@@ -4,8 +4,10 @@ using System.Text;
 
 namespace Advent.MMXVIII
 {
-    public class Day01
+    public class Day01 : IPuzzle
     {
+        public string Name { get { return "2018-01";} }
+
         public static int Callibrate01(string input)
         {
             var parts = Util.Split(input);
@@ -49,6 +51,12 @@ namespace Advent.MMXVIII
                     }
                 }
             }
+        }
+
+        public void Run(string input)
+        {
+            Console.WriteLine("2018 Day01 Pt1 - " + Callibrate01(input));
+            Console.WriteLine("2018 Day01 Pt2 - " + Callibrate02(input));
         }
     }
 }

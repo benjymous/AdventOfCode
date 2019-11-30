@@ -1,14 +1,47 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Runtime;
 
 namespace Advent
 {
     class Program
     {
+        static string[] _args;
+
+        static bool ShouldRun(IPuzzle puzzle)
+        {
+            if (_args.Length == 0) return true;
+
+            foreach (var line in _args)
+            {
+                if (line.Contains(puzzle.Name)) return true;
+            }
+
+            return false;
+        }
+
+        static List<IPuzzle> GetPuzzles()
+        {
+            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
+                .Where(x => typeof(IPuzzle).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
+                .Select(x => (IPuzzle)Activator.CreateInstance(x)).OrderBy(x => x.Name).ToList();
+        }
+
         static void Main(string[] args)
         {
-            string day01Input = System.IO.File.ReadAllText(@"Data\MMXVIII\day01.txt");
-            Console.WriteLine("2018 Day01 Pt1 - " + MMXVIII.Day01.Callibrate01(day01Input));
-            Console.WriteLine("2018 Day01 Pt2 - " + MMXVIII.Day01.Callibrate02(day01Input));
+            _args = args;
+
+            var puzzles = GetPuzzles();
+
+            foreach (var puzzle in puzzles)
+            {
+                if (ShouldRun(puzzle))
+                {
+                    string input = System.IO.File.ReadAllText(@"Data\"+puzzle.Name+".txt");
+                    puzzle.Run(input);
+                }
+            }
         }
     }
 }
