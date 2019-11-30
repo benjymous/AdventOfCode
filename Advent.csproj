@@ -6,18 +6,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\MMXVIII\**" />
     <Compile Remove="test\**" />
+    <EmbeddedResource Remove="Data\MMXVIII\**" />
     <EmbeddedResource Remove="test\**" />
+    <None Remove="Data\MMXVIII\**" />
     <None Remove="test\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\MMXVIII\" />
     <Folder Include="MMXIX\" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Data\MMXVIII\day01.txt">
+    <None Update="Data\2018-01.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
