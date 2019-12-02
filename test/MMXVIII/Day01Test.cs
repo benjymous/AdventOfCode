@@ -15,7 +15,7 @@ namespace Advent.MMXVIII.Test
         [DataTestMethod]
         public void Callibrate01Test(string input, int expected)
         {
-            Assert.IsTrue(MMXVIII.Day01.Callibrate01(input) == expected);
+            Assert.AreEqual(expected, MMXVIII.Day01.Callibrate01(input));
         }
 
         [DataRow("+1, -1", 0)]
@@ -25,7 +25,7 @@ namespace Advent.MMXVIII.Test
         [DataTestMethod]
         public void Callibrate02Test(string input, int expected)
         {
-            Assert.IsTrue(MMXVIII.Day01.Callibrate02(input) == expected);
+            Assert.AreEqual(expected, MMXVIII.Day01.Callibrate02(input));
         }
     }
 }
