@@ -11,53 +11,46 @@ namespace Advent.MMXIX
             HALT = 99,
         }
 
-        public int[] Memory {get;set;}
-        int PC {get;set;} = 0;
+        int[] Memory {get;set;}
+        int InstructionPointer {get;set;} = 0;
 
         public IntCPU (string program)
         {
-            Memory = Util.Parse(Util.Split(program));
+            Memory = Util.Parse(program);
         }
 
         // Read from the address referenced from the given PC offset
-        public int ValueRef(int offset)
-        {
-            return Memory[Memory[PC+offset]];
-        }
+        int ValueRef(int offset) => Memory[Memory[InstructionPointer+offset]];
 
         // Write to the address referenced from the given PC offset
-        public void PutVia(int offset, int val)
-        {
-            Memory[Memory[PC+offset]]=val;
-        }
+        void PutVia(int offset, int val) => Memory[Memory[InstructionPointer+offset]]=val;
 
-        public bool Step() 
+        bool Step() 
         {
-            switch((Mnemonic)(Memory[PC])) 
+            switch((Mnemonic)(Memory[InstructionPointer])) 
             {
+                case Mnemonic.ADD: // add PC+1 and PC+2 and put it in address PC+3
+                {
+                    PutVia(3, ValueRef(1)+ValueRef(2)); 
+                    InstructionPointer += 4;
+                }
+                break;
+
+                case Mnemonic.MUL: // multiply PC+1 and PC+2 and put it in address PC+3
+                {
+                    PutVia(3, ValueRef(1)*ValueRef(2));
+                    InstructionPointer += 4;
+                }
+                break;
+
                 case Mnemonic.HALT: // stop
                 {
                     return false;
                 }
 
-                case Mnemonic.ADD: // add
-                {
-
-                    PutVia(3, ValueRef(1)+ValueRef(2));
-                    PC += 4;
-                }
-                break;
-
-                case Mnemonic.MUL: // mul
-                {
-                    PutVia(3, ValueRef(1)*ValueRef(2));
-                    PC += 4;
-                }
-                break;
-
                 default:
                 {
-                    throw new Exception("Unknown instruction "+Memory[PC]);
+                    throw new Exception("Unknown instruction "+Memory[InstructionPointer]);
                 }
             }
 
@@ -67,15 +60,12 @@ namespace Advent.MMXIX
         public void Run()
         {
             bool running = true;
-            while (running) running = Step();
+            while (running = Step());
         }
 
-        public void Poke(int addr, int val) { Memory[addr] = val; }
-        public int Peek(int addr) { return Memory[addr]; }
+        public void Poke(int addr, int val) => Memory[addr] = val; 
+        public int Peek(int addr) => Memory[addr];
 
-        public override string ToString()
-        {
-            return string.Join(",", Memory);
-        }
+        public override string ToString() => string.Join(",", Memory);
     }
 }

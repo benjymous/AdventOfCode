@@ -21,14 +21,11 @@ namespace Advent
             }
         }
 
-        public static int[] Parse(string[] input)
-        {
-            return input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int32.Parse(s)).ToArray();
-        }
+        public static int[] Parse(string input) => Parse(Split(input));
 
-        public static string GetInput(IPuzzle puzzle)
-        {
-            return System.IO.File.ReadAllText(System.IO.Path.Combine("Data",puzzle.Name+".txt"));
-        }
+        public static int[] Parse(string[] input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int32.Parse(s)).ToArray();
+
+        public static string GetInput(IPuzzle puzzle) => System.IO.File.ReadAllText(System.IO.Path.Combine("Data",puzzle.Name+".txt"));
+    
     }
 }
