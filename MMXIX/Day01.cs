@@ -26,7 +26,7 @@ namespace Advent.MMXIX
             return fuel;
         }
 
-        public static int FuelCheck01(string input)
+        public int FuelCheck01(string input)
         {
             var parts = Util.Split(input);
 
@@ -43,7 +43,7 @@ namespace Advent.MMXIX
             return sum;
         }
 
-        public static int FuelCheck02(string input)
+        public int FuelCheck02(string input)
         {
             var parts = Util.Split(input);
 

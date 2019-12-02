@@ -27,5 +27,22 @@ namespace Advent.MMXVIII.Test
         {
             Assert.AreEqual(expected, MMXVIII.Day01.Callibrate02(input));
         }
+
+        [DataTestMethod]
+        public void Callibration_Part1_Regression()
+        {
+            var d = new Day01();
+            var input = Util.GetInput(d);
+            Assert.AreEqual(553, MMXVIII.Day01.Callibrate01(input));
+        }
+
+        [DataTestMethod]
+        public void Callibration_Part2_Regression()
+        {
+            var d = new Day01();
+            var input = Util.GetInput(d);
+            Assert.AreEqual(78724, MMXVIII.Day01.Callibrate02(input));
+        }
+
     }
 }

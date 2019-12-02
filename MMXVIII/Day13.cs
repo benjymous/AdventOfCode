@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVIII
 {
@@ -231,21 +230,23 @@ namespace Advent.MMXVIII
             }
         }
 
-        public void Run(string input)
+        public string Part1(string input)
         {
             var t = new TrainSim(input);
+            return t.Run();
+        }
 
-            //var t = new TrainSim(@"/->-\        ,|   |  /----\,| /-+--+-\  |,| | |  | v  |,\-+-/  \-+--/,  \------/   ");
-            Console.WriteLine("- Pt1 - "+t.Run());
-
+        public string Part2(string input)
+        {
             var t2 = new TrainSim(input);
             t2.StopOnCrash=false;
-            Console.WriteLine("- Pt2 - "+t2.Run());
+            return t2.Run();
+        }
 
-            // var t3 = new TrainSim(@"/>-<\  ,|   |  ,| /<+-\,| | | v,\>+</ |,  |   ^,  \<->/");
-            // t3.StopOnCrash=false;
-            // //t3.Debug = true;
-            // Console.WriteLine("- Pt2 - "+t3.Run());
+        public void Run(string input)
+        {
+            Console.WriteLine("- Pt1 - "+Part1(input));
+            Console.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }
