@@ -38,7 +38,8 @@ namespace Advent
             {
                 if (ShouldRun(puzzle))
                 {
-                    string input = System.IO.File.ReadAllText(System.IO.Path.Combine("Data",puzzle.Name+".txt"));
+                    Console.WriteLine(puzzle.Name);
+                    var input = Util.GetInput(puzzle);
                     puzzle.Run(input);
                 }
             }

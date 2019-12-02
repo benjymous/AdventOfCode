@@ -25,5 +25,10 @@ namespace Advent
         {
             return input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int32.Parse(s)).ToArray();
         }
+
+        public static string GetInput(IPuzzle puzzle)
+        {
+            return System.IO.File.ReadAllText(System.IO.Path.Combine("Data",puzzle.Name+".txt"));
+        }
     }
 }

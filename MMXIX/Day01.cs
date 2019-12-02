@@ -62,8 +62,8 @@ namespace Advent.MMXIX
 
         public void Run(string input)
         {
-            Console.WriteLine("2019 Day01 Pt1 - " + FuelCheck01(input));
-            Console.WriteLine("2019 Day01 Pt2 - " + FuelCheck02(input));
+            Console.WriteLine("- Pt1 - " + FuelCheck01(input));
+            Console.WriteLine("- Pt2 - " + FuelCheck02(input));
         }
     }
 }
