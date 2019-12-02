@@ -7,13 +7,14 @@ namespace Advent.Test
     {
         [DataRow("a", "a")]
         [DataRow("a\nb", "a|b")]
+        [DataRow("a\nb\nc", "a|b|c")]
         [DataRow("a,b,c", "a|b|c")]
         [DataTestMethod]
         public void TestSplit(string input, string expected)
         {
             string[] result = Util.Split(input);
             string joined = string.Join("|", result);
-            Assert.IsTrue(joined == expected);
+            Assert.AreEqual(expected, joined);
         }
     }
 }
