@@ -13,11 +13,11 @@ namespace Advent
             int linefeedCount = input.Count( c => c == '\n');
             if (linefeedCount > commaCount)
             {
-                return input.Split("\n");
+                return input.Split("\n").Where(x => !string.IsNullOrEmpty(x)).ToArray();
             }
             else
             {
-                return input.Split(",").Select(e => e.Replace("\n","")).ToArray();
+                return input.Split(",").Select(e => e.Replace("\n","")).Where(x => !string.IsNullOrEmpty(x)).ToArray();
             }
         }
 
