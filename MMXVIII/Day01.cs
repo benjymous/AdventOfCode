@@ -55,8 +55,8 @@ namespace Advent.MMXVIII
 
         public void Run(string input)
         {
-            Console.WriteLine("2018 Day01 Pt1 - " + Callibrate01(input));
-            Console.WriteLine("2018 Day01 Pt2 - " + Callibrate02(input));
+            Console.WriteLine("- Pt1 - " + Callibrate01(input));
+            Console.WriteLine("- Pt2 - " + Callibrate02(input));
         }
     }
 }

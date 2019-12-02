@@ -13,11 +13,25 @@ namespace Advent.MMXIX.Test
         [DataTestMethod]
         public void CPU01Test(string input, string expected)
         {
-            var cpu = new Day02.IntCPU(input);
+            var cpu = new IntCPU(input);
             cpu.Run();
             Assert.AreEqual(expected, cpu.ToString());
         }
 
+        [DataTestMethod]
+        public void CPU02Test()
+        {
+            var d = new Day02();
+            var input = Util.GetInput(d);
+            Assert.AreEqual(3716250, d.Part1(input));
+        }
 
+        [DataTestMethod]
+        public void CPU03Test()
+        {
+            var d = new Day02();
+            var input = Util.GetInput(d);
+            Assert.AreEqual(6472, d.Part2(input));
+        }
     }
 }
