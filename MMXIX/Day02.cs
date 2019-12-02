@@ -119,7 +119,7 @@ namespace Advent.MMXIX
 
         public void Run(string input)
         {
-            //Console.WriteLine("2019 Day02 Pt1 - " + Part1(input));
+            Console.WriteLine("2019 Day02 Pt1 - " + Part1(input));
             Console.WriteLine("2019 Day02 Pt2 - " + Part2(input));
         }
     }
