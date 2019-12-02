@@ -11,7 +11,7 @@ namespace Advent.MMXIX.Test
         [DataRow("2,4,4,5,99,0", "2,4,4,5,99,9801")]
         [DataRow("1,1,1,4,99,5,6,0,99", "30,1,1,4,2,5,6,0,99")]
         [DataTestMethod]
-        public void CPU01Test(string input, string expected)
+        public void CPUTest(string input, string expected)
         {
             var cpu = new IntCPU(input);
             cpu.Run();
@@ -19,7 +19,7 @@ namespace Advent.MMXIX.Test
         }
 
         [DataTestMethod]
-        public void CPU02Test()
+        public void CPU_Part1_Regression()
         {
             var d = new Day02();
             var input = Util.GetInput(d);
@@ -27,7 +27,7 @@ namespace Advent.MMXIX.Test
         }
 
         [DataTestMethod]
-        public void CPU03Test()
+        public void CPU_Part2_Regression()
         {
             var d = new Day02();
             var input = Util.GetInput(d);

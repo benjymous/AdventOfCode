@@ -26,6 +26,22 @@ namespace Advent.MMXVIII.Test
             var res = t.Run();
             Assert.AreEqual(expected, res);                    
         }
+
+        [DataTestMethod]
+        public void Train_Part1_Regression()
+        {
+            var d = new Day13();
+            var input = Util.GetInput(d);
+            Assert.AreEqual("Crash at 116,10", d.Part1(input));
+        }
+
+        [DataTestMethod]
+        public void Train_Part2_Regression()
+        {
+            var d = new Day13();
+            var input = Util.GetInput(d);
+            Assert.AreEqual("Last train at 116,25", d.Part2(input));
+        }
      
     }
 }

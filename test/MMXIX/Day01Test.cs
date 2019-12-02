@@ -25,5 +25,21 @@ namespace Advent.MMXIX.Test
         {
             Assert.IsTrue(MMXIX.Day01.GetFullFuelRequirement(input) == expected);
         }
+
+        [DataTestMethod]
+        public void FuelCheck_Part1_Regression()
+        {
+            var d = new Day01();
+            var input = Util.GetInput(d);
+            Assert.AreEqual(3224048, d.FuelCheck01(input));
+        }
+
+        [DataTestMethod]
+        public void FuelCheck_Part2_Regression()
+        {
+            var d = new Day01();
+            var input = Util.GetInput(d);
+            Assert.AreEqual(4833211, d.FuelCheck02(input));
+        }
     }
 }

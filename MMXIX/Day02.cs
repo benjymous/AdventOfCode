@@ -24,14 +24,14 @@ namespace Advent.MMXIX
 
         public int Part2(string input)
         {
-            for (int x=0; x<100; ++x)
+            for (int noun=0; noun<100; ++noun)
             {
-                for (int y=0; y<100; ++y)
+                for (int verb=0; verb<100; ++verb)
                 {
-                    int v = RunProgram(input, x, y);
+                    int v = RunProgram(input, noun, verb);
                     if (v == 19690720)
                     {
-                        return (100*x)+y;
+                        return (100*noun)+verb;
                     }
                 }
             }
