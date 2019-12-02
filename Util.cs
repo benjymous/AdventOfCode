@@ -9,7 +9,9 @@ namespace Advent
     {
         public static string[] Split(string input)
         {
-            if (input.Contains("\n") && input.Count( c => c == '\n') > 1 && !input.Trim().EndsWith("\n"))
+            int commaCount = input.Count( c => c == ',');
+            int linefeedCount = input.Count( c => c == '\n');
+            if (linefeedCount > commaCount)
             {
                 return input.Split("\n");
             }
