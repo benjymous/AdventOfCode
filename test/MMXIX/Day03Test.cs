@@ -32,5 +32,13 @@ namespace Advent.MMXIX.Test
             Assert.AreEqual(293, Day03.FindIntersection(input, Day03.SearchMode.Closest));
         }
 
+        [DataTestMethod]
+        public void Wire_Part2_Regression()
+        {
+            var d = new Day03();
+            var input = Util.GetInput(d);
+            Assert.AreEqual(27306, Day03.FindIntersection(input, Day03.SearchMode.Shortest));
+        }
+
     }
 }
