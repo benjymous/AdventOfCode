@@ -9,8 +9,10 @@ namespace Advent.MMXVIII
     {
         public string Name { get { return "2018-02";} }
  
-        public void Part1(string[] keys)
+        public static int Part1(string input)
         {
+            var keys = Util.Split(input);
+
             int doubles = 0;
             int triples = 0;
 
@@ -19,15 +21,7 @@ namespace Advent.MMXVIII
                 var chars = new Dictionary<char, int>();
                 for (var i=0; i<id.Length; ++i)
                 {
-                    var code = id[i];
-                    if (chars.ContainsKey(code))
-                    {
-                        chars[code]++;
-                    }
-                    else
-                    {
-                        chars[code]=1;
-                    } 
+                    chars.IncrementAtIndex(id[i]);
                 }
 
                 bool hasDouble = chars.Any(kvp => kvp.Value == 2);
@@ -37,12 +31,12 @@ namespace Advent.MMXVIII
 	            if (hasTriple) triples++;
             }
 
-
-            Console.WriteLine("* Pt1 - Doubles: "+ doubles+ " Triples: "+ triples+ " Checksum:" + doubles*triples);
+            return doubles*triples;
         }
 
-        public void Part2(string[] keys)
+        public static string Part2(string input)
         {
+            var keys = Util.Split(input);
             foreach (var s1 in keys)
             {                
                 foreach (var s2 in keys)
@@ -63,20 +57,18 @@ namespace Advent.MMXVIII
 
                     if (diff == 1) 
                     {
-                        Console.WriteLine("* Pt2 - "+answer);
-                        return;
-                    }
-
+                        return answer;
+                    }               
                 }
             }
+            return "FAIL";
+
         }
 
         public void Run(string input)
         {
-            var keys = Util.Split(input);
-
-            Part1(keys);
-            Part2(keys);
+            Console.WriteLine("* Pt1 - "+Part1(input));
+            Console.WriteLine("* Pt2 - "+Part2(input));
         }
     }
 }

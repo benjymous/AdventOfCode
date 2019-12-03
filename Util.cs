@@ -25,7 +25,21 @@ namespace Advent
 
         public static int[] Parse(string[] input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int32.Parse(s)).ToArray();
 
-        public static string GetInput(IPuzzle puzzle) => System.IO.File.ReadAllText(System.IO.Path.Combine("Data",puzzle.Name+".txt"));
-    
+        public static string GetInput(IPuzzle puzzle) => System.IO.File.ReadAllText(System.IO.Path.Combine("Data",puzzle.Name+".txt"));   
+    }
+
+    public static class MapExtensions
+    {
+        public static void IncrementAtIndex<T>(this Dictionary<T,int> dict, T key)
+        {
+            if (dict.ContainsKey(key))
+            {
+                dict[key]++;
+            }
+            else
+            {
+                dict[key] = 1;
+            }
+        }
     }
 }
