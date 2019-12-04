@@ -8,7 +8,7 @@ namespace Advent.MMXVIII
     {
         public string Name { get { return "2018-01";} }
 
-        public static int Callibrate01(string input)
+        public static int Part1(string input)
         {
             var parts = Util.Split(input);
 
@@ -25,7 +25,7 @@ namespace Advent.MMXVIII
             return sum;
         }
 
-        public static int Callibrate02(string input)
+        public static int Part2(string input)
         {
             var seen = new HashSet<int>();
 
@@ -55,8 +55,8 @@ namespace Advent.MMXVIII
 
         public void Run(string input)
         {
-            Console.WriteLine("- Pt1 - " + Callibrate01(input));
-            Console.WriteLine("- Pt2 - " + Callibrate02(input));
+            Console.WriteLine("- Pt1 - " + Part1(input));
+            Console.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

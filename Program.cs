@@ -7,44 +7,31 @@ namespace Advent
 {
     class Program
     {
-        static string[] _args;
-
-        static bool ShouldRun(IPuzzle puzzle)
-        {
-            if (_args.Length == 0) return true;
-
-            foreach (var line in _args)
-            {
-                if (line.Contains(puzzle.Name)) return true;
-            }
-
-            return false;
-        }
-
-        static List<IPuzzle> GetPuzzles()
+        static IEnumerable<IPuzzle> GetPuzzles()
         {
             return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
                 .Where(x => typeof(IPuzzle).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
-                .Select(x => (IPuzzle)Activator.CreateInstance(x)).OrderBy(x => x.Name).ToList();
+                .Select(x => (IPuzzle)Activator.CreateInstance(x))
+                .Where(p => p.ShouldRun())
+                .OrderBy(x => x.Name);
         }
 
         static void Main(string[] args)
         {
-            _args = args;
+            Extensions.args = args;
 
             var puzzles = GetPuzzles();
+            var timings = new Dictionary<string, long>();
 
             foreach (var puzzle in puzzles)
+            {             
+                timings[puzzle.Name] = puzzle.TimeRun();            
+            }
+
+            Console.WriteLine();
+            foreach (var kvp in timings)
             {
-                if (ShouldRun(puzzle))
-                {
-                    var watch = new System.Diagnostics.Stopwatch();        
-                    watch.Start();
-                    Console.WriteLine(puzzle.Name);
-                    var input = Util.GetInput(puzzle);
-                    puzzle.Run(input);
-                    Console.WriteLine($"- took {watch.ElapsedMilliseconds}ms");
-                }
+                Console.WriteLine($"{kvp.Key} - {kvp.Value}ms");
             }
         }
     }
