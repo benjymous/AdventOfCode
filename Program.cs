@@ -38,9 +38,12 @@ namespace Advent
             {
                 if (ShouldRun(puzzle))
                 {
+                    var watch = new System.Diagnostics.Stopwatch();        
+                    watch.Start();
                     Console.WriteLine(puzzle.Name);
                     var input = Util.GetInput(puzzle);
                     puzzle.Run(input);
+                    Console.WriteLine($"- took {watch.ElapsedMilliseconds}ms");
                 }
             }
         }
