@@ -167,10 +167,9 @@ namespace Advent.MMXVIII
                 return Math.Abs(x-cave.tx)+Math.Abs(y-cave.ty);
             }
 
-            bool CanMove(Cave cave, int dx, int dy)
+            bool ToolValid(char cell, Tool tool)
             {
-                var t = cave.MapAt(x+dx, y+dy);
-                switch (t)
+                switch (cell)
                 {
                     case ROCKY:
                         return tool != Tool.None;
@@ -187,9 +186,21 @@ namespace Advent.MMXVIII
                 }
             }
 
-            State SetTool(Tool newTool)
+            bool CanMove(Cave cave, int dx, int dy)
             {
-                if (newTool != tool)
+                var t = cave.MapAt(x+dx, y+dy);
+                return ToolValid(t, tool);
+            }
+
+            bool CanSwitch(Cave cave, Tool newTool)
+            {
+                var t = cave.MapAt(x, y);
+                return ToolValid(t, newTool);
+            }
+
+            State SetTool(Cave cave, Tool newTool)
+            {
+                if (newTool != tool && CanSwitch(cave, tool))
                 {
                     var newState = this.MemberwiseClone() as State;
                     newState.tool = newTool;
@@ -218,9 +229,9 @@ namespace Advent.MMXVIII
             {
                 List<State> newStates = new List<State>();
 
-                newStates.Add(SetTool(Tool.None));
-                newStates.Add(SetTool(Tool.Torch));
-                newStates.Add(SetTool(Tool.ClimbingGear));
+                newStates.Add(SetTool(cave, Tool.None));
+                newStates.Add(SetTool(cave, Tool.Torch));
+                newStates.Add(SetTool(cave, Tool.ClimbingGear));
 
                 newStates.Add(Move(cave, 1, 0));
                 newStates.Add(Move(cave, 0, 1));
@@ -300,7 +311,7 @@ namespace Advent.MMXVIII
 
         public void Run(string input)
         {
-            //Console.WriteLine(Part2(10,10,510));
+            Console.WriteLine(Part2(10,10,510));
 
             Console.WriteLine("- Pt1 - "+Part1(input));
             //Console.WriteLine("- Pt2 - "+Part2(input));
