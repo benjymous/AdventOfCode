@@ -50,7 +50,7 @@ namespace Advent.MMXVIII
                 var shrunk = input.Replace(c.ToString(), "").Replace(c.ToString().ToUpper(), "");
                 int v = Reduce(shrunk);
                 answers.Add(v);
-                Console.WriteLine($"{c}-{v}");
+                //Console.WriteLine($"{c}-{v}");
             });
             return answers.Min();
         }
