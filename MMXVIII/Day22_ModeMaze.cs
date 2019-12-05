@@ -22,7 +22,7 @@ namespace Advent.MMXVIII
         {
             public Cave(int targetX, int targetY, int caveDepth)
             {
-                target = new ManhattanVector2(targetX, targetY);
+                target = new State() {position = new ManhattanVector2(targetX, targetY), tool = Tool.Torch };
                 depth = caveDepth;
             }
 
@@ -61,7 +61,7 @@ namespace Advent.MMXVIII
                 if (pos == ManhattanVector2.Zero) result =  0;
 
                 // The region at the coordinates of the target has a geologic index of 0.
-                else if (pos == target) result =  0;
+                else if (pos == target.position) result =  0;
 
                 // If the region's Y coordinate is 0, the geologic index is its X coordinate times 16807.
                 else if (pos.Y==0) result = pos.X*16807; 
@@ -120,9 +120,9 @@ namespace Advent.MMXVIII
             public int GetScore()
             {
                 int score = 0;
-                for(int y=0; y<=target.Y; ++y)
+                for(int y=0; y<=target.position.Y; ++y)
                 {
-                    for (int x=0; x<=target.X; ++x)
+                    for (int x=0; x<=target.position.X; ++x)
                     {
                         var c = MapAt( new ManhattanVector2(x,y) );
                         score += RiskLevel(c);
@@ -131,7 +131,7 @@ namespace Advent.MMXVIII
                 return score;
             }
 
-            public ManhattanVector2 target;
+            public State target;
             int depth;
         }
         
@@ -149,28 +149,51 @@ namespace Advent.MMXVIII
                 this.cave = cave;
             }
             Cave cave;
+            
+            Dictionary<string, Astar.Node<State>> nodeCache = new Dictionary<string, Astar.Node<State>>();
 
-            public override List<Astar.Node<State>> GetAdjacentNodes(Astar.Node<State> n)
+            public override List<Astar.Node<State>> GetAdjacentNodes(Astar.Node<State> node)
             {
-                return new List<Astar.Node<State>>();
+                var currentState = node.Position;
+                var moves = currentState.TryMoves(cave);
+                var nodes = new List<Astar.Node<State>>();
+
+                foreach (var state in moves)
+                {
+                    if (state == null) continue;
+
+                    var key = state.ToString();
+                    if (nodeCache.ContainsKey(key)) 
+                    {
+                        nodes.Add(nodeCache[key]);
+                    }
+                    else
+                    {
+                        var newNode = new Astar.Node<State>(state, true) 
+                        {
+                            Cost = state.cost,
+                            DistanceToTarget = state.Distance(cave.target)
+                        };
+                        nodeCache[key] = newNode;
+                        nodes.Add(newNode);
+                    }
+                }
+
+                return nodes;
             }
         }
         
         public class State : IVec
         {
-            public ManhattanVector2 position;
-            public int steps;
+            public ManhattanVector2 position = new ManhattanVector2(0,0);
+           
+            public int cost = 0;
 
             public Tool tool = Tool.Torch;
 
             public bool Win(Cave cave)
             {
                 return DistanceToTarget(cave)==0 && tool==Tool.Torch;
-            }
-
-            public int Sort(Cave cave)
-            {
-                return DistanceToTarget(cave)+steps;
             }
 
             public int DistanceToTarget(Cave cave)
@@ -216,7 +239,8 @@ namespace Advent.MMXVIII
                 {
                     var newState = this.MemberwiseClone() as State;
                     newState.tool = newTool;
-                    newState.steps += 7;
+                    newState.cost = 7;
+
                     return newState;
                 }
 
@@ -229,7 +253,8 @@ namespace Advent.MMXVIII
                 {
                     var newState = this.MemberwiseClone() as State;
                     newState.position.Offset(dx, dy);
-                    newState.steps++;
+                    newState.cost = 1;
+
                     return newState;
                 }
 
@@ -259,6 +284,42 @@ namespace Advent.MMXVIII
                 var man2 = other as State;
                 return position.Distance(man2.position) + Math.Abs((int)tool-(int)man2.tool);
             }
+
+            public static bool operator== (State v1, State v2)
+            {
+                if (object.ReferenceEquals(v1, null) && object.ReferenceEquals(v2, null)) return true;
+                if (object.ReferenceEquals(v1, null) && !object.ReferenceEquals(v2, null)) return false;
+                return v1.Equals(v2);
+            }
+
+            public static bool operator!= (State v1, State v2)
+            {
+                if (object.ReferenceEquals(v1, null) && object.ReferenceEquals(v2, null)) return true;
+                if (object.ReferenceEquals(v1, null) && !object.ReferenceEquals(v2, null)) return false;
+                return !v1.Equals(v2);
+            }
+
+            public override bool Equals(object other)
+            {
+                if (!(other is State)) return false;
+                return Distance(other as State) == 0;
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    int hash = 17;
+                    hash = hash * 31 + position.GetHashCode();
+                    hash = hash * 31 + tool.GetHashCode();
+                    return hash;
+                }
+            }
+
+            public override string ToString()
+            {
+                return $"{position} {tool}";
+            }
         }
         
         public void DrawMap(char[][] map)
@@ -283,43 +344,15 @@ namespace Advent.MMXVIII
             return Part1(int.Parse(bits[3]), int.Parse(bits[4]), int.Parse(bits[1]));
         }
 
+
         public static int Part2(int tx, int ty, int depth)
         {
             var cave = new Cave(tx, ty, depth);
 
-            var best = new Dictionary<string, int>();
-            var tryStates = new List<State>() {new State()};
+            var search = new CaveStar(cave);
+            var path = search.FindPath(new State(), cave.target);
 
-            
-            int winCount = 500;
-            while (tryStates.Count > 0)
-            {
-                var state = tryStates[0];
-                tryStates.Remove(state);
-                var key = GetKey(state.position.X, state.position.Y);
-
-                if (!best.ContainsKey(key) || best[key] > state.steps)
-                {
-                    best[key] = state.steps;
-                }
-
-                if (state.Win(cave))
-                {
-                    winCount--;
-                }
-
-                if (winCount == 0)
-                {
-                    break;
-                }
-
-                tryStates.AddRange(state.TryMoves(cave));
-                tryStates.Sort((a,b) => a.DistanceToTarget(cave).CompareTo(b.DistanceToTarget(cave)));
-                
-            }
-
-
-            return best[GetKey(tx,ty)];
+            return 0;
         }
 
         public static int Part2(string input)
