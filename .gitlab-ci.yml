@@ -3,3 +3,7 @@ image: "mcr.microsoft.com/dotnet/core/sdk:3.0"
 test:
   script:
     - dotnet test
+
+run:
+  script:
+    - dotnet run
