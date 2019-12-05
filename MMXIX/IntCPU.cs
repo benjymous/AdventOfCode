@@ -5,23 +5,38 @@ namespace Advent.MMXIX
 {
     public class IntCPU
     {
-        public enum Mnemonic
+        public enum Opcode
         {
             ADD = 1,
             MUL = 2,
+
             PUT = 3,
             OUT = 4,
+
+            JMPTRUE = 5,
+            JMPFALSE = 6,
+
+            LT = 7,
+            EQ = 8,
+
             HALT = 99,
         }
 
-        Dictionary<Mnemonic,int> InstructionSizes = new Dictionary<Mnemonic, int>()
+        Dictionary<Opcode,int> InstructionSizes = new Dictionary<Opcode, int>()
         {
-            {Mnemonic.ADD, 4},
-            {Mnemonic.MUL, 4},
-            {Mnemonic.PUT, 2},
-            {Mnemonic.OUT, 2},
+            {Opcode.ADD, 4},
+            {Opcode.MUL, 4},
 
-            {Mnemonic.HALT, 1}
+            {Opcode.PUT, 2},
+            {Opcode.OUT, 2},
+
+            {Opcode.JMPTRUE, 3},
+            {Opcode.JMPFALSE, 3},
+
+            {Opcode.LT, 4},
+            {Opcode.EQ, 4},
+
+            {Opcode.HALT, 1}
         };
 
         public enum ParamMode
@@ -43,7 +58,7 @@ namespace Advent.MMXIX
 
         int GetValue(Instr i, int paramIdx, ParamMode paramMode = ParamMode.Auto)
         {
-            if (paramMode == ParamMode.Auto) paramMode = i.opmode[paramIdx];
+            if (paramMode == ParamMode.Auto) paramMode = i.mode[paramIdx];
             switch (paramMode)
             {
                 case ParamMode.Position:
@@ -64,8 +79,8 @@ namespace Advent.MMXIX
 
         class Instr
         {
-            public Mnemonic instruction = 0;
-            public ParamMode[] opmode = {0,0,0}; 
+            public Opcode code = 0;
+            public ParamMode[] mode = {0,0,0}; 
         }
 
         Instr DecodeInstruction()
@@ -73,11 +88,16 @@ namespace Advent.MMXIX
             Instr instr = new Instr();
             var instructionRaw = Memory[InstructionPointer].ToString().PadLeft(5,'0');
 
-            instr.instruction = (Mnemonic)(int.Parse($"{instructionRaw[3]}{instructionRaw[4]}"));
+            instr.code = (Opcode)(int.Parse($"{instructionRaw[3]}{instructionRaw[4]}"));
 
-            for (var i=0; i<InstructionSizes[instr.instruction]-1; ++i)
+            if (!InstructionSizes.ContainsKey(instr.code))
             {
-                instr.opmode[i] = (ParamMode)(int.Parse($"{instructionRaw[2-i]}"));
+                throw new Exception($"Unknown instruction {instructionRaw} at {InstructionPointer}");
+            }
+
+            for (var i=0; i<InstructionSizes[instr.code]-1; ++i)
+            {
+                instr.mode[i] = (ParamMode)(int.Parse($"{instructionRaw[2-i]}"));
             }
 
             return instr;
@@ -86,27 +106,29 @@ namespace Advent.MMXIX
         bool Step() 
         {
             var instr = DecodeInstruction();
-            switch(instr.instruction) 
+            switch(instr.code) 
             {
-                case Mnemonic.ADD: // add PC+1 and PC+2 and put it in address PC+3
+                case Opcode.ADD: // add PC+1 and PC+2 and put it in address PC+3
                 {
                     var outPos = GetValue(instr, 2, ParamMode.Immediate);
                     var val1 = GetValue(instr, 0);
                     var val2 = GetValue(instr, 1);
                     Memory[outPos] = val1+val2;
+                    InstructionPointer += InstructionSizes[instr.code];
                 }
                 break;
 
-                case Mnemonic.MUL: // multiply PC+1 and PC+2 and put it in address PC+3
+                case Opcode.MUL: // multiply PC+1 and PC+2 and put it in address PC+3
                 {
                     var outPos = GetValue(instr, 2, ParamMode.Immediate);
                     var val1 = GetValue(instr, 0);
                     var val2 = GetValue(instr, 1);
                     Memory[outPos] = val1*val2;
+                    InstructionPointer += InstructionSizes[instr.code];
                 }
                 break;
 
-                case Mnemonic.PUT: // takes a single integer as input and saves it to the address given by its only parameter
+                case Opcode.PUT: // takes a single integer as input and saves it to the address given by its only parameter
                 {
                     if (Input.Count == 0)
                     {
@@ -114,16 +136,62 @@ namespace Advent.MMXIX
                     }
                     var v = Input.Dequeue();
                     Memory[GetValue(instr, 0, ParamMode.Immediate)] = v;
+                    InstructionPointer += InstructionSizes[instr.code];
                 }
                 break;
 
-                case Mnemonic.OUT: // output the value of its only parameter.
+                case Opcode.OUT: // output the value of its only parameter.
                 {
                     Output.Add(GetValue(instr, 0));
+                    InstructionPointer += InstructionSizes[instr.code];
                 }
                 break;
 
-                case Mnemonic.HALT: // stop
+                case Opcode.JMPTRUE: 
+                {
+                    var val1 = GetValue(instr, 0);
+                    var val2 = GetValue(instr, 1);
+
+                    if (val1 != 0) 
+                        InstructionPointer = val2;
+                    else
+                        InstructionPointer += InstructionSizes[instr.code];
+                }
+                break;
+
+                case Opcode.JMPFALSE:
+                {
+                    var val1 = GetValue(instr, 0);
+                    var val2 = GetValue(instr, 1);
+
+                    if (val1 == 0) 
+                        InstructionPointer = val2;
+                    else
+                        InstructionPointer += InstructionSizes[instr.code];
+                }
+                break;
+
+                case Opcode.LT:
+                {
+                    var outPos = GetValue(instr, 2, ParamMode.Immediate);
+                    var val1 = GetValue(instr, 0);
+                    var val2 = GetValue(instr, 1);
+                    Memory[outPos] = val1 < val2 ? 1 : 0;
+                    InstructionPointer += InstructionSizes[instr.code];
+                }
+                break;
+
+                case Opcode.EQ:
+                {
+                    var outPos = GetValue(instr, 2, ParamMode.Immediate);
+                    var val1 = GetValue(instr, 0);
+                    var val2 = GetValue(instr, 1);
+                    Memory[outPos] = val1 == val2 ? 1 : 0;
+                    InstructionPointer += InstructionSizes[instr.code];
+                }
+                break;
+
+                case Opcode.HALT: // stop
                 {
                     return false;
                 }
@@ -134,7 +202,7 @@ namespace Advent.MMXIX
                 }
             }
 
-            InstructionPointer += InstructionSizes[instr.instruction];
+            
 
             return true;
         }
