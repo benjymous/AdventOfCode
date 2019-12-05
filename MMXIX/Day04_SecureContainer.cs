@@ -17,7 +17,7 @@ namespace Advent.MMXIX
             var pairs = new Dictionary<char, bool>();
             for (var i=0; i<5; i++) 
             {
-                if (num[i]==num[i+1])
+                if (num[i] == num[i+1])
                 {
                     adjacent = true;
                     pairs[num[i]] = true;
@@ -35,7 +35,7 @@ namespace Advent.MMXIX
                 // the two adjacent matching digits are not part of a larger group of matching digits
                 for (var i=0; i<4; i++) 
                 {
-                    if (num[i]==num[i+1] && num[i+1]==num[i+2])
+                    if (num[i] == num[i+1] && num[i+1] == num[i+2])
                     {
                         pairs[num[i]] = false;
                         // actually a triple
