@@ -142,12 +142,21 @@ namespace Advent.MMXVIII
             ClimbingGear, 
         }
 
-        public class CaveStar : AStar<ManhattanVector3>
+        public class CaveStar : Astar.Astar<State>
         {
-            
+            public CaveStar(Cave cave)
+            {
+                this.cave = cave;
+            }
+            Cave cave;
+
+            public override List<Astar.Node<State>> GetAdjacentNodes(Astar.Node<State> n)
+            {
+                return new List<Astar.Node<State>>();
+            }
         }
         
-        public class State
+        public class State : IVec
         {
             public ManhattanVector2 position;
             public int steps;
@@ -241,6 +250,14 @@ namespace Advent.MMXVIII
                 newStates.Add(Move(cave, 0, -1));
 
                 return newStates.Where(x => x!=null).ToList();
+            }
+
+            public int Distance(IVec other)
+            {
+                if (!(other is State)) return Int32.MaxValue;
+
+                var man2 = other as State;
+                return position.Distance(man2.position) + Math.Abs((int)tool-(int)man2.tool);
             }
         }
         
