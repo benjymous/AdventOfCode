@@ -1,9 +1,15 @@
 image: "mcr.microsoft.com/dotnet/core/sdk:3.0"
 
+stages:
+  - test
+  - run
+
 test:
+  stage: test
   script:
     - dotnet test
 
 run:
+  stage: run
   script:
     - dotnet run
