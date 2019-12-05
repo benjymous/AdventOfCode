@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Advent.AStar
+namespace Advent.Astar
 {
     public class Node<VecType> where VecType : class, IVec
     {
@@ -51,6 +51,10 @@ namespace Advent.AStar
             {
                 return Grid.Count;
             }
+        }
+
+        public Astar()
+        {
         }
 
         public Astar(List<List<Node<VecType>>> grid)
