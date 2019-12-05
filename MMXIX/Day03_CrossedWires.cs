@@ -9,23 +9,6 @@ namespace Advent.MMXIX
     {
         public string Name { get { return "2019-03";} }
 
-        public struct Position
-        {
-            public int X;
-            public int Y;
-
-            public Position(int x, int y)
-            {
-                X = x;
-                Y = y;
-            }
-
-            public override string ToString()
-            {
-                return X+","+Y;
-            }
-        }        
-
         public enum SearchMode 
         {
             Closest,
@@ -45,7 +28,7 @@ namespace Advent.MMXIX
                 if (string.IsNullOrEmpty(line)) continue;
                 var instructions = line.Split(",");
 
-                var position = new Position(0,0);
+                var position = new ManhattanVector2(0,0);
                 int steps = 0;
                 Dictionary<string, int> current = new  Dictionary<string, int>();
 
@@ -83,7 +66,7 @@ namespace Advent.MMXIX
                             int dist = int.MaxValue;
                             if (mode == SearchMode.Closest)
                             {
-                                dist = Math.Abs(position.X)+Math.Abs(position.Y);
+                                dist = position.Distance(ManhattanVector2.Zero);
                             }
                             else
                             {

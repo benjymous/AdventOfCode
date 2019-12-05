@@ -45,6 +45,157 @@ namespace Advent
         }
     }
 
+    public interface IVec
+    {
+        int Distance(IVec other);
+    }
+
+
+    public class ManhattanVector2 : IVec
+    {
+        public ManhattanVector2(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public int X {get;set;}
+        public int Y {get;set;}
+
+        public override string ToString()
+        {
+            return X+","+Y;
+        }
+
+        public void Offset(int dx, int dy)
+        {
+            X+=dx;
+            Y+=dy;
+        }
+
+        public static ManhattanVector2 operator+ (ManhattanVector2 a, ManhattanVector2 b)
+        {
+            return new ManhattanVector2(a.X+b.X, a.Y+b.Y);   
+        }
+
+        public static ManhattanVector2 operator- (ManhattanVector2 a, ManhattanVector2 b)
+        {
+            return new ManhattanVector2(a.X-b.X, a.Y-b.Y);   
+        }
+
+        public int Distance(IVec other)
+        {
+            if (!(other is ManhattanVector2)) return Int32.MaxValue;
+
+            var man2 = other as ManhattanVector2;
+            return Math.Abs(X-man2.X) + Math.Abs(Y-man2.Y);
+        }
+
+        public static bool operator== (ManhattanVector2 v1, ManhattanVector2 v2)
+        {
+            return v1.Equals(v2);
+        }
+
+        public static bool operator!= (ManhattanVector2 v1, ManhattanVector2 v2)
+        {
+            return !v1.Equals(v2);
+        }
+
+        public override bool Equals(object other)
+        {
+            if (!(other is ManhattanVector2)) return false;
+            return Distance(other as ManhattanVector2) == 0;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 31 + X.GetHashCode();
+                hash = hash * 31 + Y.GetHashCode();
+                return hash;
+            }
+        }
+
+        public static ManhattanVector2 Zero = new ManhattanVector2(0,0);
+    }
+
+
+    public class ManhattanVector3 : IVec
+    {
+        public ManhattanVector3(int x, int y, int z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
+        public int X {get;set;}
+        public int Y {get;set;}
+        public int Z {get;set;}
+
+        public override string ToString()
+        {
+            return X+","+Y+","+Z;
+        }
+
+        public void Offset(int dx, int dy, int dz)
+        {
+            X+=dx;
+            Y+=dy;
+            Z+=dz;
+        }
+
+        public static ManhattanVector3 operator+ (ManhattanVector3 a, ManhattanVector3 b)
+        {
+            return new ManhattanVector3(a.X+b.X, a.Y+b.Y, a.Z+b.Z);   
+        }
+
+        public static ManhattanVector3 operator- (ManhattanVector3 a, ManhattanVector3 b)
+        {
+            return new ManhattanVector3(a.X-b.X, a.Y-b.Y, a.Z-b.Z);   
+        }
+
+        public int Distance(IVec other)
+        {
+            if (!(other is ManhattanVector3)) return Int32.MaxValue;
+
+            var man2 = other as ManhattanVector3;
+            return Math.Abs(X-man2.X) + Math.Abs(Y-man2.Y) + Math.Abs(Z-man2.Z);
+        }
+
+        public static bool operator== (ManhattanVector3 v1, ManhattanVector3 v2)
+        {
+            return v1.Equals(v2);
+        }
+
+        public static bool operator!= (ManhattanVector3 v1, ManhattanVector3 v2)
+        {
+            return !v1.Equals(v2);
+        }
+
+        public override bool Equals(object other)
+        {
+            if (!(other is ManhattanVector3)) return false;
+            return Distance(other as ManhattanVector3) == 0;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 31 + X.GetHashCode();
+                hash = hash * 31 + Y.GetHashCode();
+                hash = hash * 31 + Z.GetHashCode();
+                return hash;
+            }
+        }
+
+        public static ManhattanVector3 Zero = new ManhattanVector3(0,0,0);
+    }
+
     public static class Extensions
     {
         public static string[] args;

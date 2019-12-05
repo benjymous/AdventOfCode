@@ -7,14 +7,14 @@ namespace Advent.MMXIX
     {
         public enum Opcode
         {
-            ADD = 1,
-            MUL = 2,
+            ADD = 1,   
+            MUL = 2,    
 
             PUT = 3,
             OUT = 4,
 
-            JMPTRUE = 5,
-            JMPFALSE = 6,
+            JT = 5,     // Jump if true
+            JF = 6,     // Jump if false
 
             LT = 7,
             EQ = 8,
@@ -30,8 +30,8 @@ namespace Advent.MMXIX
             {Opcode.PUT, 2},
             {Opcode.OUT, 2},
 
-            {Opcode.JMPTRUE, 3},
-            {Opcode.JMPFALSE, 3},
+            {Opcode.JT, 3},
+            {Opcode.JF, 3},
 
             {Opcode.LT, 4},
             {Opcode.EQ, 4},
@@ -69,7 +69,6 @@ namespace Advent.MMXIX
                     return val;
                 }
                     
-
                 case ParamMode.Immediate:
                     return Memory[InstructionPointer+paramIdx+1];
             }
@@ -147,7 +146,7 @@ namespace Advent.MMXIX
                 }
                 break;
 
-                case Opcode.JMPTRUE: 
+                case Opcode.JT: // if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
                 {
                     var val1 = GetValue(instr, 0);
                     var val2 = GetValue(instr, 1);
@@ -159,7 +158,7 @@ namespace Advent.MMXIX
                 }
                 break;
 
-                case Opcode.JMPFALSE:
+                case Opcode.JF: // if the first parameter is zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
                 {
                     var val1 = GetValue(instr, 0);
                     var val2 = GetValue(instr, 1);
@@ -171,7 +170,7 @@ namespace Advent.MMXIX
                 }
                 break;
 
-                case Opcode.LT:
+                case Opcode.LT: // if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
                 {
                     var outPos = GetValue(instr, 2, ParamMode.Immediate);
                     var val1 = GetValue(instr, 0);
@@ -181,7 +180,7 @@ namespace Advent.MMXIX
                 }
                 break;
 
-                case Opcode.EQ:
+                case Opcode.EQ: // if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
                 {
                     var outPos = GetValue(instr, 2, ParamMode.Immediate);
                     var val1 = GetValue(instr, 0);
@@ -202,15 +201,12 @@ namespace Advent.MMXIX
                 }
             }
 
-            
-
             return true;
         }
 
         public void Run()
         {
-            bool running = true;
-            while (running = Step());
+            while (Step());
         }
 
         public void Poke(int addr, int val) => Memory[addr] = val; 

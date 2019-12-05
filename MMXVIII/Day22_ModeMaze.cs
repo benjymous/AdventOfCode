@@ -16,34 +16,34 @@ namespace Advent.MMXVIII
         public const char BLOCKED = '#';
 
         public static string GetKey(int x, int y) => $"{x},{y}";
+        public static string GetKey(ManhattanVector2 pos) => $"{pos.X},{pos.Y}";
 
         public class Cave
         {
             public Cave(int targetX, int targetY, int caveDepth)
             {
-                tx = targetX;
-                ty = targetY;
+                target = new ManhattanVector2(targetX, targetY);
                 depth = caveDepth;
             }
 
             Dictionary<string,int> GeoCache = new Dictionary<string, int>();
             Dictionary<string,char> Map = new Dictionary<string, char>();
 
-            public char MapAt(int x, int y)
+            public char MapAt(ManhattanVector2 pos)
             {
-                var key = GetKey(x,y);
+                var key = GetKey(pos);
 
                 if (!Map.ContainsKey(key))
                 {
-                    Map[key] = TypeChar(x,y);
+                    Map[key] = TypeChar(pos);
                 }   
                 return Map[key];
                 
             }
 
-            public int GeologicIndex(int x, int y)
+            public int GeologicIndex(ManhattanVector2 pos)
             {
-                var key = GetKey(x,y);
+                var key = GetKey(pos);
 
                 if (GeoCache.ContainsKey(key))
                 {
@@ -52,39 +52,39 @@ namespace Advent.MMXVIII
 
                 int result = 0;
 
-                if (x<0 || y<0)
+                if (pos.X<0 || pos.Y<0)
                 {
                     throw new Exception("Invalid coordinate");
                 }
 
                 // The region at 0,0 (the mouth of the cave) has a geologic index of 0.
-                if (x==0 && y==0) result =  0;
+                if (pos == ManhattanVector2.Zero) result =  0;
 
                 // The region at the coordinates of the target has a geologic index of 0.
-                else if (x==tx && y==ty) result =  0;
+                else if (pos == target) result =  0;
 
                 // If the region's Y coordinate is 0, the geologic index is its X coordinate times 16807.
-                else if (y==0) result =  x*16807; 
+                else if (pos.Y==0) result = pos.X*16807; 
 
                 // If the region's X coordinate is 0, the geologic index is its Y coordinate times 48271
-                else if (x==0) result =  y*48271;
+                else if (pos.X==0) result = pos.Y*48271;
 
-                else result = ErosionLevel(x-1, y) * ErosionLevel(x, y-1);
+                else result = ErosionLevel(pos - new ManhattanVector2(1,0)) * ErosionLevel(pos - new ManhattanVector2(0,1));
 
                 GeoCache[key] = result;
                 return result;
             }
 
             // A region's erosion level is its geologic index plus the cave system's depth, all modulo 20183
-            public int ErosionLevel(int x, int y)
+            public int ErosionLevel(ManhattanVector2 pos)
             {
-                return (GeologicIndex(x, y) + depth) % 20183;
+                return (GeologicIndex(pos) + depth) % 20183;
             }
 
-            public char TypeChar(int x, int y)
+            public char TypeChar(ManhattanVector2 pos)
             {
-                if (x<0 || y<0) return BLOCKED;
-                var erosionLevel = ErosionLevel(x,y);
+                if (pos.X<0 || pos.Y<0) return BLOCKED;
+                var erosionLevel = ErosionLevel(pos);
                 switch (erosionLevel % 3)
                 {
                     case 0:
@@ -120,20 +120,18 @@ namespace Advent.MMXVIII
             public int GetScore()
             {
                 int score = 0;
-                for(int y=0; y<=ty; ++y)
+                for(int y=0; y<=target.Y; ++y)
                 {
-                    for (int x=0; x<=tx; ++x)
+                    for (int x=0; x<=target.X; ++x)
                     {
-                        var c = MapAt(x,y);
+                        var c = MapAt( new ManhattanVector2(x,y) );
                         score += RiskLevel(c);
                     }
                 }
                 return score;
             }
 
-
-            public int tx;
-            public int ty;
+            public ManhattanVector2 target;
             int depth;
         }
         
@@ -143,11 +141,15 @@ namespace Advent.MMXVIII
             Torch,
             ClimbingGear, 
         }
+
+        public class CaveStar : AStar<ManhattanVector3>
+        {
+            
+        }
         
         public class State
         {
-            public int x = 0;
-            public int y = 0;
+            public ManhattanVector2 position;
             public int steps;
 
             public Tool tool = Tool.Torch;
@@ -164,7 +166,7 @@ namespace Advent.MMXVIII
 
             public int DistanceToTarget(Cave cave)
             {
-                return Math.Abs(x-cave.tx)+Math.Abs(y-cave.ty);
+                return position.Distance(cave.target);
             }
 
             bool ToolValid(char cell, Tool tool)
@@ -188,13 +190,14 @@ namespace Advent.MMXVIII
 
             bool CanMove(Cave cave, int dx, int dy)
             {
-                var t = cave.MapAt(x+dx, y+dy);
+                var newPos = position + new ManhattanVector2(dx, dy);
+                var t = cave.MapAt(newPos);
                 return ToolValid(t, tool);
             }
 
             bool CanSwitch(Cave cave, Tool newTool)
             {
-                var t = cave.MapAt(x, y);
+                var t = cave.MapAt(position);
                 return ToolValid(t, newTool);
             }
 
@@ -216,8 +219,7 @@ namespace Advent.MMXVIII
                 if (CanMove(cave, dx, dy))
                 {
                     var newState = this.MemberwiseClone() as State;
-                    newState.x += dx;
-                    newState.y += dy;
+                    newState.position.Offset(dx, dy);
                     newState.steps++;
                     return newState;
                 }
@@ -277,7 +279,7 @@ namespace Advent.MMXVIII
             {
                 var state = tryStates[0];
                 tryStates.Remove(state);
-                var key = GetKey(state.x, state.y);
+                var key = GetKey(state.position.X, state.position.Y);
 
                 if (!best.ContainsKey(key) || best[key] > state.steps)
                 {
