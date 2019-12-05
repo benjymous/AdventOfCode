@@ -56,7 +56,6 @@ namespace Advent.MMXIX
 
                     for (var j=0; j<distance; ++j)
                     {
-
                         switch (i[0])
                         {
                             case 'R':                        
@@ -97,7 +96,6 @@ namespace Advent.MMXIX
                         {
                             current[searchKey] = steps; 
                         }
-
                     }                    
                 } 
 
@@ -109,10 +107,8 @@ namespace Advent.MMXIX
  
         public void Run(string input)
         {
-            //Console.WriteLine(FindIntersection("R8,U5,L5,D3\nU7,R6,D4,L4", SearchMode.Shortest));
             Console.WriteLine("* Pt1 - "+FindIntersection(input, SearchMode.Closest));  
             Console.WriteLine("* Pt2 - "+FindIntersection(input, SearchMode.Shortest));  
         }
-
     }
 }
