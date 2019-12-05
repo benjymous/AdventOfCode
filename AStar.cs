@@ -37,29 +37,9 @@ namespace Advent.Astar
 
     public abstract class Astar<VecType> where VecType : class, IVec
     {
-        List<List<Node<VecType>>> Grid;
-        int GridRows
-        {
-            get
-            {
-               return Grid[0].Count;
-            }
-        }
-        int GridCols
-        {
-            get
-            {
-                return Grid.Count;
-            }
-        }
-
+        
         public Astar()
         {
-        }
-
-        public Astar(List<List<Node<VecType>>> grid)
-        {
-            Grid = grid;
         }
 
         public Stack<Node<VecType>> FindPath(VecType Start, VecType End)
@@ -79,6 +59,7 @@ namespace Advent.Astar
             while(OpenList.Count != 0 && !ClosedList.Exists(x => x.Position == end.Position))
             {
                 current = OpenList[0];
+                Console.WriteLine($"{current.Position.ToString()}");
                 OpenList.Remove(current);
                 ClosedList.Add(current);
                 adjacencies = GetAdjacentNodes(current);
