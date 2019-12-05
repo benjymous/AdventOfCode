@@ -9,22 +9,22 @@ namespace Advent.MMXIX
     {
         public string Name { get { return "2019-05";} }
  
-        public static string RunProgram(string program, IEnumerable<int> input)
+        public static string RunProgram(string program, int input)
         {
             var cpu = new IntCPU(program);
-            foreach (var i in input) cpu.Input.Enqueue(i);
+            cpu.Input.Enqueue(input);
             cpu.Run();
             return string.Join(",", cpu.Output);
         }
 
         public static string Part1(string input)
         {
-            return RunProgram(input, new List<int>{1});
+            return RunProgram(input, 1);
         }
 
-        public static int Part2(string input)
+        public static string Part2(string input)
         {
-            return 0;
+            return RunProgram(input, 5);
         }
 
         public void Run(string input)
