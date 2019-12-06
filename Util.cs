@@ -81,13 +81,15 @@ namespace Advent
             return string.Join(",", Component);
         }
 
-        protected void Set(int [] newVal)
+        public void Set(params int [] newVal)
         {
+            if (newVal.Length != ComponentCount) throw new System.Exception("Incompatible vectors");
             Component = newVal;
         }
 
-        protected void Offset(int [] offset)
+        public void Offset(params int [] offset)
         {
+            if (offset.Length != ComponentCount) throw new System.Exception("Incompatible vectors");
             for (int i=0; i<offset.Length; ++i)
             {
                 Component[i] += offset[i];
@@ -96,7 +98,6 @@ namespace Advent
 
         protected void Offset(ManhattanVectorN offset)
         {
-            if (offset.ComponentCount != ComponentCount) throw new System.Exception("Incompatible vectors");
             Offset(offset.Component);
         }
 
@@ -131,7 +132,7 @@ namespace Advent
             return Distance(man2.Component);
         }
 
-        public int Distance(int[] other)
+        public int Distance(params int[] other)
         {
             if (other.Length != ComponentCount) return Int32.MaxValue;
 
@@ -176,9 +177,10 @@ namespace Advent
 
     public class ManhattanVector2 : ManhattanVectorN
     {
-        public ManhattanVector2(int x, int y)
-            : base(new int[]{x,y})
+        public ManhattanVector2(params int[] vals)
+            : base(vals)
         {
+            if (ComponentCount != 2) throw new Exception("Invalid component count for Vector2");
         }
 
         public ManhattanVector2(string val)
@@ -196,34 +198,19 @@ namespace Advent
         public int X { get{ return Component[0]; } set { Component[0] = value;} }
         public int Y { get{ return Component[1]; } set { Component[1] = value;} }
 
-        public void Offset(int dx, int dy)
-        {
-            base.Offset(new int[]{dx,dy});
-        }
+        public static ManhattanVector2 operator+ (ManhattanVector2 a, ManhattanVector2 b) => new ManhattanVector2((ManhattanVectorN)a + (ManhattanVectorN)b);
 
-        public int Distance(int x, int y)
-        {
-            return base.Distance(new int[]{x,y});
-        }
-
-        public static ManhattanVector2 operator+ (ManhattanVector2 a, ManhattanVector2 b)
-        {
-            return new ManhattanVector2((ManhattanVectorN)a + (ManhattanVectorN)b);
-        }
-
-        public static ManhattanVector2 operator- (ManhattanVector2 a, ManhattanVector2 b)
-        {
-            return new ManhattanVector2((ManhattanVectorN)a - (ManhattanVectorN)b);
-        }
+        public static ManhattanVector2 operator- (ManhattanVector2 a, ManhattanVector2 b) => new ManhattanVector2((ManhattanVectorN)a - (ManhattanVectorN)b);
 
         public static ManhattanVector2 Zero = new ManhattanVector2(0,0);
     }
 
-        public class ManhattanVector3 : ManhattanVectorN
+    public class ManhattanVector3 : ManhattanVectorN
     {
-        public ManhattanVector3(int x, int y, int z)
-            : base(new int[]{x,y,z})
+        public ManhattanVector3(params int[] vals)
+            : base(vals)
         {
+            if (ComponentCount != 3) throw new Exception("Invalid component count for Vector2");
         }
 
         public ManhattanVector3(string val)
@@ -242,27 +229,41 @@ namespace Advent
         public int Y { get{ return Component[1]; } set { Component[1] = value;} }
         public int Z { get{ return Component[2]; } set { Component[2] = value;} }
 
-        public void Offset(int dx, int dy, int dz)
-        {
-            base.Offset(new int[]{dx,dy,dz});
-        }
-
-        public int Distance(int x, int y, int z)
-        {
-            return base.Distance(new int[]{x,y,z});
-        }
-
-        public static ManhattanVector3 operator+ (ManhattanVector3 a, ManhattanVector3 b)
-        {
-            return new ManhattanVector3(a + (ManhattanVectorN)b);
-        }
-
-        public static ManhattanVector3 operator- (ManhattanVector3 a, ManhattanVector3 b)
-        {
-            return new ManhattanVector3((ManhattanVectorN)a - (ManhattanVectorN)b);
-        }
+        public static ManhattanVector3 operator+ (ManhattanVector3 a, ManhattanVector3 b) => new ManhattanVector3(a + (ManhattanVectorN)b);
+        public static ManhattanVector3 operator- (ManhattanVector3 a, ManhattanVector3 b) => new ManhattanVector3((ManhattanVectorN)a - (ManhattanVectorN)b);
 
         public static ManhattanVector3 Zero = new ManhattanVector3(0,0,0);
+    }
+
+    public class ManhattanVector4 : ManhattanVectorN
+    {
+        public ManhattanVector4(params int[] vals)
+            : base(vals)
+        {
+            if (ComponentCount != 4) throw new Exception("Invalid component count for Vector4");
+        }
+
+        public ManhattanVector4(string val)
+            : base(val)
+        {
+            if (ComponentCount != 4) throw new Exception("Invalid component count for Vector4");   
+        }
+
+        public ManhattanVector4(ManhattanVectorN other)
+            : base(other.Component)
+        {
+            if (ComponentCount != 4) throw new Exception("Invalid component count for Vector4"); 
+        }
+
+        public int X { get{ return Component[0]; } set { Component[0] = value;} }
+        public int Y { get{ return Component[1]; } set { Component[1] = value;} }
+        public int Z { get{ return Component[2]; } set { Component[2] = value;} }
+        public int W { get{ return Component[3]; } set { Component[3] = value;} }
+
+        public static ManhattanVector4 operator+ (ManhattanVector4 a, ManhattanVector4 b) => new ManhattanVector4(a + (ManhattanVectorN)b);
+        public static ManhattanVector4 operator- (ManhattanVector4 a, ManhattanVector4 b) => new ManhattanVector4((ManhattanVectorN)a - (ManhattanVectorN)b);
+
+        public static ManhattanVector4 Zero = new ManhattanVector4(0,0,0,0);
     }
 
     public static class Extensions
