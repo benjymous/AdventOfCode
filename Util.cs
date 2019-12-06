@@ -23,6 +23,14 @@ namespace Advent
             }
         }
 
+        public static List<T> Parse<T>(string input)
+        {
+            return input.Split("\n")
+                        .Where(x => !string.IsNullOrWhiteSpace(x))
+                        .Select(line => (T)Activator.CreateInstance(typeof(T), new object[] {line}))
+                        .ToList(); 
+        }
+
         public static int[] Parse(string input) => Parse(Split(input));
 
         public static int[] Parse(string[] input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int32.Parse(s)).ToArray();
@@ -51,72 +59,105 @@ namespace Advent
     }
 
 
-    public class ManhattanVector2 : IVec
+    public class ManhattanVectorN : IVec
     {    
-        public ManhattanVector2(int x, int y)
+        public ManhattanVectorN(int[] components)
         {
-            X = x;
-            Y = y;
+            Component = components;
         }
 
-        public ManhattanVector2(string val)
+        public ManhattanVectorN(string val)
         {
             var bits = val.Trim().Split(",");
-            X = int.Parse(bits[0]);
-            Y = int.Parse(bits[1]);
+            Component = bits.Select(s => int.Parse(s)).ToArray();
         }
 
-        public int X {get;set;}
-        public int Y {get;set;}
+        public int[] Component = null;
+
+        public int ComponentCount { get { return Component.Length; } }
 
         public override string ToString()
         {
-            return X+","+Y;
+            return string.Join(",", Component);
         }
 
-        public void Offset(int dx, int dy)
+        protected void Set(int [] newVal)
         {
-            X+=dx;
-            Y+=dy;
+            Component = newVal;
         }
 
-        public static ManhattanVector2 operator+ (ManhattanVector2 a, ManhattanVector2 b)
+        protected void Offset(int [] offset)
         {
-            return new ManhattanVector2(a.X+b.X, a.Y+b.Y);   
+            for (int i=0; i<offset.Length; ++i)
+            {
+                Component[i] += offset[i];
+            }
         }
 
-        public static ManhattanVector2 operator- (ManhattanVector2 a, ManhattanVector2 b)
+        protected void Offset(ManhattanVectorN offset)
         {
-            return new ManhattanVector2(a.X-b.X, a.Y-b.Y);   
+            if (offset.ComponentCount != ComponentCount) throw new System.Exception("Incompatible vectors");
+            Offset(offset.Component);
+        }
+
+        public static ManhattanVectorN operator+ (ManhattanVectorN a, ManhattanVectorN b)
+        {
+            if (a.ComponentCount != b.ComponentCount) throw new System.Exception("Incompatible vectors");
+            int [] newVal = (int[]) (a.Component.Clone());
+            for (int i=0; i<a.ComponentCount; ++i)
+            {
+                newVal[i]+=b.Component[i];
+            }
+            return new ManhattanVectorN(newVal);   
+        }
+
+        public static ManhattanVectorN operator- (ManhattanVectorN a, ManhattanVectorN b)
+        {
+            if (a.ComponentCount != b.ComponentCount) throw new System.Exception("Incompatible vectors");
+            int [] newVal = (int[]) (a.Component.Clone());
+            for (int i=0; i<a.ComponentCount; ++i)
+            {
+                newVal[i]-=b.Component[i];
+            }  
+            return new ManhattanVectorN(newVal);  
         }
 
         public int Distance(IVec other)
         {
-            if (!(other is ManhattanVector2)) return Int32.MaxValue;
+            if (!(other is ManhattanVectorN)) return Int32.MaxValue;
+            
+            var man2 = other as ManhattanVectorN;
 
-            var man2 = other as ManhattanVector2;
-            return Distance(man2.X, man2.Y);
+            return Distance(man2.Component);
         }
 
-        public int Distance(int x, int y)
+        public int Distance(int[] other)
         {
-            return Math.Abs(X-x)+Math.Abs(Y-y);
+            if (other.Length != ComponentCount) return Int32.MaxValue;
+
+            int distance = 0;
+            for (var i=0; i<ComponentCount; ++i)
+            {
+                distance += Math.Abs(Component[i]-other[i]);
+            }
+            return distance;
         }
 
-        public static bool operator== (ManhattanVector2 v1, ManhattanVector2 v2)
+
+        public static bool operator== (ManhattanVectorN v1, ManhattanVectorN v2)
         {
             return v1.Equals(v2);
         }
 
-        public static bool operator!= (ManhattanVector2 v1, ManhattanVector2 v2)
+        public static bool operator!= (ManhattanVectorN v1, ManhattanVectorN v2)
         {
             return !v1.Equals(v2);
         }
 
         public override bool Equals(object other)
         {
-            if (!(other is ManhattanVector2)) return false;
-            return Distance(other as ManhattanVector2) == 0;
+            if (!(other is ManhattanVectorN)) return false;
+            return Distance(other as ManhattanVectorN) == 0;
         }
 
         public override int GetHashCode()
@@ -124,85 +165,101 @@ namespace Advent
             unchecked
             {
                 int hash = 17;
-                hash = hash * 31 + X.GetHashCode();
-                hash = hash * 31 + Y.GetHashCode();
+                for (int i=0; i<ComponentCount; ++i)
+                {
+                    hash = hash * 31 + Component[i];
+                }
                 return hash;
             }
+        }
+    }
+
+    public class ManhattanVector2 : ManhattanVectorN
+    {
+        public ManhattanVector2(int x, int y)
+            : base(new int[]{x,y})
+        {
+        }
+
+        public ManhattanVector2(string val)
+            : base(val)
+        {
+            if (ComponentCount != 2) throw new Exception("Invalid component count for Vector2");   
+        }
+
+        public ManhattanVector2(ManhattanVectorN other)
+            : base(other.Component)
+        {
+            if (ComponentCount != 2) throw new Exception("Invalid component count for Vector2"); 
+        }
+
+        public int X { get{ return Component[0]; } set { Component[0] = value;} }
+        public int Y { get{ return Component[1]; } set { Component[1] = value;} }
+
+        public void Offset(int dx, int dy)
+        {
+            base.Offset(new int[]{dx,dy});
+        }
+
+        public int Distance(int x, int y)
+        {
+            return base.Distance(new int[]{x,y});
+        }
+
+        public static ManhattanVector2 operator+ (ManhattanVector2 a, ManhattanVector2 b)
+        {
+            return new ManhattanVector2((ManhattanVectorN)a + (ManhattanVectorN)b);
+        }
+
+        public static ManhattanVector2 operator- (ManhattanVector2 a, ManhattanVector2 b)
+        {
+            return new ManhattanVector2((ManhattanVectorN)a - (ManhattanVectorN)b);
         }
 
         public static ManhattanVector2 Zero = new ManhattanVector2(0,0);
     }
 
-
-    public class ManhattanVector3 : IVec
+        public class ManhattanVector3 : ManhattanVectorN
     {
         public ManhattanVector3(int x, int y, int z)
+            : base(new int[]{x,y,z})
         {
-            X = x;
-            Y = y;
-            Z = z;
         }
 
-        public int X {get;set;}
-        public int Y {get;set;}
-        public int Z {get;set;}
-
-        public override string ToString()
+        public ManhattanVector3(string val)
+            : base(val)
         {
-            return X+","+Y+","+Z;
+            if (ComponentCount != 3) throw new Exception("Invalid component count for Vector2");   
         }
+
+        public ManhattanVector3(ManhattanVectorN other)
+            : base(other.Component)
+        {
+            if (ComponentCount != 3) throw new Exception("Invalid component count for Vector2"); 
+        }
+
+        public int X { get{ return Component[0]; } set { Component[0] = value;} }
+        public int Y { get{ return Component[1]; } set { Component[1] = value;} }
+        public int Z { get{ return Component[2]; } set { Component[2] = value;} }
 
         public void Offset(int dx, int dy, int dz)
         {
-            X+=dx;
-            Y+=dy;
-            Z+=dz;
+            base.Offset(new int[]{dx,dy,dz});
+        }
+
+        public int Distance(int x, int y, int z)
+        {
+            return base.Distance(new int[]{x,y,z});
         }
 
         public static ManhattanVector3 operator+ (ManhattanVector3 a, ManhattanVector3 b)
         {
-            return new ManhattanVector3(a.X+b.X, a.Y+b.Y, a.Z+b.Z);   
+            return new ManhattanVector3(a + (ManhattanVectorN)b);
         }
 
         public static ManhattanVector3 operator- (ManhattanVector3 a, ManhattanVector3 b)
         {
-            return new ManhattanVector3(a.X-b.X, a.Y-b.Y, a.Z-b.Z);   
-        }
-
-        public int Distance(IVec other)
-        {
-            if (!(other is ManhattanVector3)) return Int32.MaxValue;
-
-            var man2 = other as ManhattanVector3;
-            return Math.Abs(X-man2.X) + Math.Abs(Y-man2.Y) + Math.Abs(Z-man2.Z);
-        }
-
-        public static bool operator== (ManhattanVector3 v1, ManhattanVector3 v2)
-        {
-            return v1.Equals(v2);
-        }
-
-        public static bool operator!= (ManhattanVector3 v1, ManhattanVector3 v2)
-        {
-            return !v1.Equals(v2);
-        }
-
-        public override bool Equals(object other)
-        {
-            if (!(other is ManhattanVector3)) return false;
-            return Distance(other as ManhattanVector3) == 0;
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hash = 17;
-                hash = hash * 31 + X.GetHashCode();
-                hash = hash * 31 + Y.GetHashCode();
-                hash = hash * 31 + Z.GetHashCode();
-                return hash;
-            }
+            return new ManhattanVector3((ManhattanVectorN)a - (ManhattanVectorN)b);
         }
 
         public static ManhattanVector3 Zero = new ManhattanVector3(0,0,0);

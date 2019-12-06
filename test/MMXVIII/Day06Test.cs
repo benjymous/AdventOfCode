@@ -6,22 +6,19 @@ namespace Advent.MMXVIII.Test
     [TestClass]
     public class Day06Test
     {
-        // [DataRow("aA", 0)]
-        // [DataRow("abBA", 0)]
-        // [DataRow("abAB", 4)]
-        // [DataRow("aabAAB", 6)]
-        // [DataRow("dabAcCaCBAcCcaDA", 10)]
-        // public void Polymer01Test(string input, int expected)
+        // [DataRow("1, 1\n1, 6\n8, 3\n3, 4\n5, 5\n8, 9", 17)]
+        // [DataTestMethod]
+        // public void Coordinates01Test(string input, int expected)
         // {
-        //     Assert.AreEqual(expected, MMXVIII.Day05.Part1(input));
+        //     Assert.AreEqual(expected, MMXVIII.Day06.Part1(input));
         // }
 
-        // [DataRow("dabAcCaCBAcCcaDA", 4)]
-        // [DataTestMethod]
-        // public void Polymer02Test(string input, int expected)
-        // {
-        //     Assert.AreEqual(expected, MMXVIII.Day05.Part2(input));
-        // }
+        [DataRow("1, 1\n1, 6\n8, 3\n3, 4\n5, 5\n8, 9", 32, 16)]
+        [DataTestMethod]
+        public void Coordinates02Test(string input, int maxValue, int expected)
+        {
+            Assert.AreEqual(expected, MMXVIII.Day06.Part2(input, maxValue));
+        }
 
         [DataTestMethod]
         public void Chronal_Part1_Regression()
