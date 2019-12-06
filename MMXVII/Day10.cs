@@ -3,11 +3,11 @@
 // using System.Linq;
 // using System.Text;
 
-// namespace Advent.MMXIX
+// namespace Advent.MMXVII
 // {
 //     public class Day10 : IPuzzle
 //     {
-//         public string Name { get { return "2019-10";} }
+//         public string Name { get { return "2017-10";} }
  
 //         public static int Part1(string input)
 //         {
