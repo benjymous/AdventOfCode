@@ -11,7 +11,8 @@ namespace Advent.MMXVIII
  
         static List<ManhattanVector2> ParseData(string input)
         {
-            return input.Split("\n").AsParallel().Where(x => !string.IsNullOrWhiteSpace(x)).Select(line => new ManhattanVector2(line)).ToList();           
+            //return input.Split("\n").Where(x => !string.IsNullOrWhiteSpace(x)).Select(line => new ManhattanVector2(line)).ToList();           
+            return Util.Parse<ManhattanVector2>(input);
         }
 
         public static int Part1(string input)
@@ -113,10 +114,8 @@ namespace Advent.MMXVIII
             return maxArea;
         }
 
-        public static int Part2(string input)
+        public static int Part2(string input, int safeDistance)
         {
-            const int safeDistance = 10000;
-
             var data = ParseData(input);
 
             var width = data.AsParallel().Select(pos => pos.X).Max();
@@ -128,6 +127,8 @@ namespace Advent.MMXVIII
                 ).Count()
             ).Sum();
         }
+
+        public static int Part2(string input) => Part2(input, 10000);
 
         public void Run(string input)
         {
