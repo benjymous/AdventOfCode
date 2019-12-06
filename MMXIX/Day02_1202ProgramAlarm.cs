@@ -20,8 +20,8 @@ namespace Advent.MMXIX
 
         const int Part2_Target = 19690720;
 
-        public int Part2(string input) => Enumerable.Range(0,100).Select( 
-            noun => Enumerable.Range(0,100).Select(
+        public int Part2(string input) => ParallelEnumerable.Range(0,100).Select( 
+            noun => ParallelEnumerable.Range(0,100).Select(
                 verb => RunProgram(input,noun,verb) == Part2_Target ? (100*noun)+verb : 0
                 ).Sum()
             ).Sum();

@@ -52,11 +52,18 @@ namespace Advent
 
 
     public class ManhattanVector2 : IVec
-    {
+    {    
         public ManhattanVector2(int x, int y)
         {
             X = x;
             Y = y;
+        }
+
+        public ManhattanVector2(string val)
+        {
+            var bits = val.Trim().Split(",");
+            X = int.Parse(bits[0]);
+            Y = int.Parse(bits[1]);
         }
 
         public int X {get;set;}
@@ -88,7 +95,12 @@ namespace Advent
             if (!(other is ManhattanVector2)) return Int32.MaxValue;
 
             var man2 = other as ManhattanVector2;
-            return Math.Abs(X-man2.X) + Math.Abs(Y-man2.Y);
+            return Distance(man2.X, man2.Y);
+        }
+
+        public int Distance(int x, int y)
+        {
+            return Math.Abs(X-x)+Math.Abs(Y-y);
         }
 
         public static bool operator== (ManhattanVector2 v1, ManhattanVector2 v2)

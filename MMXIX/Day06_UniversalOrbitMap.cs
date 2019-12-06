@@ -23,7 +23,6 @@ namespace Advent.MMXIX
         public class Tree
         {
             Dictionary<string, Node> index = new Dictionary<string, Node>();
-            Dictionary<string, string> parents = new Dictionary<string, string>();
 
             public IEnumerable<string> GetIndex() => index.Keys;  
             public IEnumerable<Node> GetNodes() => index.Values;      
@@ -43,20 +42,6 @@ namespace Advent.MMXIX
                 var c = GetNode(child);
                 p.Children.Add(c);
                 c.Parent = p;
-                parents[child] = parent;
-            }
-
-            public Node FindRoot()
-            {
-                Node root = null;
-                foreach(var name in index.Keys)
-                {
-                    if (!parents.ContainsKey(name))
-                    {
-                        root = index[name];
-                    }
-                }
-                return root;
             }
         }
         
@@ -95,29 +80,14 @@ namespace Advent.MMXIX
         public static int Part2(string input)
         {
             var tree = ParseTree(input);
+            var youUp = TraverseUp(tree.GetNode("YOU"));
+            var santaUp = TraverseUp(tree.GetNode("SAN"));
 
-            var root = tree.GetNode("COM");
-            var you = tree.GetNode("YOU");
-            var santa = tree.GetNode("SAN");
-
-            var youUp = TraverseUp(you);
-            var santaUp = TraverseUp(santa);
-
-            int lowest = Int32.MaxValue;
-
-            for(var y=0; y<youUp.Count; ++y)
-            {
-                for (var s = 0; s < santaUp.Count; ++s)
-                {
-                    if (youUp[y] == santaUp[s])
-                    {
-                        lowest = Math.Min(lowest, y+s);
-                        //Console.WriteLine($"Common node {youUp[y]} = {y+s}");
-                    }
-                }
-            }
-
-            return lowest;
+            return Enumerable.Range(0,youUp.Count).Select( 
+                    you => Enumerable.Range(0,santaUp.Count).Select(
+                        santa => youUp[you] == santaUp[santa] ? you+santa : int.MaxValue
+                    ).Min()
+                ).Min();
         }
 
         public void Run(string input)

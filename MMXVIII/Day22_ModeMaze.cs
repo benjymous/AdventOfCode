@@ -363,10 +363,10 @@ namespace Advent.MMXVIII
 
         public void Run(string input)
         {
-            Console.WriteLine(Part2(10,10,510));
-
             Console.WriteLine("- Pt1 - "+Part1(input));
             //Console.WriteLine("- Pt2 - "+Part2(input));
+
+            //Console.WriteLine(Part2(10,10,510));
         }
     }
 }

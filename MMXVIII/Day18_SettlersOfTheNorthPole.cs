@@ -171,10 +171,10 @@ namespace Advent.MMXVIII
         {
             //Console.WriteLine(Step('|', "...|||.."));
 
-            Console.WriteLine(Run("......,......,..#|..,..#|..,..||..,......", 1000000));
+            //Console.WriteLine(Run("......,......,..#|..,..#|..,..||..,......", 1000000));
 
-            //Console.WriteLine("- Pt1 - "+Part1(input));
-            //Console.WriteLine("- Pt2 - "+Part2(input));
+            Console.WriteLine("- Pt1 - "+Part1(input));
+            Console.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }
