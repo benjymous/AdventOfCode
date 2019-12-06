@@ -12,7 +12,7 @@ namespace Advent.MMXVIII
     {
         public string Name { get { return "2018-05";} }
  
-        static int Reduce (string inp) 
+        static int Reduce(string inp) 
         {
             var input = inp.Trim().ToCharArray();
             bool replaced = true;
@@ -40,19 +40,15 @@ namespace Advent.MMXVIII
             return Reduce(input);
         }
 
-        public static int Part2(string input)
+        public static int ShrinkReduce(char c, string input)
         {
-            var alpha = "abcdefghijklmnopqrstuvwxyz";
+            var shrunk = input.Replace(c.ToString(), "").Replace(c.ToString().ToUpper(), "");
+            return Reduce(shrunk);
+        }
 
-            var answers = new ConcurrentBag<int>();
-            Parallel.ForEach(alpha, c =>
-            {
-                var shrunk = input.Replace(c.ToString(), "").Replace(c.ToString().ToUpper(), "");
-                int v = Reduce(shrunk);
-                answers.Add(v);
-                //Console.WriteLine($"{c}-{v}");
-            });
-            return answers.Min();
+        public static int Part2(string input)
+        {            
+            return ParallelEnumerable.Range('a', 26).Select( alpha => ShrinkReduce((char)alpha, input) ).Min();
         }
 
         public void Run(string input)
