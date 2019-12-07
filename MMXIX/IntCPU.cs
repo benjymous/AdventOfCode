@@ -49,7 +49,7 @@ namespace Advent.MMXIX
         int[] Memory {get;set;}
         int InstructionPointer {get;set;} = 0;
         public Queue<int> Input {get;set;} = new Queue<int>();
-        public List<int> Output {get;set;} = new List<int>();
+        public Queue<int> Output {get;set;} = new Queue<int>();
 
         public IntCPU (string program)
         {
@@ -102,7 +102,7 @@ namespace Advent.MMXIX
             return instr;
         }
 
-        bool Step() 
+        public bool Step() 
         {
             var instr = DecodeInstruction();
             switch(instr.code) 
@@ -141,7 +141,7 @@ namespace Advent.MMXIX
 
                 case Opcode.OUT: // output the value of its only parameter.
                 {
-                    Output.Add(GetValue(instr, 0));
+                    Output.Enqueue(GetValue(instr, 0));
                     InstructionPointer += InstructionSizes[instr.code];
                 }
                 break;

@@ -9,29 +9,36 @@ namespace Advent
 {
     public class Util
     {
-        public static string[] Split(string input)
+        public static string[] Split(string input, char splitChar='\0')
         {
-            int commaCount = input.Count( c => c == ',');
-            int linefeedCount = input.Count( c => c == '\n');
-            if (linefeedCount > commaCount)
+            if (splitChar == '\0')
             {
-                return input.Split("\n").Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                int commaCount = input.Count( c => c == ',');
+                int linefeedCount = input.Count( c => c == '\n');
+                if (linefeedCount > commaCount)
+                {
+                    return input.Split("\n").Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                }
+                else
+                {
+                    return input.Split(",").Select(e => e.Replace("\n","")).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                }
             }
             else
             {
-                return input.Split(",").Select(e => e.Replace("\n","")).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                return input.Split(splitChar).Select(e => e.Replace("\n","")).Where(x => !string.IsNullOrEmpty(x)).ToArray();
             }
         }
 
-        public static List<T> Parse<T>(string input)
+        public static List<T> Parse<T>(string input, char splitChar='\n')
         {
-            return input.Split("\n")
+            return input.Split(splitChar)
                         .Where(x => !string.IsNullOrWhiteSpace(x))
                         .Select(line => (T)Activator.CreateInstance(typeof(T), new object[] {line}))
                         .ToList(); 
         }
 
-        public static int[] Parse(string input) => Parse(Split(input));
+        public static int[] Parse(string input, char splitChar='\0') => Parse(Split(input, splitChar));
 
         public static int[] Parse(string[] input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int32.Parse(s)).ToArray();
 
