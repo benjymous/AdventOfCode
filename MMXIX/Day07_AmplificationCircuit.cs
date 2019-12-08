@@ -15,7 +15,7 @@ namespace Advent.MMXIX
 
             foreach (var phase in inputs)
             {
-                IntCPU cpu = new IntCPU(program);
+                var cpu = new NPSA.IntCPU(program);
                 cpu.Input.Enqueue(phase);
                 cpu.Input.Enqueue(signal);
                 cpu.Run();
@@ -29,11 +29,11 @@ namespace Advent.MMXIX
         {
             int signal = 0;
 
-            var cpus = new List<IntCPU>();
+            var cpus = new List<NPSA.IntCPU>();
 
             foreach (var phase in inputs)
             {
-                IntCPU cpu = new IntCPU(program);
+                var cpu = new NPSA.IntCPU(program);
                 cpu.Input.Enqueue(phase);
 
                 cpus.Add(cpu);

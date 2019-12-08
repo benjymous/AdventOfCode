@@ -13,7 +13,7 @@ namespace Advent.MMXIX.Test
         [DataTestMethod]
         public void CPUTest(string input, string expected)
         {
-            var cpu = new IntCPU(input);
+            var cpu = new NPSA.IntCPU(input);
             cpu.Run();
             Assert.AreEqual(expected, cpu.ToString());
         }
