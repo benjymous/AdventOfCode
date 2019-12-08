@@ -83,11 +83,10 @@ namespace Advent.MMXIX
             var youUp = TraverseUp(tree.GetNode("YOU"));
             var santaUp = TraverseUp(tree.GetNode("SAN"));
 
-            return Enumerable.Range(0,youUp.Count).Select( 
-                    you => Enumerable.Range(0,santaUp.Count).Select(
-                        santa => youUp[you] == santaUp[santa] ? you+santa : int.MaxValue
-                    ).Min()
-                ).Min();
+            return Util.Matrix(youUp.Count, santaUp.Count)
+                       .Where(val => youUp[val.Item1] == santaUp[val.Item2])
+                       .Select(val => val.Item1+val.Item2)
+                       .Min();
         }
 
         public void Run(string input)

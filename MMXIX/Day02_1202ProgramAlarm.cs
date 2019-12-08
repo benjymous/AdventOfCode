@@ -9,7 +9,7 @@ namespace Advent.MMXIX
 
         public int RunProgram(string input, int noun, int verb)
         {
-            var cpu = new IntCPU(input);
+            var cpu = new NPSA.IntCPU(input);
             cpu.Poke(1, noun);
             cpu.Poke(2, verb);
             cpu.Run();
@@ -20,11 +20,9 @@ namespace Advent.MMXIX
 
         const int Part2_Target = 19690720;
 
-        public int Part2(string input) => ParallelEnumerable.Range(0,100).Select( 
-            noun => ParallelEnumerable.Range(0,100).Select(
-                verb => RunProgram(input,noun,verb) == Part2_Target ? (100*noun)+verb : 0
-                ).Sum()
-            ).Sum();
+        public int Part2(string input) => Util.Matrix(100,100)
+                   .Where(val => RunProgram(input, val.Item1, val.Item2) == Part2_Target)
+                   .Select(val => (100*val.Item1)+val.Item2).FirstOrDefault();
 
         public void Run(string input)
         {

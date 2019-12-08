@@ -1,4 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 [assembly: Parallelize(Workers = 0, Scope = ExecutionScope.MethodLevel)]
 
@@ -46,5 +50,8 @@ namespace Advent.Test
             Assert.AreEqual(expected, a.Distance(b));
             Assert.AreEqual(expected, b.Distance(a));
         }
+
+
+
     }
 }

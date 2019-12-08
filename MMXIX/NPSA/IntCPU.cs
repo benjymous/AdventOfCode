@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Advent.MMXIX
+namespace Advent.MMXIX.NPSA
 {
     public class IntCPU
     {

@@ -11,7 +11,7 @@ namespace Advent.MMXIX
  
         public static string RunProgram(string program, int input)
         {
-            var cpu = new IntCPU(program);
+            var cpu = new NPSA.IntCPU(program);
             cpu.Input.Enqueue(input);
             cpu.Run();
             return string.Join(",", cpu.Output);
@@ -29,7 +29,7 @@ namespace Advent.MMXIX
 
         public void Run(string input)
         {
-            var cpu = new IntCPU("1002,4,3,4,33");
+            var cpu = new NPSA.IntCPU("1002,4,3,4,33");
             cpu.Run();
             Console.WriteLine(cpu.ToString());
 
