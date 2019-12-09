@@ -4,6 +4,6 @@ namespace Advent
     {
         string Name {get;}
 
-        void Run(string input);
+        void Run(string input, System.IO.TextWriter console);
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Runtime;
+using System.Collections.Concurrent;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Advent
 {
@@ -21,15 +23,35 @@ namespace Advent
             Extensions.args = args;
 
             var puzzles = GetPuzzles();
-            var timings = new Dictionary<string, long>();
+            var timings = new ConcurrentDictionary<string, long>();
 
-            foreach (var puzzle in puzzles)
-            {             
-                timings[puzzle.Name] = puzzle.TimeRun();            
+            Mutex mut = new Mutex();
+
+            int total = puzzles.Count();
+            int finished = 0;
+
+            if (puzzles.Count()==1)
+            {
+                puzzles.First().TimeRun(Console.Out);
+            }
+            else
+            {
+                Parallel.ForEach(puzzles, (puzzle) =>
+                {
+                    TextBuffer buffer = new TextBuffer();
+                    timings[puzzle.Name] = puzzle.TimeRun(buffer);
+
+                    mut.WaitOne();
+                    Console.WriteLine(buffer);
+                    ++finished;
+                    Console.WriteLine($"[{finished}/{total} {((finished)*100/total)}%]");
+                    Console.WriteLine();
+                    mut.ReleaseMutex();
+                });
             }
 
             Console.WriteLine();
-            foreach (var kvp in timings)
+            foreach (var kvp in timings.OrderBy(kvp => kvp.Key))
             {
                 Console.WriteLine($"{kvp.Key} - {kvp.Value}ms");
             }

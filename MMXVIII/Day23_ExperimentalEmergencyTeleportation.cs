@@ -116,14 +116,14 @@ namespace Advent.MMXVIII
             return bestDistance;
         }
 
-        public void Run(string input)
+        public void Run(string input, System.IO.TextWriter console)
         {
             //Console.WriteLine(Part1("pos=<0,0,0>, r=4\npos=<1,0,0>, r=1\npos=<4,0,0>, r=3\npos=<0,2,0>, r=1\npos=<0,5,0>, r=3\npos=<0,0,3>, r=1\npos=<1,1,1>, r=1\npos=<1,1,2>, r=1\npos=<1,3,1>, r=1"));
 
             //Console.WriteLine(Part2("pos=<10,12,12>, r=2\npos=<12,14,12>, r=2\npos=<16,12,12>, r=4\npos=<14,14,14>, r=6\npos=<50,50,50>, r=200\npos=<10,10,10>, r=5"));
 
-            Console.WriteLine("- Pt1 - "+Part1(input));
-            Console.WriteLine("- Pt2 - "+Part2(input));
+            console.WriteLine("- Pt1 - "+Part1(input));
+            console.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

@@ -78,10 +78,10 @@ namespace Advent.MMXIX
             return count;
         }
 
-        public void Run(string input)
+        public void Run(string input, System.IO.TextWriter console)
         {
-            Console.WriteLine("- Pt1 - "+Part1(input));
-            Console.WriteLine("- Pt2 - "+Part2(input));
+            console.WriteLine("- Pt1 - "+Part1(input));
+            console.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

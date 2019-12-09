@@ -201,16 +201,16 @@ namespace Advent.MMXVIII
 
 
 
-                    if (Debug)
-                    {
-                        Console.WriteLine(trains.Where(t => t.crash).Count()+ " crashed");
+                    // if (Debug)
+                    // {
+                    //     Console.WriteLine(trains.Where(t => t.crash).Count()+ " crashed");
 
-                        foreach (var line in turn)
-                        {
-                            Console.WriteLine(string.Join("", line));
-                        }
-                        Console.WriteLine();
-                    }
+                    //     foreach (var line in turn)
+                    //     {
+                    //         Console.WriteLine(string.Join("", line));
+                    //     }
+                    //     Console.WriteLine();
+                    // }
 
                         // remove crashed trains
                     
@@ -243,10 +243,10 @@ namespace Advent.MMXVIII
             return t2.Run();
         }
 
-        public void Run(string input)
+        public void Run(string input, System.IO.TextWriter console)
         {
-            Console.WriteLine("- Pt1 - "+Part1(input));
-            Console.WriteLine("- Pt2 - "+Part2(input));
+            console.WriteLine("- Pt1 - "+Part1(input));
+            console.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

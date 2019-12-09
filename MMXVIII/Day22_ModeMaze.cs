@@ -361,10 +361,10 @@ namespace Advent.MMXVIII
             return Part2(int.Parse(bits[3]), int.Parse(bits[4]), int.Parse(bits[1]));
         }
 
-        public void Run(string input)
+        public void Run(string input, System.IO.TextWriter console)
         {
-            Console.WriteLine("- Pt1 - "+Part1(input));
-            //Console.WriteLine("- Pt2 - "+Part2(input));
+            console.WriteLine("- Pt1 - "+Part1(input));
+            //console.WriteLine("- Pt2 - "+Part2(input));
 
             //Console.WriteLine(Part2(10,10,510));
         }

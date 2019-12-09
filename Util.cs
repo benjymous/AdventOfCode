@@ -316,6 +316,25 @@ namespace Advent
         }
     }
 
+    public class TextBuffer : System.IO.TextWriter
+    {
+        StringBuilder builder = new StringBuilder();
+        public override void Write(char value)
+        {
+            builder.Append(value);
+        }
+
+        public override Encoding Encoding
+        {
+            get => System.Text.Encoding.UTF8;
+        }
+
+        public override string ToString()
+        {
+            return builder.ToString();
+        }
+    }
+
     public static class Extensions
     {
         public static string[] args;
@@ -332,13 +351,13 @@ namespace Advent
             return false;
         }
 
-        public static long TimeRun(this IPuzzle puzzle)
+        public static long TimeRun(this IPuzzle puzzle,  System.IO.TextWriter buffer)
         {
             var watch = new System.Diagnostics.Stopwatch();        
             watch.Start();
-            Console.WriteLine(puzzle.Name);
+            buffer.WriteLine(puzzle.Name);
             var input = Util.GetInput(puzzle);
-            puzzle.Run(input);
+            puzzle.Run(input, buffer);
             return watch.ElapsedMilliseconds;
         }
 

@@ -15,17 +15,17 @@ namespace Advent.MMXIX
             return image.GetChecksum();
         }
 
-        public static string Part2(string input)
+        public static string Part2(string input, System.IO.TextWriter console)
         {
             var image = new NPSA.Image(input, 25, 6);
-            Console.WriteLine(image.ToString());
+            console.WriteLine(image.ToString());
             return image.ToString().GetSHA256String();
         }
         
-        public void Run(string input)
+        public void Run(string input, System.IO.TextWriter console)
         {
-            Console.WriteLine("- Pt1 - "+Part1(input));
-            Console.WriteLine("- Pt2 - "+Part2(input));
+            console.WriteLine("- Pt1 - "+Part1(input));
+            console.WriteLine("- Pt2 - "+Part2(input, console));
         }
     }
 }
