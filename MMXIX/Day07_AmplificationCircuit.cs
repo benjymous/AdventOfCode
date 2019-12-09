@@ -9,9 +9,9 @@ namespace Advent.MMXIX
     {
         public string Name { get { return "2019-07";} }
  
-        public static int RunAmplifiers01(string program, IEnumerable<int> inputs)
+        public static Int64 RunAmplifiers01(string program, IEnumerable<int> inputs)
         {
-            int signal = 0;
+            Int64 signal = 0;
 
             foreach (var phase in inputs)
             {
@@ -25,9 +25,9 @@ namespace Advent.MMXIX
             return signal;
         }
 
-        public static int RunAmplifiers02(string program, IEnumerable<int> inputs)
+        public static Int64 RunAmplifiers02(string program, IEnumerable<int> inputs)
         {
-            int signal = 0;
+            Int64 signal = 0;
 
             var cpus = new List<NPSA.IntCPU>();
 
@@ -43,7 +43,7 @@ namespace Advent.MMXIX
 
             int steps = 0;
 
-            int output = 0;
+            Int64 output = 0;
             
             while (true)
             {
@@ -69,14 +69,14 @@ namespace Advent.MMXIX
             }
         }       
 
-        public static int Part1(string input)
+        public static Int64 Part1(string input)
         {
             var permutations = Permutations.Get(Enumerable.Range(0, 5));
 
             return permutations.Select(set => RunAmplifiers01(input, set)).Max();
         }
 
-        public static int Part2(string input)
+        public static Int64 Part2(string input)
         {
             var permutations = Permutations.Get(Enumerable.Range(5, 5));
           

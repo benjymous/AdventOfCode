@@ -5,9 +5,9 @@
 
 // namespace Advent.MMXVII
 // {
-//     public class Day12 : IPuzzle
+//     public class Day10 : IPuzzle
 //     {
-//         public string Name { get { return "2017-06";} }
+//         public string Name { get { return "2017-04";} }
  
 //         public static int Part1(string input)
 //         {
