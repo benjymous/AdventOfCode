@@ -37,7 +37,7 @@ namespace Advent.MMXIX.Test
         {
             var d = new Day08();
             var input = Util.GetInput(d);
-            Assert.AreEqual(-469838489, Day08.Part2(input));
+            Assert.AreEqual(-125488897, Day08.Part2(input));
         }
 
     }
