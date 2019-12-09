@@ -52,22 +52,15 @@ namespace Advent.MMXIX.NPSA
             Auto = 99,
         }
 
-        int MemSize {get;} = 0;
-        Int64[] Memory {get;set;}
+        AutoList<Int64> Memory {get;set;}
         Int64 InstructionPointer {get;set;} = 0;
         Int64 RelBase {get;set;} = 0;
         public Queue<Int64> Input {get;set;} = new Queue<Int64>();
         public Queue<Int64> Output {get;set;} = new Queue<Int64>();
 
-        public IntCPU (string program, int memSize=-1)
+        public IntCPU (string program)
         {
-            MemSize = memSize;
-            var input = Util.Parse64(program).ToList();
-            while (input.Count < MemSize)
-            {
-                input.Add(0);
-            }
-            Memory = input.ToArray();
+            Memory = new AutoList<Int64>(Util.Parse64(program));
         }
 
         Int64 GetValue(Instr i, int paramIdx)

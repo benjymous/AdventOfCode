@@ -11,26 +11,18 @@ namespace Advent.MMXIX
  
         public static string Run(string program, int input)
         {
-            var cpu = new NPSA.IntCPU(program, 10240);
+            var cpu = new NPSA.IntCPU(program);
             cpu.Input.Enqueue(input);
             cpu.Run();
             return string.Join(",",cpu.Output);
         }
 
-        public static string Part1(string input)
-        {
-            return Run(input, 1);
-        }
+        public static string Part1(string input) => Run(input, 1);
 
-        public static string Part2(string input)
-        {
-            return Run(input, 2);
-        }
+        public static string Part2(string input) => Run(input, 2);
 
         public void Run(string input)
         {
-            //Console.WriteLine(Part1("109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99"));
-
             Console.WriteLine("- Pt1 - "+Part1(input));
             Console.WriteLine("- Pt2 - "+Part2(input));
         }

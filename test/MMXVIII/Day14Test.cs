@@ -6,6 +6,9 @@ namespace Advent.MMXVIII.Test
     [TestClass]
     public class Day14Test
     {
+        string input = Util.GetInput<Day14>();
+
+        [TestCategory("Test")]
         [DataRow(9, 10, "5158916779")]
         [DataRow(5, 10, "0124515891")]
         [DataRow(18, 10, "9251071085")]
@@ -16,6 +19,7 @@ namespace Advent.MMXVIII.Test
             Assert.AreEqual(expected, Day14.Part1(start, keep));                    
         }
 
+        [TestCategory("Test")]
         [DataRow("51589", 9)]
         [DataRow("01245", 5)]
         [DataRow("92510", 18)]
@@ -26,19 +30,17 @@ namespace Advent.MMXVIII.Test
             Assert.AreEqual(expected, Day14.Part2(search));                    
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Chocolate_Part1_Regression()
         {
-            var d = new Day14();
-            var input = Util.GetInput(d);
             Assert.AreEqual("4910101614", Day14.Part1(int.Parse(input), 10));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Chocolate_Part2_Regression()
         {
-            var d = new Day14();
-            var input = Util.GetInput(d);
             Assert.AreEqual(20253137, Day14.Part2(input));
         }
      

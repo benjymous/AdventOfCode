@@ -6,6 +6,9 @@ namespace Advent.MMXVIII.Test
     [TestClass]
     public class Day13Test
     {
+        string input = Util.GetInput<Day13>();
+
+        [TestCategory("Test")]
         [DataRow(">-<", "Crash at 1,0")]
         [DataRow("|,v,|,|,|,^,|", "Crash at 0,3")]
         [DataRow(@"/->-\        ,|   |  /----\,| /-+--+-\  |,| | |  | v  |,\-+-/  \-+--/,  \------/   ", "Crash at 7,3")]
@@ -17,6 +20,7 @@ namespace Advent.MMXVIII.Test
             Assert.AreEqual(expected, res);                    
         }
 
+        [TestCategory("Test")]
         [DataRow(@"/>-<\  ,|   |  ,| /<+-\,| | | v,\>+</ |,  |   ^,  \<->/", "Last train at 6,4")]
         [DataTestMethod]
         public void Trains02(string input, string expected)
@@ -27,20 +31,18 @@ namespace Advent.MMXVIII.Test
             Assert.AreEqual(expected, res);                    
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Train_Part1_Regression()
         {
-            var d = new Day13();
-            var input = Util.GetInput(d);
-            Assert.AreEqual("Crash at 116,10", d.Part1(input));
+            Assert.AreEqual("Crash at 116,10", Day13.Part1(input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Train_Part2_Regression()
         {
-            var d = new Day13();
-            var input = Util.GetInput(d);
-            Assert.AreEqual("Last train at 116,25", d.Part2(input));
+            Assert.AreEqual("Last train at 116,25", Day13.Part2(input));
         }
      
     }

@@ -6,6 +6,9 @@ namespace Advent.MMXVIII.Test
     [TestClass]
     public class Day05Test
     {
+        string input = Util.GetInput<Day05>();
+
+        [TestCategory("Test")]
         [DataRow("aA", 0)]
         [DataRow("abBA", 0)]
         [DataRow("abAB", 4)]
@@ -16,6 +19,7 @@ namespace Advent.MMXVIII.Test
             Assert.AreEqual(expected, MMXVIII.Day05.Part1(input));
         }
 
+        [TestCategory("Test")]
         [DataRow("dabAcCaCBAcCcaDA", 4)]
         [DataTestMethod]
         public void Polymer02Test(string input, int expected)
@@ -23,19 +27,17 @@ namespace Advent.MMXVIII.Test
             Assert.AreEqual(expected, MMXVIII.Day05.Part2(input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Polymer_Part1_Regression()
         {
-            var d = new Day05();
-            var input = Util.GetInput(d);
             Assert.AreEqual(9202, Day05.Part1(input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Polymer_Part2_Regression()
         {
-            var d = new Day05();
-            var input = Util.GetInput(d);
             Assert.AreEqual(6394, Day05.Part2(input));
         }
 

@@ -6,6 +6,9 @@ namespace Advent.MMXIX.Test
     [TestClass]
     public class Day02Test
     {
+        string input = Util.GetInput<Day02>();
+
+        [TestCategory("Test")]
         [DataRow("1,0,0,0,99", "2,0,0,0,99")]
         [DataRow("2,3,0,3,99", "2,3,0,6,99")]
         [DataRow("2,4,4,5,99,0", "2,4,4,5,99,9801")]
@@ -18,20 +21,18 @@ namespace Advent.MMXIX.Test
             Assert.AreEqual(expected, cpu.ToString());
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void CPU_Part1_Regression()
         {
-            var d = new Day02();
-            var input = Util.GetInput(d);
-            Assert.AreEqual(3716250, d.Part1(input));
+            Assert.AreEqual(3716250, Day02.Part1(input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void CPU_Part2_Regression()
         {
-            var d = new Day02();
-            var input = Util.GetInput(d);
-            Assert.AreEqual(6472, d.Part2(input));
+            Assert.AreEqual(6472, Day02.Part2(input));
         }
     }
 }

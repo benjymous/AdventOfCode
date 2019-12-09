@@ -6,6 +6,9 @@ namespace Advent.MMXIX.Test
     [TestClass]
     public class Day06Test
     {
+        string input = Util.GetInput<Day06>();
+        
+        [TestCategory("Test")]
         [DataRow("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L", "L", 0)]
         [DataRow("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L", "K", 1)]
         [DataRow("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L", "J", 2)]
@@ -19,6 +22,7 @@ namespace Advent.MMXIX.Test
             Assert.AreEqual(expected, count);
         }
 
+        [TestCategory("Test")]
         [DataRow("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L", 42)]
         [DataTestMethod]
         public void AllDescendentsTest(string input, int expected)
@@ -26,7 +30,7 @@ namespace Advent.MMXIX.Test
             Assert.AreEqual(expected, Day06.Part1(input));
         }
 
-
+        [TestCategory("Test")]
         [DataRow("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L\nK)YOU\nI)SAN", 4)]
         [DataTestMethod]
         public void TraversalTest(string input, int expected)
@@ -43,19 +47,17 @@ namespace Advent.MMXIX.Test
         //     Assert.AreEqual(expected, Day04.CheckCriteria(input, true));
         // }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Orbital_Part1_Regression()
         {
-            var d = new Day06();
-            var input = Util.GetInput(d);
             Assert.AreEqual(147223, Day06.Part1(input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Orbital_Part2_Regression()
         {
-            var d = new Day06();
-            var input = Util.GetInput(d);
             Assert.AreEqual(340, Day06.Part2(input));
         }
 

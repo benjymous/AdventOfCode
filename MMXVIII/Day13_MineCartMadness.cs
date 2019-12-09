@@ -230,13 +230,13 @@ namespace Advent.MMXVIII
             }
         }
 
-        public string Part1(string input)
+        public static string Part1(string input)
         {
             var t = new TrainSim(input);
             return t.Run();
         }
 
-        public string Part2(string input)
+        public static string Part2(string input)
         {
             var t2 = new TrainSim(input);
             t2.StopOnCrash=false;

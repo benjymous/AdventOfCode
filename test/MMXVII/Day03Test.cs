@@ -6,6 +6,9 @@ namespace Advent.MMXVII.Test
     [TestClass]
     public class Day03Test
     {
+        string input = Util.GetInput<Day03>();
+
+        [TestCategory("Test")]
         [DataRow(1, 0)]
         [DataRow(12, 3)]
         [DataRow(23, 2)]
@@ -16,6 +19,7 @@ namespace Advent.MMXVII.Test
             Assert.AreEqual(expected, MMXVII.Day03.Part1(input));
         }
 
+        [TestCategory("Test")]
         [DataRow(1, 2)]
         [DataRow(4, 5)]
         [DataRow(23, 25)]
@@ -26,19 +30,17 @@ namespace Advent.MMXVII.Test
             Assert.AreEqual(expected, MMXVII.Day03.Part2(input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Spiral_Part1_Regression()
         {
-            var d = new MMXVII.Day03();
-            var input = Util.GetInput(d);
             Assert.AreEqual(326, MMXVII.Day03.Part1(input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Checksum_Part2_Regression()
         {
-            var d = new MMXVII.Day03();
-            var input = Util.GetInput(d);
             Assert.AreEqual(363010, MMXVII.Day03.Part2(input));
         }
 

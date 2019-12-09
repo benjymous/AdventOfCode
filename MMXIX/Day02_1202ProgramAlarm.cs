@@ -7,7 +7,7 @@ namespace Advent.MMXIX
     {
         public string Name { get { return "2019-02";} }
 
-        public Int64 RunProgram(string input, int noun, int verb)
+        public static Int64 RunProgram(string input, int noun, int verb)
         {
             var cpu = new NPSA.IntCPU(input);
             cpu.Poke(1, noun);
@@ -16,11 +16,11 @@ namespace Advent.MMXIX
             return cpu.Peek(0);
         }
 
-        public Int64 Part1(string input) => RunProgram(input, 12, 2);
+        public static Int64 Part1(string input) => RunProgram(input, 12, 2);
 
         const int Part2_Target = 19690720;
 
-        public int Part2(string input) => Util.Matrix(100,100)
+        public static int Part2(string input) => Util.Matrix(100,100)
                    .Where(val => RunProgram(input, val.Item1, val.Item2) == Part2_Target)
                    .Select(val => (100*val.Item1)+val.Item2).FirstOrDefault();
 

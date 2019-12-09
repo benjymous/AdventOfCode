@@ -6,6 +6,9 @@ namespace Advent.MMXVIII.Test
     [TestClass]
     public class Day18Test
     {
+        string input = Util.GetInput<Day18>();
+
+        [TestCategory("Test")]
         [DataRow('.', "........", '.')]
         [DataRow('.', ".....|..", '.')]
         [DataRow('.', ".|.....|", '.')]
@@ -31,6 +34,7 @@ namespace Advent.MMXVIII.Test
             Assert.AreEqual(expected, MMXVIII.Day18.Step(current, neighbours));
         }
 
+        [TestCategory("Test")]
         [DataRow(".#.#...|#.,.....#|##|,.|..|...#.,..|#.....#,#.#|||#|#|,...#.||...,.|....|...,||...#|.#|,|.||||..|.,...#.|..|.", 1147)]
         [DataTestMethod]
         public void Lumber01Test(string input, int expected)
@@ -38,6 +42,7 @@ namespace Advent.MMXVIII.Test
             Assert.AreEqual(expected, MMXVIII.Day18.Part1(input));
         }
 
+        [TestCategory("Test")]
         // Stable layout
         [DataRow("......,......,..#|..,..#|..,..|...,......", 1, 6)]
         [DataRow("......,......,..#|..,..#|..,..|...,......", 10, 6)]
@@ -62,19 +67,17 @@ namespace Advent.MMXVIII.Test
             Assert.AreEqual(expected, MMXVIII.Day18.Run(input, iterations));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Lumber_Part1_Regression()
         {
-            var d = new Day18();
-            var input = Util.GetInput(d);
             Assert.AreEqual(536370, Day18.Part1(input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Lumber_Part2_Regression()
         {
-            var d = new Day18();
-            var input = Util.GetInput(d);
             Assert.AreEqual(190512, Day18.Part2(input));
         }
 

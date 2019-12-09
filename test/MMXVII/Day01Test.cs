@@ -6,6 +6,9 @@ namespace Advent.MMXVII.Test
     [TestClass]
     public class Day01Test
     {
+        string input = Util.GetInput<Day01>();
+
+        [TestCategory("Test")]
         [DataRow("1122", 3)]
         [DataRow("1111", 4)]
         [DataRow("1234", 0)]
@@ -16,6 +19,7 @@ namespace Advent.MMXVII.Test
             Assert.AreEqual(expected, MMXVII.Day01.Part1(input));
         }
 
+        [TestCategory("Test")]
         [DataRow("1212", 6)]
         [DataRow("1221", 0)]
         [DataRow("123425", 4)]
@@ -27,19 +31,17 @@ namespace Advent.MMXVII.Test
             Assert.AreEqual(expected, MMXVII.Day01.Part2(input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Captcha_Part1_Regression()
         {
-            var d = new Day01();
-            var input = Util.GetInput(d);
             Assert.AreEqual(1141, MMXVII.Day01.Part1(input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Captcha_Part2_Regression()
         {
-            var d = new Day01();
-            var input = Util.GetInput(d);
             Assert.AreEqual(950, MMXVII.Day01.Part2(input));
         }
 

@@ -6,6 +6,9 @@ namespace Advent.MMXVII.Test
     [TestClass]
     public class Day04Test
     {
+        string input = Util.GetInput<Day04>();
+
+        [TestCategory("Test")]
         [DataRow("aa bb cc dd ee", true)]
         [DataRow("aa bb cc dd aa", false)]
         [DataRow("aa bb cc dd aaa", true)]
@@ -15,6 +18,7 @@ namespace Advent.MMXVII.Test
             Assert.AreEqual(expected, MMXVII.Day04.ValidationRule2(input));
         }
 
+        [TestCategory("Test")]
         [DataRow("abcde fghij", true)]
         [DataRow("abcde xyz ecdab", false)]
         [DataRow("a ab abc abd abf abj", true)]
@@ -26,19 +30,17 @@ namespace Advent.MMXVII.Test
             Assert.AreEqual(expected, MMXVII.Day04.ValidationRule2(input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Entropy_Part1_Regression()
         {
-            var d = new MMXVII.Day04();
-            var input = Util.GetInput(d);
             Assert.AreEqual(325, MMXVII.Day04.Part1(input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Entropy_Part2_Regression()
         {
-            var d = new MMXVII.Day04();
-            var input = Util.GetInput(d);
             Assert.AreEqual(119, MMXVII.Day04.Part2(input));
         }
 
