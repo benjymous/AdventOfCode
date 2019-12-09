@@ -5,9 +5,9 @@
 
 // namespace Advent.MMXVII
 // {
-//     public class Day12 : IPuzzle
+//     public class Day08 : IPuzzle
 //     {
-//         public string Name { get { return "2017-06";} }
+//         public string Name { get { return "2017-02";} }
  
 //         public static int Part1(string input)
 //         {
@@ -24,5 +24,4 @@
 //             Console.WriteLine("- Pt1 - "+Part1(input));
 //             Console.WriteLine("- Pt2 - "+Part2(input));
 //         }
-//     }
-// }
+//     }// }

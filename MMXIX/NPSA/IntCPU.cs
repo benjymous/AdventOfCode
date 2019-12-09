@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Advent.MMXIX.NPSA
 {
@@ -19,6 +20,8 @@ namespace Advent.MMXIX.NPSA
             LT = 7,
             EQ = 8,
 
+            SETR = 9,
+
             HALT = 99,
         }
 
@@ -36,6 +39,8 @@ namespace Advent.MMXIX.NPSA
             {Opcode.LT, 4},
             {Opcode.EQ, 4},
 
+            {Opcode.SETR, 2},
+
             {Opcode.HALT, 1}
         };
 
@@ -43,60 +48,102 @@ namespace Advent.MMXIX.NPSA
         {
             Position = 0,
             Immediate = 1,
+            Relative = 2,
             Auto = 99,
         }
 
-        int[] Memory {get;set;}
-        int InstructionPointer {get;set;} = 0;
-        public Queue<int> Input {get;set;} = new Queue<int>();
-        public Queue<int> Output {get;set;} = new Queue<int>();
+        int MemSize {get;} = 0;
+        Int64[] Memory {get;set;}
+        Int64 InstructionPointer {get;set;} = 0;
+        Int64 RelBase {get;set;} = 0;
+        public Queue<Int64> Input {get;set;} = new Queue<Int64>();
+        public Queue<Int64> Output {get;set;} = new Queue<Int64>();
 
-        public IntCPU (string program)
+        public IntCPU (string program, int memSize=-1)
         {
-            Memory = Util.Parse(program);
+            MemSize = memSize;
+            var input = Util.Parse64(program).ToList();
+            while (input.Count < MemSize)
+            {
+                input.Add(0);
+            }
+            Memory = input.ToArray();
         }
 
-        int GetValue(Instr i, int paramIdx, ParamMode paramMode = ParamMode.Auto)
+        Int64 GetValue(Instr i, int paramIdx)
         {
-            if (paramMode == ParamMode.Auto) paramMode = i.mode[paramIdx];
+            var paramMode = i.mode[paramIdx];  
             switch (paramMode)
             {
                 case ParamMode.Position:
                 {
-                    var addr0 = InstructionPointer+paramIdx+1;
-                    var addr1 = Memory[addr0];
-                    var val = Memory[addr1];
-                    return val;
+                    return Memory[Memory[InstructionPointer+paramIdx+1]];
                 }
                     
                 case ParamMode.Immediate:
-                    return Memory[InstructionPointer+paramIdx+1];
+                {
+                    var param = InstructionPointer+paramIdx+1;
+                    var val = Memory[param];
+                    return val;
+                }
+
+                case ParamMode.Relative:
+                {
+                    var param = InstructionPointer+paramIdx+1;
+                    var offset = Memory[param];
+                    var val = Memory[offset+RelBase];
+                    return val;
+                }
             }
 
-            throw new Exception("Unknown opmode");
+            throw new Exception($"Unexpected ParamMode {paramMode}");
+        }
+
+        Int64 GetOutPos(Instr i, int paramIdx)
+        {
+            var paramMode = i.mode[paramIdx];  
+
+            switch (paramMode)
+            {
+                case ParamMode.Position:
+                    return Memory[InstructionPointer+paramIdx+1];
+
+                case ParamMode.Relative:
+                    var pos1 = InstructionPointer+paramIdx+1;
+                    var val = Memory[pos1];
+                    return val+RelBase;
+            } 
+
+            throw new Exception($"Unexpected ParamMode {paramMode}");
         }
 
         class Instr
         {
+            public string raw = "00000";
             public Opcode code = 0;
             public ParamMode[] mode = {0,0,0}; 
+
+            public override string ToString()
+            {
+                return $"{raw} - {code} - {string.Join(",",mode)}";
+            }
         }
 
         Instr DecodeInstruction()
         {
             Instr instr = new Instr();
-            var instructionRaw = Memory[InstructionPointer].ToString().PadLeft(5,'0');
+            instr.raw = Memory[InstructionPointer].ToString().PadLeft(5,'0');
 
-            instr.code = (Opcode)(int.Parse($"{instructionRaw[3]}{instructionRaw[4]}"));
+            instr.code = (Opcode)(Int64.Parse($"{instr.raw[3]}{instr.raw[4]}"));
 
             if (!InstructionSizes.ContainsKey(instr.code))
             {
-                throw new Exception($"Unknown instruction {instructionRaw} at {InstructionPointer}");
+                throw new Exception($"Unknown instruction {instr.raw} at {InstructionPointer}");
             }
 
             for (var i=0; i<InstructionSizes[instr.code]-1; ++i)
             {
-                instr.mode[i] = (ParamMode)(int.Parse($"{instructionRaw[2-i]}"));
+                instr.mode[i] = (ParamMode)(Int64.Parse($"{instr.raw[2-i]}"));
             }
 
             return instr;
@@ -105,11 +152,12 @@ namespace Advent.MMXIX.NPSA
         public bool Step() 
         {
             var instr = DecodeInstruction();
+            //Console.WriteLine($"{InstructionPointer}: {instr}");
             switch(instr.code) 
             {
                 case Opcode.ADD: // add PC+1 and PC+2 and put it in address PC+3
                 {
-                    var outPos = GetValue(instr, 2, ParamMode.Immediate);
+                    var outPos = GetOutPos(instr, 2);
                     var val1 = GetValue(instr, 0);
                     var val2 = GetValue(instr, 1);
                     Memory[outPos] = val1+val2;
@@ -119,7 +167,7 @@ namespace Advent.MMXIX.NPSA
 
                 case Opcode.MUL: // multiply PC+1 and PC+2 and put it in address PC+3
                 {
-                    var outPos = GetValue(instr, 2, ParamMode.Immediate);
+                    var outPos = GetOutPos(instr, 2);
                     var val1 = GetValue(instr, 0);
                     var val2 = GetValue(instr, 1);
                     Memory[outPos] = val1*val2;
@@ -134,7 +182,7 @@ namespace Advent.MMXIX.NPSA
                         throw new Exception("Out of input!");
                     }
                     var v = Input.Dequeue();
-                    Memory[GetValue(instr, 0, ParamMode.Immediate)] = v;
+                    Memory[GetOutPos(instr, 0)] = v;
                     InstructionPointer += InstructionSizes[instr.code];
                 }
                 break;
@@ -172,7 +220,7 @@ namespace Advent.MMXIX.NPSA
 
                 case Opcode.LT: // if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
                 {
-                    var outPos = GetValue(instr, 2, ParamMode.Immediate);
+                    var outPos = GetOutPos(instr, 2);
                     var val1 = GetValue(instr, 0);
                     var val2 = GetValue(instr, 1);
                     Memory[outPos] = val1 < val2 ? 1 : 0;
@@ -182,10 +230,17 @@ namespace Advent.MMXIX.NPSA
 
                 case Opcode.EQ: // if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
                 {
-                    var outPos = GetValue(instr, 2, ParamMode.Immediate);
+                    var outPos = GetOutPos(instr, 2);
                     var val1 = GetValue(instr, 0);
                     var val2 = GetValue(instr, 1);
                     Memory[outPos] = val1 == val2 ? 1 : 0;
+                    InstructionPointer += InstructionSizes[instr.code];
+                }
+                break;
+
+                case Opcode.SETR:
+                {
+                    RelBase += GetValue(instr,0);
                     InstructionPointer += InstructionSizes[instr.code];
                 }
                 break;
@@ -209,8 +264,8 @@ namespace Advent.MMXIX.NPSA
             while (Step());
         }
 
-        public void Poke(int addr, int val) => Memory[addr] = val; 
-        public int Peek(int addr) => Memory[addr];
+        public void Poke(Int64 addr, Int64 val) => Memory[addr] = val; 
+        public Int64 Peek(Int64 addr) => Memory[addr];
 
         public override string ToString() => string.Join(",", Memory);
     }

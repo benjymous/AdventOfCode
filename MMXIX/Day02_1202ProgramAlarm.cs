@@ -7,7 +7,7 @@ namespace Advent.MMXIX
     {
         public string Name { get { return "2019-02";} }
 
-        public int RunProgram(string input, int noun, int verb)
+        public Int64 RunProgram(string input, int noun, int verb)
         {
             var cpu = new NPSA.IntCPU(input);
             cpu.Poke(1, noun);
@@ -16,7 +16,7 @@ namespace Advent.MMXIX
             return cpu.Peek(0);
         }
 
-        public int Part1(string input) => RunProgram(input, 12, 2);
+        public Int64 Part1(string input) => RunProgram(input, 12, 2);
 
         const int Part2_Target = 19690720;
 

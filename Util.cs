@@ -39,8 +39,10 @@ namespace Advent
         }
 
         public static int[] Parse(string input, char splitChar='\0') => Parse(Split(input, splitChar));
+        public static Int64[] Parse64(string input, char splitChar='\0') => Parse64(Split(input, splitChar));
 
         public static int[] Parse(string[] input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int32.Parse(s)).ToArray();
+        public static Int64[] Parse64(string[] input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int64.Parse(s)).ToArray();
 
         public static IEnumerable<IEnumerable<T>> Slice<T>(IEnumerable<T> source, int sliceSize)
         {
