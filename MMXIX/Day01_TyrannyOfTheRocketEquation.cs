@@ -22,13 +22,13 @@ namespace Advent.MMXIX
             return fuel;
         }
 
-        public int FuelCheck01(string input) => Util.Parse(input).Select(module => GetFuelRequirement(module)).Sum();
-        public int FuelCheck02(string input) => Util.Parse(input).Select(module => GetFullFuelRequirement(module)).Sum();
+        public static int Part1(string input) => Util.Parse(input).Select(module => GetFuelRequirement(module)).Sum();
+        public static int Part2(string input) => Util.Parse(input).Select(module => GetFullFuelRequirement(module)).Sum();
 
         public void Run(string input)
         {
-            Console.WriteLine("- Pt1 - " + FuelCheck01(input));
-            Console.WriteLine("- Pt2 - " + FuelCheck02(input));
+            Console.WriteLine("- Pt1 - " + Part1(input));
+            Console.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

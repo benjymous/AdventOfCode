@@ -90,7 +90,7 @@ namespace Advent.MMXVIII
                     return Count(TREES, currentState) * Count(LUMBERYARD, currentState); 
                 } 
 
-                var hash = Util.GetHashString(String.Join("",currentState));
+                var hash = String.Join("",currentState).GetSHA256String();
                 
                 var matchIdx = i-previous.Count;
                 foreach (var prev in previous)

@@ -66,21 +66,8 @@ namespace Advent
         public static IEnumerable<Tuple<int,int>> Matrix(int maxX, int maxY) => Matrix<int,int>(Enumerable.Range(0, maxX), Enumerable.Range(0, maxY));
 
         public static string GetInput(IPuzzle puzzle) => System.IO.File.ReadAllText(System.IO.Path.Combine("Data",puzzle.Name+".txt")).Replace("\r","");   
-    
-        public static byte[] GetHash(string inputString)
-        {
-            HashAlgorithm algorithm = SHA256.Create();
-            return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
-        }
 
-        public static string GetHashString(string inputString)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (byte b in GetHash(inputString))
-                sb.Append(b.ToString("X2"));
-
-            return sb.ToString();
-        }
+        public static string GetInput<T>() where T : IPuzzle, new() => GetInput(new T());
     }
 
     public interface IVec
@@ -296,6 +283,39 @@ namespace Advent
         public static ManhattanVector4 Zero = new ManhattanVector4(0,0,0,0);
     }
 
+    public class AutoList<DataType> : System.Collections.Generic.List<DataType>
+    {
+        public AutoList(IEnumerable<DataType> input) => AddRange(input);
+
+        private void Resize(int size) => AddRange(Enumerable.Repeat(default(DataType), size-Count));
+
+        DataType Get(int key)
+        {
+            if (key >= Count) Resize(key+1);
+
+            return base[key];
+        }
+
+        void Set(int key, DataType value)
+        {
+            if (key >= Count) Resize(key+1);
+
+            base[key] = value;
+        }
+
+        public new DataType this[int key]
+        {
+            get => Get(key);
+            set => Set(key,value);
+        }
+
+        public DataType this[Int64 key]
+        {
+            get => Get((int)key);
+            set => Set((int)key,value);
+        }
+    }
+
     public static class Extensions
     {
         public static string[] args;
@@ -334,23 +354,19 @@ namespace Advent
             }
         }
 
-        public static int GetDeterministicHashCode(this string str)
+        public static byte[] GetSHA256(this string inputString)
         {
-            unchecked
-            {
-                int hash1 = (5381 << 16) + 5381;
-                int hash2 = hash1;
+            HashAlgorithm algorithm = SHA256.Create();
+            return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
+        }
 
-                for (int i = 0; i < str.Length; i += 2)
-                {
-                    hash1 = ((hash1 << 5) + hash1) ^ str[i];
-                    if (i == str.Length - 1)
-                        break;
-                    hash2 = ((hash2 << 5) + hash2) ^ str[i + 1];
-                }
+        public static string GetSHA256String(this string inputString)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in GetSHA256(inputString))
+                sb.Append(b.ToString("X2"));
 
-                return hash1 + (hash2 * 1566083941);
-            }
+            return sb.ToString();
         }
     }
 }

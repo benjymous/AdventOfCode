@@ -15,11 +15,11 @@ namespace Advent.MMXIX
             return image.GetChecksum();
         }
 
-        public static int Part2(string input)
+        public static string Part2(string input)
         {
             var image = new NPSA.Image(input, 25, 6);
             Console.WriteLine(image.ToString());
-            return image.ToString().GetDeterministicHashCode();
+            return image.ToString().GetSHA256String();
         }
         
         public void Run(string input)

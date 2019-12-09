@@ -23,9 +23,19 @@ namespace Advent.MMXVII
             public int val1;
             public int val2;
 
+            public bool isDifferent(Component other)
+            {
+                return other.val1 != val1 || other.val2 != val2;
+            }
+
             public bool Has(int val)
             {
                 return val1==val || val2==val;
+            }
+
+            public int Other(int a)
+            {
+                if (val1==a) return val2; else return val1;
             }
 
             public bool CanLink(Component other)
@@ -39,51 +49,70 @@ namespace Advent.MMXVII
             }
         }
 
-        public static IEnumerable<Component> ReduceValid(IEnumerable<Component> data)
+        public static IEnumerable<IEnumerable<Component>> GetChains(int currentPort, IEnumerable<Component> inputs)
         {
-            List<Component> output = new List<Component>();
-            var input = data.ToList();
+            var first = inputs.Where(c => c.Has(currentPort));
 
-            if (!input[0].Has(0)) return null;
-
-            output.Add(input[0]);
-
-            for (int i=0; i<input.Count-1; ++i)
+            foreach (var component in first)
             {
-                if (input[i].CanLink(input[i+1]))
-                {
-                    output.Add(input[i+1]);
-                }
-                else
-                {
-                    return output;
-                }
-            }
+                yield return new List<Component>{component};
+                var rest = inputs.Where(c => c.isDifferent(component));
 
-            return output;
+                var childResults = GetChains(component.Other(currentPort), rest); 
+                foreach (var item in childResults)
+                {
+                    List<Component> newList = new List<Component>();
+                    newList.Add(component);
+                    newList.AddRange(item);
+                    yield return newList;
+                } 
+            }
         }
- 
+
         public static int Part1(string input)
         {
-            // var data = Util.Parse<Component>(input);
+            var data = Util.Parse<Component>(input);
+            var chains = GetChains(0, data);
 
-            // var perms = Permutations.Get(data).AsParallel()
-            //             .Select(perm => ReduceValid(perm))
-            //             .Where(perm => perm != null);
-
-            // return perms.Count();
-            return 0;
+            return Part1(chains);
+        }
+ 
+        public static int Part1(IEnumerable<IEnumerable<Component>> chains)
+        {
+            return chains.AsParallel().Select(chain => chain.Select(comp => comp.Strength()).Sum()).Max();
         }
 
         public static int Part2(string input)
         {
-            return 0;
+            var data = Util.Parse<Component>(input);
+            var chains = GetChains(0, data);
+
+            return Part2(chains);
+        }
+
+        public static int Part2(IEnumerable<IEnumerable<Component>> chains)
+        {
+            var groups = chains.GroupBy(chain => chain.Count());
+
+            var longest = groups.Select(x => x.Key).Max();
+
+            var longestGroup = groups.Where(x => x.Key == longest).SelectMany(x=>x);
+
+            var longestStrongest = longestGroup.Select(chain => chain.Select(component => component.Strength()).Sum()).Max();
+
+            return longestStrongest;
         }
 
         public void Run(string input)
         {
-            Console.WriteLine("- Pt1 - "+Part1(input));
-            Console.WriteLine("- Pt2 - "+Part2(input));
+            Console.WriteLine(Part1("0/2\n2/2\n2/3\n3/4\n3/5\n0/1\n10/1\n9/10"));
+            Console.WriteLine(Part2("0/2\n2/2\n2/3\n3/4\n3/5\n0/1\n10/1\n9/10"));
+
+            var data = Util.Parse<Component>(input);
+            var chains = GetChains(0, data).ToList();
+
+            Console.WriteLine("- Pt1 - "+Part1(chains));
+            Console.WriteLine("- Pt2 - "+Part2(chains));
         }
     }
 }

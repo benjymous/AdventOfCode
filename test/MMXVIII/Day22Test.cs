@@ -6,6 +6,9 @@ namespace Advent.MMXVIII.Test
     [TestClass]
     public class Day22Test
     {
+        string input = Util.GetInput<Day22>();
+
+        [TestCategory("Test")]
         [DataRow(0,0, 10,10, 510, 0)]
         [DataRow(1,0, 10,10, 510, 16807)]
         [DataRow(0,1, 10,10, 510, 48271)]
@@ -18,6 +21,7 @@ namespace Advent.MMXVIII.Test
             Assert.AreEqual(expected, c.GeologicIndex(new ManhattanVector2(x,y)));
         }
 
+        [TestCategory("Test")]
         [DataRow(0,0, 10,10, 510, 510)]
         [DataRow(1,0, 10,10, 510, 17317)]
         [DataRow(0,1, 10,10, 510, 8415)]
@@ -30,6 +34,7 @@ namespace Advent.MMXVIII.Test
             Assert.AreEqual(expected, c.ErosionLevel(new ManhattanVector2(x,y)));
         }
 
+        [TestCategory("Test")]
         [DataRow(0,0, 10,10, 510, Day22.ROCKY)]
         [DataRow(1,0, 10,10, 510, Day22.WET)]
         [DataRow(0,1, 10,10, 510, Day22.ROCKY)]
@@ -42,6 +47,7 @@ namespace Advent.MMXVIII.Test
             Assert.AreEqual(expected, c.TypeChar(new ManhattanVector2(x,y)));
         }
 
+        [TestCategory("Test")]
         [DataRow(10,10, 510, 114)]
         [DataTestMethod]
         public void Cave01Test(int tx, int ty, int depth, int expected)
@@ -49,19 +55,17 @@ namespace Advent.MMXVIII.Test
             Assert.AreEqual(expected, Day22.Part1(tx, ty, depth));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void Caves_Part1_Regression()
         {
-            var d = new Day22();
-            var input = Util.GetInput(d);
             Assert.AreEqual(7299, MMXVIII.Day22.Part1(input));
         }
 
+        // [TestCategory("Regression")]
         // [DataTestMethod]
         // public void Caves_Part2_Regression()
         // {
-        //     var d = new Day22();
-        //     var input = Util.GetInput(d);
         //     Assert.AreEqual(0, MMXVIII.Day22.Part2(input));
         // }
 

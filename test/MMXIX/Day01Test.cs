@@ -6,6 +6,9 @@ namespace Advent.MMXIX.Test
     [TestClass]
     public class Day01Test
     {
+        string input = Util.GetInput<Day01>();
+
+        [TestCategory("Test")]
         [DataRow(12, 2)]
         [DataRow(14, 2)]
         [DataRow(1969, 654)]
@@ -17,6 +20,7 @@ namespace Advent.MMXIX.Test
             Assert.IsTrue(MMXIX.Day01.GetFuelRequirement(input) == expected);
         }
 
+        [TestCategory("Test")]
         [DataRow(14, 2)]
         [DataRow(1969, 966)]
         [DataRow(100756, 50346)]
@@ -26,20 +30,18 @@ namespace Advent.MMXIX.Test
             Assert.IsTrue(MMXIX.Day01.GetFullFuelRequirement(input) == expected);
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void FuelCheck_Part1_Regression()
-        {
-            var d = new Day01();
-            var input = Util.GetInput(d);
-            Assert.AreEqual(3224048, d.FuelCheck01(input));
+        {    
+            Assert.AreEqual(3224048, Day01.Part1(input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void FuelCheck_Part2_Regression()
         {
-            var d = new Day01();
-            var input = Util.GetInput(d);
-            Assert.AreEqual(4833211, d.FuelCheck02(input));
+            Assert.AreEqual(4833211, Day01.Part2(input));
         }
     }
 }

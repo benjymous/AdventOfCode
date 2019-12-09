@@ -6,6 +6,9 @@ namespace Advent.MMXIX.Test
     [TestClass]
     public class Day05Test
     {
+        string input = Util.GetInput<Day05>();
+        
+        [TestCategory("Test")]
         [DataRow("1002,4,3,4,33", "1002,4,3,4,99")]
         [DataTestMethod]
         public void CPU2Test1(string program, string expected)
@@ -15,6 +18,8 @@ namespace Advent.MMXIX.Test
             Assert.AreEqual(expected, cpu.ToString());
         }
 
+        
+        
         // Using position mode, consider whether the input is equal to 8;
         // output 1 (if it is) or 0 (if it is not).
         [DataRow("3,9,8,9,10,9,4,9,99,-1,8", 8, "1")]
@@ -51,25 +56,24 @@ namespace Advent.MMXIX.Test
         [DataRow("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99", 8, "1000")]
         [DataRow("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99", 10, "1001")]
         [DataRow("3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99", 100, "1001")]
+        [TestCategory("Test")]
         [DataTestMethod]
         public void CPU2Test2(string program, int input, string expected)
         {
             Assert.AreEqual(expected, Day05.RunProgram(program, input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void CPU2_Part1_Regression()
         {
-            var d = new Day05();
-            var input = Util.GetInput(d);
             Assert.AreEqual("0,0,0,0,0,0,0,0,0,16574641", Day05.Part1(input));
         }
 
+        [TestCategory("Regression")]
         [DataTestMethod]
         public void CPU2_Part2_Regression()
         {
-            var d = new Day05();
-            var input = Util.GetInput(d);
             Assert.AreEqual("15163975", Day05.Part2(input));
         }
     }
