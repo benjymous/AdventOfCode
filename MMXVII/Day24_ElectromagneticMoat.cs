@@ -53,7 +53,7 @@ namespace Advent.MMXVII
         {
             var first = inputs.Where(c => c.Has(currentPort));
 
-            foreach (var component in first)
+            foreach (var component in first.AsParallel())
             {
                 yield return new List<Component>{component};
                 var rest = inputs.Where(c => c.isDifferent(component));
@@ -105,8 +105,8 @@ namespace Advent.MMXVII
 
         public void Run(string input)
         {
-            Console.WriteLine(Part1("0/2\n2/2\n2/3\n3/4\n3/5\n0/1\n10/1\n9/10"));
-            Console.WriteLine(Part2("0/2\n2/2\n2/3\n3/4\n3/5\n0/1\n10/1\n9/10"));
+            //Console.WriteLine(Part1("0/2\n2/2\n2/3\n3/4\n3/5\n0/1\n10/1\n9/10"));
+            //Console.WriteLine(Part2("0/2\n2/2\n2/3\n3/4\n3/5\n0/1\n10/1\n9/10"));
 
             var data = Util.Parse<Component>(input);
             var chains = GetChains(0, data).ToList();

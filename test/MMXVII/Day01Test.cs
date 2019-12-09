@@ -3,6 +3,7 @@ using System.Diagnostics;
 
 namespace Advent.MMXVII.Test
 {
+    [TestCategory("2017")]
     [TestClass]
     public class Day01Test
     {

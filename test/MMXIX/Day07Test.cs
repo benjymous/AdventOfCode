@@ -3,6 +3,8 @@ using System.Diagnostics;
 
 namespace Advent.MMXIX.Test
 {
+    [TestCategory("2019")]
+    [TestCategory("IntCPU")]
     [TestClass]
     public class Day07Test
     {
