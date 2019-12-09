@@ -167,14 +167,14 @@ namespace Advent.MMXVIII
             return Run(input, 1000000000);
         }
 
-        public void Run(string input)
+        public void Run(string input, System.IO.TextWriter console)
         {
             //Console.WriteLine(Step('|', "...|||.."));
 
             //Console.WriteLine(Run("......,......,..#|..,..#|..,..||..,......", 1000000));
 
-            Console.WriteLine("- Pt1 - "+Part1(input));
-            Console.WriteLine("- Pt2 - "+Part2(input));
+            console.WriteLine("- Pt1 - "+Part1(input));
+            console.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

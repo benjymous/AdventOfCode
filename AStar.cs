@@ -59,7 +59,7 @@ namespace Advent.Astar
             while(OpenList.Count != 0 && !ClosedList.Exists(x => x.Position == end.Position))
             {
                 current = OpenList[0];
-                Console.WriteLine($"{current.Position.ToString()}");
+                //Console.WriteLine($"{current.Position.ToString()}");
                 OpenList.Remove(current);
                 ClosedList.Add(current);
                 adjacencies = GetAdjacentNodes(current);

@@ -38,11 +38,6 @@ namespace Advent.MMXVII
                 if (val1==a) return val2; else return val1;
             }
 
-            public bool CanLink(Component other)
-            {
-                return other.Has(val1) || other.Has(val2);
-            }
-
             public int Strength()
             {
                 return val1+val2;
@@ -53,7 +48,7 @@ namespace Advent.MMXVII
         {
             var first = inputs.Where(c => c.Has(currentPort));
 
-            foreach (var component in first.AsParallel())
+            foreach (var component in first)
             {
                 yield return new List<Component>{component};
                 var rest = inputs.Where(c => c.isDifferent(component));
@@ -103,7 +98,7 @@ namespace Advent.MMXVII
             return longestStrongest;
         }
 
-        public void Run(string input)
+        public void Run(string input, System.IO.TextWriter console)
         {
             //Console.WriteLine(Part1("0/2\n2/2\n2/3\n3/4\n3/5\n0/1\n10/1\n9/10"));
             //Console.WriteLine(Part2("0/2\n2/2\n2/3\n3/4\n3/5\n0/1\n10/1\n9/10"));
@@ -111,8 +106,8 @@ namespace Advent.MMXVII
             var data = Util.Parse<Component>(input);
             var chains = GetChains(0, data).ToList();
 
-            Console.WriteLine("- Pt1 - "+Part1(chains));
-            Console.WriteLine("- Pt2 - "+Part2(chains));
+            console.WriteLine("- Pt1 - "+Part1(chains));
+            console.WriteLine("- Pt2 - "+Part2(chains));
         }
     }
 }
