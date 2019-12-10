@@ -5,7 +5,7 @@
 
 // namespace Advent.MMXVI
 // {
-//     public class Day08 : IPuzzle
+//     public class Day02 : IPuzzle
 //     {
 //         public string Name { get { return "2016-02";} }
  
