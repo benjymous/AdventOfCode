@@ -387,5 +387,27 @@ namespace Advent
 
             return sb.ToString();
         }
+
+        public static byte[] GetMD5(this string inputString)
+        {
+            HashAlgorithm algorithm = MD5.Create();
+            return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
+        }
+
+        public static string GetMD5String(this string inputString)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in GetMD5(inputString))
+                sb.Append(b.ToString("X2"));
+
+            return sb.ToString();
+        }
+
+        private static string vowels = "aeiouAEIOU";
+
+        public static bool IsVowel(this char c)
+        {
+            return vowels.Contains(c);
+        }
     }
 }
