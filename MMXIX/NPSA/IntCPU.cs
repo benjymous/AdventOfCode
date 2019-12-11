@@ -4,6 +4,12 @@ using System.Linq;
 
 namespace Advent.MMXIX.NPSA
 {
+    public interface ICPUInterrupt
+    {
+        void WillReadInput();
+        void HasPutOutput();
+    }
+
     public class IntCPU
     {
         public enum Opcode
@@ -57,6 +63,8 @@ namespace Advent.MMXIX.NPSA
         Int64 RelBase {get;set;} = 0;
         public Queue<Int64> Input {get;set;} = new Queue<Int64>();
         public Queue<Int64> Output {get;set;} = new Queue<Int64>();
+
+        public ICPUInterrupt Interrupt {get;set;} = null;
 
         public IntCPU (string program)
         {
@@ -172,7 +180,14 @@ namespace Advent.MMXIX.NPSA
                 {
                     if (Input.Count == 0)
                     {
-                        throw new Exception("Out of input!");
+                        if (Interrupt != null)
+                        {
+                            Interrupt.WillReadInput();
+                        }
+                        if (Input.Count == 0)
+                        {
+                            throw new Exception("Out of input!");
+                        }
                     }
                     var v = Input.Dequeue();
                     Memory[GetOutPos(instr, 0)] = v;
@@ -183,6 +198,10 @@ namespace Advent.MMXIX.NPSA
                 case Opcode.OUT: // output the value of its only parameter.
                 {
                     Output.Enqueue(GetValue(instr, 0));
+                    if (Interrupt != null)
+                    {
+                        Interrupt.HasPutOutput();
+                    }
                     InstructionPointer += InstructionSizes[instr.code];
                 }
                 break;
