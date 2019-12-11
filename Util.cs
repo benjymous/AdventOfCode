@@ -215,6 +215,11 @@ namespace Advent
         public int X { get{ return Component[0]; } set { Component[0] = value;} }
         public int Y { get{ return Component[1]; } set { Component[1] = value;} }
 
+        public void Offset(Direction2 dir)
+        {
+            Offset(dir.DX, dir.DY);
+        }
+
         public static ManhattanVector2 operator+ (ManhattanVector2 a, ManhattanVector2 b) => new ManhattanVector2((ManhattanVectorN)a + (ManhattanVectorN)b);
 
         public static ManhattanVector2 operator- (ManhattanVector2 a, ManhattanVector2 b) => new ManhattanVector2((ManhattanVectorN)a - (ManhattanVectorN)b);
@@ -281,6 +286,64 @@ namespace Advent
         public static ManhattanVector4 operator- (ManhattanVector4 a, ManhattanVector4 b) => new ManhattanVector4((ManhattanVectorN)a - (ManhattanVectorN)b);
 
         public static ManhattanVector4 Zero = new ManhattanVector4(0,0,0,0);
+    }
+
+    public class Direction2
+    {
+        public int DX {get;set;} = 0;
+        public int DY {get;set;} = 0;
+
+        public Direction2(int dx, int dy)
+        {
+            DX = dx;
+            DY = dy;
+        }
+
+        public void SetDirection(int dirx, int diry)
+        {
+            DX = dirx;
+            DY = diry;
+        }
+
+        public void TurnLeft()
+        {
+            // up :  0,-1 ->  -1,0;
+            // left: -1,0 -> 0,1
+            // down: 0,1 -> 1,0
+            // right: 1,0 -> 0,-1
+
+            if (DX==0 && DY == -1) SetDirection(-1,0);
+            else if (DX==-1 && DY==0) SetDirection(0,1);
+            else if (DX==0 && DY==1) SetDirection(1,0);
+            else if (DX==1 && DY==0) SetDirection(0,-1);
+
+            else throw new Exception("Unrecognised train direction: "+DX+","+DY);
+        }
+
+        public void TurnRight()
+        {
+            // up :  0,-1 ->  1,0;
+            // right: 1,0 -> 0,1
+            // down: 0,1 -> -1,0
+            // left: -1,0 -> 0,-1
+
+            if (DX==0 && DY == -1) SetDirection(1,0);
+            else if (DX==1 && DY==0) SetDirection(0,1);
+            else if (DX==0 && DY==1) SetDirection(-1,0);
+            else if (DX==-1 && DY==0) SetDirection(0,-1);
+
+            else throw new Exception("Unrecognised train direction :"+DX+","+DY);
+        }
+
+            public char AsChar() 
+            {
+                if (DX > 0) return '>';
+                if (DX < 0) return '<';
+                if (DY < 0) return '^';
+                if (DY > 0) return 'v';
+
+                throw new Exception("Unknown direction state");
+            }
     }
 
     public class AutoList<DataType> : System.Collections.Generic.List<DataType>

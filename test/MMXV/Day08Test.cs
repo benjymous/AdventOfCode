@@ -29,14 +29,14 @@ namespace Advent.MMXV.Test
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Image_Part1_Regression()
+        public void Encoding_Part1_Regression()
         {
-            Assert.AreEqual(0, Day08.Part1(input));
+            Assert.AreEqual(1342, Day08.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Image_Part2_Regression()
+        public void Encoding_Part2_Regression()
         {     
             Assert.AreEqual(0, Day08.Part2(input));
         }
