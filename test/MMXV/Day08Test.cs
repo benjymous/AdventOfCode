@@ -38,7 +38,7 @@ namespace Advent.MMXV.Test
         [DataTestMethod]
         public void Encoding_Part2_Regression()
         {     
-            Assert.AreEqual(0, Day08.Part2(input));
+            Assert.AreEqual(2074, Day08.Part2(input));
         }
 
     }

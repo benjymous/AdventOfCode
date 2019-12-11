@@ -54,23 +54,47 @@ namespace Advent.MMXV
             return ReplaceHexChars(TrimOuterQuotes(input).Replace("\\\\", "|").Replace("\\\"","\"")).Replace("|", "\\");
         }
 
+        public static string Encode(char input)
+        {
+            switch(input)
+            {
+                case '\"' : return "\\\""; 
+                case '\\' : return "\\\\";
+            }
+            return $"{input}";
+        }
+
+        public static string Escape(string input)
+        {
+            return '\"' + String.Join("",input.Select(c => Encode(c))) + '\"';
+        }
+
         public static int Part1(string input)
         {
             var lines = Util.Split(input, '\n');
 
             var result = lines.Select(line => Tuple.Create(line,Unescape(line)));
 
-            foreach (var r in result)
-            {
-                Console.WriteLine($"{r.Item1} - >{r.Item2}<");
-            }
+            // foreach (var r in result)
+            // {
+            //     Console.WriteLine($"{r.Item1} - >{r.Item2}<");
+            // }
 
             return result.Select(x => x.Item1.Length - x.Item2.Length).Sum();
         }
 
         public static int Part2(string input)
         {
-            return 0;
+            var lines = Util.Split(input, '\n');
+
+            var result = lines.Select(line => Tuple.Create(line,Escape(line)));
+
+            // foreach (var r in result)
+            // {
+            //     Console.WriteLine($"{r.Item1} - >{r.Item2}<");
+            // }
+
+            return result.Select(x => x.Item2.Length - x.Item1.Length).Sum();
         }
 
         public void Run(string input, System.IO.TextWriter console)
@@ -81,6 +105,11 @@ namespace Advent.MMXV
             // Console.WriteLine(Unescape("\"\\x27\""));
 
             // Console.WriteLine(Part1("\"\"\n\"abc\"\n\"aaa\\\"aaa\"\n\"\\x27\"\n"));
+
+            //Console.WriteLine(Escape("\"\"").Length);
+            //Console.WriteLine(Escape("\"abc\"").Length);
+            //Console.WriteLine(Escape("\"aaa\\\"aaa\"").Length);
+            //Console.WriteLine(Escape("\"\\x27\"").Length);
 
             console.WriteLine("- Pt1 - "+Part1(input));
             console.WriteLine("- Pt2 - "+Part2(input));
