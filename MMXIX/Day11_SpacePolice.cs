@@ -17,8 +17,7 @@ namespace Advent.MMXIX
 
             Dictionary<string, int> hullColours = new Dictionary<string, int>();
 
-            int dx = 0;
-            int dy = -1;
+            Direction2 direction = new Direction2(0,-1);
 
             int minx = 0;
             int miny = 0;
@@ -34,45 +33,10 @@ namespace Advent.MMXIX
                 cpu.Interrupt = this;
             }
 
-            void SetDirection(int dirx, int diry)
-            {
-                dx = dirx;
-                dy = diry;
-            }
-
-            void TurnLeft()
-            {
-                // up :  0,-1 ->  -1,0;
-                // left: -1,0 -> 0,1
-                // down: 0,1 -> 1,0
-                // right: 1,0 -> 0,-1
-
-                if (dx==0 && dy == -1) SetDirection(-1,0);
-                else if (dx==-1 && dy==0) SetDirection(0,1);
-                else if (dx==0 && dy==1) SetDirection(1,0);
-                else if (dx==1 && dy==0) SetDirection(0,-1);
-
-                else throw new Exception("Unrecognised train direction: "+dx+","+dy);
-            }
-
-            void TurnRight()
-            {
-                // up :  0,-1 ->  1,0;
-                // right: 1,0 -> 0,1
-                // down: 0,1 -> -1,0
-                // left: -1,0 -> 0,-1
-
-                if (dx==0 && dy == -1) SetDirection(1,0);
-                else if (dx==1 && dy==0) SetDirection(0,1);
-                else if (dx==0 && dy==1) SetDirection(-1,0);
-                else if (dx==-1 && dy==0) SetDirection(0,-1);
-
-                else throw new Exception("Unrecognised train direction :"+dx+","+dy);
-            }
-
+            
             void Forwards()
             {
-                position.Offset(dx, dy);
+                position.Offset(direction);
 
                 minx = Math.Min(minx, position.X);
                 miny = Math.Min(miny, position.Y);
@@ -118,8 +82,8 @@ namespace Advent.MMXIX
                 }
                 else if (readState == 1)
                 {
-                    if (data == 0) TurnLeft();
-                    else if (data == 1) TurnRight();
+                    if (data == 0) direction.TurnLeft();
+                    else if (data == 1) direction.TurnRight();
                     else {throw new Exception("Unexpected turn direction!");}
                     Forwards();
                 }
@@ -164,18 +128,20 @@ namespace Advent.MMXIX
             return robot.GetPaintedTileCount();
         }
 
-        public static string Part2(string input)
+        public static string Part2(string input, System.IO.TextWriter console)
         {
             var robot = new EmergencyHullPainterRobot(input);
             robot.PaintHull(1);
             robot.Run();
-            return robot.GetDrawnPattern();
+            var image = robot.GetDrawnPattern();
+            console.WriteLine(image.ToString());
+            return image.ToString().GetSHA256String();
         }
 
         public void Run(string input, System.IO.TextWriter console)
         {
             console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2:\n"+Part2(input));
+            console.WriteLine("- Pt2 - "+Part2(input, console));
         }
     }
 }

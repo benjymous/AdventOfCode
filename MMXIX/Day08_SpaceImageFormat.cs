@@ -25,7 +25,7 @@ namespace Advent.MMXIX
         public void Run(string input, System.IO.TextWriter console)
         {
             console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input, console));
+            console.WriteLine("- Pt2 -"+Part2(input, console));
         }
     }
 }
