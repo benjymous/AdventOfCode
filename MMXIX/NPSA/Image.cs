@@ -65,7 +65,7 @@ namespace Advent.MMXIX.NPSA
             var outStr = "";
             foreach (var l in final)
             {
-                outStr += string.Join("",l)+System.Environment.NewLine;
+                outStr += string.Join("",l)+'\n';
             }
 
             return outStr;
