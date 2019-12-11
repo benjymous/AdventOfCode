@@ -55,6 +55,12 @@ namespace Advent
             {
                 Console.WriteLine($"{kvp.Key} - {kvp.Value}ms");
             }
+            
+            Console.WriteLine();
+            foreach (var kvp in timings.OrderBy(kvp => kvp.Value))
+            {
+                Console.WriteLine($"{kvp.Key} - {kvp.Value}ms");
+            }
         }
     }
 }
