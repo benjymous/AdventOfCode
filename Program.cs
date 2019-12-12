@@ -20,10 +20,6 @@ namespace Advent
 
         static void Main(string[] args)
         {
-            #if DEBUG
-            Console.WriteLine("Debug!");
-            #endif
-
             Extensions.args = args;
 
             var puzzles = GetPuzzles();
