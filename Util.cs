@@ -409,6 +409,34 @@ namespace Advent
         }
     }
 
+    public static class HashBreaker
+    {
+        static public string GetHash(int num, string baseStr)
+        {
+           string hashInput = baseStr + num.ToString();
+           return hashInput.GetMD5String(); 
+        }
+
+        static bool IsHash(int num, string baseStr, string prefix)
+        {
+            string hashed = GetHash(num, baseStr);
+            return hashed.StartsWith(prefix);
+        }
+ 
+        public static IEnumerable<int> Forever(int start=0)
+        {
+            int i=start;
+            while(true) { yield return i++; }
+        }
+
+        public static int FindHash(string baseStr, int numZeroes, int start=0)
+        {
+            var prefix = String.Join("", Enumerable.Repeat('0', numZeroes));
+            
+            return Forever(start).Where(n => IsHash(n, baseStr, prefix)).First();
+        }
+    }
+
     public static class Extensions
     {
         public static string[] args;
@@ -475,6 +503,11 @@ namespace Advent
                 sb.Append(b.ToString("X2"));
 
             return sb.ToString();
+        }
+
+        public static string AsString(this IEnumerable<char> input)
+        {
+            return String.Join("", input);
         }
 
         private static string vowels = "aeiouAEIOU";
