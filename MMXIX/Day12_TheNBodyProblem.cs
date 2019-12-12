@@ -205,14 +205,13 @@ namespace Advent.MMXIX
         }
 
         public static Int64 Part2(string input)
-        {
-            Int64 result = 1;
+        {           
+            var results = Enumerable.Range(0,3).AsParallel().Select(i => FindCycle(input, i));
 
-            for (int i=0; i<3; ++i)
+            Int64 result = 1;
+            foreach (var r in results)
             {
-                var cycle = FindCycle(input, i);
-                result = CalcLCM( result, cycle );
-                //Console.WriteLine($"{i} {cycle}");
+                result = CalcLCM(result, r);
             }
 
             return result;
