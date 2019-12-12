@@ -119,7 +119,7 @@ namespace Advent.MMXV
             //console.WriteLine(FindNextValid("ghijklmn"));
 
             console.WriteLine("- Pt1 - "+Part1(input));
-            //console.WriteLine("- Pt2 - "+Part2(input));
+            console.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }
