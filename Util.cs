@@ -215,9 +215,9 @@ namespace Advent
         public int X { get{ return Component[0]; } set { Component[0] = value;} }
         public int Y { get{ return Component[1]; } set { Component[1] = value;} }
 
-        public void Offset(Direction2 dir)
+        public void Offset(Direction2 dir, int multiple=1)
         {
-            Offset(dir.DX, dir.DY);
+            Offset(dir.DX*multiple, dir.DY*multiple);
         }
 
         public static ManhattanVector2 operator+ (ManhattanVector2 a, ManhattanVector2 b) => new ManhattanVector2((ManhattanVectorN)a + (ManhattanVectorN)b);

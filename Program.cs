@@ -32,7 +32,9 @@ namespace Advent
 
             if (puzzles.Count()==1)
             {
-                puzzles.First().TimeRun(Console.Out);
+                var timing = puzzles.First().TimeRun(Console.Out);
+                Console.WriteLine();
+                Console.WriteLine($"{timing} ms");
             }
             else
             {
