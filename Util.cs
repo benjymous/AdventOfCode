@@ -85,7 +85,7 @@ namespace Advent
 
         public ManhattanVectorN(string val)
         {
-            var bits = val.Trim().Split(",");
+            var bits = Split(val);
             Component = bits.Select(s => int.Parse(s)).ToArray();
         }
 
@@ -96,6 +96,17 @@ namespace Advent
         public override string ToString()
         {
             return string.Join(",", Component);
+        }
+
+        private string[] Split(string val)
+        {
+            const string keep = "0192345678,-";
+            StringBuilder sb = new StringBuilder();
+            foreach (var c in val)
+            {
+               if (keep.Contains(c)) sb.Append(c);
+            }
+            return sb.ToString().Split(",");
         }
 
         public void Set(params int [] newVal)
