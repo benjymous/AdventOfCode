@@ -53,12 +53,15 @@ namespace Advent.MMXIX
 
             public void WillReadInput()
             {
+
                 var ball = FindCell(4);
                 var paddle = FindCell(3);
 
                 int joystick = Math.Sign(ball.X - paddle.X);
 
                 cpu.Input.Enqueue(joystick);
+
+                //Draw();
             }
 
             public void HasPutOutput()
@@ -70,7 +73,37 @@ namespace Advent.MMXIX
                     int tile = (int)cpu.Output.Dequeue();
 
                     screen[$"{xPos},{yPos}"]=tile;
+
+                    // if (tile == 4)
+                    // {
+                    //     Draw();
+                    // }
                 }
+            }
+
+            public void Draw()
+            {        
+                Console.WriteLine();
+                Console.WriteLine();
+                for (int y=0; y<25; ++y)
+                {
+                    var str = "";
+                    for (int x=0; x<=40; ++x)
+                    {
+                        var key = $"{x},{y}";
+                        if (screen.ContainsKey(key))
+                        {
+                            str += tiles[screen[key]]+" ";
+                        }
+                        else
+                        {
+                            str += tiles[0]+" ";
+                        }
+                    }
+                    Console.WriteLine(str);
+                }
+
+                System.Threading.Thread.Sleep(100);
             }
         }
  
