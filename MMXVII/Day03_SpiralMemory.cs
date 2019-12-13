@@ -93,11 +93,7 @@ namespace Advent.MMXVII
                 {
                     for (int x=-1; x<=1; ++x)
                     {
-                        string key = $"{pos.X+x},{pos.Y+y}";
-                        if (cells.ContainsKey(key))
-                        {
-                            sum += cells[key];
-                        }
+                        sum += cells.GetStrKey($"{pos.X+x},{pos.Y+y}");
                     }
                 }
                 cells[pos.ToString()] = sum;

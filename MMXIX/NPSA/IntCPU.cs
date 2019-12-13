@@ -17,11 +17,11 @@ namespace Advent.MMXIX.NPSA
             ADD = 1,   
             MUL = 2,    
 
-            PUT = 3,
+            GET = 3,
             OUT = 4,
 
-            JT = 5,     // Jump if true
-            JF = 6,     // Jump if false
+            JNZ = 5,     // Jump if not zero 
+            JZ = 6,      // Jump if zero
 
             LT = 7,
             EQ = 8,
@@ -36,11 +36,11 @@ namespace Advent.MMXIX.NPSA
             {Opcode.ADD, 4},
             {Opcode.MUL, 4},
 
-            {Opcode.PUT, 2},
+            {Opcode.GET, 2},
             {Opcode.OUT, 2},
 
-            {Opcode.JT, 3},
-            {Opcode.JF, 3},
+            {Opcode.JNZ, 3},
+            {Opcode.JZ, 3},
 
             {Opcode.LT, 4},
             {Opcode.EQ, 4},
@@ -176,7 +176,7 @@ namespace Advent.MMXIX.NPSA
                 }
                 break;
 
-                case Opcode.PUT: // takes a single integer as input and saves it to the address given by its only parameter
+                case Opcode.GET: // takes a single integer as input and saves it to the address given by its only parameter
                 {
                     if (Input.Count == 0)
                     {
@@ -206,7 +206,7 @@ namespace Advent.MMXIX.NPSA
                 }
                 break;
 
-                case Opcode.JT: // if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
+                case Opcode.JNZ: // if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
                 {
                     var val1 = GetValue(instr, 0);
                     var val2 = GetValue(instr, 1);
@@ -218,7 +218,7 @@ namespace Advent.MMXIX.NPSA
                 }
                 break;
 
-                case Opcode.JF: // if the first parameter is zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
+                case Opcode.JZ: // if the first parameter is zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
                 {
                     var val1 = GetValue(instr, 0);
                     var val2 = GetValue(instr, 1);

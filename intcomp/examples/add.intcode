@@ -1,0 +1,9 @@
+; read two integers from the input, and return the sum
+GET x
+GET y
+ADD x y z
+OUT z
+HALT
+:x 0
+:y 0
+:z 0

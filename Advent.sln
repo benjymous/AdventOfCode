@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Advent", "Advent.csproj", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "test\Test.csproj", "{2598E148-01A2-40F5-A6CB-5E2CC4A1BB9C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "intcomp", "intcomp\intcomp.csproj", "{C9A8BC55-FAA8-48F4-BD34-B1418657B62A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2598E148-01A2-40F5-A6CB-5E2CC4A1BB9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2598E148-01A2-40F5-A6CB-5E2CC4A1BB9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2598E148-01A2-40F5-A6CB-5E2CC4A1BB9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9A8BC55-FAA8-48F4-BD34-B1418657B62A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9A8BC55-FAA8-48F4-BD34-B1418657B62A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9A8BC55-FAA8-48F4-BD34-B1418657B62A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9A8BC55-FAA8-48F4-BD34-B1418657B62A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
