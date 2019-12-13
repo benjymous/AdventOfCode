@@ -475,6 +475,34 @@ namespace Advent
             }
         }
 
+        public static void PutObjKey<T>(this Dictionary<string, T> dict, object key, T value)
+        {
+            PutStrKey(dict, key.ToString(), value);
+        }
+
+        public static void PutStrKey<T>(this Dictionary<string, T> dict, string key, T value)
+        {
+            dict[key] = value;
+        }
+
+        public static T GetStrKey<T>(this Dictionary<string, T> dict, string key)
+        {
+            if (dict.ContainsKey(key))
+            {
+                return dict[key];
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
+        public static T GetObjKey<T>(this Dictionary<string, T> dict, object key)
+        {
+            var k = key.ToString();
+            return GetStrKey(dict, k);
+        }
+
         public static byte[] GetSHA256(this string inputString)
         {
             HashAlgorithm algorithm = SHA256.Create();

@@ -43,7 +43,7 @@ namespace Advent.MMXIX
 
             public int Score()
             {
-                return screen["-1,0"];
+                return screen.GetStrKey("-1,0");
             }
 
             ManhattanVector2 FindCell(int tile)
@@ -90,15 +90,7 @@ namespace Advent.MMXIX
                     var str = "";
                     for (int x=0; x<=40; ++x)
                     {
-                        var key = $"{x},{y}";
-                        if (screen.ContainsKey(key))
-                        {
-                            str += tiles[screen[key]]+" ";
-                        }
-                        else
-                        {
-                            str += tiles[0]+" ";
-                        }
+                        str += tiles[screen.GetStrKey($"{x},{y}")]+" ";
                     }
                     Console.WriteLine(str);
                 }

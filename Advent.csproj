@@ -6,12 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\MMXVIII\**" />
     <Compile Remove="test\**" />
-    <EmbeddedResource Remove="Data\MMXVIII\**" />
     <EmbeddedResource Remove="test\**" />
-    <None Remove="Data\MMXVIII\**" />
     <None Remove="test\**" />
+    
+    <Compile Remove="intcomp\**" />
+    <EmbeddedResource Remove="intcomp\**" />
+    <None Remove="intcomp\**" />
+    
+    <Compile Remove="IntCpuCmd\**" />
+    <EmbeddedResource Remove="IntCpuCmd\**" />
+    <None Remove="IntCpuCmd\**" />
   </ItemGroup>
 
   <ItemGroup>

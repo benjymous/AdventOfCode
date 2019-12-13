@@ -48,12 +48,11 @@ namespace Advent.MMXIX
             public void PaintHull(int colour)
             {
                 if (colour < 0 || colour > 1) throw new Exception("Unexpected hull colour!");
-                hullColours[position.ToString()] = colour;
+                hullColours.PutObjKey(position, colour);
             }
             int ReadCamera()
             {
-                if (!hullColours.ContainsKey(position.ToString())) return 0;
-                return hullColours[position.ToString()];
+                return hullColours.GetObjKey(position);
             }
 
             public int GetPaintedTileCount()
@@ -103,14 +102,7 @@ namespace Advent.MMXIX
                 {
                     for (var x=minx; x<=maxx; ++x)
                     {
-                        int val = 0;
-                        var key = $"{x},{y}";
-                        if (hullColours.ContainsKey(key))
-                        {
-                            val = hullColours[key];
-                        }
-
-                        if (val == 0) outStr +=" ";
+                        if (hullColours.GetStrKey($"{x},{y}") == 0) outStr +=" ";
                         else outStr +="#";
 
                     }
