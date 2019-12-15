@@ -93,28 +93,28 @@ namespace Advent.MMXIX
                 {
                     case 0:
                     {
-                        Console.WriteLine("Wall!");
+                        if (mode == Mode.Interactive) Console.WriteLine("Wall!");
 
                         map.PutObjKey(tryState, new Node(1));
                     }
                     break;
                     case 1: 
                     {
-                        Console.WriteLine("Ok");
+                        if (mode == Mode.Interactive) Console.WriteLine("Ok");
                         map.PutObjKey(tryState, new Node(0));
                         position = tryState;
                     }
                     break;
                     case 2: 
                     {
-                        Console.WriteLine("Found Oxygen system"); 
+                        if (mode == Mode.Interactive) Console.WriteLine("Found Oxygen system"); 
                         map.PutObjKey(tryState, new Node(2));
                         position = tryState;
                     }
                     break;
                     default: 
                     {
-                        Console.WriteLine("??? {val}"); 
+                        if (mode == Mode.Interactive) Console.WriteLine("??? {val}"); 
                         map.PutObjKey(tryState, new Node((int)val));
                         position = tryState;
                     }
@@ -135,11 +135,16 @@ namespace Advent.MMXIX
                     var line = "";
                     for (int x=minx; x <=maxx; ++x)
                     {
+                
                         if (x == position.X && y == position.Y)
                         {
                             line += "@";
                         }
-                        else 
+                        else if (x==0 && y==0)
+                        {
+                            line += "S";
+                        }
+                        else
                         {         
                             var key = $"{x},{y}";
                             if (map.ContainsKey(key))
@@ -152,7 +157,7 @@ namespace Advent.MMXIX
                                     case 1:
                                         line += "#"; break;
                                     default:
-                                        line += '0'+node.data; break;
+                                        line += $"{node.data}"; break;
                                 }
                             }
                             else
@@ -262,11 +267,13 @@ namespace Advent.MMXIX
             var droid = new RepairDrone(input);
             droid.Run();
 
+            droid.DrawMap();
+
             var oxygenSystemPosition = droid.FindCell(2);
 
             var path = droid.FindPath(new ManhattanVector2(0,0), new ManhattanVector2(oxygenSystemPosition));
 
-            return 0;
+            return path.Count();
         }
 
         public static int Part2(string input)
