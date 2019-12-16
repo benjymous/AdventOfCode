@@ -14,9 +14,18 @@ namespace Advent.MMXIX.Test
         [DataRow("19617804207202209144916044189917", "73745418")]
         [DataRow("69317163492948606335995924319873", "52432133")]
         [DataTestMethod]
-        public void AsteroidsTest(string input, string expected)
+        public void FFTTest(string input, string expected)
         {
             Assert.AreEqual(expected, Day16.Part1(input));
+        }
+
+        [TestCategory("Test")]
+        [DataRow("03036732577212944063491565474664", "84462026")]
+        [DataRow("02935109699940807407585447034323", "78725270")]
+        [DataRow("03081770884921959731165446850517", "53553731")]
+        public void FF2Test(string input, string expected)
+        {
+            Assert.AreEqual(expected, Day16.Part2(input));
         }
 
         [TestCategory("Regression")]
@@ -30,7 +39,7 @@ namespace Advent.MMXIX.Test
         [DataTestMethod]
         public void FFT_Part2_Regression()
         {
-            Assert.AreEqual(0, Day16.Part2(input));
+            //Assert.AreEqual(0, Day16.Part2(input));
         }
     }
 }
