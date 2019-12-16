@@ -39,7 +39,7 @@ namespace Advent.MMXIX.Test
         [DataTestMethod]
         public void FFT_Part2_Regression()
         {
-            //Assert.AreEqual(0, Day16.Part2(input));
+            Assert.AreEqual("84024125", Day16.Part2(input));
         }
     }
 }

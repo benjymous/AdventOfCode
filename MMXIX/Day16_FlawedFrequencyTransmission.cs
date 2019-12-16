@@ -87,19 +87,6 @@ namespace Advent.MMXIX
 
         public void Run(string input, System.IO.TextWriter console)
         {
-            // for (int i=0; i<1000; ++i)
-            // {
-            //     TestSequence(i);
-            // }
-
-            //Console.WriteLine(Part1("80871224585914546619083218645595")); // 24176176
-
-            //Console.WriteLine("98765432109876543210".Skip(7).Take(8).AsString());
-
-            Console.WriteLine(Part2("03036732577212944063491565474664")); // 84462026
-            Console.WriteLine(Part2("02935109699940807407585447034323")); // 78725270
-            Console.WriteLine(Part2("03081770884921959731165446850517")); // 53553731
-
             console.WriteLine("- Pt1 - "+Part1(input));
             console.WriteLine("- Pt2 - "+Part2(input));
         }
