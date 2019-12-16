@@ -68,6 +68,34 @@ namespace Advent
         public static string GetInput(IPuzzle puzzle) => System.IO.File.ReadAllText(System.IO.Path.Combine("Data",puzzle.Name+".txt")).Replace("\r","");   
 
         public static string GetInput<T>() where T : IPuzzle, new() => GetInput(new T());
+
+                public static IEnumerable<int> Forever(int start=0)
+        {
+            int i=start;
+            while(true) { yield return i++; }
+        }
+
+        public static IEnumerable<int> RepeatForever(IEnumerable<int> input)
+        {
+            while (true)
+            {
+                foreach (var i in input)
+                {
+                    yield return i;
+                }
+            }
+        }
+
+        public static IEnumerable<int> DuplicateDigits(IEnumerable<int> input, int repeats)
+        {
+            foreach (var i in input)
+            {
+                for (int j=0; j<repeats; ++j)
+                {
+                    yield return i;
+                }
+            }
+        }
     }
 
     public interface IVec
@@ -423,17 +451,11 @@ namespace Advent
             return hashed.StartsWith(prefix);
         }
  
-        public static IEnumerable<int> Forever(int start=0)
-        {
-            int i=start;
-            while(true) { yield return i++; }
-        }
-
         public static int FindHash(string baseStr, int numZeroes, int start=0)
         {
             var prefix = String.Join("", Enumerable.Repeat('0', numZeroes));
             
-            return Forever(start).Where(n => IsHash(n, baseStr, prefix)).First();
+            return Util.Forever(start).Where(n => IsHash(n, baseStr, prefix)).First();
         }
     }
 
