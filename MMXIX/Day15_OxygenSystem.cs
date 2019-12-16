@@ -40,7 +40,7 @@ namespace Advent.MMXIX
             int minx = 0, miny = 0;
             int maxx = 0, maxy = 0;
 
-            Dictionary<string,AStar.IRoom> map = new Dictionary<string,AStar.IRoom>();
+            public Dictionary<string,AStar.IRoom> map = new Dictionary<string,AStar.IRoom>();
 
             public string FindCell(int num)
             {
@@ -127,9 +127,9 @@ namespace Advent.MMXIX
                 maxy = Math.Max(maxy, tryState.Y);
             }
 
-            public void DrawMap()
+            public void DrawMap(System.IO.TextWriter console)
             {
-                Console.WriteLine($"{minx},{miny} - {maxx},{maxy}");
+                console.WriteLine();
                 for (var y=miny; y<=maxy; ++y)
                 {
                     var line = "";
@@ -166,15 +166,16 @@ namespace Advent.MMXIX
                             }
                         }
                     }
-                    Console.WriteLine(line);
+                    console.WriteLine(line);
                 }
+                console.WriteLine();
 
             }
             public void WillReadInput()
             {
                 if (mode == Mode.Interactive)
                 {
-                    DrawMap();
+                    DrawMap(Console.Out);
                     Console.WriteLine($"Located at {position}");
                     Console.WriteLine("north (1), south (2), west (3), and east (4) ?");
                     
@@ -262,12 +263,12 @@ namespace Advent.MMXIX
           
         }
  
-        public static int Part1(string input)
+        public static int Part1(string input, System.IO.TextWriter console = null)
         {
             var droid = new RepairDrone(input);
             droid.Run();
 
-            droid.DrawMap();
+            droid.DrawMap(console==null ? Console.Out : console);
 
             var oxygenSystemPosition = droid.FindCell(2);
 
@@ -278,12 +279,26 @@ namespace Advent.MMXIX
 
         public static int Part2(string input)
         {
-            return 0;
+            var droid = new RepairDrone(input);
+            droid.Run();
+            var oxygenSystemPosition = new ManhattanVector2(droid.FindCell(2));
+
+            var dist = 0;
+            foreach (var kvp in droid.map)
+            {
+                if (kvp.Value.Data()==0)
+                {
+                    var path = droid.FindPath(oxygenSystemPosition, new ManhattanVector2(kvp.Key));
+                    dist = Math.Max(dist, path.Count());
+                }
+            }
+
+            return dist;
         }
 
         public void Run(string input, System.IO.TextWriter console)
         {
-            console.WriteLine("- Pt1 - "+Part1(input));
+            console.WriteLine("- Pt1 - "+Part1(input, console));
             console.WriteLine("- Pt2 - "+Part2(input));
         }
     }
