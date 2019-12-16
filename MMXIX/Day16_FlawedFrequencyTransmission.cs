@@ -63,25 +63,8 @@ namespace Advent.MMXIX
 
         public void Run(string input, System.IO.TextWriter console)
         {
-
-            // console.WriteLine(string.Join(", ", GetPattern(0).Take(10)));
-            // console.WriteLine(string.Join(", ", GetPattern(1).Take(10)));
-            // console.WriteLine(string.Join(", ", GetPattern(2).Take(10)));
-            // console.WriteLine(string.Join(", ", GetPattern(3).Take(10)));
-
-            //console.WriteLine(ApplyRepeatedFFT("12345678", 4));
-
-            // console.WriteLine(Part1("80871224585914546619083218645595")); // 24176176
-            // console.WriteLine(Part1("19617804207202209144916044189917")); // 73745418
-            // console.WriteLine(Part1("69317163492948606335995924319873")); // 52432133
-
-        
-
             console.WriteLine("- Pt1 - "+Part1(input));
             // console.WriteLine("- Pt2 - "+Part2(input));
-
-            // 100 - 14735428 x  [ 147354284 x ]
-            // 101 - 70262020 x
         }
     }
 }
