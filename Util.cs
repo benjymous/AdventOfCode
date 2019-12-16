@@ -485,15 +485,15 @@ namespace Advent
             return watch.ElapsedMilliseconds;
         }
 
-        public static void IncrementAtIndex<T>(this Dictionary<T,int> dict, T key)
+        public static void IncrementAtIndex<T>(this Dictionary<T,int> dict, T key, int val=1)
         {
             if (dict.ContainsKey(key))
             {
-                dict[key]++;
+                dict[key] += val;
             }
             else
             {
-                dict[key] = 1;
+                dict[key] = val;
             }
         }
 
