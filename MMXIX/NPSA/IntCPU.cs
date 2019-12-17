@@ -120,38 +120,57 @@ namespace Advent.MMXIX.NPSA
 
         class Instr
         {
-            public string raw = "00000";
+            //public string raw = "00000";
             public Opcode code = 0;
             public ParamMode[] mode = {0,0,0}; 
 
             public override string ToString()
             {
-                return $"{raw} - {code} - {string.Join(",",mode)}";
+                //return $"{raw} - {code} - {string.Join(",",mode)}";
+                return $"{code} - {string.Join(",",mode)}";
             }
         }
+
+        static int[] mods = {1000, 10000, 100000};
+
+        static int GetOpcode(int raw, int index)
+        {
+            int mod = mods[index];
+            int div = mod/10;
+            return (int)(raw % mod)/div;
+        }
+
+        Dictionary<Int64, Instr> instructionCache = new Dictionary<long, Instr>();
 
         Instr DecodeInstruction()
         {
-            Instr instr = new Instr();
-            instr.raw = Memory[InstructionPointer].ToString().PadLeft(5,'0');
-
-            instr.code = (Opcode)(Int64.Parse($"{instr.raw[3]}{instr.raw[4]}"));
-
-            if (!InstructionSizes.ContainsKey(instr.code))
+            int raw = (int)Memory[InstructionPointer];
+            if (instructionCache.ContainsKey(raw))
             {
-                throw new Exception($"Unknown instruction {instr.raw} at {InstructionPointer}");
+                return instructionCache[raw];
             }
-
-            for (var i=0; i<InstructionSizes[instr.code]-1; ++i)
+            else
             {
-                instr.mode[i] = (ParamMode)(Int64.Parse($"{instr.raw[2-i]}"));
-            }
+                var instr = new Instr();
 
-            return instr;
+                instr.code = (Opcode)(raw % 100);
+
+                if (!InstructionSizes.ContainsKey(instr.code))
+                {
+                    throw new Exception($"Unknown instruction {raw} at {InstructionPointer}");
+                }
+
+                for (var i=0; i<InstructionSizes[instr.code]-1; ++i)
+                {
+                    instr.mode[i] = (ParamMode)(GetOpcode(raw, i));
+                }
+                instructionCache[raw] = instr;
+                return instr;
+            }
         }
 
         public bool Step() 
-        {
+        {     
             var instr = DecodeInstruction();
             //Console.WriteLine($"{InstructionPointer}: {instr}");
             switch(instr.code) 
@@ -180,10 +199,7 @@ namespace Advent.MMXIX.NPSA
                 {
                     if (Input.Count == 0)
                     {
-                        if (Interrupt != null)
-                        {
-                            Interrupt.WillReadInput();
-                        }
+                        Interrupt?.WillReadInput();
                         if (Input.Count == 0)
                         {
                             throw new Exception("Out of input!");
@@ -198,10 +214,7 @@ namespace Advent.MMXIX.NPSA
                 case Opcode.OUT: // output the value of its only parameter.
                 {
                     Output.Enqueue(GetValue(instr, 0));
-                    if (Interrupt != null)
-                    {
-                        Interrupt.HasPutOutput();
-                    }
+                    Interrupt?.HasPutOutput();
                     InstructionPointer += InstructionSizes[instr.code];
                 }
                 break;
@@ -279,6 +292,6 @@ namespace Advent.MMXIX.NPSA
         public void Poke(Int64 addr, Int64 val) => Memory[addr] = val; 
         public Int64 Peek(Int64 addr) => Memory[addr];
 
-        public override string ToString() => string.Join(",", Memory);
+        public override string ToString() => string.Join(",", Memory.Values);
     }
 }
