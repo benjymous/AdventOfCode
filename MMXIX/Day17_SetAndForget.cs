@@ -261,8 +261,9 @@ namespace Advent.MMXIX
 
             //var optimised = "C,C,A,B,C,B,C,A,B,A\nR,12,L,6,R,6,R,8,R,6\nL,8,R,8,R,6,R,12\nR,12,L,8,R,6";
 
+            string videoFeedFlag = terminal.DisplayLive ? "\ny\n" : "\nn\n";
 
-            var compiled = Compile(optimised + "\ny\n");
+            var compiled = Compile(optimised + videoFeedFlag);
             
             foreach(var i in compiled)
             {
