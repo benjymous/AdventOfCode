@@ -58,5 +58,16 @@ namespace Advent.MMXIX.NPSA
         {
             return screenBuffer.GetStrKey($"{x},{y}");
         }
+
+        public ManhattanVector2 FindCharacter(char c)
+        {
+            var res = screenBuffer.Where(kvp => kvp.Value == c);
+            if (res.Any())
+            {
+                return new ManhattanVector2(res.First().Key);
+            }
+
+            throw new Exception("Not found");
+        }
     }
 }

@@ -53,6 +53,8 @@ namespace Advent.MMXIX
             }
         }
 
+
+
         public void HasPutOutput()
         {
             Int64 v = cpu.Output.Dequeue();
@@ -255,8 +257,23 @@ namespace Advent.MMXIX
             return shrunk.Select(c => (Int64) c);
         }
 
+        string BuildPath()
+        {
+            var position = terminal.FindCharacter('^');
+            if (terminal.GetAt(position.X, position.Y-1)!='#')
+            {
+                
+            }
+
+            return "";
+        }
+
         public void WillReadInput()
         {        
+            var prog = BuildPath();
+
+            Console.WriteLine($"--{prog}--");
+
             var optimised = Optimise(programUnoptimised);
 
             //var optimised = "C,C,A,B,C,B,C,A,B,A\nR,12,L,6,R,6,R,8,R,6\nL,8,R,8,R,6,R,12\nR,12,L,8,R,6";
