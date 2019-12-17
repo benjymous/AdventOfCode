@@ -400,9 +400,8 @@ namespace Advent
 
         DataType Get(int key)
         {
-            if (!ContainsKey(key)) return default(DataType);
-
-            return base[key];
+            if (!TryGetValue(key, out DataType val)) return default(DataType);
+            return val;
         }
 
         public new DataType this[int key]
@@ -514,14 +513,8 @@ namespace Advent
 
         public static T GetStrKey<T>(this Dictionary<string, T> dict, string key)
         {
-            if (dict.ContainsKey(key))
-            {
-                return dict[key];
-            }
-            else
-            {
-                return default(T);
-            }
+            if (dict.TryGetValue(key, out T val)) return val;
+            return default(T);
         }
 
         public static T GetObjKey<T>(this Dictionary<string, T> dict, object key)
