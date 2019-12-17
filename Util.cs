@@ -385,36 +385,41 @@ namespace Advent
             }
     }
 
-    public class AutoList<DataType> : System.Collections.Generic.List<DataType>
+    public class AutoList<DataType> : System.Collections.Generic.Dictionary<int, DataType>
     {
         public AutoList(IEnumerable<DataType> input) => AddRange(input);
 
-        private void Resize(int size) => AddRange(Enumerable.Repeat(default(DataType), size-Count));
+        private void AddRange(IEnumerable<DataType> input)
+        {
+            int i = Count;
+            foreach (var v in input)
+            {
+                base[i++]=v;
+            }
+        }
 
         DataType Get(int key)
         {
-            if (key >= Count) Resize(key+1);
+            if (!ContainsKey(key)) return default(DataType);
 
             return base[key];
-        }
-
-        void Set(int key, DataType value)
-        {
-            if (key >= Count) Resize(key+1);
-
-            base[key] = value;
         }
 
         public new DataType this[int key]
         {
             get => Get(key);
-            set => Set(key,value);
+            set => base[key] = value;
         }
 
         public DataType this[Int64 key]
         {
             get => Get((int)key);
-            set => Set((int)key,value);
+            set => base[(int)key] = value;
+        }
+
+        public new IEnumerable<DataType> GetEnumerator()
+        {
+            return Values;
         }
     }
 
