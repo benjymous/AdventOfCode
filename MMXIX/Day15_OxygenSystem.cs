@@ -49,7 +49,7 @@ namespace Advent.MMXIX
                 return map.Where(kvp => kvp.Value.Data() == num).First().Key;
             }
 
-            HashSet<Tuple<ManhattanVector2,ManhattanVector2>> unknowns = new HashSet<Tuple<ManhattanVector2,ManhattanVector2>>();
+            Stack<Tuple<ManhattanVector2,ManhattanVector2>> unknowns = new Stack<Tuple<ManhattanVector2,ManhattanVector2>>();
 
             public enum Mode
             {
@@ -75,7 +75,7 @@ namespace Advent.MMXIX
             {
                 if (!map.ContainsKey(neighbour.ToString()))
                 {
-                    unknowns.Add(Tuple.Create(current, neighbour));
+                    unknowns.Push(Tuple.Create(current, neighbour));
                 }
             }
 
@@ -228,10 +228,7 @@ namespace Advent.MMXIX
 
                     if (!hasTarget)
                     {
-                        target = unknowns.OrderBy(p => p.Item2.Distance(position))
-                                         .First();
-
-                        unknowns.Remove(target);
+                        target = unknowns.Pop();
                         hasTarget = true;
                     }
 
