@@ -229,8 +229,6 @@ namespace Advent.MMXIX
                     if (!hasTarget)
                     {
                         target = unknowns.OrderBy(p => p.Item2.Distance(position))
-                                         .Take(8)
-                                         .OrderBy(p => FindPath(position, p.Item1).Count())
                                          .First();
 
                         unknowns.Remove(target);
@@ -265,9 +263,9 @@ namespace Advent.MMXIX
                 }
             }
 
+            RoomPathFinder finder = new RoomPathFinder();
             public IEnumerable<ManhattanVector2> FindPath(ManhattanVector2 start, ManhattanVector2 end)
-            {
-                var finder = new RoomPathFinder();
+            {          
                 return finder.FindPath(map, start, end);
             }
           

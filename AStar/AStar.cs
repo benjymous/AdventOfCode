@@ -24,9 +24,19 @@ namespace Advent.AStar
 
         Dictionary<ManhattanVector2, ManhattanVector2> nodeLinks = new Dictionary<ManhattanVector2, ManhattanVector2>();
 
+        private void Reset()
+        {
+            closedSet.Clear();
+            openSet.Clear();
+            gScore.Clear();
+            fScore.Clear();
+            nodeLinks.Clear();
+        }
+
         public List<ManhattanVector2> FindPath(Dictionary<string,IRoom> graph, ManhattanVector2 start, ManhattanVector2 goal)
         {
-
+            Reset();
+            
             openSet[start] = true;
             gScore[start] = 0;
             fScore[start] = Heuristic(start, goal);
