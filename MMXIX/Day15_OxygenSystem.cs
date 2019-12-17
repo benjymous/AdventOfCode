@@ -37,8 +37,10 @@ namespace Advent.MMXIX
             Tuple<ManhattanVector2,ManhattanVector2> target = null;
             bool hasTarget = false;
 
-            int minx = 0, miny = 0;
-            int maxx = 0, maxy = 0;
+            public int Steps {get; private set;} = 0;
+
+            public int minx = 0, miny = 0;
+            public int maxx = 0, maxy = 0;
 
             public Dictionary<string,AStar.IRoom> map = new Dictionary<string,AStar.IRoom>();
 
@@ -52,10 +54,10 @@ namespace Advent.MMXIX
             public enum Mode
             {
                 Interactive = 0,
-                Sweep = 2,
+                Search = 2,
             }
 
-            public Mode mode = Mode.Sweep;
+            public Mode mode = Mode.Search;
 
 
             public RepairDrone(string input)
@@ -127,6 +129,17 @@ namespace Advent.MMXIX
                 maxy = Math.Max(maxy, tryState.Y);
             }
 
+            public int GetMapData(int x, int y)
+            {
+                var key = $"{x},{y}";
+                if (map.ContainsKey(key))
+                {                  
+                    var node = map.GetStrKey(key) as Node;
+                    return node.data;
+                }
+                else return 0;
+            }
+
             public void DrawMap(System.IO.TextWriter console)
             {
                 console.WriteLine();
@@ -145,25 +158,17 @@ namespace Advent.MMXIX
                             line += "S";
                         }
                         else
-                        {         
-                            var key = $"{x},{y}";
-                            if (map.ContainsKey(key))
-                            {                  
-                                var node = map.GetStrKey(key) as Node;
-                                switch(node.data)
-                                {
-                                    case 0:
-                                        line += "."; break;
-                                    case 1:
-                                        line += "#"; break;
-                                    default:
-                                        line += $"{node.data}"; break;
-                                }
-                            }
-                            else
+                        {       
+                            switch(GetMapData(x,y))
                             {
-                                line += " ";
+                                case 0:
+                                    line += "."; break;
+                                case 1:
+                                    line += "#"; break;
+                                default:
+                                    line += "?"; break;
                             }
+                           
                         }
                     }
                     console.WriteLine(line);
@@ -173,6 +178,7 @@ namespace Advent.MMXIX
             }
             public void WillReadInput()
             {
+                Steps++;
                 if (mode == Mode.Interactive)
                 {
                     DrawMap(Console.Out);
@@ -205,16 +211,16 @@ namespace Advent.MMXIX
                     }
                     cpu.Input.Enqueue(code);
                 }
-                else if (mode == Mode.Sweep)
+                else if (mode == Mode.Search)
                 {
                     //DrawMap();
 
-                    if (mode == Mode.Sweep)
+                    if (mode == Mode.Search)
                     {
                         AddUnknowns();
                     }
 
-                    if (unknowns.Count == 0)
+                    if (unknowns.Count == 0 && !hasTarget)
                     {
                         cpu.Input.Enqueue(0); // stop
                         return;
@@ -222,7 +228,11 @@ namespace Advent.MMXIX
 
                     if (!hasTarget)
                     {
-                        target = unknowns.OrderBy(p => p.Item2.Distance(position)).First();
+                        target = unknowns.OrderBy(p => p.Item2.Distance(position))
+                                         .Take(8)
+                                         .OrderBy(p => FindPath(position, p.Item1).Count())
+                                         .First();
+
                         unknowns.Remove(target);
                         hasTarget = true;
                     }
@@ -262,13 +272,17 @@ namespace Advent.MMXIX
             }
           
         }
- 
+        
         public static int Part1(string input, System.IO.TextWriter console = null)
         {
+            if (console == null) console = Console.Out;
+
             var droid = new RepairDrone(input);
             droid.Run();
 
-            droid.DrawMap(console==null ? Console.Out : console);
+            droid.DrawMap(console);
+
+            console.WriteLine($"Map explored in {droid.Steps} steps");
 
             var oxygenSystemPosition = droid.FindCell(2);
 
@@ -284,14 +298,36 @@ namespace Advent.MMXIX
             var oxygenSystemPosition = new ManhattanVector2(droid.FindCell(2));
 
             var dist = 0;
-            foreach (var kvp in droid.map)
+            for (int y=droid.miny+1; y<droid.maxy; ++y)
             {
-                if (kvp.Value.Data()==0)
+                for (int x=droid.minx+1; x<droid.maxx; ++x)
                 {
-                    var path = droid.FindPath(oxygenSystemPosition, new ManhattanVector2(kvp.Key));
-                    dist = Math.Max(dist, path.Count());
+                    if( droid.GetMapData(x,y) == 0 )
+                    {
+                        int score = droid.GetMapData(x+1,y) +
+                                    droid.GetMapData(x-1,y) +
+                                    droid.GetMapData(x,y+1) +
+                                    droid.GetMapData(x,y-1);
+
+                        if (score == 3)
+                        {
+                            // dead end
+                            var path = droid.FindPath(oxygenSystemPosition, new ManhattanVector2(x,y));
+                            dist = Math.Max(dist, path.Count());
+                        }
+                    }
                 }
             }
+
+            
+            // foreach (var kvp in droid.map)
+            // {
+            //     if (kvp.Value.Data()==0)
+            //     {
+            //         var path = droid.FindPath(oxygenSystemPosition, new ManhattanVector2(kvp.Key));
+            //         dist = Math.Max(dist, path.Count());
+            //     }
+            // }
 
             return dist;
         }
