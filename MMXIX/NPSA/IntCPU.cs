@@ -55,7 +55,6 @@ namespace Advent.MMXIX.NPSA
             Position = 0,
             Immediate = 1,
             Relative = 2,
-            Auto = 99,
         }
 
         AutoList<Int64> Memory {get;set;}
@@ -73,8 +72,7 @@ namespace Advent.MMXIX.NPSA
 
         Int64 GetValue(Instr i, int paramIdx)
         {
-            var paramMode = i.mode[paramIdx];  
-            switch (paramMode)
+            switch (i.mode[paramIdx])
             {
                 case ParamMode.Position:
                 {
@@ -83,39 +81,30 @@ namespace Advent.MMXIX.NPSA
                     
                 case ParamMode.Immediate:
                 {
-                    var param = InstructionPointer+paramIdx+1;
-                    var val = Memory[param];
-                    return val;
+                    return Memory[InstructionPointer+paramIdx+1];
                 }
 
                 case ParamMode.Relative:
                 {
-                    var param = InstructionPointer+paramIdx+1;
-                    var offset = Memory[param];
-                    var val = Memory[offset+RelBase];
-                    return val;
+                    return Memory[Memory[InstructionPointer+paramIdx+1]+RelBase];
                 }
             }
 
-            throw new Exception($"Unexpected ParamMode {paramMode}");
+            throw new Exception($"Unexpected ParamMode {i.mode[paramIdx]}");
         }
 
         Int64 GetOutPos(Instr i, int paramIdx)
         {
-            var paramMode = i.mode[paramIdx];  
-
-            switch (paramMode)
+            switch (i.mode[paramIdx])
             {
                 case ParamMode.Position:
                     return Memory[InstructionPointer+paramIdx+1];
 
                 case ParamMode.Relative:
-                    var pos1 = InstructionPointer+paramIdx+1;
-                    var val = Memory[pos1];
-                    return val+RelBase;
+                    return Memory[InstructionPointer+paramIdx+1]+RelBase;
             } 
 
-            throw new Exception($"Unexpected ParamMode {paramMode}");
+            throw new Exception($"Unexpected ParamMode {i.mode[paramIdx]}");
         }
 
         class Instr
@@ -123,6 +112,7 @@ namespace Advent.MMXIX.NPSA
             //public string raw = "00000";
             public Opcode code = 0;
             public ParamMode[] mode = {0,0,0}; 
+            public int size = 0;
 
             public override string ToString()
             {
@@ -145,22 +135,23 @@ namespace Advent.MMXIX.NPSA
         Instr DecodeInstruction()
         {
             int raw = (int)Memory[InstructionPointer];
-            if (instructionCache.ContainsKey(raw))
+            Instr instr;
+            if (instructionCache.TryGetValue(raw, out instr))
             {
-                return instructionCache[raw];
+                return instr;
             }
             else
             {
-                var instr = new Instr();
+                instr = new Instr();
 
                 instr.code = (Opcode)(raw % 100);
 
-                if (!InstructionSizes.ContainsKey(instr.code))
+                if (!InstructionSizes.TryGetValue(instr.code, out instr.size))
                 {
                     throw new Exception($"Unknown instruction {raw} at {InstructionPointer}");
                 }
 
-                for (var i=0; i<InstructionSizes[instr.code]-1; ++i)
+                for (var i=0; i<instr.size-1; ++i)
                 {
                     instr.mode[i] = (ParamMode)(GetOpcode(raw, i));
                 }
@@ -177,21 +168,15 @@ namespace Advent.MMXIX.NPSA
             {
                 case Opcode.ADD: // add PC+1 and PC+2 and put it in address PC+3
                 {
-                    var outPos = GetOutPos(instr, 2);
-                    var val1 = GetValue(instr, 0);
-                    var val2 = GetValue(instr, 1);
-                    Memory[outPos] = val1+val2;
-                    InstructionPointer += InstructionSizes[instr.code];
+                    Memory[GetOutPos(instr, 2)] = GetValue(instr, 0) + GetValue(instr, 1);
+                    InstructionPointer += instr.size;
                 }
                 break;
 
                 case Opcode.MUL: // multiply PC+1 and PC+2 and put it in address PC+3
                 {
-                    var outPos = GetOutPos(instr, 2);
-                    var val1 = GetValue(instr, 0);
-                    var val2 = GetValue(instr, 1);
-                    Memory[outPos] = val1*val2;
-                    InstructionPointer += InstructionSizes[instr.code];
+                    Memory[GetOutPos(instr, 2)] = GetValue(instr, 0)*GetValue(instr, 1);
+                    InstructionPointer += instr.size;
                 }
                 break;
 
@@ -205,9 +190,8 @@ namespace Advent.MMXIX.NPSA
                             throw new Exception("Out of input!");
                         }
                     }
-                    var v = Input.Dequeue();
-                    Memory[GetOutPos(instr, 0)] = v;
-                    InstructionPointer += InstructionSizes[instr.code];
+                    Memory[GetOutPos(instr, 0)] = Input.Dequeue();
+                    InstructionPointer += instr.size;
                 }
                 break;
 
@@ -215,58 +199,46 @@ namespace Advent.MMXIX.NPSA
                 {
                     Output.Enqueue(GetValue(instr, 0));
                     Interrupt?.HasPutOutput();
-                    InstructionPointer += InstructionSizes[instr.code];
+                    InstructionPointer += instr.size;
                 }
                 break;
 
                 case Opcode.JNZ: // if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
                 {
-                    var val1 = GetValue(instr, 0);
-                    var val2 = GetValue(instr, 1);
-
-                    if (val1 != 0) 
-                        InstructionPointer = val2;
+                    if (GetValue(instr, 0) != 0) 
+                        InstructionPointer = GetValue(instr, 1);
                     else
-                        InstructionPointer += InstructionSizes[instr.code];
+                        InstructionPointer += instr.size;
                 }
                 break;
 
                 case Opcode.JZ: // if the first parameter is zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
                 {
-                    var val1 = GetValue(instr, 0);
-                    var val2 = GetValue(instr, 1);
-
-                    if (val1 == 0) 
-                        InstructionPointer = val2;
+                    if (GetValue(instr, 0) == 0) 
+                        InstructionPointer = GetValue(instr, 1);
                     else
-                        InstructionPointer += InstructionSizes[instr.code];
+                        InstructionPointer += instr.size;
                 }
                 break;
 
                 case Opcode.LT: // if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
                 {
-                    var outPos = GetOutPos(instr, 2);
-                    var val1 = GetValue(instr, 0);
-                    var val2 = GetValue(instr, 1);
-                    Memory[outPos] = val1 < val2 ? 1 : 0;
-                    InstructionPointer += InstructionSizes[instr.code];
+                    Memory[GetOutPos(instr, 2)] = GetValue(instr, 0) < GetValue(instr, 1) ? 1 : 0;
+                    InstructionPointer += instr.size;
                 }
                 break;
 
                 case Opcode.EQ: // if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
                 {
-                    var outPos = GetOutPos(instr, 2);
-                    var val1 = GetValue(instr, 0);
-                    var val2 = GetValue(instr, 1);
-                    Memory[outPos] = val1 == val2 ? 1 : 0;
-                    InstructionPointer += InstructionSizes[instr.code];
+                    Memory[GetOutPos(instr, 2)] = GetValue(instr, 0) == GetValue(instr, 1) ? 1 : 0;
+                    InstructionPointer += instr.size;
                 }
                 break;
 
                 case Opcode.SETR:
                 {
                     RelBase += GetValue(instr,0);
-                    InstructionPointer += InstructionSizes[instr.code];
+                    InstructionPointer += instr.size;
                 }
                 break;
 
