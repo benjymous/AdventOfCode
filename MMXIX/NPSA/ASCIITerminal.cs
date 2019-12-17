@@ -12,6 +12,8 @@ namespace Advent.MMXIX.NPSA
 
         public ManhattanVector2 Max {get;} = new ManhattanVector2(0,0);
 
+        public bool DisplayLive {get;set;} = false;            
+
         public ASCIITerminal()
         {
 
@@ -19,9 +21,25 @@ namespace Advent.MMXIX.NPSA
 
         public void Write(char c)
         {
+            if (DisplayLive)
+            {
+                Console.Write(c);
+            }
+
             switch(c)
             {
                 case '\n':
+
+                    if (Cursor.X == 0)
+                    {
+                        Cursor.Y = 0;
+                        Cursor.X = 0;
+                        if (DisplayLive)
+                        {
+                            Console.WriteLine();
+                        }
+                    }
+
                     Cursor.X = 0;
                     Cursor.Y++;
                     break;
@@ -31,6 +49,7 @@ namespace Advent.MMXIX.NPSA
                     Cursor.X++;
                     break;
             }
+
             Max.X = Math.Max(Max.X, Cursor.X);
             Max.Y = Math.Max(Max.Y, Cursor.Y);
         }

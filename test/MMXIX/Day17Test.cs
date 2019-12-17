@@ -20,7 +20,7 @@ namespace Advent.MMXIX.Test
         [DataTestMethod]
         public void Hoovamatic_Part2_Regression()
         {
-            Assert.AreEqual(0, Day17.Part2(input));
+            Assert.AreEqual(942367, Day17.Part2(input));
         }
     }
 }
