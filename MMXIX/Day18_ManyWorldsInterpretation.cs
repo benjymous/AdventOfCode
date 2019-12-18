@@ -61,58 +61,123 @@ namespace Advent.MMXIX
             return newKeys;
         }
 
-        static int min = int.MaxValue;
+         static int min = int.MaxValue;
 
-        public static int Solve(Dictionary<string, AStar.IRoom> map, ManhattanVector2 position, Dictionary<char, ManhattanVector2> availableKeys, HashSet<char> allKeys, int totalScore)
+//         public static int Solve(Dictionary<string, AStar.IRoom> map, ManhattanVector2 position, Dictionary<char, ManhattanVector2> availableKeys, HashSet<char> allKeys, int totalScore)
+//         {
+//             if (availableKeys.Count == 0)
+//             {
+//                 min = Math.Min(totalScore, min);
+//                 Console.WriteLine($"[{min}] - Path found at {totalScore}");
+                
+//                 return 0;
+//             }
+//             var finder = new AStar.RoomPathFinder();
+
+            
+
+//             var callback = new Callback();
+//             callback.HeldKeys = new HashSet<char>(allKeys.Where(k => !availableKeys.ContainsKey(k)).Select(k => char.ToUpper(k)));
+
+//             var paths = availableKeys.Select(k => Tuple.Create(k, finder.FindPath(map, position, k.Value, callback))).Where(v => v.Item2.Count() > 0 && (v.Item2.Count() + totalScore) < min).OrderBy(v => v.Item2.Count());
+
+//             if (!paths.Any()) return 9999;
+
+// #if BLAH
+//             var shortestPath = paths.AsParallel().Select(tup => tup.Item2.Count + Solve(map, tup.Item1.Value, CloneKeys(availableKeys, tup.Item1.Key), allKeys, totalScore+tup.Item2.Count)).Min();
+// #else
+//             int shortestPath = int.MaxValue;
+//             foreach (var tup in paths)
+//             {           
+//                 var path = tup.Item2;
+//                 var key = tup.Item1;
+//                 if (path.Count < shortestPath)
+//                 {
+//                     int newVal = path.Count + Solve(map, key.Value, CloneKeys(availableKeys, key.Key), allKeys, totalScore+path.Count);
+//                     shortestPath = Math.Min(shortestPath, newVal);
+//                 }
+//             }
+// #endif
+
+//             // foreach (var key in availableKeys.OrderBy(k => k.Key))
+//             // {
+//             //     var path = finder.FindPath(map, position, key.Value);
+//             //     if (path.Any())
+//             //     {               
+//             //         if (path.Count < shortestPath)
+//             //         {
+//             //             int newVal = path.Count + Solve(CloneMap(map, char.ToUpper(key.Key)), key.Value, CloneKeys(availableKeys, key.Key), doors, totalScore+path.Count);
+//             //             shortestPath = Math.Min(shortestPath, newVal);
+//             //         }
+//             //     }
+//             // }
+
+//             return shortestPath;
+//         }
+
+        public static int Solve(ManhattanVector2 position, Dictionary<string, AStar.IRoom> map, Dictionary<string, IEnumerable<ManhattanVector2>> paths, HashSet<char> allKeys, Dictionary<char, ManhattanVector2> availableKeys, int totalScore)
         {
+
             if (availableKeys.Count == 0)
             {
                 min = Math.Min(totalScore, min);
                 Console.WriteLine($"[{min}] - Path found at {totalScore}");
-                
                 return 0;
             }
-            var finder = new AStar.RoomPathFinder();
 
-            
-
-            var callback = new Callback();
-            callback.HeldKeys = new HashSet<char>(allKeys.Where(k => !availableKeys.ContainsKey(k)).Select(k => char.ToUpper(k)));
-
-            var paths = availableKeys.Select(k => Tuple.Create(k, finder.FindPath(map, position, k.Value, callback))).Where(v => v.Item2.Count() > 0 && (v.Item2.Count() + totalScore) < min).OrderBy(v => v.Item2.Count());
-
-            if (!paths.Any()) return 9999;
-
-#if BLAH
-            var shortestPath = paths.AsParallel().Select(tup => tup.Item2.Count + Solve(map, tup.Item1.Value, CloneKeys(availableKeys, tup.Item1.Key), allKeys, totalScore+tup.Item2.Count)).Min();
-#else
             int shortestPath = int.MaxValue;
-            foreach (var tup in paths)
-            {           
-                var path = tup.Item2;
-                var key = tup.Item1;
-                if (path.Count < shortestPath)
+            var heldKeys = new HashSet<char>(allKeys.Where(k => !availableKeys.ContainsKey(k)).Select(k => char.ToUpper(k)));
+
+            foreach (var key in availableKeys.OrderBy(k => k.Key))
+            {
+
+                var pathKey = $"{position}:{key.Value}";
+
+                IEnumerable<ManhattanVector2> path;
+
+                if (!paths.TryGetValue(pathKey, out  path))
                 {
-                    int newVal = path.Count + Solve(map, key.Value, CloneKeys(availableKeys, key.Key), allKeys, totalScore+path.Count);
+                    pathKey = $"{key.Value}:{position}";
+
+                    if (!paths.TryGetValue(pathKey, out path))
+                    {
+                        throw new Exception("Couldn't find path!");
+                    }
+                }
+
+                if (IsWalkable(map, path, heldKeys))
+                {
+                    var newVal = path.Count() + Solve(key.Value, map, paths, allKeys, CloneKeys(availableKeys, key.Key), totalScore+path.Count());
                     shortestPath = Math.Min(shortestPath, newVal);
                 }
             }
-#endif
 
-            // foreach (var key in availableKeys.OrderBy(k => k.Key))
-            // {
-            //     var path = finder.FindPath(map, position, key.Value);
-            //     if (path.Any())
-            //     {               
-            //         if (path.Count < shortestPath)
-            //         {
-            //             int newVal = path.Count + Solve(CloneMap(map, char.ToUpper(key.Key)), key.Value, CloneKeys(availableKeys, key.Key), doors, totalScore+path.Count);
-            //             shortestPath = Math.Min(shortestPath, newVal);
-            //         }
-            //     }
-            // }
-
+            
             return shortestPath;
+        }
+
+        public static bool IsWalkable(Dictionary<string, AStar.IRoom> map, IEnumerable<ManhattanVector2> path, HashSet<char> heldKeys)
+        {
+            foreach (var pos in path)
+            {
+                var node = map.GetObjKey(pos);
+                if (node==null) 
+                {
+                    return false;
+                }
+                var c = (node as Node).data;
+                if (c != '.')
+                {
+                    if (c>='A' && c <='Z')
+                    {
+                        if (!heldKeys.Contains(c))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         }
  
         public static int Part1(string input)
@@ -151,7 +216,30 @@ namespace Advent.MMXIX
                 }
             }
 
-            return Solve(map, position, availableKeys, allKeys, 0);
+            var paths = new Dictionary<string, IEnumerable<ManhattanVector2>>();
+
+            var finder = new AStar.RoomPathFinder();
+            var callback = new Callback();
+            callback.HeldKeys = new HashSet<char>(allKeys.Select(c => char.ToUpper(c)));
+
+            foreach (var k1 in allKeys)
+            {
+                paths[$"{position}:{availableKeys[k1]}"] = finder.FindPath(map, position, availableKeys[k1], callback);
+
+                foreach (var k2 in allKeys.Where(k => k > k1))
+                {
+                    paths[$"{availableKeys[k1]}:{availableKeys[k2]}"] = finder.FindPath(map, availableKeys[k1], availableKeys[k2], callback);
+                }
+            }
+
+            // foreach (var p in paths)
+            // {
+            //     Console.WriteLine($"{p.Key} - {IsWalkable(map, p.Value, new HashSet<char>())}");
+            // };
+
+            return Solve(position, map, paths, allKeys, availableKeys, 0);
+
+            //return Solve(map, position, availableKeys, allKeys, 0);
         }
 
         public static int Part2(string input)
@@ -171,13 +259,13 @@ namespace Advent.MMXIX
         public void Run(string input, System.IO.TextWriter console)
         {
 
-            // Test(Part1("#########\n#b.A.@.a#\n#########"), 8);
+            //Test(Part1("#########\n#b.A.@.a#\n#########"), 8);
 
-            // Test(Part1("########################\n#f.D.E.e.C.b.A.@.a.B.c.#\n######################.#\n#d.....................#\n########################"), 86);
+            //Test(Part1("########################\n#f.D.E.e.C.b.A.@.a.B.c.#\n######################.#\n#d.....................#\n########################"), 86);
         
-            // Test(Part1("########################\n#...............b.C.D.f#\n#.######################\n#.....@.a.B.c.d.A.e.F.g#\n########################"), 132);
+            //Test(Part1("########################\n#...............b.C.D.f#\n#.######################\n#.....@.a.B.c.d.A.e.F.g#\n########################"), 132);
 
-            // Test(Part1("#################\n#i.G..c...e..H.p#\n########.########\n#j.A..b...f..D.o#\n########@########\n#k.E..a...g..B.n#\n########.########\n#l.F..d...h..C.m#\n#################"), 136);
+            //Test(Part1("#################\n#i.G..c...e..H.p#\n########.########\n#j.A..b...f..D.o#\n########@########\n#k.E..a...g..B.n#\n########.########\n#l.F..d...h..C.m#\n#################"), 136);
 
             //console.WriteLine("- Pt1 - "+Part1(input));
             //console.WriteLine("- Pt2 - "+Part2(input));
