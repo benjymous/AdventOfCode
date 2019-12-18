@@ -7,8 +7,12 @@ namespace Advent.AStar
 {
     public interface IRoom
     {
-        bool IsWalkable();
         int Data();
+    }
+
+    public interface ICanWalk
+    {
+        bool IsWalkable(IRoom room);
     }
 
     public class RoomPathFinder
@@ -24,6 +28,8 @@ namespace Advent.AStar
 
         Dictionary<ManhattanVector2, ManhattanVector2> nodeLinks = new Dictionary<ManhattanVector2, ManhattanVector2>();
 
+        ICanWalk canWalk = null;
+
         private void Reset()
         {
             closedSet.Clear();
@@ -31,11 +37,14 @@ namespace Advent.AStar
             gScore.Clear();
             fScore.Clear();
             nodeLinks.Clear();
+            canWalk = null;
         }
 
-        public List<ManhattanVector2> FindPath(Dictionary<string,IRoom> graph, ManhattanVector2 start, ManhattanVector2 goal)
+        public List<ManhattanVector2> FindPath(Dictionary<string,IRoom> graph, ManhattanVector2 start, ManhattanVector2 goal, ICanWalk callback)
         {
             Reset();
+
+            canWalk = callback;
             
             openSet[start] = true;
             gScore[start] = 0;
@@ -99,7 +108,7 @@ namespace Advent.AStar
             return score;
         }
 
-        public static IEnumerable<ManhattanVector2> Neighbors(Dictionary<string,IRoom> graph, ManhattanVector2 center)
+        IEnumerable<ManhattanVector2> Neighbors(Dictionary<string,IRoom> graph, ManhattanVector2 center)
         {
 
             // ManhattanVector2 pt = new ManhattanVector2(center.X - 1, center.Y - 1);
@@ -138,10 +147,16 @@ namespace Advent.AStar
             //     yield return pt;
         }
 
-        public static bool IsValidNeighbor(Dictionary<string,IRoom> matrix, ManhattanVector2 pt)
+        bool IsValidNeighbor(Dictionary<string,IRoom> matrix, ManhattanVector2 pt)
         {
             var key = pt.ToString();
-            return matrix.ContainsKey(key) && matrix[key].IsWalkable();
+            IRoom room;
+            if (matrix.TryGetValue(key, out room))
+            {
+                return canWalk.IsWalkable(room);
+            }
+
+            return false;
         
             // int x = pt.X;
             // int y = pt.Y;

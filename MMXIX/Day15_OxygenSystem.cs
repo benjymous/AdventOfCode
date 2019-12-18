@@ -17,16 +17,22 @@ namespace Advent.MMXIX
                 data = d;
             }
             public int data;
-            public bool IsWalkable()
-            {
-                return data != 1;
-            }
 
             public int Data()
             {
                 return data;
             }
         }
+
+        public class Callback : AStar.ICanWalk
+        {
+            public bool IsWalkable(IRoom room)
+            {
+                return room.Data() != 1;
+            }
+        }
+
+        static Callback callback = new Callback();
 
         public class RepairDrone : NPSA.ICPUInterrupt
         {
@@ -263,7 +269,7 @@ namespace Advent.MMXIX
             RoomPathFinder finder = new RoomPathFinder();
             public IEnumerable<ManhattanVector2> FindPath(ManhattanVector2 start, ManhattanVector2 end)
             {          
-                return finder.FindPath(map, start, end);
+                return finder.FindPath(map, start, end, callback);
             }
           
         }

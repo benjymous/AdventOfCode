@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Advent.AStar;
 
 namespace Advent.MMXIX
 {
@@ -17,30 +18,35 @@ namespace Advent.MMXIX
             }
             public char data;
 
-            public bool IsWalkable()
-            {
-                return data == '.' || (data >='a' && data <='z');
-            }
-
             public int Data()
             {
                 return data;
             }
         }
-        
-        static Dictionary<string, AStar.IRoom> CloneMap(Dictionary<string, AStar.IRoom> map, char remove)
-        {
-            var newMap = new Dictionary<string, AStar.IRoom>();
 
-            foreach (var kvp in map)
+        public class Callback : AStar.ICanWalk
+        {
+            public HashSet<char> HeldKeys {get;set;}
+            public bool IsWalkable(IRoom room)
             {
-                var node = kvp.Value as Node;
-                char c = node.data;
-                if (remove == c) c = '.';
-                newMap[kvp.Key] = new Node(c);
+                int data = room.Data();
+                return data == '.' || (data >='a' && data <='z') || HeldKeys.Contains((Char)data);
             }
-            return newMap;
         }
+
+        // static Dictionary<string, AStar.IRoom> CloneMap(Dictionary<string, AStar.IRoom> map, char remove)
+        // {
+        //     var newMap = new Dictionary<string, AStar.IRoom>();
+
+        //     foreach (var kvp in map)
+        //     {
+        //         var node = kvp.Value as Node;
+        //         char c = node.data;
+        //         if (remove == c) c = '.';
+        //         newMap[kvp.Key] = new Node(c);
+        //     }
+        //     return newMap;
+        // }
 
         static Dictionary<char, ManhattanVector2> CloneKeys(Dictionary<char, ManhattanVector2> keys, char remove)
         {
@@ -57,7 +63,7 @@ namespace Advent.MMXIX
 
         static int min = int.MaxValue;
 
-        public static int Solve(Dictionary<string, AStar.IRoom> map, ManhattanVector2 position, Dictionary<char, ManhattanVector2> availableKeys, Dictionary<char, ManhattanVector2> doors, int totalScore)
+        public static int Solve(Dictionary<string, AStar.IRoom> map, ManhattanVector2 position, Dictionary<char, ManhattanVector2> availableKeys, HashSet<char> allKeys, int totalScore)
         {
             if (availableKeys.Count == 0)
             {
@@ -68,22 +74,30 @@ namespace Advent.MMXIX
             }
             var finder = new AStar.RoomPathFinder();
 
-            //int shortestPath = int.MaxValue;
+            
 
-            var paths = availableKeys.Select(k => Tuple.Create(k, finder.FindPath(map, position, k.Value))).Where(v => v.Item2.Count() > 0).OrderBy(v => v.Item2.Count());
+            var callback = new Callback();
+            callback.HeldKeys = new HashSet<char>(allKeys.Where(k => !availableKeys.ContainsKey(k)).Select(k => char.ToUpper(k)));
 
-            var shortestPath = paths.AsParallel().Select(tup => tup.Item2.Count + Solve(CloneMap(map, char.ToUpper(tup.Item1.Key)), tup.Item1.Value, CloneKeys(availableKeys, tup.Item1.Key), doors, totalScore+tup.Item2.Count)).Min();
+            var paths = availableKeys.Select(k => Tuple.Create(k, finder.FindPath(map, position, k.Value, callback))).Where(v => v.Item2.Count() > 0 && (v.Item2.Count() + totalScore) < min).OrderBy(v => v.Item2.Count());
 
-            // foreach (var tup in paths)
-            // {           
-            //     var path = tup.Item2;
-            //     var key = tup.Item1;
-            //     if (path.Count < shortestPath)
-            //     {
-            //         int newVal = path.Count + Solve(CloneMap(map, char.ToUpper(key.Key)), key.Value, CloneKeys(availableKeys, key.Key), doors, totalScore+path.Count);
-            //         shortestPath = Math.Min(shortestPath, newVal);
-            //     }
-            // }
+            if (!paths.Any()) return 9999;
+
+#if BLAH
+            var shortestPath = paths.AsParallel().Select(tup => tup.Item2.Count + Solve(map, tup.Item1.Value, CloneKeys(availableKeys, tup.Item1.Key), allKeys, totalScore+tup.Item2.Count)).Min();
+#else
+            int shortestPath = int.MaxValue;
+            foreach (var tup in paths)
+            {           
+                var path = tup.Item2;
+                var key = tup.Item1;
+                if (path.Count < shortestPath)
+                {
+                    int newVal = path.Count + Solve(map, key.Value, CloneKeys(availableKeys, key.Key), allKeys, totalScore+path.Count);
+                    shortestPath = Math.Min(shortestPath, newVal);
+                }
+            }
+#endif
 
             // foreach (var key in availableKeys.OrderBy(k => k.Key))
             // {
@@ -104,11 +118,13 @@ namespace Advent.MMXIX
         public static int Part1(string input)
         {
             min = int.MaxValue;
+
             var lines = Util.Split(input);
 
             var map = new Dictionary<string, AStar.IRoom>();
             ManhattanVector2 position = new ManhattanVector2(0,0);
             var availableKeys = new Dictionary<char, ManhattanVector2>();
+            var allKeys = new HashSet<char>();
             var doors = new Dictionary<char, ManhattanVector2>();
 
             for (var y=0; y<lines.Length; ++y)
@@ -125,6 +141,7 @@ namespace Advent.MMXIX
                     if (c>='a' && c <='z')
                     {
                         availableKeys[c] = new ManhattanVector2(x,y);
+                        allKeys.Add(c);
                     }
                     if (c>='A' && c <='Z')
                     {
@@ -134,7 +151,7 @@ namespace Advent.MMXIX
                 }
             }
 
-            return Solve(map, position, availableKeys, doors, 0);
+            return Solve(map, position, availableKeys, allKeys, 0);
         }
 
         public static int Part2(string input)
