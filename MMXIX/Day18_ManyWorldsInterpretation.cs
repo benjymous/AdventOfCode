@@ -45,7 +45,7 @@ namespace Advent.MMXIX
 
         public static int PlayerCode(int i)
         {
-            return (1 << 27+i);
+            return (1 << 26+i);
         }
 
         // set bit in given value for key added
@@ -59,7 +59,8 @@ namespace Advent.MMXIX
         {
             for(int k=1; k<=v; k<<=1)
             {
-                if ((v & k)>0) yield return k;
+                if ((v & k)>0) 
+                    yield return k;
             }
         }
 
@@ -139,20 +140,23 @@ namespace Advent.MMXIX
 
             public void AlterForPart2()
             {
-                var centrePoint = startPositions.First();
-                startPositions.Clear();
+                if (startPositions.Count == 1)
+                {
+                    var centrePoint = startPositions.First();
+                    startPositions.Clear();
 
-                startPositions.Add(new ManhattanVector2(centrePoint.X-1, centrePoint.Y-1));
-                startPositions.Add(new ManhattanVector2(centrePoint.X+1, centrePoint.Y-1));
-                startPositions.Add(new ManhattanVector2(centrePoint.X-1, centrePoint.Y+1));
-                startPositions.Add(new ManhattanVector2(centrePoint.X+1, centrePoint.Y+1));
+                    startPositions.Add(new ManhattanVector2(centrePoint.X-1, centrePoint.Y-1));
+                    startPositions.Add(new ManhattanVector2(centrePoint.X+1, centrePoint.Y-1));
+                    startPositions.Add(new ManhattanVector2(centrePoint.X-1, centrePoint.Y+1));
+                    startPositions.Add(new ManhattanVector2(centrePoint.X+1, centrePoint.Y+1));
 
-                map[$"{centrePoint.X},{centrePoint.Y}"] = new Node('#');
+                    map[$"{centrePoint.X},{centrePoint.Y}"] = new Node('#');
 
-                map[$"{centrePoint.X-1},{centrePoint.Y}"] = new Node('#');
-                map[$"{centrePoint.X+1},{centrePoint.Y}"] = new Node('#');
-                map[$"{centrePoint.X},{centrePoint.Y-1}"] = new Node('#');
-                map[$"{centrePoint.X},{centrePoint.Y+1}"] = new Node('#');
+                    map[$"{centrePoint.X-1},{centrePoint.Y}"] = new Node('#');
+                    map[$"{centrePoint.X+1},{centrePoint.Y}"] = new Node('#');
+                    map[$"{centrePoint.X},{centrePoint.Y-1}"] = new Node('#');
+                    map[$"{centrePoint.X},{centrePoint.Y+1}"] = new Node('#');
+                }
             }
 
             public void DrawMap()
@@ -226,8 +230,6 @@ namespace Advent.MMXIX
                 // take an item from the job queue
                 var item = queue.Dequeue();
 
-                Console.WriteLine($"{Convert.ToString(item.Item1, 2)} {Convert.ToString(item.Item2,2)} {item.Item3}");
-
                 var positions = item.Item1;
                 var heldKeys = item.Item2;
                 int distance = item.Item3;
@@ -236,16 +238,15 @@ namespace Advent.MMXIX
 
                 if (tryKeys>0)
                 {
+                    var z = Bits(positions);
                     foreach (var position in Bits(positions))
                     {
                         // check keys not held
                         foreach (var key in Bits(tryKeys))
                         {
-                            Console.WriteLine($"trying player {Convert.ToString(position, 2)} key {Convert.ToString(key, 2)}");
                             var path = map.paths[position|key];
                             if (path.IsWalkable(heldKeys))
                             {
-                                Console.WriteLine("Can walk");
                                 // path isn't blocked - state holds all necessary keys
 
                                 // create new state, at location of next key
@@ -264,12 +265,7 @@ namespace Advent.MMXIX
                                     // cache the new shorter distance, and add the new state to our job queue
                                     cache[cacheId] = next.Item3;
                                     queue.Enqueue(next);
-                                    Console.WriteLine("Added item");
                                 }
-                            }
-                            else
-                            {
-                                Console.WriteLine("can't walk");
                             }
                         }
                     }
@@ -303,11 +299,8 @@ namespace Advent.MMXIX
 
         public void Run(string input, System.IO.TextWriter console)
         {
-
-            Util.Test(Part2("#######\n#a.#Cd#\n##...##\n##.@.##\n##...##\n#cB#Ab#\n#######"), 8);  
-
-            //console.WriteLine("- Pt1 - "+Part1(input));
-            //console.WriteLine("- Pt2 - "+Part2(input));
+            console.WriteLine("- Pt1 - "+Part1(input));
+            console.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

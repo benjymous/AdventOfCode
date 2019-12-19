@@ -21,6 +21,15 @@ namespace Advent.MMXIX.Test
             Assert.AreEqual(expected, Day18.Part1(input));
         }
 
+        [TestCategory("Test")]
+        [DataRow("#######\n#a.#Cd#\n##...##\n##.@.##\n##...##\n#cB#Ab#\n#######", 8)]
+        [DataRow("###############\n#d.ABC.#.....a#\n######@#@######\n###############\n######@#@######\n#b.....#.....c#\n###############",24)]
+        [DataTestMethod]
+        public void PathTest2(string input, int expected)
+        {
+            Assert.AreEqual(expected, Day18.Part2(input));
+        }
+
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Vault_Part1_Regression()
@@ -32,7 +41,7 @@ namespace Advent.MMXIX.Test
         [DataTestMethod]
         public void Vault_Part2_Regression()
         {
-            Assert.AreEqual(0, Day18.Part2(input));
+            Assert.AreEqual(1910, Day18.Part2(input));
         }
     }
 }
