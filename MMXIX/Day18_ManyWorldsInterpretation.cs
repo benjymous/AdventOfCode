@@ -115,56 +115,56 @@ namespace Advent.MMXIX
         //             return shortestPath;
         //         }
 
-        public static int Solve(ManhattanVector2 position, Dictionary<string, AStar.IRoom> map, Dictionary<string, IEnumerable<ManhattanVector2>> paths, HashSet<char> allKeys, Dictionary<char, ManhattanVector2> availableKeys, int totalScore)
-        {
+        // public static int Solve2(ManhattanVector2 position, Dictionary<string, AStar.IRoom> map, Dictionary<string, IEnumerable<ManhattanVector2>> paths, HashSet<char> allKeys, Dictionary<char, ManhattanVector2> availableKeys, int totalScore)
+        // {
 
-            if (availableKeys.Count == 0)
-            {
-                min = Math.Min(totalScore, min);
-                Console.WriteLine($"[{min}] - Path found at {totalScore}");
-                return 0;
-            }
+        //     if (availableKeys.Count == 0)
+        //     {
+        //         min = Math.Min(totalScore, min);
+        //         Console.WriteLine($"[{min}] - Path found at {totalScore}");
+        //         return 0;
+        //     }
 
-            int shortestPath = int.MaxValue;
-            var heldKeys = new HashSet<char>(allKeys.Where(k => !availableKeys.ContainsKey(k)).Select(k => char.ToUpper(k)));
+        //     int shortestPath = int.MaxValue;
+        //     var heldKeys = new HashSet<char>(allKeys.Where(k => !availableKeys.ContainsKey(k)).Select(k => char.ToUpper(k)));
 
-            List<Tuple<char, ManhattanVector2, IEnumerable<ManhattanVector2>>> possiblePaths = new List<Tuple<char, ManhattanVector2, IEnumerable<ManhattanVector2>>>();
+        //     List<Tuple<char, ManhattanVector2, IEnumerable<ManhattanVector2>>> possiblePaths = new List<Tuple<char, ManhattanVector2, IEnumerable<ManhattanVector2>>>();
 
-            foreach (var key in availableKeys.OrderBy(k => k.Key))
-            {
+        //     foreach (var key in availableKeys.OrderBy(k => k.Key))
+        //     {
 
-                var pathKey = $"{position}:{key.Value}";
+        //         var pathKey = $"{position}:{key.Value}";
 
-                IEnumerable<ManhattanVector2> path;
+        //         IEnumerable<ManhattanVector2> path;
 
-                if (!paths.TryGetValue(pathKey, out path))
-                {
-                    pathKey = $"{key.Value}:{position}";
+        //         if (!paths.TryGetValue(pathKey, out path))
+        //         {
+        //             pathKey = $"{key.Value}:{position}";
 
-                    if (!paths.TryGetValue(pathKey, out path))
-                    {
-                        throw new Exception("Couldn't find path!");
-                    }
-                }
+        //             if (!paths.TryGetValue(pathKey, out path))
+        //             {
+        //                 throw new Exception("Couldn't find path!");
+        //             }
+        //         }
 
-                if (IsWalkable(map, path, heldKeys))
-                {
-                    //var newVal = path.Count() + Solve(key.Value, map, paths, allKeys, CloneKeys(availableKeys, key.Key), totalScore+path.Count());
-                    //shortestPath = Math.Min(shortestPath, newVal);
+        //         if (IsWalkable(map, path, heldKeys))
+        //         {
+        //             //var newVal = path.Count() + Solve(key.Value, map, paths, allKeys, CloneKeys(availableKeys, key.Key), totalScore+path.Count());
+        //             //shortestPath = Math.Min(shortestPath, newVal);
 
-                    possiblePaths.Add(Tuple.Create(key.Key, key.Value, path));
-                }
-            }
+        //             possiblePaths.Add(Tuple.Create(key.Key, key.Value, path));
+        //         }
+        //     }
 
-            if (totalScore == 0)
-            { 
-                return possiblePaths.OrderBy(t => t.Item3.Count()).AsParallel().Select(t => Solve(t.Item2, map, paths, allKeys, CloneKeys(availableKeys, t.Item1), totalScore + t.Item3.Count())).Min();
-            }
-            else
-            {
-                return possiblePaths.OrderBy(t => t.Item3.Count()).Select(t => Solve(t.Item2, map, paths, allKeys, CloneKeys(availableKeys, t.Item1), totalScore + t.Item3.Count())).Min();
-            }
-        }
+        //     if (totalScore == 0)
+        //     { 
+        //         return possiblePaths.OrderBy(t => t.Item3.Count()).AsParallel().Select(t => Solve(t.Item2, map, paths, allKeys, CloneKeys(availableKeys, t.Item1), totalScore + t.Item3.Count())).Min();
+        //     }
+        //     else
+        //     {
+        //         return possiblePaths.OrderBy(t => t.Item3.Count()).Select(t => Solve(t.Item2, map, paths, allKeys, CloneKeys(availableKeys, t.Item1), totalScore + t.Item3.Count())).Min();
+        //     }
+        // }
 
         public static bool IsWalkable(Dictionary<string, AStar.IRoom> map, IEnumerable<ManhattanVector2> path, HashSet<char> heldKeys)
         {
@@ -180,7 +180,7 @@ namespace Advent.MMXIX
                 {
                     if (c>='A' && c <='Z')
                     {
-                        if (!heldKeys.Contains(c))
+                        if (!heldKeys.Contains(char.ToLower(c)))
                         {
                             return false;
                         }
@@ -197,7 +197,7 @@ namespace Advent.MMXIX
             var lines = Util.Split(input);
 
             var map = new Dictionary<string, AStar.IRoom>();
-            ManhattanVector2 position = new ManhattanVector2(0,0);
+            ManhattanVector2 startPosition = new ManhattanVector2(0,0);
             var availableKeys = new Dictionary<char, ManhattanVector2>();
             var allKeys = new HashSet<char>();
             var doors = new Dictionary<char, ManhattanVector2>();
@@ -210,7 +210,7 @@ namespace Advent.MMXIX
                     var c = line[x];
                     if (c=='@')
                     {
-                        position = new ManhattanVector2(x,y);
+                        startPosition = new ManhattanVector2(x,y);
                         c= '.';
                     }
                     if (c>='a' && c <='z')
@@ -234,22 +234,69 @@ namespace Advent.MMXIX
 
             foreach (var k1 in allKeys)
             {
-                paths[$"{position}:{availableKeys[k1]}"] = finder.FindPath(map, position, availableKeys[k1], callback);
+                paths[$"{startPosition}:{availableKeys[k1]}"] = finder.FindPath(map, startPosition, availableKeys[k1], callback);
 
                 foreach (var k2 in allKeys.Where(k => k > k1))
                 {
-                    paths[$"{availableKeys[k1]}:{availableKeys[k2]}"] = finder.FindPath(map, availableKeys[k1], availableKeys[k2], callback);
+                    var path = finder.FindPath(map, availableKeys[k1], availableKeys[k2], callback);
+                    paths[$"{availableKeys[k1]}:{availableKeys[k2]}"] = path;
+                    paths[$"{availableKeys[k2]}:{availableKeys[k1]}"] = path;
                 }
             }
 
-            // foreach (var p in paths)
-            // {
-            //     Console.WriteLine($"{p.Key} - {IsWalkable(map, p.Value, new HashSet<char>())}");
-            // };
+            var queue = new Queue<Tuple<ManhattanVector2, HashSet<char>, int>>();
 
-            return Solve(position, map, paths, allKeys, availableKeys, 0);
+            queue.Enqueue(Tuple.Create(startPosition, new HashSet<char>(), 0));
 
-            //return Solve(map, position, availableKeys, allKeys, 0);
+            var cache = new Dictionary<string,int>();
+
+            int currentBest = int.MaxValue;
+
+            while (queue.Any())
+            {
+                var item = queue.Dequeue();
+
+                var position = item.Item1;
+                var heldKeys = item.Item2;
+                int distance = item.Item3;
+
+                var tryKeys = availableKeys.Where(k => !heldKeys.Contains(k.Key));
+
+                if (tryKeys.Any())
+                {
+                    foreach (var key in tryKeys)
+                    {
+                        var path = paths[$"{position}:{key.Value}"];
+                        if (IsWalkable(map, path, heldKeys))
+                        {
+                            var newKeys = new HashSet<char>(heldKeys);
+                            newKeys.Add(key.Key);
+                            var next = Tuple.Create(key.Value, newKeys, distance+path.Count());
+                            var nextKey = $"{next.Item1}:{next.Item2.OrderBy(c=>c).AsString()}";
+                            if (!cache.TryGetValue(nextKey, out int cachedBest))
+                            {
+                                cachedBest = int.MaxValue;
+                            }
+                            if (cachedBest > next.Item3)
+                            {
+                                cache[nextKey] = next.Item3;
+                                queue.Enqueue(next);
+                            }
+                            // else
+                            // {
+                            //     Console.WriteLine($"Skipped {nextKey}");
+                            // }
+                        }
+                    }
+                }
+                else
+                {
+                    currentBest = Math.Min(currentBest, distance);
+                    //Console.WriteLine($"Current best: {currentBest}");
+                }
+            }
+
+            return currentBest;
         }
 
         public static int Part2(string input)
