@@ -96,6 +96,15 @@ namespace Advent
                 }
             }
         }
+
+        public static void Test(int actual, int expected)
+        {
+            if (expected != actual)
+            {
+                throw new Exception($"Expected {expected} but got {actual}" );
+            }
+            Console.WriteLine(actual);
+        }
     }
 
     public interface IVec
