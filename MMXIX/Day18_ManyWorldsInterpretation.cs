@@ -199,15 +199,22 @@ namespace Advent.MMXIX
                     foreach (var player in startPositions)
                     {
                         int playerId = PlayerCode(startPositions.IndexOf(player));
-                        paths[playerId|k1] = new RoomPath(map, finder.FindPath(map, player, keyPositions[k1], callback));
+                        var path = finder.FindPath(map, player, keyPositions[k1], callback);
+                        if (path.Any())
+                        {
+                            paths[playerId|k1] = new RoomPath(map, path);
+                        }
                     }
                     foreach (var k2 in Bits(AllKeys))  
                     {
                         if (k2 > k1)
                         {
                             // path from k1 to k2
-                            var path = new RoomPath(map,  finder.FindPath(map, keyPositions[k1], keyPositions[k2], callback));
-                            paths[k1|k2] = path; // since we're using bitwise, we just store two bits for k1|k2 it doesn't matter which way around
+                            var path = finder.FindPath(map, keyPositions[k1], keyPositions[k2], callback);
+                            if (path.Any())
+                            {
+                                paths[k1|k2] = new RoomPath(map,  path); // since we're using bitwise, we just store two bits for k1|k2 it doesn't matter which way around
+                            }
                         }
                     }
                 }
@@ -244,27 +251,29 @@ namespace Advent.MMXIX
                         // check keys not held
                         foreach (var key in Bits(tryKeys))
                         {
-                            var path = map.paths[position|key];
-                            if (path.IsWalkable(heldKeys))
+                            if (map.paths.TryGetValue(position|key, out var path))
                             {
-                                // path isn't blocked - state holds all necessary keys
-
-                                // create new state, at location of next key
-                                var next = Tuple.Create((positions-position)+(key), heldKeys|key, distance+path.Count);
-
-                                // check if we've visited this position with this set of keys before
-                                var cacheId  = (Int64)next.Item1 << 32 | (Int64)(uint)next.Item2;
-                                if (!cache.TryGetValue(cacheId, out int cachedBest))
+                                if (path.IsWalkable(heldKeys))
                                 {
-                                    cachedBest = int.MaxValue;
-                                }
+                                    // path isn't blocked - state holds all necessary keys
 
-                                // we've not visited, or our new path is shorter
-                                if (cachedBest > next.Item3)
-                                {
-                                    // cache the new shorter distance, and add the new state to our job queue
-                                    cache[cacheId] = next.Item3;
-                                    queue.Enqueue(next);
+                                    // create new state, at location of next key
+                                    var next = Tuple.Create((positions-position)+(key), heldKeys|key, distance+path.Count);
+
+                                    // check if we've visited this position with this set of keys before
+                                    var cacheId  = (Int64)next.Item1 << 32 | (Int64)(uint)next.Item2;
+                                    if (!cache.TryGetValue(cacheId, out int cachedBest))
+                                    {
+                                        cachedBest = int.MaxValue;
+                                    }
+
+                                    // we've not visited, or our new path is shorter
+                                    if (cachedBest > next.Item3)
+                                    {
+                                        // cache the new shorter distance, and add the new state to our job queue
+                                        cache[cacheId] = next.Item3;
+                                        queue.Enqueue(next);
+                                    }
                                 }
                             }
                         }
