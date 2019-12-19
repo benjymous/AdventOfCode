@@ -58,6 +58,7 @@ namespace Advent.MMXIX.NPSA
         }
 
         AutoList<Int64> Memory {get;set;}
+        IEnumerable<long> initialState;
         Int64 InstructionPointer {get;set;} = 0;
         Int64 RelBase {get;set;} = 0;
         public Queue<Int64> Input {get;set;} = new Queue<Int64>();
@@ -67,7 +68,17 @@ namespace Advent.MMXIX.NPSA
 
         public IntCPU (string program)
         {
-            Memory = new AutoList<Int64>(Util.Parse64(program));
+            initialState = Util.Parse64(program);
+            Reset();         
+        }
+
+        public void Reset()
+        {
+            Memory = new AutoList<Int64>(initialState);
+            InstructionPointer = 0;
+            RelBase = 0;
+            Input.Clear();
+            Output.Clear();
         }
 
         Int64 GetValue(Instr i, int paramIdx)
@@ -109,32 +120,30 @@ namespace Advent.MMXIX.NPSA
 
         class Instr
         {
-            //public string raw = "00000";
             public Opcode code = 0;
             public ParamMode[] mode = {0,0,0}; 
             public int size = 0;
 
             public override string ToString()
             {
-                //return $"{raw} - {code} - {string.Join(",",mode)}";
                 return $"{code} - {string.Join(",",mode)}";
             }
         }
 
         static int[] mods = {1000, 10000, 100000};
 
-        static int GetOpcode(int raw, int index)
+        static ParamMode GetOpcode(Int64 raw, int index)
         {
             int mod = mods[index];
             int div = mod/10;
-            return (int)(raw % mod)/div;
+            return (ParamMode)((raw % mod)/div);
         }
 
         Dictionary<Int64, Instr> instructionCache = new Dictionary<long, Instr>();
 
         Instr DecodeInstruction()
         {
-            int raw = (int)Memory[InstructionPointer];
+            var raw = Memory[InstructionPointer];
             Instr instr;
             if (instructionCache.TryGetValue(raw, out instr))
             {
@@ -153,7 +162,7 @@ namespace Advent.MMXIX.NPSA
 
                 for (var i=0; i<instr.size-1; ++i)
                 {
-                    instr.mode[i] = (ParamMode)(GetOpcode(raw, i));
+                    instr.mode[i] = GetOpcode(raw, i);
                 }
                 instructionCache[raw] = instr;
                 return instr;
