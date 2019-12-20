@@ -9,6 +9,7 @@ namespace Advent.AStar
     {
         bool IsValidNeighbour(ManhattanVector2 location);
         IEnumerable<ManhattanVector2> GetNeighbours(ManhattanVector2 location);
+        int Heuristic(ManhattanVector2 location1, ManhattanVector2 location2);
     }
 
     public interface IIsWalkable<TCellDataType>
@@ -26,10 +27,17 @@ namespace Advent.AStar
 
         public GridMap(IIsWalkable<TCellDataType> walkable)
         {
-            Walkable = walkable;
+            if (walkable != null)
+            {
+                Walkable = walkable;
+            }
+            else
+            {        
+                Walkable = this as IIsWalkable<TCellDataType>;
+            }
         }
 
-        public IEnumerable<ManhattanVector2> GetNeighbours(ManhattanVector2 center)
+        public virtual IEnumerable<ManhattanVector2> GetNeighbours(ManhattanVector2 center)
         {
             ManhattanVector2 pt;
             pt = new ManhattanVector2(center.X - 1, center.Y);
@@ -64,6 +72,11 @@ namespace Advent.AStar
         {       
             return data.Where(kvp =>  EqualityComparer<TCellDataType>.Default.Equals(kvp.Value, val) ).First().Key;
         }
+
+        public int Heuristic(ManhattanVector2 location1, ManhattanVector2 location2)
+        {
+            return location1.Distance(location2);
+        }
     }
 
     public class RoomPathFinder
@@ -94,7 +107,7 @@ namespace Advent.AStar
             
             openSet[start] = true;
             gScore[start] = 0;
-            fScore[start] = Heuristic(start, goal);
+            fScore[start] = graph.Heuristic(start, goal);
 
             while (openSet.Count > 0)
             {
@@ -123,20 +136,13 @@ namespace Advent.AStar
                     //record it
                     nodeLinks[neighbor] = current;
                     gScore[neighbor] = projectedG;
-                    fScore[neighbor] = projectedG + Heuristic(neighbor, goal);
+                    fScore[neighbor] = projectedG + graph.Heuristic(neighbor, goal);
 
                 }
             }
 
 
             return new List<ManhattanVector2>();
-        }
-
-        private int Heuristic(ManhattanVector2 start, ManhattanVector2 goal)
-        {
-            var dx = goal.X - start.X;
-            var dy = goal.Y - start.Y;
-            return Math.Abs(dx) + Math.Abs(dy);
         }
 
         private int getGScore(ManhattanVector2 pt)
