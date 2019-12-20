@@ -168,17 +168,16 @@ namespace Advent.MMXIX
         {
             var system = new System(input);
 
-            var seen = new HashSet<string>();
-
             int step = 0;
+
+            var starthash = system.GetStateString(component);
 
             while (true)
             {
-                var hash = system.GetStateString(component).GetMD5String();
-                if (seen.Contains(hash)) return step;
-                seen.Add(hash);
                 system.Step(component);
                 step++;
+                var hash = system.GetStateString(component);
+                if (hash == starthash) return step;
             }
         }
 
