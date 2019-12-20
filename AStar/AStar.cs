@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Advent.AStar
 {
-    public interface IMap
+    public interface IMap<TCoordinateType>
     {
-        bool IsValidNeighbour(ManhattanVector2 location);
-        IEnumerable<ManhattanVector2> GetNeighbours(ManhattanVector2 location);
-        int Heuristic(ManhattanVector2 location1, ManhattanVector2 location2);
+        bool IsValidNeighbour(TCoordinateType location);
+        IEnumerable<TCoordinateType> GetNeighbours(TCoordinateType location);
+        int Heuristic(TCoordinateType location1, TCoordinateType location2);
     }
 
     public interface IIsWalkable<TCellDataType>
@@ -17,7 +17,7 @@ namespace Advent.AStar
         bool IsWalkable(TCellDataType cell);
     }
 
-    public class GridMap<TCellDataType> : IMap
+    public class GridMap<TCellDataType> : IMap<ManhattanVector2>
     {
         public Dictionary<string, TCellDataType> data = new Dictionary<string, TCellDataType>();
 
@@ -79,18 +79,18 @@ namespace Advent.AStar
         }
     }
 
-    public class RoomPathFinder
+    public class RoomPathFinder<TCoordinateType> where TCoordinateType : class
     {
 
-        Dictionary<ManhattanVector2, bool> closedSet = new Dictionary<ManhattanVector2, bool>();
-        Dictionary<ManhattanVector2, bool> openSet = new Dictionary<ManhattanVector2, bool>();
+        Dictionary<TCoordinateType, bool> closedSet = new Dictionary<TCoordinateType, bool>();
+        Dictionary<TCoordinateType, bool> openSet = new Dictionary<TCoordinateType, bool>();
 
         //cost of start to this key node
-        Dictionary<ManhattanVector2, int> gScore = new Dictionary<ManhattanVector2, int>();
+        Dictionary<TCoordinateType, int> gScore = new Dictionary<TCoordinateType, int>();
         //cost of start to goal, passing through key node
-        Dictionary<ManhattanVector2, int> fScore = new Dictionary<ManhattanVector2, int>();
+        Dictionary<TCoordinateType, int> fScore = new Dictionary<TCoordinateType, int>();
 
-        Dictionary<ManhattanVector2, ManhattanVector2> nodeLinks = new Dictionary<ManhattanVector2, ManhattanVector2>();
+        Dictionary<TCoordinateType, TCoordinateType> nodeLinks = new Dictionary<TCoordinateType, TCoordinateType>();
 
         private void Reset()
         {
@@ -101,7 +101,7 @@ namespace Advent.AStar
             nodeLinks.Clear();
         }
 
-        public List<ManhattanVector2> FindPath(IMap graph, ManhattanVector2 start, ManhattanVector2 goal)
+        public List<TCoordinateType> FindPath(IMap<TCoordinateType> graph, TCoordinateType start, TCoordinateType goal)
         {
             Reset();
             
@@ -142,10 +142,10 @@ namespace Advent.AStar
             }
 
 
-            return new List<ManhattanVector2>();
+            return new List<TCoordinateType>();
         }
 
-        private int getGScore(ManhattanVector2 pt)
+        private int getGScore(TCoordinateType pt)
         {
             int score = int.MaxValue;
             gScore.TryGetValue(pt, out score);
@@ -153,16 +153,16 @@ namespace Advent.AStar
         }
 
 
-        private int getFScore(ManhattanVector2 pt)
+        private int getFScore(TCoordinateType pt)
         {
             int score = int.MaxValue;
             fScore.TryGetValue(pt, out score);
             return score;
         }
 
-        private List<ManhattanVector2> Reconstruct(ManhattanVector2 current)
+        private List<TCoordinateType> Reconstruct(TCoordinateType current)
         {
-            List<ManhattanVector2> path = new List<ManhattanVector2>();
+            List<TCoordinateType> path = new List<TCoordinateType>();
             while (nodeLinks.ContainsKey(current))
             {
                 path.Add(current);
@@ -173,10 +173,10 @@ namespace Advent.AStar
             return path;
         }
 
-        private ManhattanVector2 nextBest()
+        private TCoordinateType nextBest()
         {
             int best = int.MaxValue;
-            ManhattanVector2 bestPt = null;
+            TCoordinateType bestPt = null;
             foreach (var node in openSet.Keys)
             {
                 var score = getFScore(node);

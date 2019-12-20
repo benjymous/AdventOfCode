@@ -253,7 +253,7 @@ namespace Advent.MMXIX
                 }
             }
 
-            RoomPathFinder finder = new RoomPathFinder();
+            RoomPathFinder<ManhattanVector2> finder = new RoomPathFinder<ManhattanVector2>();
             public IEnumerable<ManhattanVector2> FindPath(ManhattanVector2 start, ManhattanVector2 end)
             {          
                 return finder.FindPath(map, start, end);
