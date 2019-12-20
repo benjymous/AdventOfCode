@@ -172,7 +172,7 @@ namespace Advent.MMXIX
                     AllPlayers |= PlayerCode(startPositions.IndexOf(player));
                 }
          
-                var finder = new AStar.RoomPathFinder();
+                var finder = new AStar.RoomPathFinder<ManhattanVector2>();
                 foreach (var k1 in Bits(AllKeys))  
                 {
                     // path from start to k1's location
