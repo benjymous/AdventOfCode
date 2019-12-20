@@ -30,7 +30,7 @@ namespace Advent.MMXIX.Test
         [DataTestMethod]
         public void Donut_Part2_Regression()
         {
-            Assert.AreEqual(0, Day20.Part2(input));
+            Assert.AreEqual(6214, Day20.Part2(input));
         }
     }
 }
