@@ -96,8 +96,8 @@ namespace Advent.MMXIX
                 {
                     if (group.Count()==2)
                     {
-                        Portals[group.First().Key.ToString()] = Tuple.Create(group.Last().Key, innerPortals[group.First().Key]);
-                        Portals[group.Last().Key.ToString()] = Tuple.Create(group.First().Key, innerPortals[group.Last().Key]);
+                        Portals[GetKey(group.First().Key)] = Tuple.Create(group.Last().Key, innerPortals[group.First().Key]);
+                        Portals[GetKey(group.Last().Key)] = Tuple.Create(group.First().Key, innerPortals[group.Last().Key]);
                     }
                 }
                 
@@ -108,23 +108,47 @@ namespace Advent.MMXIX
 
             public bool Part2 {get;set;} = false;
 
-            public Dictionary<string, Tuple<ManhattanVector2, bool>> Portals {get;private set;} = new Dictionary<string, Tuple<ManhattanVector2, bool>>();
+            public Dictionary<int, Tuple<ManhattanVector2, bool>> Portals {get;private set;} = new Dictionary<int, Tuple<ManhattanVector2, bool>>();
 
             public ManhattanVector2 Start {get;private set;}
             public ManhattanVector2 End {get;private set;}
 
             public int Width {get;private set;}
             public int Height {get;private set;}
+
+            public int MaxDepth {get;set;} = 25;
         
 
-            public override IEnumerable<ManhattanVector2> GetNeighbours(ManhattanVector2 center)
+            public override IEnumerable<ManhattanVector2> GetNeighbours(ManhattanVector2 centre)
             {
-                if (Portals.TryGetValue(center.ToString(), out var other))
+                if (Portals.TryGetValue(GetKey(centre), out var other))
                 {
                     yield return other.Item1;
                 }
 
-                foreach (var v in base.GetNeighbours(center)) yield return v;
+                foreach (var v in base.GetNeighbours(centre)) yield return v;
+            }
+
+            public IEnumerable<Tuple<ManhattanVector2, int>> GetNeighbours2(ManhattanVector2 centre, int level)
+            {
+                if (Portals.TryGetValue(GetKey(centre), out var other))
+                {
+                    int newLevel = level;
+                    if (other.Item2)
+                    {
+                        newLevel++;
+                    }
+                    else
+                    {
+                        newLevel--;
+                    }
+                    if (newLevel >=0 && newLevel <= MaxDepth)
+                    {
+                        yield return Tuple.Create(other.Item1, newLevel);
+                    }
+                }
+
+                foreach (var v in base.GetNeighbours(centre)) yield return Tuple.Create(v, level);
             }
 
             public bool IsWalkable(char cell)
@@ -132,7 +156,10 @@ namespace Advent.MMXIX
                 return cell == '.';
             }
         }
- 
+
+        public static int GetKey(ManhattanVector2 pos) => (pos.X << 8)+(pos.Y);
+        public static int GetKey(ManhattanVector2 pos, int level) => (pos.X << 16)+(pos.Y << 8)+level;
+
         public static int Part1(string input)
         {
             var map = new PortalMap(input);
@@ -140,9 +167,9 @@ namespace Advent.MMXIX
             var jobqueue = new Queue<Tuple<ManhattanVector2,int>>();
             jobqueue.Enqueue(Tuple.Create(map.End,0));
             int best = int.MaxValue;
-            var cache = new Dictionary<string, int>();
+            var cache = new Dictionary<int, int>();
 
-            cache[map.End.ToString()] = 0;
+            cache[GetKey(map.End)] = 0;
 
             while (jobqueue.Any())
             {
@@ -159,7 +186,7 @@ namespace Advent.MMXIX
                 {
                     foreach (var neighbour in map.GetNeighbours(entry.Item1))
                     {
-                        var key = neighbour.ToString();                        
+                        var key = GetKey(neighbour);                        
 
                         int newDistance = entry.Item2+1;
                         if (cache.TryGetValue(key, out var dist))
@@ -209,56 +236,65 @@ namespace Advent.MMXIX
             return best;
         }
 
+
+
+  
+
         public static int Part2(string input)
         {
-            // var map = new PortalMap(input);
+            var map = new PortalMap(input);
 
-            // var jobqueue = new Queue<Tuple<ManhattanVector2,int,int>>();
-            // jobqueue.Enqueue(Tuple.Create(map.End,0,0));
-            // int best = int.MaxValue;
-            // var cache = new Dictionary<string, int>();
+            var jobqueue = new Queue<Tuple<ManhattanVector2,int,int>>();
+            jobqueue.Enqueue(Tuple.Create(map.End,0,0));
+            int best = int.MaxValue;
+            var cache = new Dictionary<int, int>();
 
-            // cache[map.End.ToString()+",0"] = 0;
+            cache[GetKey(map.End, 0)] = 0;
 
-            // while (jobqueue.Any())
-            // {
-            //     var entry = jobqueue.Dequeue();
+            int deepest = 0;
 
-            //     if (entry.Item1 == map.Start && entry.Item2 == 0)
-            //     {
-            //         if (entry.Item2 < best)
-            //         {
-            //             best = entry.Item2;
-            //         }
-            //     }
-            //     else
-            //     {
-            //         var neighbours = map.GetNeighbours(entry.Item1);
-            //         foreach (var neighbour in neighbours)
-            //         {
-            //             var key = $"{neighbour},{newLevel}";
+            while (jobqueue.Any())
+            {
+                var entry = jobqueue.Dequeue();
+                deepest = Math.Max(deepest, entry.Item2);
 
-            //             int newDistance = entry.Item2+1;
-            //             if (cache.TryGetValue(key, out var dist))
-            //             {
-            //                 if (dist < newDistance)
-            //                 {
-            //                     continue;
-            //                 }
-            //             }
-            //             cache[key] = newDistance;
-            //             jobqueue.Enqueue(Tuple.Create(neighbour, newLevel, newDistance));
-            //         }
-            //     }
-            // }
+                //Console.WriteLine($"{entry.Item1}:{entry.Item2} - {entry.Item3}");
 
-            return 0;
+                if (entry.Item1 == map.Start && entry.Item2 == 0)
+                {
+                    if (entry.Item2 < best)
+                    {
+                        best = entry.Item3;
+                    }
+                }
+                else
+                {
+                    var neighbours = map.GetNeighbours2(entry.Item1, entry.Item2);
+                    foreach (var neighbour in neighbours)
+                    {
+                        var key = GetKey(neighbour.Item1, neighbour.Item2);
+
+                        int newDistance = entry.Item3+1;
+                        if (cache.TryGetValue(key, out var dist))
+                        {
+                            if (dist < newDistance)
+                            {
+                                continue;
+                            }
+                        }
+                        cache[key] = newDistance;
+                        jobqueue.Enqueue(Tuple.Create(neighbour.Item1, neighbour.Item2, newDistance));
+                    }
+                }
+            }
+
+            return best;
         }
 
         public void Run(string input, System.IO.TextWriter console)
         {       
             console.WriteLine("- Pt1 - "+Part1(input));
-            //console.WriteLine("- Pt2 - "+Part2(input));
+            console.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }
