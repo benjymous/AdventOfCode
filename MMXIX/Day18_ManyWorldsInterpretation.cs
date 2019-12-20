@@ -32,7 +32,7 @@ namespace Advent.MMXIX
         }
 
         // iterate over bits, returns sequence like 1,2,4,8 (only returning set bits in input)
-        public static IEnumerable<int> Bits(int v)
+        public static IEnumerable<int> BitSequence(int v)
         {
             for(int k=1; k<=v; k<<=1)
             {
@@ -45,7 +45,7 @@ namespace Advent.MMXIX
         {
             public RoomPath(Dictionary<string, char> map, IEnumerable<ManhattanVector2> path)
             {
-                List<char> seenDoors = new List<char>();
+                if (path.Count()==0) throw new Exception("empty path");
 
                 // find all the doors this path passes through
                 foreach (var pos in path)
@@ -57,15 +57,14 @@ namespace Advent.MMXIX
                         Doors = AddKey(Doors, c);
                     }                  
                 }
-
                 Count = path.Count();
             }
 
-            public bool IsWalkable(int heldKeys) => Count > 0 && ((Doors & heldKeys) == Doors);
-
-            public int Count {get;private set;}
+            public bool IsWalkable(int heldKeys) => ((Doors & heldKeys) == Doors);
 
             int Doors = 0;
+
+            public int Count {get;private set;}
         }
 
         public class MapData : AStar.GridMap<char>
@@ -87,8 +86,20 @@ namespace Advent.MMXIX
                 }
             }
 
-            public MapData(string input)
-                :base(new Walkable())
+            Dictionary<int, IEnumerable<int>> BitCache = new Dictionary<int, IEnumerable<int>>();
+            public IEnumerable<int> Bits(int input)
+            {
+                if (BitCache.TryGetValue(input, out var output))
+                {
+                    return output;
+                }
+
+                var seq = BitSequence(input).ToArray();
+                BitCache[input] = seq;
+                return seq;
+            }
+
+            public MapData(string input) : base(new Walkable())
             {
                 var lines = Util.Split(input);                
 
@@ -171,7 +182,7 @@ namespace Advent.MMXIX
                 {
                     AllPlayers |= PlayerCode(startPositions.IndexOf(player));
                 }
-         
+
                 var finder = new AStar.RoomPathFinder<ManhattanVector2>();
                 foreach (var k1 in Bits(AllKeys))  
                 {
@@ -200,6 +211,8 @@ namespace Advent.MMXIX
                 }
             }
         }
+
+        static Int64 GetKey(int players, int keys) => (Int64)players << 32 | (Int64)(uint)keys;
  
         public static int Solve(MapData map)
         {
@@ -209,6 +222,7 @@ namespace Advent.MMXIX
 
             queue.Enqueue(Tuple.Create(map.AllPlayers, 0, 0));
             var cache = new Dictionary<Int64,int>();
+            cache[GetKey(map.AllPlayers,0)]=0;
 
             int currentBest = int.MaxValue;
 
@@ -225,11 +239,10 @@ namespace Advent.MMXIX
 
                 if (tryKeys>0)
                 {
-                    var z = Bits(positions);
-                    foreach (var position in Bits(positions))
+                    foreach (var position in map.Bits(positions))
                     {
                         // check keys not held
-                        foreach (var key in Bits(tryKeys))
+                        foreach (var key in map.Bits(tryKeys))
                         {
                             if (map.paths.TryGetValue(position|key, out var path))
                             {
@@ -238,10 +251,10 @@ namespace Advent.MMXIX
                                     // path isn't blocked - state holds all necessary keys
 
                                     // create new state, at location of next key
-                                    var next = Tuple.Create((positions-position)+(key), heldKeys|key, distance+path.Count);
+                                    var next = Tuple.Create((positions-position)+(key), heldKeys+key, distance+path.Count);
 
                                     // check if we've visited this position with this set of keys before
-                                    var cacheId  = (Int64)next.Item1 << 32 | (Int64)(uint)next.Item2;
+                                    var cacheId = GetKey(next.Item1,next.Item2);
                                     if (!cache.TryGetValue(cacheId, out int cachedBest))
                                     {
                                         cachedBest = int.MaxValue;
@@ -275,16 +288,12 @@ namespace Advent.MMXIX
             return Solve(map);
         }
 
-
-
         public static int Part2(string input)
         {     
             var map = new MapData(input);
             map.AlterForPart2();
             return Solve(map);
         }
-
-
 
         public void Run(string input, System.IO.TextWriter console)
         {

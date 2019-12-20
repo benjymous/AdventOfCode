@@ -49,11 +49,11 @@ namespace Advent.MMXIX
 
         // Thanks to FirescuOvidiu
         // All 1s in second half, past leading zeroes
-        static List<int> ProcessSignal(List<int> sequence)
+        static IEnumerable<int> ProcessSignal(int[] sequence)
         {
 
-            List<int> newSequence = Enumerable.Repeat(0, sequence.Count).ToList();
-            int sizeSequence = sequence.Count;
+            var newSequence = Enumerable.Repeat(0, sequence.Length).ToArray();
+            int sizeSequence = sequence.Length;
             int sum = 0;
             int phase = 0;
 
@@ -74,9 +74,9 @@ namespace Advent.MMXIX
 
         public static string Part2(string input)
         {
-            var initial = string.Join("", Enumerable.Repeat(input.Trim(), 10000)).Select(c => (int)c).ToList();
+            var initial = string.Join("", Enumerable.Repeat(input.Trim(), 10000)).Select(c => (int)c);
 
-            var signal = ProcessSignal(initial);
+            var signal = ProcessSignal(initial.ToArray());
 
             int messageOffset = int.Parse(input.Substring(0, 7));
 
