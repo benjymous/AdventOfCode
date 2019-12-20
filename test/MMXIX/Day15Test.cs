@@ -5,6 +5,7 @@ namespace Advent.MMXIX.Test
 {
     [TestCategory("2019")]
     [TestCategory("IntCPU")]
+    [TestCategory("AStar")]
     [TestClass]
     public class Day15Test
     {

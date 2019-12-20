@@ -10,29 +10,6 @@ namespace Advent.MMXIX
     {
         public string Name { get { return "2019-18";} }
 
-        public class Node : AStar.IRoom
-        {
-            public Node(char c)
-            {
-                data = c;
-            }
-            public char data;
-
-            public int Data()
-            {
-                return data;
-            }
-        }
-
-        public class Callback : AStar.ICanWalk
-        {
-            public bool IsWalkable(IRoom room)
-            {
-                // we don't care about keys or doors, just the shortest possible path
-                return room.Data() != '#';
-            }
-        }
-
         // turn key char into bit
         // a (or A) = 000001
         // b        = 000010
@@ -66,15 +43,14 @@ namespace Advent.MMXIX
 
         public class RoomPath
         {
-            public RoomPath(Dictionary<string, AStar.IRoom> map, IEnumerable<ManhattanVector2> path)
+            public RoomPath(Dictionary<string, char> map, IEnumerable<ManhattanVector2> path)
             {
                 List<char> seenDoors = new List<char>();
 
                 // find all the doors this path passes through
                 foreach (var pos in path)
                 {
-                    var node = map.GetObjKey(pos);              
-                    var c = (node as Node).data;
+                    var c = map.GetObjKey(pos);              
 
                     if (c>='A' && c <='Z')
                     {
@@ -92,10 +68,8 @@ namespace Advent.MMXIX
             int Doors = 0;
         }
 
-        public class MapData
+        public class MapData : AStar.GridMap<char>
         {
-            Dictionary<string, AStar.IRoom> map = new Dictionary<string, AStar.IRoom>();
-
             List<ManhattanVector2> startPositions = new List<ManhattanVector2>();
 
             public int AllKeys {get; private set;} = 0;
@@ -105,7 +79,16 @@ namespace Advent.MMXIX
             Dictionary<int, ManhattanVector2> doors = new Dictionary<int, ManhattanVector2>();
             public Dictionary<int, RoomPath> paths {get; private set;} = new Dictionary<int, RoomPath>();
 
+            class Walkable : AStar.IIsWalkable<char>
+            {
+                public bool IsWalkable(char cell)
+                {
+                    return cell != '#';
+                }
+            }
+
             public MapData(string input)
+                :base(new Walkable())
             {
                 var lines = Util.Split(input);                
 
@@ -133,7 +116,7 @@ namespace Advent.MMXIX
                             // door
                             doors[KeyCode(c)] = new ManhattanVector2(x,y);
                         }
-                        map.PutStrKey($"{x},{y}", new Node(c));
+                        data.PutStrKey($"{x},{y}",c);
                     }
                 }
             }
@@ -150,12 +133,12 @@ namespace Advent.MMXIX
                     startPositions.Add(new ManhattanVector2(centrePoint.X-1, centrePoint.Y+1));
                     startPositions.Add(new ManhattanVector2(centrePoint.X+1, centrePoint.Y+1));
 
-                    map[$"{centrePoint.X},{centrePoint.Y}"] = new Node('#');
+                    data[$"{centrePoint.X},{centrePoint.Y}"] = '#';
 
-                    map[$"{centrePoint.X-1},{centrePoint.Y}"] = new Node('#');
-                    map[$"{centrePoint.X+1},{centrePoint.Y}"] = new Node('#');
-                    map[$"{centrePoint.X},{centrePoint.Y-1}"] = new Node('#');
-                    map[$"{centrePoint.X},{centrePoint.Y+1}"] = new Node('#');
+                    data[$"{centrePoint.X-1},{centrePoint.Y}"] = '#';
+                    data[$"{centrePoint.X+1},{centrePoint.Y}"] = '#';
+                    data[$"{centrePoint.X},{centrePoint.Y-1}"] = '#';
+                    data[$"{centrePoint.X},{centrePoint.Y+1}"] = '#';
                 }
             }
 
@@ -165,9 +148,7 @@ namespace Advent.MMXIX
                 {
                     for (var x=0; x<7; ++x)
                     {
-                        var n = map.GetStrKey($"{x},{y}") as Node;
-
-                        var c = n.data;
+                        var c = data.GetStrKey($"{x},{y}");
 
                         var pos = new ManhattanVector2(x,y);
 
@@ -192,17 +173,16 @@ namespace Advent.MMXIX
                 }
          
                 var finder = new AStar.RoomPathFinder();
-                var callback = new Callback();
                 foreach (var k1 in Bits(AllKeys))  
                 {
                     // path from start to k1's location
                     foreach (var player in startPositions)
                     {
                         int playerId = PlayerCode(startPositions.IndexOf(player));
-                        var path = finder.FindPath(map, player, keyPositions[k1], callback);
+                        var path = finder.FindPath(this, player, keyPositions[k1]);
                         if (path.Any())
                         {
-                            paths[playerId|k1] = new RoomPath(map, path);
+                            paths[playerId|k1] = new RoomPath(data, path);
                         }
                     }
                     foreach (var k2 in Bits(AllKeys))  
@@ -210,10 +190,10 @@ namespace Advent.MMXIX
                         if (k2 > k1)
                         {
                             // path from k1 to k2
-                            var path = finder.FindPath(map, keyPositions[k1], keyPositions[k2], callback);
+                            var path = finder.FindPath(this, keyPositions[k1], keyPositions[k2]);
                             if (path.Any())
                             {
-                                paths[k1|k2] = new RoomPath(map,  path); // since we're using bitwise, we just store two bits for k1|k2 it doesn't matter which way around
+                                paths[k1|k2] = new RoomPath(data,  path); // since we're using bitwise, we just store two bits for k1|k2 it doesn't matter which way around
                             }
                         }
                     }

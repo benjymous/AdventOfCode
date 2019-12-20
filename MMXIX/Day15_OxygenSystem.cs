@@ -10,30 +10,6 @@ namespace Advent.MMXIX
     {
         public string Name { get { return "2019-15";} }
 
-        public class Node : AStar.IRoom
-        {
-            public Node(int d)
-            {
-                data = d;
-            }
-            public int data;
-
-            public int Data()
-            {
-                return data;
-            }
-        }
-
-        public class Callback : AStar.ICanWalk
-        {
-            public bool IsWalkable(IRoom room)
-            {
-                return room.Data() != 1;
-            }
-        }
-
-        static Callback callback = new Callback();
-
         public class RepairDrone : NPSA.ICPUInterrupt
         {
             NPSA.IntCPU cpu;
@@ -48,11 +24,23 @@ namespace Advent.MMXIX
             public int minx = 0, miny = 0;
             public int maxx = 0, maxy = 0;
 
-            public Dictionary<string,AStar.IRoom> map = new Dictionary<string,AStar.IRoom>();
+            public const int OPEN = 0;
+            public const int WALL = 1;
+            public const int OXYGEN = 2;
+
+            class Walkable : AStar.IIsWalkable<int>
+            {
+                public bool IsWalkable(int cell)
+                {
+                    return cell != WALL;
+                }
+            }
+
+            public AStar.GridMap<int> map = new AStar.GridMap<int>(new Walkable());
 
             public string FindCell(int num)
             {
-                return map.Where(kvp => kvp.Value.Data() == num).First().Key;
+                return map.FindCell(num);
             }
 
             Stack<Tuple<ManhattanVector2,ManhattanVector2>> unknowns = new Stack<Tuple<ManhattanVector2,ManhattanVector2>>();
@@ -79,7 +67,7 @@ namespace Advent.MMXIX
 
             public void AddIfUnknown(ManhattanVector2 current, ManhattanVector2 neighbour)
             {
-                if (!map.ContainsKey(neighbour.ToString()))
+                if (!map.data.ContainsKey(neighbour.ToString()))
                 {
                     unknowns.Push(Tuple.Create(current, neighbour));
                 }
@@ -103,27 +91,27 @@ namespace Advent.MMXIX
                     {
                         if (mode == Mode.Interactive) Console.WriteLine("Wall!");
 
-                        map.PutObjKey(tryState, new Node(1));
+                        map.data.PutObjKey(tryState, WALL);
                     }
                     break;
                     case 1: 
                     {
                         if (mode == Mode.Interactive) Console.WriteLine("Ok");
-                        map.PutObjKey(tryState, new Node(0));
+                        map.data.PutObjKey(tryState, OPEN);
                         position = tryState;
                     }
                     break;
                     case 2: 
                     {
                         if (mode == Mode.Interactive) Console.WriteLine("Found Oxygen system"); 
-                        map.PutObjKey(tryState, new Node(2));
+                        map.data.PutObjKey(tryState, OXYGEN);
                         position = tryState;
                     }
                     break;
                     default: 
                     {
                         if (mode == Mode.Interactive) Console.WriteLine("??? {val}"); 
-                        map.PutObjKey(tryState, new Node((int)val));
+                        map.data.PutObjKey(tryState, (int)val);
                         position = tryState;
                     }
                     break;
@@ -138,10 +126,9 @@ namespace Advent.MMXIX
             public int GetMapData(int x, int y)
             {
                 var key = $"{x},{y}";
-                if (map.ContainsKey(key))
+                if (map.data.ContainsKey(key))
                 {                  
-                    var node = map.GetStrKey(key) as Node;
-                    return node.data;
+                    return map.data.GetStrKey(key);
                 }
                 else return 0;
             }
@@ -258,7 +245,7 @@ namespace Advent.MMXIX
                     int code = 0;
 
                     if (tryState.Y < position.Y) code = 1; // up
-                    else if (tryState.Y > position.Y)  code = 2; // down
+                    else if (tryState.Y > position.Y) code = 2; // down
                     else if (tryState.X < position.X) code = 3; // left
                     else if (tryState.X > position.X) code = 4; // right
 
@@ -269,7 +256,7 @@ namespace Advent.MMXIX
             RoomPathFinder finder = new RoomPathFinder();
             public IEnumerable<ManhattanVector2> FindPath(ManhattanVector2 start, ManhattanVector2 end)
             {          
-                return finder.FindPath(map, start, end, callback);
+                return finder.FindPath(map, start, end);
             }
           
         }
@@ -285,7 +272,7 @@ namespace Advent.MMXIX
 
             console.WriteLine($"Map explored in {droid.Steps} steps");
 
-            var oxygenSystemPosition = droid.FindCell(2);
+            var oxygenSystemPosition = droid.FindCell(RepairDrone.OXYGEN);
 
             var path = droid.FindPath(new ManhattanVector2(0,0), new ManhattanVector2(oxygenSystemPosition));
 

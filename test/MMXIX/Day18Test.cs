@@ -4,6 +4,7 @@ using System.Diagnostics;
 namespace Advent.MMXIX.Test
 {
     [TestCategory("2019")]
+    [TestCategory("AStar")]
     [TestClass]
     public class Day18Test
     {
