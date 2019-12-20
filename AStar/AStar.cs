@@ -5,14 +5,65 @@ using System.Text;
 
 namespace Advent.AStar
 {
-    public interface IRoom
+    public interface IMap
     {
-        int Data();
+        bool IsValidNeighbour(ManhattanVector2 location);
+        IEnumerable<ManhattanVector2> GetNeighbours(ManhattanVector2 location);
     }
 
-    public interface ICanWalk
+    public interface IIsWalkable<TCellDataType>
     {
-        bool IsWalkable(IRoom room);
+        bool IsWalkable(TCellDataType cell);
+    }
+
+    public class GridMap<TCellDataType> : IMap
+    {
+        public Dictionary<string, TCellDataType> data = new Dictionary<string, TCellDataType>();
+
+        public TCellDataType WallType;
+
+        IIsWalkable<TCellDataType> Walkable;
+
+        public GridMap(IIsWalkable<TCellDataType> walkable)
+        {
+            Walkable = walkable;
+        }
+
+        public IEnumerable<ManhattanVector2> GetNeighbours(ManhattanVector2 center)
+        {
+            ManhattanVector2 pt;
+            pt = new ManhattanVector2(center.X - 1, center.Y);
+            if (IsValidNeighbour(pt))
+                yield return pt;
+
+            pt = new ManhattanVector2(center.X + 1, center.Y);
+            if (IsValidNeighbour(pt))
+                yield return pt;
+
+            pt = new ManhattanVector2(center.X, center.Y + 1);
+            if (IsValidNeighbour(pt))
+                yield return pt;
+
+            pt = new ManhattanVector2(center.X, center.Y - 1);
+            if (IsValidNeighbour(pt))
+                yield return pt;
+
+        }
+
+        public bool IsValidNeighbour(ManhattanVector2 pt)
+        {
+            if (data.TryGetValue(pt.ToString(), out var room))
+            {
+                return Walkable.IsWalkable(room);
+            }
+
+            return false;
+        }
+
+        public string FindCell(TCellDataType val)
+        {       
+            return data.Where(kvp =>  EqualityComparer<TCellDataType>.Default.Equals(kvp.Value, val) ).First().Key;
+        }
     }
 
     public class RoomPathFinder
@@ -28,8 +79,6 @@ namespace Advent.AStar
 
         Dictionary<ManhattanVector2, ManhattanVector2> nodeLinks = new Dictionary<ManhattanVector2, ManhattanVector2>();
 
-        ICanWalk canWalk = null;
-
         private void Reset()
         {
             closedSet.Clear();
@@ -37,14 +86,11 @@ namespace Advent.AStar
             gScore.Clear();
             fScore.Clear();
             nodeLinks.Clear();
-            canWalk = null;
         }
 
-        public List<ManhattanVector2> FindPath(Dictionary<string,IRoom> graph, ManhattanVector2 start, ManhattanVector2 goal, ICanWalk callback)
+        public List<ManhattanVector2> FindPath(IMap graph, ManhattanVector2 start, ManhattanVector2 goal)
         {
             Reset();
-
-            canWalk = callback;
             
             openSet[start] = true;
             gScore[start] = 0;
@@ -62,7 +108,7 @@ namespace Advent.AStar
                 openSet.Remove(current);
                 closedSet[current] = true;
 
-                foreach (var neighbor in Neighbors(graph, current))
+                foreach (var neighbor in graph.GetNeighbours(current))
                 {
                     if (closedSet.ContainsKey(neighbor))
                         continue;
@@ -106,68 +152,6 @@ namespace Advent.AStar
             int score = int.MaxValue;
             fScore.TryGetValue(pt, out score);
             return score;
-        }
-
-        IEnumerable<ManhattanVector2> Neighbors(Dictionary<string,IRoom> graph, ManhattanVector2 center)
-        {
-
-            // ManhattanVector2 pt = new ManhattanVector2(center.X - 1, center.Y - 1);
-            // if (IsValidNeighbor(graph, pt))
-            //     yield return pt;
-
-            var pt = new ManhattanVector2(center.X, center.Y - 1);
-            if (IsValidNeighbor(graph, pt))
-                yield return pt;
-
-            // pt = new ManhattanVector2(center.X + 1, center.Y - 1);
-            // if (IsValidNeighbor(graph, pt))
-            //     yield return pt;
-
-            //middle row
-            pt = new ManhattanVector2(center.X - 1, center.Y);
-            if (IsValidNeighbor(graph, pt))
-                yield return pt;
-
-            pt = new ManhattanVector2(center.X + 1, center.Y);
-            if (IsValidNeighbor(graph, pt))
-                yield return pt;
-
-
-            // //bottom row
-            // pt = new ManhattanVector2(center.X - 1, center.Y + 1);
-            // if (IsValidNeighbor(graph, pt))
-            //     yield return pt;
-
-            pt = new ManhattanVector2(center.X, center.Y + 1);
-            if (IsValidNeighbor(graph, pt))
-                yield return pt;
-
-            // pt = new ManhattanVector2(center.X + 1, center.Y + 1);
-            // if (IsValidNeighbor(graph, pt))
-            //     yield return pt;
-        }
-
-        bool IsValidNeighbor(Dictionary<string,IRoom> matrix, ManhattanVector2 pt)
-        {
-            var key = pt.ToString();
-            IRoom room;
-            if (matrix.TryGetValue(key, out room))
-            {
-                return canWalk.IsWalkable(room);
-            }
-
-            return false;
-        
-            // int x = pt.X;
-            // int y = pt.Y;
-            // if (x < 0 || x >= matrix.Length)
-            //     return false;
-
-            // if (y < 0 || y >= matrix[x].Length)
-            //     return false;
-
-            // return matrix[x][y];
-
         }
 
         private List<ManhattanVector2> Reconstruct(ManhattanVector2 current)
