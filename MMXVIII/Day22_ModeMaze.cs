@@ -37,8 +37,7 @@ namespace Advent.MMXVIII
                 {
                     Map[key] = TypeChar(pos);
                 }   
-                return Map[key];
-                
+                return Map[key];               
             }
 
             public int GeologicIndex(ManhattanVector2 pos)
@@ -141,65 +140,24 @@ namespace Advent.MMXVIII
             Torch,
             ClimbingGear, 
         }
-
-        // public class CaveStar : Astar.Astar<State>
-        // {
-        //     public CaveStar(Cave cave)
-        //     {
-        //         this.cave = cave;
-        //     }
-        //     Cave cave;
-            
-        //     Dictionary<string, Astar.Node<State>> nodeCache = new Dictionary<string, Astar.Node<State>>();
-
-        //     public override List<Astar.Node<State>> GetAdjacentNodes(Astar.Node<State> node)
-        //     {
-        //         var currentState = node.Position;
-        //         var moves = currentState.TryMoves(cave);
-        //         var nodes = new List<Astar.Node<State>>();
-
-        //         foreach (var state in moves)
-        //         {
-        //             if (state == null) continue;
-
-        //             var key = state.ToString();
-        //             if (nodeCache.ContainsKey(key)) 
-        //             {
-        //                 nodes.Add(nodeCache[key]);
-        //             }
-        //             else
-        //             {
-        //                 var newNode = new Astar.Node<State>(state, true) 
-        //                 {
-        //                     Cost = state.cost,
-        //                     DistanceToTarget = state.Distance(cave.target)
-        //                 };
-        //                 nodeCache[key] = newNode;
-        //                 nodes.Add(newNode);
-        //             }
-        //         }
-
-        //         return nodes;
-        //     }
-        // }
         
         public class State : IVec
         {
             public ManhattanVector2 position = new ManhattanVector2(0,0);
-           
-            public int cost = 0;
 
             public Tool tool = Tool.Torch;
 
-            public bool Win(Cave cave)
+            public int cost = 0;
+
+            public Int64 GetKey() => (position.X << 40)+(position.Y << 20)+(int)tool;
+
+            public State(ManhattanVector2 pos, Tool t)
             {
-                return DistanceToTarget(cave)==0 && tool==Tool.Torch;
+                position = pos;
+                tool = t;
             }
 
-            public int DistanceToTarget(Cave cave)
-            {
-                return position.Distance(cave.target);
-            }
+            public State() {}
 
             bool ToolValid(char cell, Tool tool)
             {
@@ -222,7 +180,10 @@ namespace Advent.MMXVIII
 
             bool CanMove(Cave cave, int dx, int dy)
             {
+                if ((position.X+dx > 100) || (position.Y+dy > 1000)) return false; // prevent the search space going crazy
+
                 var newPos = position + new ManhattanVector2(dx, dy);
+
                 var t = cave.MapAt(newPos);
                 return ToolValid(t, tool);
             }
@@ -233,48 +194,46 @@ namespace Advent.MMXVIII
                 return ToolValid(t, newTool);
             }
 
-            State SetTool(Cave cave, Tool newTool)
+            bool TrySetTool(Cave cave, Tool newTool, out State newState)
             {
                 if (newTool != tool && CanSwitch(cave, tool))
                 {
-                    var newState = this.MemberwiseClone() as State;
-                    newState.tool = newTool;
+                    newState = new State(position, newTool);
                     newState.cost = 7;
 
-                    return newState;
+                    return true;
                 }
 
-                return null;
+                newState = null;
+                return false;
             }
 
-            State Move(Cave cave, int dx, int dy)
+            bool TryMove(Cave cave, int dx, int dy, out State newState)
             {
                 if (CanMove(cave, dx, dy))
                 {
-                    var newState = this.MemberwiseClone() as State;
-                    newState.position.Offset(dx, dy);
+                    newState = new State(new ManhattanVector2(position.X+dx, position.Y+dy), tool);
                     newState.cost = 1;
 
-                    return newState;
+                    return true;
                 }
 
-                return null;
+                newState = null;
+                return false;
             }
 
-            public List<State> TryMoves(Cave cave)
+            public IEnumerable<State> GetNeighbours(Cave cave)
             {
-                List<State> newStates = new List<State>();
+                State newstate;
 
-                newStates.Add(SetTool(cave, Tool.None));
-                newStates.Add(SetTool(cave, Tool.Torch));
-                newStates.Add(SetTool(cave, Tool.ClimbingGear));
+                if (TrySetTool(cave, Tool.None, out newstate)) yield return newstate;
+                if (TrySetTool(cave, Tool.Torch, out newstate)) yield return newstate;
+                if (TrySetTool(cave, Tool.ClimbingGear, out newstate)) yield return newstate;
 
-                newStates.Add(Move(cave, 1, 0));
-                newStates.Add(Move(cave, 0, 1));
-                newStates.Add(Move(cave, -1, 0));
-                newStates.Add(Move(cave, 0, -1));
-
-                return newStates.Where(x => x!=null).ToList();
+                if (TryMove(cave, 1, 0, out newstate)) yield return newstate;
+                if (TryMove(cave, 0, 1, out newstate)) yield return newstate;
+                if (TryMove(cave, -1, 0, out newstate)) yield return newstate;
+                if (TryMove(cave, 0, -1, out newstate)) yield return newstate;
             }
 
             public int Distance(IVec other)
@@ -344,15 +303,54 @@ namespace Advent.MMXVIII
             return Part1(int.Parse(bits[3]), int.Parse(bits[4]), int.Parse(bits[1]));
         }
 
-
         public static int Part2(int tx, int ty, int depth)
         {
-            // var cave = new Cave(tx, ty, depth);
+            var cave = new Cave(tx, ty, depth);
 
-            // var search = new CaveStar(cave);
-            // var path = search.FindPath(new State(), cave.target);
+            var startPos = new State(new ManhattanVector2(0,0), Tool.None);
+            var endPos = new State(new ManhattanVector2(tx, ty), Tool.Torch);
 
-            return 0;
+
+            var jobqueue = new Queue<Tuple<State,int>>();
+            jobqueue.Enqueue(Tuple.Create(startPos,0));
+            int best = int.MaxValue;
+            var cache = new Dictionary<Int64, int>();
+
+            cache[startPos.GetKey()] = 0;
+
+            while (jobqueue.Any())
+            {
+                var entry = jobqueue.Dequeue();
+
+                if (entry.Item1 == endPos)
+                {
+                    if (entry.Item2 < best)
+                    {
+                        best = entry.Item2;
+                    }
+                }
+                else
+                {
+                    var neighbours = entry.Item1.GetNeighbours(cave);
+                    foreach (var neighbour in neighbours)
+                    {
+                        var key = neighbour.GetKey();                        
+
+                        int newDistance = entry.Item2+neighbour.cost;
+                        if (cache.TryGetValue(key, out var dist))
+                        {
+                            if (dist < newDistance)
+                            {
+                                continue;
+                            }
+                        }
+                        cache[key] = newDistance;
+                        jobqueue.Enqueue(Tuple.Create(neighbour, newDistance));
+                    }
+                }
+            }
+
+            return best;
         }
 
         public static int Part2(string input)
@@ -363,10 +361,10 @@ namespace Advent.MMXVIII
 
         public void Run(string input, System.IO.TextWriter console)
         {
-            console.WriteLine("- Pt1 - "+Part1(input));
+            //console.WriteLine("- Pt1 - "+Part1(input));
             //console.WriteLine("- Pt2 - "+Part2(input));
 
-            //Console.WriteLine(Part2(10,10,510));
+            Console.WriteLine(Part2(10,10,510));
         }
     }
 }
