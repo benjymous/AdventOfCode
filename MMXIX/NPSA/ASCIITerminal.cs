@@ -4,7 +4,71 @@ using System.Linq;
 
 namespace Advent.MMXIX.NPSA
 {
-    public class ASCIITerminal
+    
+    abstract class ASCIITerminal : NPSA.ICPUInterrupt
+    {
+        protected NPSA.IntCPU cpu;
+
+        protected NPSA.ASCIIBuffer buffer = new NPSA.ASCIIBuffer();
+
+        protected Int64 finalOutput;
+
+        public bool Interactive {get;set;} = false;
+
+        public ASCIITerminal(string program)
+        {
+            cpu = new NPSA.IntCPU(program);
+            cpu.Interrupt = this;
+        }
+
+        public void SetDisplay(bool on)
+        {
+            buffer.DisplayLive = on;
+        }
+
+        public void HasPutOutput()
+        {
+            Int64 v = cpu.Output.Dequeue();
+
+            if (v <= 255)
+            {
+                buffer.Write((char)v);
+            }
+            else
+            {
+                finalOutput = v;
+            }
+        }
+
+        public abstract IEnumerable<string> AutomaticInput();
+
+        public void WillReadInput()
+        {
+            if (Interactive)
+            {
+                Console.Write("?> ");
+                var input = Console.ReadLine();
+                foreach (var c in input.ToArray())
+                {
+                    cpu.Input.Enqueue(c);
+                }
+                cpu.Input.Enqueue('\n');
+            }
+            else
+            {
+                foreach (var line in AutomaticInput())
+                {
+                    foreach (var c in line)
+                    {
+                        cpu.Input.Enqueue(c);
+                    }
+                    cpu.Input.Enqueue('\n');
+                }
+            }
+        }
+    }
+
+    public class ASCIIBuffer
     {
         Dictionary<string, char> screenBuffer = new Dictionary<string, char>();
 
@@ -14,9 +78,8 @@ namespace Advent.MMXIX.NPSA
 
         public bool DisplayLive {get;set;} = false;            
 
-        public ASCIITerminal()
+        public ASCIIBuffer()
         {
-
         }
 
         public void Write(char c)

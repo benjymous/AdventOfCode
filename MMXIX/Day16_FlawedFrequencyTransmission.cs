@@ -51,13 +51,12 @@ namespace Advent.MMXIX
         // All 1s in second half, past leading zeroes
         static IEnumerable<int> ProcessSignal(int[] sequence)
         {
-
             var newSequence = Enumerable.Repeat(0, sequence.Length).ToArray();
             int sizeSequence = sequence.Length;
             int sum = 0;
             int phase = 0;
 
-            while(phase<100)
+            while (phase<100)
             {
                 sum = 0;
                 for (int position = sizeSequence - 1; position >= sizeSequence / 2; position--)

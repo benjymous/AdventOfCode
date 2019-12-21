@@ -38,7 +38,7 @@ namespace Advent
             }
             else
             {
-                Parallel.ForEach(puzzles, (puzzle) =>
+                Parallel.ForEach(puzzles, new ParallelOptions(){MaxDegreeOfParallelism=1}, (puzzle) =>
                 {
                     TextBuffer buffer = new TextBuffer();
                     timings[puzzle.Name] = puzzle.TimeRun(buffer);
