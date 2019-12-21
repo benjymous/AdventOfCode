@@ -7,22 +7,22 @@ namespace Advent.MMXIX.Test
     [TestCategory("IntCPU")]
     [TestCategory("ASCIITerminal")]
     [TestClass]
-    public class Day17Test
+    public class Day21Test
     {
-        string input = Util.GetInput<Day17>();
+        string input = Util.GetInput<Day21>();
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Hoovamatic_Part1_Regression()
+        public void Springbot_Part1_Regression()
         {
-            Assert.AreEqual(5056, Day17.Part1(input));
+            Assert.AreEqual(19359969, Day21.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Hoovamatic_Part2_Regression()
+        public void Springbot_Part2_Regression()
         {
-            Assert.AreEqual(942367, Day17.Part2(input));
+            Assert.AreEqual(1140082748, Day21.Part2(input));
         }
     }
 }

@@ -6,17 +6,12 @@ using System.Text.RegularExpressions;
 
 namespace Advent.MMXIX
 {
-    class Hoovamatic : NPSA.ICPUInterrupt
+    class Hoovamatic : NPSA.ASCIITerminal
     {
-        NPSA.IntCPU cpu;
-        NPSA.ASCIITerminal terminal = new NPSA.ASCIITerminal();
+        public Int64 DustCollected => finalOutput;
 
-        public Int64 DustCollected {get;set;} = 0;
-
-        public Hoovamatic(string input)
+        public Hoovamatic(string input) : base(input)
         {
-            cpu = new NPSA.IntCPU(input);
-            cpu.Interrupt = this;
         }
 
         public void Activate()
@@ -24,28 +19,19 @@ namespace Advent.MMXIX
             cpu.Poke(0, 2);
         }
 
-        public void SetDisplay(bool on)
-        {
-            terminal.DisplayLive = on;
-        }
-
-        public int Run()
-        {
-            cpu.Run();
-            return 0;
-        }
+        public void Run() => cpu.Run();
 
         public IEnumerable<ManhattanVector2> FindIntersections()
         {
-            for (int y=1; y<terminal.Max.Y; ++y)
+            for (int y=1; y<buffer.Max.Y; ++y)
             {
-                for (int x=1; x<terminal.Max.X; ++x)
+                for (int x=1; x<buffer.Max.X; ++x)
                 {
-                    if ((terminal.GetAt(x,y)=='#') &&
-                        (terminal.GetAt(x-1,y)=='#') &&
-                        (terminal.GetAt(x+1,y)=='#') &&
-                        (terminal.GetAt(x,y-1)=='#') &&
-                        (terminal.GetAt(x,y+1)=='#'))
+                    if ((buffer.GetAt(x,y)=='#') &&
+                        (buffer.GetAt(x-1,y)=='#') &&
+                        (buffer.GetAt(x+1,y)=='#') &&
+                        (buffer.GetAt(x,y-1)=='#') &&
+                        (buffer.GetAt(x,y+1)=='#'))
                     {
                         yield return new ManhattanVector2(x,y);
                     }
@@ -55,21 +41,7 @@ namespace Advent.MMXIX
 
 
 
-        public void HasPutOutput()
-        {
-            Int64 v = cpu.Output.Dequeue();
-
-            if (v <= 255)
-            {
-                terminal.Write((char)v);
-            }
-            else
-            {
-                DustCollected += v;
-                //Console.WriteLine($"Collected {DustCollected} dust");
-            }
-        }
-
+      
 
         // ......................a#####b......................
         // ......................#.....#......................
@@ -248,19 +220,19 @@ namespace Advent.MMXIX
             return null;
         }
 
-        IEnumerable<Int64> Compile(string program)
+        IEnumerable<string> Compile(string program)
         {
             var shrunk = program.Replace(" ","");
 
             var lines = shrunk.Split('\n');
 
-            return shrunk.Select(c => (Int64) c);
+            return lines;
         }
 
         string BuildPath()
         {
-            var position = terminal.FindCharacter('^');
-            if (terminal.GetAt(position.X, position.Y-1)!='#')
+            var position = buffer.FindCharacter('^');
+            if (buffer.GetAt(position.X, position.Y-1)!='#')
             {
                 
             }
@@ -268,24 +240,17 @@ namespace Advent.MMXIX
             return "";
         }
 
-        public void WillReadInput()
-        {        
+        public override IEnumerable<string> AutomaticInput()
+        {
             var prog = BuildPath();
 
             Console.WriteLine($"--{prog}--");
 
             var optimised = Optimise(programUnoptimised);
 
-            //var optimised = "C,C,A,B,C,B,C,A,B,A\nR,12,L,6,R,6,R,8,R,6\nL,8,R,8,R,6,R,12\nR,12,L,8,R,6";
+            string videoFeedFlag = buffer.DisplayLive ? "\ny\n" : "\nn\n";
 
-            string videoFeedFlag = terminal.DisplayLive ? "\ny\n" : "\nn\n";
-
-            var compiled = Compile(optimised + videoFeedFlag);
-            
-            foreach(var i in compiled)
-            {
-                cpu.Input.Enqueue(i);
-            }
+            return Compile(optimised + videoFeedFlag);
         }
     }
 
