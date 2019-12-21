@@ -24,6 +24,7 @@ namespace Advent.MMXVIII
             {
                 target = new State() {position = new ManhattanVector2(targetX, targetY), tool = Tool.Torch };
                 depth = caveDepth;
+                distanceLimit = (int)((targetX + targetY)*1.25);
             }
 
             Dictionary<string,int> GeoCache = new Dictionary<string, int>();
@@ -132,6 +133,8 @@ namespace Advent.MMXVIII
 
             public State target;
             int depth;
+
+            public int distanceLimit;
         }
         
         public enum Tool
@@ -180,9 +183,15 @@ namespace Advent.MMXVIII
 
             bool CanMove(Cave cave, int dx, int dy)
             {
-                if ((position.X+dx > 100) || (position.Y+dy > 1000)) return false; // prevent the search space going crazy
+                if ((position.X+dx > cave.target.position.X+20) || (position.Y+dy > cave.target.position.Y+20)) return false; // prevent the search space going crazy
 
                 var newPos = position + new ManhattanVector2(dx, dy);
+
+                // if (newPos.Distance(ManhattanVector2.Zero) > cave.distanceLimit && 
+                //     newPos.Distance(cave.target) > cave.distanceLimit)
+                //     {
+                //         return false;
+                //     }
 
                 var t = cave.MapAt(newPos);
                 return ToolValid(t, tool);
@@ -226,14 +235,14 @@ namespace Advent.MMXVIII
             {
                 State newstate;
 
-                if (TrySetTool(cave, Tool.None, out newstate)) yield return newstate;
-                if (TrySetTool(cave, Tool.Torch, out newstate)) yield return newstate;
-                if (TrySetTool(cave, Tool.ClimbingGear, out newstate)) yield return newstate;
-
                 if (TryMove(cave, 1, 0, out newstate)) yield return newstate;
                 if (TryMove(cave, 0, 1, out newstate)) yield return newstate;
                 if (TryMove(cave, -1, 0, out newstate)) yield return newstate;
                 if (TryMove(cave, 0, -1, out newstate)) yield return newstate;
+
+                if (TrySetTool(cave, Tool.None, out newstate)) yield return newstate;
+                if (TrySetTool(cave, Tool.Torch, out newstate)) yield return newstate;
+                if (TrySetTool(cave, Tool.ClimbingGear, out newstate)) yield return newstate;
             }
 
             public int Distance(IVec other)
@@ -307,9 +316,7 @@ namespace Advent.MMXVIII
         {
             var cave = new Cave(tx, ty, depth);
 
-            var startPos = new State(new ManhattanVector2(0,0), Tool.None);
-            var endPos = new State(new ManhattanVector2(tx, ty), Tool.Torch);
-
+            var startPos = new State(new ManhattanVector2(0,0), Tool.Torch);
 
             var jobqueue = new Queue<Tuple<State,int>>();
             jobqueue.Enqueue(Tuple.Create(startPos,0));
@@ -322,7 +329,7 @@ namespace Advent.MMXVIII
             {
                 var entry = jobqueue.Dequeue();
 
-                if (entry.Item1 == endPos)
+                if (entry.Item1 == cave.target)
                 {
                     if (entry.Item2 < best)
                     {
@@ -334,12 +341,14 @@ namespace Advent.MMXVIII
                     var neighbours = entry.Item1.GetNeighbours(cave);
                     foreach (var neighbour in neighbours)
                     {
-                        var key = neighbour.GetKey();                        
-
                         int newDistance = entry.Item2+neighbour.cost;
+
+                        if (newDistance > best) continue;
+
+                        var key = neighbour.GetKey();              
                         if (cache.TryGetValue(key, out var dist))
                         {
-                            if (dist < newDistance)
+                            if (dist <= newDistance)
                             {
                                 continue;
                             }
@@ -361,10 +370,10 @@ namespace Advent.MMXVIII
 
         public void Run(string input, System.IO.TextWriter console)
         {
-            //console.WriteLine("- Pt1 - "+Part1(input));
-            //console.WriteLine("- Pt2 - "+Part2(input));
+            console.WriteLine("- Pt1 - "+Part1(input));
+            console.WriteLine("- Pt2 - "+Part2(input));
 
-            Console.WriteLine(Part2(10,10,510));
+            //Console.WriteLine(Part2(10,10,510));
         }
     }
 }
