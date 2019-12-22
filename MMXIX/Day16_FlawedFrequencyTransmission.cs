@@ -49,6 +49,8 @@ namespace Advent.MMXIX
 
         // Thanks to FirescuOvidiu
         // All 1s in second half, past leading zeroes
+        // based on algorithm here:
+        // https://github.com/FirescuOvidiu/Advent-of-Code-2019/blob/master/Day%2016/day16-part2/day16-part2.cpp
         static IEnumerable<int> ProcessSignal(int[] sequence)
         {
             var newSequence = Enumerable.Repeat(0, sequence.Length).ToArray();
