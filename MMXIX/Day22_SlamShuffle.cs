@@ -178,16 +178,6 @@ namespace Advent.MMXIX
 
         static BigInteger modInverse(BigInteger b) => Pow(b, numCards - 2);
 
-        // static BigInteger Pow(BigInteger value, BigInteger exponent)
-        // {
-        //     BigInteger originalValue = value;
-        //     while (exponent-- > 1)
-        //     {
-        //         value = BigInteger.Multiply(value, originalValue);
-        //     }
-        //     return value;
-        // }
-
         static BigInteger Pow(BigInteger baseVal, BigInteger exp)
         {
             if (exp == 0)
@@ -262,54 +252,8 @@ namespace Advent.MMXIX
 
         public void Run(string input, System.IO.TextWriter console)
         {
-            // // console.WriteLine(new Deck(10));
-            // // console.WriteLine(new Deck(10).Stack());
-
-            // // console.WriteLine(new Deck(10).Cut(3));
-            // // console.WriteLine(new Deck(10).Cut(-4));
-
-            // // console.WriteLine(new Deck(10).Deal(3));
-
-            // // deal with increment 7
-            // // deal into new stack
-            // // deal into new stack
-            // // Result: 0 3 6 9 2 5 8 1 4 7
-            // console.WriteLine(new Deck(10).Deal(7).Stack().Stack());
-
-            // // cut 6
-            // // deal with increment 7
-            // // deal into new stack
-            // // Result: 3 0 7 4 1 8 5 2 9 6
-            // console.WriteLine(new Deck(10).Cut(6).Deal(7).Stack());
-
-            // // deal with increment 7
-            // // deal with increment 9
-            // // cut -2
-            // // Result: 6 3 0 7 4 1 8 5 2 9
-            // console.WriteLine(new Deck(10).Deal(7).Deal(9).Cut(-2));
-
-            // // deal into new stack
-            // // cut -2
-            // // deal with increment 7
-            // // cut 8
-            // // cut -4
-            // // deal with increment 7
-            // // cut 3
-            // // deal with increment 9
-            // // deal with increment 3
-            // // cut -1
-            // // Result: 9 2 5 8 1 4 7 0 3 6
-            // console.WriteLine(new Deck(10).Stack().Cut(-2).Deal(7).Cut(8).Cut(-4).Deal(7).Cut(3).Deal(9).Deal(3).Cut(-1));
-
-
-            // var shuffled = Shuffle(new Deck(10), "deal into new stack\ncut -2\ndeal with increment 7\ncut 8\ncut -4\ndeal with increment 7\ncut 3\ndeal with increment 9\ndeal with increment 3\ncut -1");
-            // console.WriteLine(shuffled);
-
             console.WriteLine("- Pt1 - "+Part1(input));
             console.WriteLine("- Pt2 - "+Part2(input));
-
-            // 38111602310424?
-            // 
         }
     }
 }
