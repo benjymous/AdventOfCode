@@ -573,5 +573,26 @@ namespace Advent
         {
             return vowels.Contains(c);
         }
+
+        public static IEnumerable<int> AllIndexesOf(this string str, string value)
+        {
+            if (String.IsNullOrEmpty(value))
+                throw new ArgumentException("the string to find may not be empty", "value");
+            for (int index = 0; ; index += value.Length)
+            {
+                index = str.IndexOf(value, index);
+                if (index == -1)
+                    break;
+                yield return index;
+            }
+        }
+
+        public static string ReplaceAtIndex(this string str, int index, string from, string replacement)
+        {
+            var sb = new StringBuilder(str);
+            sb.Remove(index, from.Length);
+            sb.Insert(index, replacement);
+            return sb.ToString();
+        }
     }
 }
