@@ -594,5 +594,15 @@ namespace Advent
             sb.Insert(index, replacement);
             return sb.ToString();
         }
+
+        // iterate over bits, returns sequence like 1,2,4,8 (only returning set bits in input)
+        public static IEnumerable<int> BitSequence(this int v)
+        {
+            for(int k=1; k<=v; k<<=1)
+            {
+                if ((v & k)>0) 
+                    yield return k;
+            }
+        }
     }
 }

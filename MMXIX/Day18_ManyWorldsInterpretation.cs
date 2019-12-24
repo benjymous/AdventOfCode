@@ -31,16 +31,6 @@ namespace Advent.MMXIX
             return v | KeyCode(c);
         }
 
-        // iterate over bits, returns sequence like 1,2,4,8 (only returning set bits in input)
-        public static IEnumerable<int> BitSequence(int v)
-        {
-            for(int k=1; k<=v; k<<=1)
-            {
-                if ((v & k)>0) 
-                    yield return k;
-            }
-        }
-
         public class RoomPath
         {
             public RoomPath(Dictionary<string, char> map, IEnumerable<ManhattanVector2> path)
@@ -94,7 +84,7 @@ namespace Advent.MMXIX
                     return output;
                 }
 
-                var seq = BitSequence(input).ToArray();
+                var seq = input.BitSequence().ToArray();
                 BitCache[input] = seq;
                 return seq;
             }
