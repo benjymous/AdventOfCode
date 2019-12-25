@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Advent.MMXIX.NPSA
 {
@@ -44,21 +45,30 @@ namespace Advent.MMXIX.NPSA
 
         public void WillReadInput()
         {
-            if (Interactive)
+            var inputs = AutomaticInput().ToArray();
+
+            if (inputs.Any())
             {
-                Console.Write("?> ");
-                var input = Console.ReadLine();
-                foreach (var c in input.ToArray())
+                foreach (var line in inputs)
                 {
-                    cpu.Input.Enqueue(c);
+                    if (Interactive)
+                    {
+                        Console.WriteLine(line);
+                    }
+                    foreach (var c in line)
+                    {
+                        cpu.Input.Enqueue(c);
+                    }
+                    cpu.Input.Enqueue('\n');
                 }
-                cpu.Input.Enqueue('\n');
             }
             else
             {
-                foreach (var line in AutomaticInput())
+                if (Interactive)
                 {
-                    foreach (var c in line)
+                    Console.Write("?> ");
+                    var input = Console.ReadLine();
+                    foreach (var c in input.ToArray())
                     {
                         cpu.Input.Enqueue(c);
                     }
@@ -76,7 +86,10 @@ namespace Advent.MMXIX.NPSA
 
         public ManhattanVector2 Max {get;} = new ManhattanVector2(0,0);
 
-        public bool DisplayLive {get;set;} = false;            
+        public bool DisplayLive {get;set;} = false;   
+
+        public List<string> Lines {get;set;} = new List<string>();   
+        private StringBuilder sb = new StringBuilder();      
 
         public ASCIIBuffer()
         {
@@ -93,6 +106,9 @@ namespace Advent.MMXIX.NPSA
             {
                 case '\n':
 
+                    Lines.Add(sb.ToString());
+                    sb = new StringBuilder();
+
                     if (Cursor.X == 0)
                     {
                         Cursor.Y = 0;
@@ -108,6 +124,7 @@ namespace Advent.MMXIX.NPSA
                     break;
 
                 default:
+                    sb.Append(c);
                     screenBuffer.PutObjKey(Cursor, c);
                     Cursor.X++;
                     break;
@@ -132,5 +149,14 @@ namespace Advent.MMXIX.NPSA
 
             throw new Exception("Not found");
         }
+
+        public void Clear()
+        {
+            Max.Set(0,0);
+            screenBuffer.Clear();
+            Lines.Clear();
+            sb = new StringBuilder();
+        }
+
     }
 }
