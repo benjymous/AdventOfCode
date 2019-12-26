@@ -62,7 +62,7 @@ namespace Advent.MMXV
                 people.Remove(starter);  
             }
 
-            var perms = Permutations.Get(people);
+            var perms = people.Permutations();
 
             var additional = $"{starter}";
             return perms.AsParallel().Select(p => GetScore(additional.Union(p).ToArray(), scores)).Max();

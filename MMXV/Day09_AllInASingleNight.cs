@@ -57,7 +57,7 @@ namespace Advent.MMXV
 
             var names = distances.Select(d => d.from).Union(distances.Select(d => d.to)).Distinct();
 
-            var permutations = Permutations.Get(names);
+            var permutations = names.Permutations();
 
             return permutations.AsParallel().Select(r => GetDistance(r, lookup));
         }

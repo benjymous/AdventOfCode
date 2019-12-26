@@ -71,14 +71,14 @@ namespace Advent.MMXIX
 
         public static Int64 Part1(string input)
         {
-            var permutations = Permutations.Get(Enumerable.Range(0, 5));
+            var permutations = Enumerable.Range(0, 5).Permutations();
 
             return permutations.Select(set => RunAmplifiers01(input, set)).Max();
         }
 
         public static Int64 Part2(string input)
         {
-            var permutations = Permutations.Get(Enumerable.Range(5, 5));
+            var permutations = Enumerable.Range(5, 5).Permutations();
           
             return permutations.Select(set => RunAmplifiers02(input, set)).Max();
         }
