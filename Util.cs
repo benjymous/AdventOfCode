@@ -604,5 +604,46 @@ namespace Advent
                     yield return k;
             }
         }
+
+        public static IEnumerable<IEnumerable<T>> Permutations<T>(this IEnumerable<T> set, IEnumerable<T> subset = null)
+        {
+            if (subset == null) subset = new T[] { };
+            if (!set.Any()) yield return subset;
+
+            for (var i = 0; i < set.Count(); i++)
+            {
+                var newSubset = set.Take(i).Concat(set.Skip(i + 1));
+                foreach (var permutation in Permutations(newSubset, subset.Concat(set.Skip(i).Take(1))))
+                {
+                    yield return permutation;
+                }
+            }
+        }
+
+        public static IEnumerable<T> Prepend<T>(this IEnumerable<T> items, T first)
+        {
+            yield return first;
+            foreach (T item in items)
+            {
+                yield return item;
+            }
+        }
+        public static IEnumerable<IEnumerable<T>> Combinations<T>(this IEnumerable<T> items)
+        {
+            if (!items.Any())
+            {
+                yield return items;
+            }
+            else
+            {
+                var head = items.First();
+                var tail = items.Skip(1);
+                foreach (var sequence in tail.Combinations())
+                {
+                    yield return sequence; // Without first
+                    yield return sequence.Prepend(head);
+                }
+            }
+        }
     }
 }
