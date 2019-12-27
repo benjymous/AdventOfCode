@@ -55,7 +55,7 @@ namespace Advent.MMXIX
             public string Run()
             {
                 cpu.Run();
-                Console.WriteLine(commandCount);
+                //Console.WriteLine(commandCount);
                 return buffer.Lines.Last();
             }
 
@@ -188,7 +188,7 @@ namespace Advent.MMXIX
                     {
                         if (itemCombos==null)
                         {
-                            Console.WriteLine(commandCount);
+                            //Console.WriteLine(commandCount);
                             itemCombos = new Queue<IEnumerable<string>>();
                             var perms = knownItems.Combinations().OrderBy(x => x.Count());
                             foreach (var perm in perms)
