@@ -440,12 +440,6 @@ namespace Advent
             get => Get(key);
             set => Set(key, value);
         }
-
-        public DataType this[Int64 key]
-        {
-            get => Get((int)key);
-            set => Set((int)key, value);
-        }
     }
 
     public class TextBuffer : System.IO.TextWriter
