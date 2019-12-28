@@ -38,7 +38,10 @@ namespace Advent
             }
             else
             {
-                Parallel.ForEach(puzzles, new ParallelOptions(){MaxDegreeOfParallelism=8}, (puzzle) =>
+                var watch = new System.Diagnostics.Stopwatch();        
+                watch.Start();
+
+                Parallel.ForEach(puzzles, new ParallelOptions(){MaxDegreeOfParallelism=1}, (puzzle) =>
                 {
                     TextBuffer buffer = new TextBuffer();
                     timings[puzzle.Name] = puzzle.TimeRun(buffer);
@@ -50,6 +53,8 @@ namespace Advent
                     Console.WriteLine();
                     mut.ReleaseMutex();
                 });
+
+                Console.WriteLine($"All completed in {watch.ElapsedMilliseconds} ms");
             }
 
             Console.WriteLine();
