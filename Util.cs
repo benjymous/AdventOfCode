@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Security.Cryptography;
-
+using System.Collections;
 
 namespace Advent
 {
@@ -52,7 +52,7 @@ namespace Advent
                 .Select(x => x.Select(v => v.Value));
         }
 
-        public static IEnumerable<Tuple<T1,T2>> Matrix<T1,T2>(IEnumerable<T1> set1, IEnumerable<T2> set2)
+        public static IEnumerable<Tuple<T1, T2>> Matrix<T1,T2>(IEnumerable<T1> set1, IEnumerable<T2> set2)
         {
             foreach (T1 x in set1)
             {
@@ -63,7 +63,7 @@ namespace Advent
             }
         }
 
-        public static IEnumerable<Tuple<int,int>> Matrix(int maxX, int maxY) => Matrix<int,int>(Enumerable.Range(0, maxX), Enumerable.Range(0, maxY));
+        public static IEnumerable<Tuple<int, int>> Matrix(int maxX, int maxY) => Matrix<int,int>(Enumerable.Range(0, maxX), Enumerable.Range(0, maxY));
 
         public static string GetInput(IPuzzle puzzle) => System.IO.File.ReadAllText(System.IO.Path.Combine("Data",puzzle.Name+".txt")).Replace("\r","");   
 
@@ -394,40 +394,57 @@ namespace Advent
             }
     }
 
-    public class AutoList<DataType> : System.Collections.Generic.Dictionary<int, DataType>
+    public class AutoArray<DataType> : IEnumerable<DataType>
     {
-        public AutoList(IEnumerable<DataType> input) => AddRange(input);
+        DataType[] data;
 
-        private void AddRange(IEnumerable<DataType> input)
-        {
-            int i = Count;
-            foreach (var v in input)
-            {
-                base[i++]=v;
-            }
-        }
+        public AutoArray(IEnumerable<DataType> input) => data = input.ToArray();
 
         DataType Get(int key)
         {
-            if (!TryGetValue(key, out DataType val)) return default(DataType);
-            return val;
+            if (key>=data.Length) return default(DataType);
+            return data[key];
         }
 
-        public new DataType this[int key]
+        void Set(int key, DataType value)
+        {
+            if (key>=data.Length) 
+            {
+                Console.Write($"Resize from {data.Length} to ");
+                Reserve(data.Length + ((key-data.Length+1)*250));
+                Console.WriteLine($"{data.Length}");
+            }
+            data[key]=value;
+        }
+
+        public void Reserve(int memorySize)
+        {
+            if (memorySize > data.Length) Array.Resize(ref data, memorySize);
+        }
+
+        public IEnumerator<DataType> GetEnumerator()
+        {
+            foreach (var item in data)
+            {
+                yield return item;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
+        public DataType this[int key]
         {
             get => Get(key);
-            set => base[key] = value;
+            set => Set(key, value);
         }
 
         public DataType this[Int64 key]
         {
             get => Get((int)key);
-            set => base[(int)key] = value;
-        }
-
-        public new IEnumerable<DataType> GetEnumerator()
-        {
-            return Values;
+            set => Set((int)key, value);
         }
     }
 

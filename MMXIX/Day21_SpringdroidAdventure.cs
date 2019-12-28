@@ -18,6 +18,7 @@ namespace Advent.MMXIX
         public void Run(IEnumerable<string> program)
         {
             commandBuffer = program;
+            cpu.Reserve(3000);
             cpu.Run();
         }
 

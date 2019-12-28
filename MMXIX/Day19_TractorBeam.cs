@@ -20,6 +20,7 @@ namespace Advent.MMXIX
             public TestDrone(string program)
             {
                 cpu = new NPSA.IntCPU(program);
+                cpu.Reserve(1000);
             }
 
             public Int64 Visit(ManhattanVector2 pos) => Visit(pos.X, pos.Y);
@@ -38,6 +39,7 @@ namespace Advent.MMXIX
                 cpu.Run();
                 res = cpu.Output.Dequeue();
                 cpu.Reset();
+                cpu.Reserve(1000);
                 Cache[key] = res;
                 return res;
             }

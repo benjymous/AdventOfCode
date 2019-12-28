@@ -57,7 +57,7 @@ namespace Advent.MMXIX.NPSA
             Relative = 2,
         }
 
-        AutoList<Int64> Memory {get;set;}
+        AutoArray<Int64> Memory {get;set;}
         IEnumerable<long> initialState;
         Int64 InstructionPointer {get;set;} = 0;
         Int64 RelBase {get;set;} = 0;
@@ -74,12 +74,14 @@ namespace Advent.MMXIX.NPSA
 
         public void Reset()
         {
-            Memory = new AutoList<Int64>(initialState);
+            Memory = new AutoArray<Int64>(initialState);
             InstructionPointer = 0;
             RelBase = 0;
             Input.Clear();
             Output.Clear();
         }
+
+        public void Reserve(int memorySize) => Memory.Reserve(memorySize);
 
         Int64 GetValue(Instr i, int paramIdx)
         {
@@ -273,6 +275,6 @@ namespace Advent.MMXIX.NPSA
         public void Poke(Int64 addr, Int64 val) => Memory[addr] = val; 
         public Int64 Peek(Int64 addr) => Memory[addr];
 
-        public override string ToString() => string.Join(",", Memory.Values);
+        public override string ToString() => string.Join(",", Memory);
     }
 }
