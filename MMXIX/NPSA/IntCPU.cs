@@ -12,7 +12,7 @@ namespace Advent.MMXIX.NPSA
 
     public class IntCPU
     {
-        public enum Opcode
+        enum Opcode
         {
             ADD = 1,   
             MUL = 2,    
@@ -31,26 +31,30 @@ namespace Advent.MMXIX.NPSA
             HALT = 99,
         }
 
-        Dictionary<Opcode,int> InstructionSizes = new Dictionary<Opcode, int>()
+        int InstructionSize(Opcode code)
         {
-            {Opcode.ADD, 4},
-            {Opcode.MUL, 4},
+            switch(code)
+            {
+                case Opcode.ADD: return 4;
+                case Opcode.MUL: return 4;
 
-            {Opcode.GET, 2},
-            {Opcode.OUT, 2},
+                case Opcode.GET: return 2;
+                case Opcode.OUT: return 2;
 
-            {Opcode.JNZ, 3},
-            {Opcode.JZ, 3},
+                case Opcode.JNZ: return 3;
+                case Opcode.JZ: return 3;
 
-            {Opcode.LT, 4},
-            {Opcode.EQ, 4},
+                case Opcode.LT: return 4;
+                case Opcode.EQ: return 4;
 
-            {Opcode.SETR, 2},
+                case Opcode.SETR: return 2;
 
-            {Opcode.HALT, 1}
-        };
+                case Opcode.HALT: return 1; 
+            }
+            throw new Exception("Bad instruction");
+        }
 
-        public enum ParamMode
+        enum ParamMode
         {
             Position = 0,
             Immediate = 1,
@@ -59,17 +63,40 @@ namespace Advent.MMXIX.NPSA
 
         AutoArray<Int64> Memory {get;set;}
         IEnumerable<long> initialState;
-        Int64 InstructionPointer {get;set;} = 0;
-        Int64 RelBase {get;set;} = 0;
+        int InstructionPointer {get;set;} = 0;
+        int RelBase {get;set;} = 0;
         public Queue<Int64> Input {get;set;} = new Queue<Int64>();
         public Queue<Int64> Output {get;set;} = new Queue<Int64>();
 
         public ICPUInterrupt Interrupt {get;set;} = null;
 
-        public IntCPU (string program)
+        IEnumerable<int> PossibleInstructions()
+        {
+            yield return 99;
+            for (int x=0; x<3; ++x)
+            {
+                for (int y=0; y<3; ++y)
+                {
+                    for (int z=0; z<3; ++z)
+                    {
+                        for (int i=1; i<10; ++i)
+                        {
+                            yield return i + (x*100) + (y*1000) + (z*10000);
+                        }
+                    }
+                }
+            }
+        }
+
+        public IntCPU(string program)
         {
             initialState = Util.Parse64(program);
-            Reset();         
+            Reset();     
+
+            lock (instructionCache)
+            {
+                foreach (var c in PossibleInstructions()) DecodeInstruction(c);
+            }    
         }
 
         public void Reset()
@@ -83,186 +110,134 @@ namespace Advent.MMXIX.NPSA
 
         public void Reserve(int memorySize) => Memory.Reserve(memorySize);
 
-        Int64 GetValue(Instr i, int paramIdx)
+        Int64 GetValue(int paramIdx) => Memory[GetAddr(paramIdx)];
+        void PutValue(int paramIdx, Int64 value) => Memory[GetAddr(paramIdx)] = value;
+        int GetAddr(int paramIdx)
         {
-            switch (i.mode[paramIdx])
+            switch (instr.mode[paramIdx])
             {
                 case ParamMode.Position:
-                {
-                    return Memory[Memory[InstructionPointer+paramIdx+1]];
-                }
-                    
+                    return (int)Memory[InstructionPointer+paramIdx+1];
+
                 case ParamMode.Immediate:
-                {
-                    return Memory[InstructionPointer+paramIdx+1];
-                }
+                    return (int)(InstructionPointer+paramIdx+1);
 
                 case ParamMode.Relative:
-                {
-                    return Memory[Memory[InstructionPointer+paramIdx+1]+RelBase];
-                }
-            }
-
-            throw new Exception($"Unexpected ParamMode {i.mode[paramIdx]}");
-        }
-
-        Int64 GetOutPos(Instr i, int paramIdx)
-        {
-            switch (i.mode[paramIdx])
-            {
-                case ParamMode.Position:
-                    return Memory[InstructionPointer+paramIdx+1];
-
-                case ParamMode.Relative:
-                    return Memory[InstructionPointer+paramIdx+1]+RelBase;
+                    return (int)(Memory[InstructionPointer+paramIdx+1]+RelBase);
             } 
 
-            throw new Exception($"Unexpected ParamMode {i.mode[paramIdx]}");
+            throw new Exception($"Unexpected ParamMode {instr.mode[paramIdx]}");
         }
 
-        class Instr
+        struct Instr
         {
-            public Opcode code = 0;
-            public ParamMode[] mode = {0,0,0}; 
-            public int size = 0;
+            public Opcode code;
+            public ParamMode[] mode;
+            public int size;
 
-            public override string ToString()
-            {
-                return $"{code} - {string.Join(",",mode)}";
-            }
+            public override string ToString() => $"{code} - {string.Join(",",mode)}";
         }
 
-        static int[] mods = {1000, 10000, 100000};
+        static int[] mods = {100, 1000, 10000, 100000};
 
-        static ParamMode GetOpcode(Int64 raw, int index)
+        static ParamMode GetOpcode(int raw, int index) => (ParamMode)((raw % mods[index+1])/mods[index]);
+
+        static Dictionary<int, Instr> instructionCache = new Dictionary<int, Instr>();
+
+        Instr instr;
+
+        void DecodeInstruction(int raw)
         {
-            int mod = mods[index];
-            int div = mod/10;
-            return (ParamMode)((raw % mod)/div);
-        }
-
-        Dictionary<Int64, Instr> instructionCache = new Dictionary<long, Instr>();
-
-        Instr DecodeInstruction()
-        {
-            var raw = Memory[InstructionPointer];
-            Instr instr;
-            if (instructionCache.TryGetValue(raw, out instr))
-            {
-                return instr;
-            }
-            else
+            if (!instructionCache.TryGetValue(raw, out instr))
             {
                 instr = new Instr();
 
                 instr.code = (Opcode)(raw % 100);
+                instr.size = InstructionSize(instr.code);
 
-                if (!InstructionSizes.TryGetValue(instr.code, out instr.size))
-                {
-                    throw new Exception($"Unknown instruction {raw} at {InstructionPointer}");
-                }
-
+                instr.mode = new ParamMode[instr.size];
                 for (var i=0; i<instr.size-1; ++i)
                 {
                     instr.mode[i] = GetOpcode(raw, i);
                 }
                 instructionCache[raw] = instr;
-                return instr;
             }
+        }
+
+        void DecodeInstruction() => DecodeInstruction((int)Memory[InstructionPointer]);
+
+        Int64 ReadInput()
+        {
+            if (Input.Count == 0)
+            {
+                Interrupt?.WillReadInput();
+                if (Input.Count == 0)
+                {
+                    throw new Exception("Out of input!");
+                }
+            }
+            return Input.Dequeue();
         }
 
         public bool Step() 
         {     
-            var instr = DecodeInstruction();
+            DecodeInstruction();
             //Console.WriteLine($"{InstructionPointer}: {instr}");
             switch(instr.code) 
             {
                 case Opcode.ADD: // add PC+1 and PC+2 and put it in address PC+3
-                {
-                    Memory[GetOutPos(instr, 2)] = GetValue(instr, 0) + GetValue(instr, 1);
-                    InstructionPointer += instr.size;
-                }
+                    PutValue(2, GetValue(0) + GetValue(1));
                 break;
 
                 case Opcode.MUL: // multiply PC+1 and PC+2 and put it in address PC+3
-                {
-                    Memory[GetOutPos(instr, 2)] = GetValue(instr, 0)*GetValue(instr, 1);
-                    InstructionPointer += instr.size;
-                }
+                    PutValue(2, GetValue(0) * GetValue(1));
                 break;
 
-                case Opcode.GET: // takes a single integer as input and saves it to the address given by its only parameter
-                {
-                    if (Input.Count == 0)
-                    {
-                        Interrupt?.WillReadInput();
-                        if (Input.Count == 0)
-                        {
-                            throw new Exception("Out of input!");
-                        }
-                    }
-                    Memory[GetOutPos(instr, 0)] = Input.Dequeue();
-                    InstructionPointer += instr.size;
-                }
+                case Opcode.GET: // takes a single integer as input and saves it to the address given by its only parameter                
+                    PutValue(0, ReadInput());
                 break;
 
                 case Opcode.OUT: // output the value of its only parameter.
-                {
-                    Output.Enqueue(GetValue(instr, 0));
+                    Output.Enqueue(GetValue(0));
                     Interrupt?.HasPutOutput();
-                    InstructionPointer += instr.size;
-                }
                 break;
 
                 case Opcode.JNZ: // if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
-                {
-                    if (GetValue(instr, 0) != 0) 
-                        InstructionPointer = GetValue(instr, 1);
-                    else
-                        InstructionPointer += instr.size;
-                }
+                    if (GetValue(0) != 0) 
+                    {
+                        InstructionPointer = (int)GetValue(1);
+                        return true;
+                    }
                 break;
 
                 case Opcode.JZ: // if the first parameter is zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
-                {
-                    if (GetValue(instr, 0) == 0) 
-                        InstructionPointer = GetValue(instr, 1);
-                    else
-                        InstructionPointer += instr.size;
-                }
+                    if (GetValue(0) == 0) 
+                    {
+                        InstructionPointer = (int)GetValue(1);
+                        return true;
+                    }
                 break;
 
                 case Opcode.LT: // if the first parameter is less than the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
-                {
-                    Memory[GetOutPos(instr, 2)] = GetValue(instr, 0) < GetValue(instr, 1) ? 1 : 0;
-                    InstructionPointer += instr.size;
-                }
+                    PutValue(2, GetValue(0) < GetValue(1) ? 1 : 0);
                 break;
 
                 case Opcode.EQ: // if the first parameter is equal to the second parameter, it stores 1 in the position given by the third parameter. Otherwise, it stores 0.
-                {
-                    Memory[GetOutPos(instr, 2)] = GetValue(instr, 0) == GetValue(instr, 1) ? 1 : 0;
-                    InstructionPointer += instr.size;
-                }
+                    PutValue(2, GetValue(0) == GetValue(1) ? 1 : 0);
                 break;
 
                 case Opcode.SETR:
-                {
-                    RelBase += GetValue(instr,0);
-                    InstructionPointer += instr.size;
-                }
+                    RelBase += (int)GetValue(0);
                 break;
 
                 case Opcode.HALT: // stop
-                {
                     return false;
-                }
 
                 default:
-                {
                     throw new Exception("Unknown instruction "+Memory[InstructionPointer]);
-                }
             }
+
+            InstructionPointer += instr.size;
 
             return true;
         }
@@ -272,8 +247,8 @@ namespace Advent.MMXIX.NPSA
             while (Step());
         }
 
-        public void Poke(Int64 addr, Int64 val) => Memory[addr] = val; 
-        public Int64 Peek(Int64 addr) => Memory[addr];
+        public void Poke(int addr, Int64 val) => Memory[addr] = val; 
+        public Int64 Peek(int addr) => Memory[addr];
 
         public override string ToString() => string.Join(",", Memory);
     }
