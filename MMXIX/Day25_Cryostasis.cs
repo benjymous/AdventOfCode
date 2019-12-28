@@ -21,17 +21,23 @@ namespace Advent.MMXIX
         class SearchDroid : NPSA.ASCIITerminal
         {
             int commandCount = 0;
+            int combosTried = 0;
+            int skippedCombos = 0;
             public SearchDroid(string program) : base(program)
             {
             }
 
             HashSet<string> HeldItems = new HashSet<string>();
 
+            HashSet<string> LastCombo;
+
             void TryCombo(IEnumerable<string> items)
             {
+                LastCombo = new HashSet<string>(items);
+                combosTried++;
                 foreach (var item in knownItems)
                 {
-                    if (HeldItems.Contains(item))
+                    if (HeldItems.Contains(item) && !LastCombo.Contains(item))
                     {
                         inputs.Enqueue($"drop {item}");
                         HeldItems.Remove(item);
@@ -40,8 +46,11 @@ namespace Advent.MMXIX
 
                 foreach (var item in items)
                 {
-                    inputs.Enqueue($"take {item}");
-                    HeldItems.Add(item);
+                    if (!HeldItems.Contains(item))
+                    {
+                        inputs.Enqueue($"take {item}");
+                        HeldItems.Add(item);
+                    }
                 }
 
                 inputs.Enqueue("south");
@@ -55,7 +64,7 @@ namespace Advent.MMXIX
             public string Run()
             {
                 cpu.Run();
-                //Console.WriteLine(commandCount);
+                //Console.WriteLine($"{commandCount} commands, {combosTried} combos tried, {skippedCombos} combos skipped");
                 return buffer.Lines.Last();
             }
 
@@ -193,7 +202,39 @@ namespace Advent.MMXIX
                             var perms = knownItems.Combinations().OrderBy(x => x.Count());
                             foreach (var perm in perms)
                             {
-                                itemCombos.Enqueue(perm);
+                                if (perm.Count() > 0)
+                                {
+                                    itemCombos.Enqueue(perm);
+                                }
+                            }
+                            //Console.WriteLine($"{itemCombos.Count} combos to try");
+                        }
+                        else
+                        {
+                            var sensorResult = l.Where(line => line.Contains("robotic")).LastOrDefault();
+                            if (sensorResult.Contains("lighter"))
+                            {
+                                //Console.WriteLine($"Combo '{string.Join(",", LastCombo)}' is too heavy");
+
+                                Queue<IEnumerable<string>> filteredCombos = new Queue<IEnumerable<string>>();
+
+                                foreach (var combo in itemCombos)
+                                {
+                                    if (LastCombo.Intersect(combo).Count() == LastCombo.Count())
+                                    {
+                                        //Console.WriteLine($"Skip '{string.Join(",", combo)}'");
+                                        skippedCombos++;
+                                    }
+                                    else
+                                    {
+                                        //Console.WriteLine($"Keep '{string.Join(",", combo)}'");
+                                        filteredCombos.Enqueue(combo);
+                                    }
+                                }
+
+                                itemCombos = filteredCombos;
+
+                                //
                             }
                         }
                         if (inputs.Count == 0 && itemCombos.Count > 0)
