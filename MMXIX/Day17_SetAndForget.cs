@@ -12,6 +12,7 @@ namespace Advent.MMXIX
 
         public Hoovamatic(string input) : base(input)
         {
+            cpu.Reserve(3500);
         }
 
         public void Activate()

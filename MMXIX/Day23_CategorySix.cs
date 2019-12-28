@@ -32,6 +32,7 @@ namespace Advent.MMXIX
             {
                 NetworkId = networkId;
                 cpu = new NPSA.IntCPU(program);
+                cpu.Reserve(3000);
                 cpu.Input.Enqueue(networkId);
                 cpu.Interrupt = this;
                 controller = networkController;
