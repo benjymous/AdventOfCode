@@ -7,7 +7,6 @@ namespace Advent.AStar
 {
     public interface IMap<TCoordinateType>
     {
-        bool IsValidNeighbour(TCoordinateType location);
         IEnumerable<TCoordinateType> GetNeighbours(TCoordinateType location);
         int Heuristic(TCoordinateType location1, TCoordinateType location2);
     }
@@ -103,6 +102,7 @@ namespace Advent.AStar
 
         public List<TCoordinateType> FindPath(IMap<TCoordinateType> graph, TCoordinateType start, TCoordinateType goal)
         {
+            int closest = int.MaxValue;
             Reset();
             
             openSet[start] = true;
@@ -136,7 +136,15 @@ namespace Advent.AStar
                     //record it
                     nodeLinks[neighbor] = current;
                     gScore[neighbor] = projectedG;
-                    fScore[neighbor] = projectedG + graph.Heuristic(neighbor, goal);
+
+                    var newScore =  projectedG + graph.Heuristic(neighbor, goal);
+                    fScore[neighbor] = newScore;
+
+                    if (newScore < closest)
+                    {
+                        closest = newScore;
+                        Console.WriteLine($"Closest {closest} {neighbor}");                       
+                    }
 
                 }
             }
