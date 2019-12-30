@@ -31,7 +31,56 @@ namespace Advent.MMXV
             return results.Count;
         }
 
+        public class MoleculePaths : AStar.IMap<string>
+        {
+            IEnumerable<string[]> rules;
+
+            public MoleculePaths(IEnumerable<string[]> r)
+            {
+                rules = r;
+            }
+
+            public int From=0;
+            public int To=1;
+
+            public IEnumerable<string> GetNeighbours(string location)
+            {
+                foreach (var rule in rules.Where(r => location.Contains(r[From])))
+                {
+                    var indices = location.AllIndexesOf(rule[From]);
+
+                    var replacements = indices.Select(i => location.ReplaceAtIndex(i, rule[From], rule[To]));
+
+                    foreach (var newStr in replacements)
+                    {
+                        yield return newStr;
+                    }
+                }
+            }
+
+            public int Heuristic(string location1, string location2)
+            {
+                return location1.LevenshteinDistance(location2) + Math.Abs(location1.Length - location2.Length);
+            }
+        }
+
         public static int Part2(string input)
+        {
+            var lines = Util.Split(input);
+
+            var rules = lines.Take(lines.Length-1).Select(x => x.Split(" => ")).OrderByDescending(x => x[1].Length);
+            var molecule = lines.Last();
+
+            var map = new MoleculePaths(rules);
+
+            var blah = new AStar.RoomPathFinder<string>();
+            var bloop = blah.FindPath(map, "e", molecule);
+            //var bloop = blah.FindPath(map, molecule, "e");
+
+            return bloop.Count();
+        }
+
+        public static int _Part2(string input)
         {
             var lines = Util.Split(input);
 
