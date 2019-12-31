@@ -52,18 +52,18 @@ namespace Advent
                 .Select(x => x.Select(v => v.Value));
         }
 
-        public static IEnumerable<Tuple<T1, T2>> Matrix<T1,T2>(IEnumerable<T1> set1, IEnumerable<T2> set2)
+        public static IEnumerable<(T1 x, T2 y)> Matrix<T1,T2>(IEnumerable<T1> set1, IEnumerable<T2> set2)
         {
             foreach (T1 x in set1)
             {
                 foreach (T2 y in set2)
                 {
-                    yield return new Tuple<T1,T2>(x,y);
+                    yield return (x,y);
                 }
             }
         }
 
-        public static IEnumerable<Tuple<int, int>> Matrix(int maxX, int maxY) => Matrix<int,int>(Enumerable.Range(0, maxX), Enumerable.Range(0, maxY));
+        public static IEnumerable<(int x, int y)> Matrix(int maxX, int maxY) => Matrix<int,int>(Enumerable.Range(0, maxX), Enumerable.Range(0, maxY));
 
         public static string GetInput(IPuzzle puzzle) => System.IO.File.ReadAllText(System.IO.Path.Combine("Data",puzzle.Name+".txt")).Replace("\r","");   
 
@@ -691,6 +691,25 @@ namespace Advent
                 }
             }
             return d[n, m];
+        }
+
+        public static IEnumerable<T> Values<T>(this T[,] array2d)
+        {
+            for (int row = 0; row < array2d.GetLength(0); row++)
+            {
+                for (int col = 0; col < array2d.GetLength(1); col++)
+                {
+                    yield return array2d[row, col];
+                }
+            }
+        }
+
+        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
+        {
+            foreach (T element in source)
+            {
+                action(element);
+            }
         }
     }
 }
