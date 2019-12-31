@@ -15,11 +15,11 @@ namespace Advent.MMXV
             {
                 width = w;
                 height = h;
+                cells = new bool[width,height];
             }
 
             public int height;
             public int width;
-
 
             public State(string input)
             {
@@ -27,6 +27,8 @@ namespace Advent.MMXV
 
                 height = lines.Length;
                 width = lines[0].Length;
+
+                cells = new bool[width,height];
 
                 for (var y = 0; y < lines.Length; ++y)
                 {
@@ -40,60 +42,53 @@ namespace Advent.MMXV
                 }
             }
 
-            public void Clear()
+            public bool[,] cells;
+
+            public void Set(int x, int y) => cells[x,y] = true;
+
+            public int Get(int x, int y = 0) => cells[x,y] ? 1 : 0;
+
+            int Neighbours(int xs, int ys)
             {
-                cells.Clear();
-            }
-
-            public Dictionary<string,int> cells = new Dictionary<string, int>();
-
-            public static int Bit(int x, int y) => 1 << ((y * 5) + x);
-
-            public void Set(int x, int y)
-            {
-                cells.PutStrKey($"{x},{y}",1);
-            }
-
-            public int Get(int x, int y = 0)
-            {
-                if (x < 0 || y < 0 || x >= width || y >= height)
-                {
-                    return 0;
-                }
-                else return cells.GetStrKey($"{x},{y}");
-            }
-
-            IEnumerable<(int x, int y)> GetNeighbours(int xs, int ys)
-            {
+                int count = 0;
                 for (int x=xs-1; x<=xs+1; x++)
                 {
-                    for (int y=ys-1; y<=ys+1; y++)
+                    if (x >=0 && x < width)
                     {
-                        if (x!=xs || y!=ys)
-                            yield return (x,y);
+                        for (int y=ys-1; y<=ys+1; y++)
+                        {
+                            if (y>=0 && y < height)
+                            {
+                                if (x!=xs || y!=ys)
+                                {
+                                    count += Get(x,y);
+                                }
+                            }
+                        }
                     }
                 }
+                return count;
             }
-
-            public int Neighbours(int x, int y) => GetNeighbours(x, y).Select(n => Get(n.x, n.y)).Sum();
 
             public void Tick(State oldState, int x, int y)
             {
                 int neighbours = oldState.Neighbours(x, y);
+                bool newVal = false;
                 if (oldState.Get(x, y) == 1)
                 {
                     if (neighbours == 2 || neighbours == 3)
                     {
-                        Set(x, y);
+                        newVal = true;
                     }
                 }
                 else
                 {
                     if (neighbours == 3)
                     {
-                        Set(x, y);
+                        newVal = true;
                     }
                 }
+                cells[x,y] = newVal;
             }
 
             public void Display()
@@ -102,8 +97,8 @@ namespace Advent.MMXV
                 {
                     for (int x = 0; x < width; ++x)
                     {
-                        var v = cells.GetStrKey($"{x},{y}");
-                        Console.Write(v == 0 ? '.' : '#');
+                        var v = cells[x,y];
+                        Console.Write(v ? '.' : '#');
                     }
                     Console.WriteLine();
                 }
@@ -122,7 +117,6 @@ namespace Advent.MMXV
 
         public static void Tick(State oldState, State newState)
         {
-            newState.Clear();
             for (var y = 0; y < oldState.height; ++y)
             {
                 for (var x = 0; x < oldState.width; ++x)
@@ -143,7 +137,10 @@ namespace Advent.MMXV
                 var oldState = states.Dequeue();
                 var newState = states.Dequeue();
 
-                oldState.StuckCorners();
+                if (stuckCorners)
+                {
+                    oldState.StuckCorners();
+                }
 
                 Tick(oldState, newState);
 
@@ -159,11 +156,10 @@ namespace Advent.MMXV
             }
             
             var end = states.Dequeue();
-            var count = end.cells.Where(kvp => kvp.Value==1).Count();
+            var count = end.cells.Values().Where(v => v==true).Count();
 
             return count;
         }
-
 
         public static int Part1(string input)
         {
