@@ -102,7 +102,7 @@ namespace Advent.AStar
 
         public List<TCoordinateType> FindPath(IMap<TCoordinateType> graph, TCoordinateType start, TCoordinateType goal)
         {
-            int closest = int.MaxValue;
+            //int closest = int.MaxValue;
             Reset();
             
             openSet[start] = true;
@@ -140,11 +140,11 @@ namespace Advent.AStar
                     var newScore =  projectedG + graph.Heuristic(neighbor, goal);
                     fScore[neighbor] = newScore;
 
-                    if (newScore < closest)
-                    {
-                        closest = newScore;
-                        Console.WriteLine($"Closest {closest} {neighbor}");                       
-                    }
+                    //if (newScore < closest)
+                    //{
+                        //closest = newScore;
+                        //Console.WriteLine($"Closest {closest} {neighbor}");                       
+                    //}
 
                 }
             }
