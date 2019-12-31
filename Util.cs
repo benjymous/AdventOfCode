@@ -69,7 +69,7 @@ namespace Advent
 
         public static string GetInput<T>() where T : IPuzzle, new() => GetInput(new T());
 
-                public static IEnumerable<int> Forever(int start=0)
+        public static IEnumerable<int> Forever(int start=0)
         {
             int i=start;
             while(true) { yield return i++; }
@@ -97,9 +97,9 @@ namespace Advent
             }
         }
 
-        public static void Test(int actual, int expected)
+        public static void Test<T>(T actual, T expected)
         {
-            if (expected != actual)
+            if (!EqualityComparer<T>.Default.Equals(actual, expected))
             {
                 throw new Exception($"Expected {expected} but got {actual}" );
             }

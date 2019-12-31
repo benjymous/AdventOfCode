@@ -16,7 +16,7 @@ namespace Advent.MMXV
             Dictionary<string, int> registers = new Dictionary<string, int>();
             public CPU(string input)
             {
-                program = Util.Split(input);
+                program = Util.Split(input.Replace(",",""));
             }
 
             bool Step()
@@ -48,7 +48,7 @@ namespace Advent.MMXV
                         break;
 
                     case "jie":
-                        if ((registers[bits[1].Replace(",","")]%2) == 0)
+                        if ((registers[bits[1]]%2) == 0)
                         {
                             programCounter += int.Parse(bits[2]);
                         }
@@ -59,7 +59,7 @@ namespace Advent.MMXV
                     break;
 
                     case "jio":
-                        if (registers[bits[1].Replace(",","")] == 1)
+                        if (registers[bits[1]] == 1)
                         {
                             programCounter += int.Parse(bits[2]);
                         }
