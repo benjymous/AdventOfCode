@@ -484,12 +484,12 @@ namespace Advent
             return hashed.Where(b => b!=0).Count() == 0;
         }
  
-        const int blockSize = 100000;
+        const int blockSize = 1000;
         public static int FindHash(string baseStr, int numZeroes, int start=0)
         {            
             while (true)
             {
-                var block = Util.Forever(start).Take(blockSize).ToArray();
+                var block = Util.Forever(start).Take(blockSize);
 
                 var hashes = block.AsParallel().Where(n => IsHash(n, baseStr, numZeroes));
                 if (hashes.Any())
@@ -499,9 +499,6 @@ namespace Advent
 
                 start += blockSize;
             }
-
-
-            return Util.Forever(start).Where(n => IsHash(n, baseStr, numZeroes)).First();
         }
     }
 
