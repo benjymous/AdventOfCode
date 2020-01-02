@@ -17,8 +17,8 @@ namespace Advent.MMXVI
             while (sb.Length < 8)
             {
                 hashNumber = HashBreaker.FindHash(doorId, 5, hashNumber+1);
-                var hashString = HashBreaker.GetHash(hashNumber, doorId);
-                char c = hashString[5];
+                var hashString = HashBreaker.GetHashChars(hashNumber, doorId);
+                char c = hashString.Skip(5).First();
                 sb.Append(c);
             }
 
@@ -33,7 +33,7 @@ namespace Advent.MMXVI
             while (outpass.Contains('_'))
             {
                 hashNumber = HashBreaker.FindHash(doorId, 5, hashNumber+1);
-                var hashString = HashBreaker.GetHash(hashNumber, doorId);
+                var hashString = HashBreaker.GetHashChars(hashNumber, doorId).Take(7).ToArray();
                 char c = hashString[6];
                 char p = hashString[5];
 
