@@ -466,23 +466,42 @@ namespace Advent
 
     public static class HashBreaker
     {
-        static public string GetHash(int num, string baseStr)
+        static public byte[] GetHash(int num, string baseStr)
         {
-           string hashInput = baseStr + num.ToString();
-           return hashInput.GetMD5String(); 
+            string hashInput = baseStr + num.ToString();
+            return hashInput.GetMD5(); 
         }
 
-        static bool IsHash(int num, string baseStr, string prefix)
+        public static IEnumerable<char> GetHashChars(int num, string baseStr)
         {
-            string hashed = GetHash(num, baseStr);
-            return hashed.StartsWith(prefix);
+            string hashInput = baseStr + num.ToString();
+            return hashInput.GetMD5Chars();  
+        }
+
+        static bool IsHash(int num, string baseStr, int numZeroes)
+        {
+            var hashed = GetHash(num, baseStr).AsNybbles().Take(numZeroes);       
+            return hashed.Where(b => b!=0).Count() == 0;
         }
  
+        const int blockSize = 1000;
         public static int FindHash(string baseStr, int numZeroes, int start=0)
-        {
-            var prefix = String.Join("", Enumerable.Repeat('0', numZeroes));
-            
-            return Util.Forever(start).Where(n => IsHash(n, baseStr, prefix)).First();
+        {            
+            while (true)
+            {
+                var block = Util.Forever(start).Take(blockSize).ToArray();
+
+                var hashes = block.AsParallel().Where(n => IsHash(n, baseStr, numZeroes));
+                if (hashes.Any())
+                {
+                    return hashes.First();
+                }
+
+                start += blockSize;
+            }
+
+
+            return Util.Forever(start).Where(n => IsHash(n, baseStr, numZeroes)).First();
         }
     }
 
@@ -578,15 +597,38 @@ namespace Advent
         {
             StringBuilder sb = new StringBuilder();
             foreach (byte b in GetMD5(inputString))
+            {
                 sb.Append(b.ToString("X2"));
+            }
 
             return sb.ToString();
+        }
+
+        public static IEnumerable<char> GetMD5Chars(this string inputString)
+        {
+            foreach (byte b in GetMD5(inputString))
+            {
+                foreach (var c in b.ToString("X2"))
+                {
+                    yield return c;
+                }
+            }
         }
 
         public static string AsString(this IEnumerable<char> input)
         {
             return String.Join("", input);
         }
+
+        public static IEnumerable<byte> AsNybbles(this byte[] bytes)
+        {
+            foreach (var x in bytes)
+            {
+                yield return (byte)((x & 0xF0) >> 4);
+                yield return (byte) (x & 0x0F);             
+            }
+        }
+
 
         private static string vowels = "aeiouAEIOU";
 
