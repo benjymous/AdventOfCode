@@ -33,10 +33,10 @@ namespace Advent.MMXV
  
         public static int Part1(string input)
         {
-            var bits = input.Where(c => (c==' ' || (c>='0' && c<='9'))).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).ToArray();
+            var numbers = Util.ExtractNumbers(input);
 
-            var row = int.Parse(bits[0]);
-            var col = int.Parse(bits[1]);
+            var row = numbers[0];
+            var col = numbers[1];
 
             var code = NumberSequence().Where(val => val.x == col && val.y == row).First().code;
 
