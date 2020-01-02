@@ -41,7 +41,7 @@ namespace Advent
                 var watch = new System.Diagnostics.Stopwatch();        
                 watch.Start();
 
-                Parallel.ForEach(puzzles, new ParallelOptions(){MaxDegreeOfParallelism=1}, (puzzle) =>
+                Parallel.ForEach(puzzles, new ParallelOptions(){MaxDegreeOfParallelism=8}, (puzzle) =>
                 {
                     TextBuffer buffer = new TextBuffer();
                     timings[puzzle.Name] = puzzle.TimeRun(buffer);
