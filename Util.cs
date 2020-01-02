@@ -105,6 +105,9 @@ namespace Advent
             }
             Console.WriteLine(actual);
         }
+
+        public static int[] ExtractNumbers(string input) => input.Where(c => (c==' ' || c=='-' || (c>='0' && c<='9'))).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(w => int.Parse(w)).ToArray();
+
     }
 
     public interface IVec
@@ -509,17 +512,24 @@ namespace Advent
             return watch.ElapsedMilliseconds;
         }
 
-        public static void IncrementAtIndex<T>(this Dictionary<T,int> dict, T key, int val=1)
+        static T Add<T>(T x, T y) => Add((dynamic)x,(dynamic)y);
+        static int Add(int a, int b) => a+b;
+        static long Add(long a, long b) => a+b;
+        static ulong Add(ulong a, ulong b) => a+b;
+
+        public static void IncrementAtIndex<T,V>(this Dictionary<T,V> dict, T key, V val)
         {
             if (dict.ContainsKey(key))
             {
-                dict[key] += val;
+                dict[key] = Add(dict[key], val);
             }
             else
             {
                 dict[key] = val;
             }
         }
+
+        public static void IncrementAtIndex<T>(this Dictionary<T,int> dict, T key, int val=1) => IncrementAtIndex<T, int>(dict, key, val);
 
         public static void PutObjKey<T>(this Dictionary<string, T> dict, object key, T value)
         {
