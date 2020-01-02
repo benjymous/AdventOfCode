@@ -484,7 +484,7 @@ namespace Advent
             return hashed.Where(b => b!=0).Count() == 0;
         }
  
-        const int blockSize = 1000;
+        const int blockSize = 100000;
         public static int FindHash(string baseStr, int numZeroes, int start=0)
         {            
             while (true)
