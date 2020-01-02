@@ -56,6 +56,14 @@ namespace Advent.MMXVI
 
         public void Run(string input, System.IO.TextWriter console)
         {
+            var watch = new System.Diagnostics.Stopwatch();        
+            watch.Start();
+            for(int i=0; i<10; ++i)
+            {
+                HashBreaker.FindHash("abcdefg", 4);
+                console.WriteLine(watch.ElapsedMilliseconds/(i+1));
+            }
+
             //Console.WriteLine(CrackPassword("abc"));
 
             //Console.WriteLine(CrackPassword2("abc"));
