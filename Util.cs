@@ -69,11 +69,7 @@ namespace Advent
 
         public static string GetInput<T>() where T : IPuzzle, new() => GetInput(new T());
 
-        public static IEnumerable<int> Forever(int start=0)
-        {
-            int i=start;
-            while(true) { yield return i++; }
-        }
+        public static IEnumerable<int> Forever(int start=0) => Enumerable.Range(start, int.MaxValue);
 
         public static IEnumerable<int> RepeatForever(IEnumerable<int> input)
         {
@@ -484,14 +480,12 @@ namespace Advent
             return hashed.Where(b => b!=0).Count() == 0;
         }
  
-        const int blockSize = 1000;
+        const int blockSize = 100000;
         public static int FindHash(string baseStr, int numZeroes, int start=0)
         {            
             while (true)
             {
-                var block = Util.Forever(start).Take(blockSize);
-
-                var hashes = block.AsParallel().Where(n => IsHash(n, baseStr, numZeroes));
+                var hashes = Enumerable.Range(start, blockSize).AsParallel().Where(n => IsHash(n, baseStr, numZeroes));
                 if (hashes.Any())
                 {
                     return hashes.First();

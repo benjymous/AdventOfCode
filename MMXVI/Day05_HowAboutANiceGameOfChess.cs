@@ -11,25 +11,29 @@ namespace Advent.MMXVI
  
         public static string CrackPassword1(string doorId)
         {
-            var sb = new StringBuilder();
+            var watch = new System.Diagnostics.Stopwatch(); 
+            var sb = new List<char>();
             int hashNumber = 0;
-
-            while (sb.Length < 8)
+            watch.Start();
+            while (sb.Count < 8)
             {
                 hashNumber = HashBreaker.FindHash(doorId, 5, hashNumber+1);
                 var hashString = HashBreaker.GetHashChars(hashNumber, doorId);
                 char c = hashString.Skip(5).First();
-                sb.Append(c);
+                sb.Add(c);
+                Console.WriteLine($"[{watch.ElapsedMilliseconds,6}]:{c} {sb.AsString()}");
             }
 
-            return sb.ToString().ToLower();
+            return sb.AsString().ToLower();
         }
 
         public static string CrackPassword2(string doorId)
         {
+            var watch = new System.Diagnostics.Stopwatch(); 
             var outpass = "________".ToCharArray();
             int hashNumber = 0;
 
+            watch.Start();
             while (outpass.Contains('_'))
             {
                 hashNumber = HashBreaker.FindHash(doorId, 5, hashNumber+1);
@@ -44,7 +48,7 @@ namespace Advent.MMXVI
                     outpass[pos] = c;
                 }
 
-                Console.WriteLine($"{hashNumber} [{pos}]:{c} {outpass.AsString()}");
+                Console.WriteLine($"[{watch.ElapsedMilliseconds,6}] {hashNumber,8} [{pos,2}]:{c} {outpass.AsString()}");
             }
 
             return outpass.AsString().ToLower();
@@ -56,13 +60,13 @@ namespace Advent.MMXVI
 
         public void Run(string input, System.IO.TextWriter console)
         {
-            var watch = new System.Diagnostics.Stopwatch();        
-            watch.Start();
-            for(int i=0; i<10; ++i)
-            {
-                HashBreaker.FindHash("abcdefg", 4);
-                console.WriteLine(watch.ElapsedMilliseconds/(i+1));
-            }
+            // var watch = new System.Diagnostics.Stopwatch();        
+            // watch.Start();
+            // for(int i=0; i<10; ++i)
+            // {
+            //     HashBreaker.FindHash("abcdefg", 4);
+            //     console.WriteLine(watch.ElapsedMilliseconds/(i+1));
+            // }
 
             //Console.WriteLine(CrackPassword("abc"));
 
