@@ -57,7 +57,6 @@ namespace Advent.MMXVI
                                     RotateCol(col, shiftcol);
                                 break;
                             }
-
                         break;
 
                         default:
@@ -65,8 +64,6 @@ namespace Advent.MMXVI
                             break;
 
                     }
-
-   
                 }
             }
 
@@ -142,16 +139,15 @@ namespace Advent.MMXVI
 
         public void Run(string input, System.IO.TextWriter console)
         {
-
-            var display = new Display("", 7, 3);
-            display.Perform("rect 3x2");
-            console.WriteLine($"{display}\n\n");
-            display.Perform("rotate column x=1 by 1");
-            console.WriteLine($"{display}\n\n");
-            display.Perform("rotate row y=0 by 4");
-            console.WriteLine($"{display}\n\n");
-            display.Perform("rotate column x=1 by 1");
-            console.WriteLine($"{display}\n\n");
+            // var display = new Display("", 7, 3);
+            // display.Perform("rect 3x2");
+            // console.WriteLine($"{display}\n\n");
+            // display.Perform("rotate column x=1 by 1");
+            // console.WriteLine($"{display}\n\n");
+            // display.Perform("rotate row y=0 by 4");
+            // console.WriteLine($"{display}\n\n");
+            // display.Perform("rotate column x=1 by 1");
+            // console.WriteLine($"{display}\n\n");
 
             console.WriteLine("- Pt1 - "+Part1(input));
             console.WriteLine("- Pt2 - \n"+Part2(input));
