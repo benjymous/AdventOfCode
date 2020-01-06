@@ -8,78 +8,73 @@ namespace Advent.MMXVI
     public class Day09 : IPuzzle
     {
         public string Name { get { return "2016-09";} }
- 
-        static string Decompress(string input)
+
+        static (int numChars, int numRepeats) Parse(string cmd)
         {
-            var sb = new StringBuilder();
+            var bits = Util.Parse(cmd, 'x');
+            return (bits[0], bits[1]);
+        }
+ 
+        static Int64 Decompress(string input, bool recurse)
+        {
+            Int64 length = 0;
             int i=0;
             while (i<input.Length)
             {
                 var c = input[i];
+               
                 if (c=='(')
                 {
                     int start = i;
                     while (input[i++]!=')');
 
-                    var cmd = input.Substring(start+1, i-start-2);
-
-                    //Console.WriteLine(cmd);
-
-                    var bits = cmd.Split("x").Select(i => int.Parse(i)).ToArray();
-
-                   
-                    var sb2 = new StringBuilder();
-                    int j=0;
-                    while (j++ < bits[0])
+                    var (numChars,numRepeats) = Parse(input.Substring(start+1, i-start-2));
+                  
+                    if (recurse)
                     {
-                        sb2.Append(input[i++]);
+                        length += Decompress(input.Substring(i, numChars), true) * numRepeats;
                     }
-
-                    for (var k=0; k<bits[1]; ++k)
+                    else
                     {
-                        sb.Append(sb2.ToString());
+                        length += numChars * numRepeats;  
                     }
+                    i+=numChars;                
 
                 }
                 else
                 {
-                    sb.Append(c);
                     i++;
-                }
-
-                
+                    length++;
+                }            
             }
-            return sb.ToString();
+            return length;
         }
 
-        public static int Part1(string input)
+        public static Int64 Part1(string input)
         {
-            var stripped = input.Trim();
-            var decompressed = Decompress(stripped);
-            return decompressed.Length;
+            return Decompress(input.Trim(), false);
         }
 
-        public static int Part2(string input)
-        {
-            input = input.Trim();
-            
-            var count = 0;
-
-            while(input.Contains("("))
-            {
-                input = Decompress(input);
-                Console.WriteLine($"{count++}, {input.Length}, {input.Where(c => c=='(').Count()}");
-            }
-
-            return 0;
+        public static Int64 Part2(string input)
+        {        
+            return Decompress(input.Trim(), true);
         }
 
         public void Run(string input, System.IO.TextWriter console)
         {
-            Util.Test(Decompress("A(1x5)BC"), "ABBBBBC");
+            //Util.Test(Part1("ADVENT"), 6UL);
+            //Util.Test(Part1("A(1x5)BC"), 7UL);
+            //Util.Test(Part1("(3x3)XYZ"), 9UL);
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            //console.WriteLine("- Pt2 - "+Part2(input));
+            //Util.Test(Part2("ADVENT"), 6UL);
+            //Util.Test(Part2("A(1x5)BC"), 7UL);
+            // Util.Test(Part2("(3x3)XYZ"), 9UL);
+            // Util.Test(Part2("X(8x2)(3x3)ABCY"), 20UL);
+            // Util.Test(Part2("(27x12)(20x12)(13x14)(7x10)(1x12)A"), 241920UL);
+            // Util.Test(Part2("(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN"), 445UL);
+
+            console.WriteLine("- Pt1 - "+Part1(input));  // 107035
+            console.WriteLine("- Pt2 - "+Part2(input));  // 11451628995
         }
     }
 }
