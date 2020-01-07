@@ -106,12 +106,12 @@ namespace Advent.MMXVIII
             }
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
             input = input.Trim();
 
-            console.WriteLine("- Pt1 - "+Part1(int.Parse(input), 10));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(int.Parse(input), 10));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

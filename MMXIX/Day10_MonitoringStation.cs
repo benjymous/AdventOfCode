@@ -146,7 +146,7 @@ namespace Advent.MMXIX
             return destroyed;
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {        
 
             //Console.WriteLine(AngleBetween(new ManhattanVector2(8,3), new ManhattanVector2(8,1)));   
@@ -180,8 +180,8 @@ namespace Advent.MMXIX
             //Console.WriteLine(Part2(".#..#,.....,#####,....#,...##"));
             //Console.WriteLine(Part2(".#....#####...#..,##...##.#####..##,##...#...#.#####.,..#.....X...###..,..#.#.....#....##"));
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input, 200));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input, 200));
         }
     }
 }

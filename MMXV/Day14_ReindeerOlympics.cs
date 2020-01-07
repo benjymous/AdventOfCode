@@ -92,19 +92,19 @@ namespace Advent.MMXV
             return MaxScoreAfterTime(deer, 2503);
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
 
             //var d1 = new Reindeer("Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds");
             //var d2 = new Reindeer("Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds");
 
-            // console.WriteLine(d1.Distance().Skip(1000).First());
-            // console.WriteLine(d2.Distance().Skip(1000).First());
+            // logger.WriteLine(d1.Distance().Skip(1000).First());
+            // logger.WriteLine(d2.Distance().Skip(1000).First());
 
-            //console.WriteLine(MaxScoreAfterTime(new List<Reindeer>{d1,d2}, 1000));
+            //logger.WriteLine(MaxScoreAfterTime(new List<Reindeer>{d1,d2}, 1000));
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

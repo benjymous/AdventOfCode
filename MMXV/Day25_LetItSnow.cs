@@ -9,11 +9,11 @@ namespace Advent.MMXV
     {
         public string Name { get { return "2015-25";} }
 
-        static IEnumerable<(int x, int y, Int64 code)> NumberSequence()
+        static IEnumerable<(int x, int y, UInt64 code)> NumberSequence()
         {
             int x=1;
             int y=1;
-            Int64 code = 20151125;
+            UInt64 code = 20151125;
             yield return (x,y,code);
 
             while (true)
@@ -43,9 +43,9 @@ namespace Advent.MMXV
             return (int)code;
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
-            console.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
         }
     }
 }

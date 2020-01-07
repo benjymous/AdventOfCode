@@ -88,10 +88,10 @@ namespace Advent.MMXIX
             return minDist;
         }
  
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
-            console.WriteLine("- Pt1 - "+FindIntersection(input, SearchMode.Closest));  
-            console.WriteLine("- Pt2 - "+FindIntersection(input, SearchMode.Shortest));  
+            logger.WriteLine("- Pt1 - "+FindIntersection(input, SearchMode.Closest));  
+            logger.WriteLine("- Pt2 - "+FindIntersection(input, SearchMode.Shortest));  
         }
     }
 }

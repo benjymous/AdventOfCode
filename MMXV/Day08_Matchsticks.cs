@@ -97,7 +97,7 @@ namespace Advent.MMXV
             return result.Select(x => x.Item2.Length - x.Item1.Length).Sum();
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
             // Console.WriteLine(Unescape("\"\""));
             // Console.WriteLine(Unescape("\"abc\""));
@@ -111,8 +111,8 @@ namespace Advent.MMXV
             //Console.WriteLine(Escape("\"aaa\\\"aaa\"").Length);
             //Console.WriteLine(Escape("\"\\x27\"").Length);
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

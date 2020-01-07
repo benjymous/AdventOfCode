@@ -258,7 +258,7 @@ namespace Advent.MMXIX
             return robot.DustCollected;
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
 
             //Hoovamatic.Optimise("R,8,R,8,R,4,R,4,R,8,L,6,L,2,R,4,R,4,R,8,R,8,R,8,L,6,L,2");
@@ -266,8 +266,8 @@ namespace Advent.MMXIX
             //var shrunk = Hoovamatic.Optimise("L,1, R,1, L,2, R,2, L,1, R,1, L,1, R,2, R,2");
             //var shrunk2 = Hoovamatic.Optimise(Hoovamatic.programUnoptimised);
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

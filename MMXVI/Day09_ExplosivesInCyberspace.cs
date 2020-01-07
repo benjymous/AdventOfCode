@@ -60,7 +60,7 @@ namespace Advent.MMXVI
             return Decompress(input.Trim(), true);
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
             //Util.Test(Part1("ADVENT"), 6UL);
             //Util.Test(Part1("A(1x5)BC"), 7UL);
@@ -73,8 +73,8 @@ namespace Advent.MMXVI
             // Util.Test(Part2("(27x12)(20x12)(13x14)(7x10)(1x12)A"), 241920UL);
             // Util.Test(Part2("(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN"), 445UL);
 
-            console.WriteLine("- Pt1 - "+Part1(input));  // 107035
-            console.WriteLine("- Pt2 - "+Part2(input));  // 11451628995
+            logger.WriteLine("- Pt1 - "+Part1(input));  // 107035
+            logger.WriteLine("- Pt2 - "+Part2(input));  // 11451628995
         }
     }
 }

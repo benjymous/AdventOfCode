@@ -133,9 +133,10 @@ namespace Advent.MMXIX
                 else return 0;
             }
 
-            public void DrawMap(System.IO.TextWriter console)
+            public void DrawMap(ILogger logger)
             {
-                console.WriteLine();
+                if (logger == null) return;
+                logger.WriteLine();
                 for (var y=miny; y<=maxy; ++y)
                 {
                     var line = "";
@@ -164,9 +165,9 @@ namespace Advent.MMXIX
                            
                         }
                     }
-                    console.WriteLine(line);
+                    logger.WriteLine(line);
                 }
-                console.WriteLine();
+                logger.WriteLine();
 
             }
             public void WillReadInput()
@@ -174,7 +175,7 @@ namespace Advent.MMXIX
                 Steps++;
                 if (mode == Mode.Interactive)
                 {
-                    DrawMap(Console.Out);
+                    DrawMap(new ConsoleOut());
                     Console.WriteLine($"Located at {position}");
                     Console.WriteLine("north (1), south (2), west (3), and east (4) ?");
                     
@@ -261,16 +262,14 @@ namespace Advent.MMXIX
           
         }
         
-        public static int Part1(string input, System.IO.TextWriter console = null)
+        public static int Part1(string input, ILogger logger = null)
         {
-            if (console == null) console = Console.Out;
-
             var droid = new RepairDrone(input);
             droid.Run();
 
-            droid.DrawMap(console);
+            droid.DrawMap(logger);
 
-            console.WriteLine($"Map explored in {droid.Steps} steps");
+            logger?.WriteLine($"Map explored in {droid.Steps} steps");
 
             var oxygenSystemPosition = droid.FindCell(RepairDrone.OXYGEN);
 
@@ -320,10 +319,10 @@ namespace Advent.MMXIX
             return dist;
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
-            console.WriteLine("- Pt1 - "+Part1(input, console));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input, logger));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

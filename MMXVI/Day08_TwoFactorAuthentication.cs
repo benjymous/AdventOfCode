@@ -137,20 +137,20 @@ namespace Advent.MMXVI
             return display.ToString();
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
             // var display = new Display("", 7, 3);
             // display.Perform("rect 3x2");
-            // console.WriteLine($"{display}\n\n");
+            // logger.WriteLine($"{display}\n\n");
             // display.Perform("rotate column x=1 by 1");
-            // console.WriteLine($"{display}\n\n");
+            // logger.WriteLine($"{display}\n\n");
             // display.Perform("rotate row y=0 by 4");
-            // console.WriteLine($"{display}\n\n");
+            // logger.WriteLine($"{display}\n\n");
             // display.Perform("rotate column x=1 by 1");
-            // console.WriteLine($"{display}\n\n");
+            // logger.WriteLine($"{display}\n\n");
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - \n"+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - \n"+Part2(input));
         }
     }
 }

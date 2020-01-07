@@ -88,26 +88,26 @@ namespace Advent.MMXVI
             return Util.Split(input).Where(i => HasAbaBab(i)).Count();
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
-            // console.WriteLine(HasAbba("--abba--"));
-            // console.WriteLine(HasAbba("abba--"));
-            // console.WriteLine(HasAbba("--abba"));
-            // console.WriteLine(HasAbba("--abab--"));
-            // console.WriteLine(HasAbba("--aba--"));
+            // logger.WriteLine(HasAbba("--abba--"));
+            // logger.WriteLine(HasAbba("abba--"));
+            // logger.WriteLine(HasAbba("--abba"));
+            // logger.WriteLine(HasAbba("--abab--"));
+            // logger.WriteLine(HasAbba("--aba--"));
 
-            // console.WriteLine(HasAbba("abba[mnop]qrst"));  // true
-            // console.WriteLine(HasAbba("abcd[bddb]xyyx"));  // false
-            // console.WriteLine(HasAbba("aaaa[qwer]tyui"));  // false
-            // console.WriteLine(HasAbba("ioxxoj[asdfgh]zxcvbn"));  // true
+            // logger.WriteLine(HasAbba("abba[mnop]qrst"));  // true
+            // logger.WriteLine(HasAbba("abcd[bddb]xyyx"));  // false
+            // logger.WriteLine(HasAbba("aaaa[qwer]tyui"));  // false
+            // logger.WriteLine(HasAbba("ioxxoj[asdfgh]zxcvbn"));  // true
 
-            //console.WriteLine(HasAbaBab("aba[bab]xyz")); // true
-            //console.WriteLine(HasAbaBab("xyx[xyx]xyx")); // false
-            //console.WriteLine(HasAbaBab("aaa[kek]eke")); // true
-            //console.WriteLine(HasAbaBab("zazbz[bzb]cdb")); // true
+            //logger.WriteLine(HasAbaBab("aba[bab]xyz")); // true
+            //logger.WriteLine(HasAbaBab("xyx[xyx]xyx")); // false
+            //logger.WriteLine(HasAbaBab("aaa[kek]eke")); // true
+            //logger.WriteLine(HasAbaBab("zazbz[bzb]cdb")); // true
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

@@ -30,6 +30,7 @@ namespace Advent.MMXIX
             public EmergencyHullPainterRobot(string program)
             {
                 cpu = new NPSA.IntCPU(program);
+                cpu.Reserve(1200);
                 cpu.Interrupt = this;
             }
 
@@ -120,20 +121,20 @@ namespace Advent.MMXIX
             return robot.GetPaintedTileCount();
         }
 
-        public static string Part2(string input, System.IO.TextWriter console)
+        public static string Part2(string input, ILogger logger)
         {
-            var robot = new EmergencyHullPainterRobot(input);
+            var robot = new EmergencyHullPainterRobot(input);            
             robot.PaintHull(1);
             robot.Run();
             var image = robot.GetDrawnPattern();
-            console.WriteLine(image.ToString());
+            logger.WriteLine("\n"+image.ToString());
             return image.ToString().GetSHA256String();
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input, console));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input, logger));
         }
     }
 }

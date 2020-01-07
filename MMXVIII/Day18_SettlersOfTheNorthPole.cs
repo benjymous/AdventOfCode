@@ -167,14 +167,14 @@ namespace Advent.MMXVIII
             return Run(input, 1000000000);
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
             //Console.WriteLine(Step('|', "...|||.."));
 
             //Console.WriteLine(Run("......,......,..#|..,..#|..,..||..,......", 1000000));
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

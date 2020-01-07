@@ -72,11 +72,11 @@ namespace Advent.MMXV
             return GetRoutes(input).Max();
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
             //Console.WriteLine(Part1("London to Dublin = 464\nLondon to Belfast = 518\nDublin to Belfast = 141"));
-            console.WriteLine("- Pt1 - " + Part1(input));
-            console.WriteLine("- Pt2 - " + Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

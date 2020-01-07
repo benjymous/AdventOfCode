@@ -32,7 +32,7 @@ namespace Advent
 
             if (puzzles.Count()==1)
             {
-                var timing = puzzles.First().TimeRun(Console.Out);
+                var timing = puzzles.First().TimeRun(new ConsoleOut());
                 Console.WriteLine();
                 Console.WriteLine($"{timing} ms");
             }
@@ -44,7 +44,7 @@ namespace Advent
                 Parallel.ForEach(puzzles, new ParallelOptions(){MaxDegreeOfParallelism=8}, (puzzle) =>
                 {
                     TextBuffer buffer = new TextBuffer();
-                    timings[puzzle.Name] = puzzle.TimeRun(buffer);
+                    timings[puzzle.Name] = puzzle.TimeRun(new TimeLogger(buffer));
 
                     mut.WaitOne();
                     Console.WriteLine(buffer);

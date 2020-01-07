@@ -25,10 +25,10 @@ namespace Advent.MMXIX
         public static int Part1(string input) => Util.Parse(input).Select(module => GetFuelRequirement(module)).Sum();
         public static int Part2(string input) => Util.Parse(input).Select(module => GetFullFuelRequirement(module)).Sum();
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
-            console.WriteLine("- Pt1 - " + Part1(input));
-            console.WriteLine("- Pt2 - " + Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

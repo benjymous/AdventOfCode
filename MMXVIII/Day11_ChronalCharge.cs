@@ -119,13 +119,13 @@ namespace Advent.MMXVIII
             return pos.ToString();
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
 
 
 
-            console.WriteLine("- Pt1 - " + Part1(input));
-            console.WriteLine("- Pt2 - " + Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

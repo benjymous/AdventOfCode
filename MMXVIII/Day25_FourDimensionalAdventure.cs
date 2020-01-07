@@ -99,13 +99,13 @@ namespace Advent.MMXVIII
             return 0;
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
 
 
             //Console.WriteLine(Part1("0,0,0,0\n3,0,0,0\n0,3,0,0\n0,0,3,0\n0,0,0,3\n0,0,0,6\n9,0,0,0\n12,0,0,0\n"));
-            console.WriteLine("- Pt1 - "+Part1(input));
-            //console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            //logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }
