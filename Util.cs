@@ -649,6 +649,26 @@ namespace Advent
             return sb.ToString();
         }
 
+        public static string ReplaceFirst(this string str, string from, string replacement)
+        {
+            int pos = str.IndexOf(from);
+            if (pos < 0)
+            {
+                return str;
+            }
+            return ReplaceAtIndex(str, pos, from, replacement);
+        }
+
+        public static string ReplaceLast(this string str, string from, string replacement)
+        {
+            int pos = str.LastIndexOf(from);
+            if (pos < 0)
+            {
+                return str;
+            }
+            return ReplaceAtIndex(str, pos, from, replacement);
+        }
+
         // iterate over bits, returns sequence like 1,2,4,8 (only returning set bits in input)
         public static IEnumerable<int> BitSequence(this int v)
         {
@@ -700,6 +720,21 @@ namespace Advent
             }
         }
 
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items)
+        {
+            var rnd = new Random();
+            return items.OrderBy(_ => rnd.Next());
+        }
+
+        public static IEnumerable<IEnumerable<T>> DuplicateSequence<T>(this IEnumerable<T> input)
+        {
+            while (true)
+            {
+                yield return input;
+            }
+        }
+
+        // returns how similar two strings are - smaller = more similar
         public static int LevenshteinDistance(this string s, string t)
         {
             if (string.IsNullOrEmpty(s))
