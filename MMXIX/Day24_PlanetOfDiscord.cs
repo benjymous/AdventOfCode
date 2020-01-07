@@ -304,13 +304,13 @@ namespace Advent.MMXIX
             return states.Dequeue().Count();
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
 
-            //console.WriteLine(Part2("....#\n#..#.\n#..##\n..#..\n#....", 10));
+            //logger.WriteLine(Part2("....#\n#..#.\n#..##\n..#..\n#....", 10));
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input, 200));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input, 200));
         }
     }
 }

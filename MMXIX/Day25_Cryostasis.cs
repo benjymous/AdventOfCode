@@ -25,6 +25,7 @@ namespace Advent.MMXIX
             int skippedCombos = 0;
             public SearchDroid(string program) : base(program)
             {
+                cpu.Reserve(5400);
             }
 
             HashSet<string> HeldItems = new HashSet<string>();
@@ -375,9 +376,9 @@ namespace Advent.MMXIX
             return 0;
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
-            Console.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
         }
     }
 }

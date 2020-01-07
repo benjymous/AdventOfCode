@@ -108,7 +108,10 @@ namespace Advent.MMXIX.NPSA
             Output.Clear();
         }
 
-        public void Reserve(int memorySize) => Memory.Reserve(memorySize);
+        public void Reserve(int memorySize) 
+        {
+            Memory.Reserve(memorySize);
+        }
 
         Int64 GetValue(int paramIdx) => Memory[GetAddr(paramIdx)];
         void PutValue(int paramIdx, Int64 value) => Memory[GetAddr(paramIdx)] = value;

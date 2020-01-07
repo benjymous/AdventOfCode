@@ -4,6 +4,11 @@ namespace Advent
     {
         string Name {get;}
 
-        void Run(string input, System.IO.TextWriter console);
+        void Run(string input, ILogger log);
+    }
+
+    public interface ILogger
+    {
+        void WriteLine(string log=null);
     }
 }

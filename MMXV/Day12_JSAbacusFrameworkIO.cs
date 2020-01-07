@@ -94,22 +94,22 @@ namespace Advent.MMXV
             return GetSum(jsonObj);
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
 
             // var data = FindNumbers(input);
             // foreach (var i in data)
             // {
-            //     console.WriteLine(i);
+            //     logger.WriteLine(i);
             // }
 
-            // console.WriteLine(Part2("[1,2,3]"));
-            // console.WriteLine(Part2("[1,{\"c\":\"red\",\"b\":2},3"));
-            // console.WriteLine(Part2("{\"d\":\"red\",\"e\":[1,2,3,4],\"f\":5}"));
-            // console.WriteLine(Part2("[1,\"red\",5]"));
+            // logger.WriteLine(Part2("[1,2,3]"));
+            // logger.WriteLine(Part2("[1,{\"c\":\"red\",\"b\":2},3"));
+            // logger.WriteLine(Part2("{\"d\":\"red\",\"e\":[1,2,3,4],\"f\":5}"));
+            // logger.WriteLine(Part2("[1,\"red\",5]"));
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

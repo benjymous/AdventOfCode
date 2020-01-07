@@ -12,6 +12,7 @@ namespace Advent.MMXIX
         public static string Run(string program, int input)
         {
             var cpu = new NPSA.IntCPU(program);
+            cpu.Reserve(8000);
             cpu.Input.Enqueue(input);
             cpu.Run();
             return string.Join(",",cpu.Output);
@@ -21,10 +22,10 @@ namespace Advent.MMXIX
 
         public static string Part2(string input) => Run(input, 2);
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Advent.MMXIX.Test
         public void Image_Part2_Regression()
         {     
             const string expectedHash = "83314289071513F5D831987A2AE99D107ACF077F8A950D9D9EBA5437B8434833";
-            Assert.AreEqual(expectedHash, Day08.Part2(input, System.Console.Out));
+            Assert.AreEqual(expectedHash, Day08.Part2(input, new ConsoleOut()));
         }
 
     }

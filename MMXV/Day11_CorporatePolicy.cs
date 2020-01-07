@@ -101,25 +101,25 @@ namespace Advent.MMXV
             return FindNextValid(FindNextValid(input.Trim()));
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
-            //console.WriteLine(Increment("aaaah"));
-            //console.WriteLine(Increment("aaahz"));
+            //logger.WriteLine(Increment("aaaah"));
+            //logger.WriteLine(Increment("aaahz"));
 
-            //console.WriteLine(IsValid1("hijklmmn"));
-            //console.WriteLine(IsValid1("abbceffg"));
-            //console.WriteLine(IsValid1("abbcegjk"));
-            //console.WriteLine(IsValid1("abcdefgh"));
-            //console.WriteLine(IsValid1("abcdffaa"));
-            //console.WriteLine(IsValid1("abcdfffa"));
-            //console.WriteLine(IsValid1("ghijklmn"));
-            //console.WriteLine(IsValid1("ghjaabcc"));
+            //logger.WriteLine(IsValid1("hijklmmn"));
+            //logger.WriteLine(IsValid1("abbceffg"));
+            //logger.WriteLine(IsValid1("abbcegjk"));
+            //logger.WriteLine(IsValid1("abcdefgh"));
+            //logger.WriteLine(IsValid1("abcdffaa"));
+            //logger.WriteLine(IsValid1("abcdfffa"));
+            //logger.WriteLine(IsValid1("ghijklmn"));
+            //logger.WriteLine(IsValid1("ghjaabcc"));
 
-            //console.WriteLine(FindNextValid("abcdefgh"));
-            //console.WriteLine(FindNextValid("ghijklmn"));
+            //logger.WriteLine(FindNextValid("abcdefgh"));
+            //logger.WriteLine(FindNextValid("ghijklmn"));
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

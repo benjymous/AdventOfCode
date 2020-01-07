@@ -103,7 +103,6 @@ namespace Advent
         }
 
         public static int[] ExtractNumbers(string input) => input.Where(c => (c==' ' || c=='-' || (c>='0' && c<='9'))).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(w => int.Parse(w)).ToArray();
-
     }
 
     public interface IVec
@@ -407,7 +406,7 @@ namespace Advent
 
         void Set(int key, DataType value)
         {
-            if (key>=data.Length) 
+            if (key>=data.Length)
             {
                 Console.Write($"Resize from {data.Length} to ");
                 Reserve(data.Length + ((key-data.Length+1)*250));
@@ -496,6 +495,43 @@ namespace Advent
         }
     }
 
+    public class TimeLogger : ILogger
+    {
+        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        System.IO.TextWriter output;
+
+        public TimeLogger (System.IO.TextWriter tw)
+        {
+            output = tw;
+            sw.Start();
+        }
+
+        public void WriteLine(string log = null)
+        {
+            if (log!=null)
+            {
+                output.Write($"[{sw.ElapsedMilliseconds,6}] ");
+                output.WriteLine(log);
+            }
+            else
+            {
+                output.WriteLine();
+            }
+        }
+
+        public override string ToString()
+        {
+            return output.ToString();
+        }
+    }
+
+    public class ConsoleOut : TimeLogger
+    {
+        public ConsoleOut() : base(Console.Out)
+        {
+        }
+    }
+
     public static class Extensions
     {
         public static string[] args;
@@ -512,13 +548,13 @@ namespace Advent
             return false;
         }
 
-        public static long TimeRun(this IPuzzle puzzle,  System.IO.TextWriter buffer)
+        public static long TimeRun(this IPuzzle puzzle,  ILogger logger)
         {
             var watch = new System.Diagnostics.Stopwatch();        
             watch.Start();
-            buffer.WriteLine(puzzle.Name);
+            logger.WriteLine(puzzle.Name);
             var input = Util.GetInput(puzzle);
-            puzzle.Run(input, buffer);
+            puzzle.Run(input, logger);
             return watch.ElapsedMilliseconds;
         }
 

@@ -93,14 +93,14 @@ namespace Advent.MMXVI
             return SimulateKeypad(input, keypad2);
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
           
-            //console.WriteLine(Part1("ULL\nRRDDD\nLURDL\nUUUUD"));
-            console.WriteLine(Part2("ULL\nRRDDD\nLURDL\nUUUUD"));
+            //logger.WriteLine(Part1("ULL\nRRDDD\nLURDL\nUUUUD"));
+            logger.WriteLine(Part2("ULL\nRRDDD\nLURDL\nUUUUD"));
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

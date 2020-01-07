@@ -144,14 +144,14 @@ namespace Advent.MMXV
             return query.Sum();
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
             // var bit1 = new Instruction("toggle 275,796 through 493,971");
             // var bit2 = new Instruction("turn off 70,873 through 798,923");
             // var bit3 = new Instruction("turn on 258,985 through 663,998");
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

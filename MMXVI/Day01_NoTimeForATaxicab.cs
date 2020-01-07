@@ -66,12 +66,12 @@ namespace Advent.MMXVI
             return -1;
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
-            console.WriteLine(Part2("R8, R4, R4, R8"));
+            //logger.WriteLine(Part2("R8, R4, R4, R8"));
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

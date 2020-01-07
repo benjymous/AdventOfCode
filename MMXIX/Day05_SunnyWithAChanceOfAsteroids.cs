@@ -27,14 +27,14 @@ namespace Advent.MMXIX
             return RunProgram(input, 5);
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
             //var cpu = new NPSA.IntCPU("1002,4,3,4,33");
             //cpu.Run();
 
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

@@ -216,12 +216,12 @@ namespace Advent.MMXIX
             return result;
         }
 
-        public void Run(string input, TextWriter console)
+        public void Run(string input, ILogger logger)
         {
-            //console.WriteLine(Part2("<x=-1, y=0, z=2>\n<x=2, y=-10, z=-7>\n<x=4, y=-8, z=8>\n<x=3, y=5, z=-1>"));
+            //logger.WriteLine(Part2("<x=-1, y=0, z=2>\n<x=2, y=-10, z=-7>\n<x=4, y=-8, z=8>\n<x=3, y=5, z=-1>"));
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

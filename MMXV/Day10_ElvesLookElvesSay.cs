@@ -55,7 +55,7 @@ namespace Advent.MMXV
             return GetNth(input, 50);
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
             //SayIt("1"); //11
             //SayIt("11"); //21
@@ -63,8 +63,8 @@ namespace Advent.MMXV
             //SayIt("1211"); //111221
             //SayIt("111221"); //312211
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

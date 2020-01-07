@@ -164,7 +164,7 @@ namespace Advent.MMXV
             return circuit.Solve("a");
         }
 
-        public void Run(string input, System.IO.TextWriter console)
+        public void Run(string input, ILogger logger)
         {
             // var example = "123 -> x\n456 -> y\nx AND y -> d\nx OR y -> e\nx LSHIFT 2 -> f\ny RSHIFT 2 -> g\nNOT x -> h\nNOT y -> i";
             // var circuit = new Circuit(example);
@@ -179,8 +179,8 @@ namespace Advent.MMXV
             // Console.WriteLine(circuit.Solve("y"));
 
 
-            console.WriteLine("- Pt1 - "+Part1(input));
-            console.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }
