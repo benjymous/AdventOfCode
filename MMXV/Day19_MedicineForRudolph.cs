@@ -31,153 +31,88 @@ namespace Advent.MMXV
             return results.Count;
         }
 
-        public class MoleculePaths : AStar.IMap<string>
+        public static bool ReduceSubPart(ref string molecule, ref int steps, IEnumerable<string[]> rules)
         {
-            IEnumerable<string[]> rules;
-
-            public MoleculePaths(IEnumerable<string[]> r)
+            bool changed = false;
+            while (true)
             {
-                rules = r;
-            }
-
-            public int From=0;
-            public int To=1;
-
-            public IEnumerable<string> GetNeighbours(string location)
-            {
-                foreach (var rule in rules.Where(r => location.Contains(r[From])))
+                var tmp = molecule;
+                foreach (var rule in rules)
                 {
-                    var indices = location.AllIndexesOf(rule[From]);
-
-                    var replacements = indices.Select(i => location.ReplaceAtIndex(i, rule[From], rule[To]));
-
-                    foreach (var newStr in replacements)
+                    if (molecule.Contains(rule[1]))
                     {
-                        yield return newStr;
+                        molecule = molecule.ReplaceLast(rule[1], rule[0]);
+                        steps++;
+                        changed = true;
                     }
                 }
-            }
-
-            public int Heuristic(string location1, string location2)
-            {
-                return location1.LevenshteinDistance(location2) + Math.Abs(location1.Length - location2.Length);
-            }
+                if (molecule == tmp)
+                {
+                   return changed;
+                }
+            }  
         }
 
         public static int Part2(string input)
         {
+            input = input.Replace("Rn", "(").Replace("Y",",").Replace("Ar", ")");
+
             var lines = Util.Split(input);
 
-            var rules = lines.Take(lines.Length-1).Select(x => x.Split(" => ")).OrderByDescending(x => x[1].Length);
+            var rules = lines.Take(lines.Length-1).Select(x => x.Split(" => ")).OrderByDescending(x => x[1].Length).ToArray();
+
             var molecule = lines.Last();
+            var original = molecule;
 
-            var map = new MoleculePaths(rules);
-
-            var blah = new AStar.RoomPathFinder<string>();
-            var bloop = blah.FindPath(map, "e", molecule);
-            //var bloop = blah.FindPath(map, molecule, "e");
-
-            return bloop.Count();
-        }
-
-        public static int _Part2(string input)
-        {
-            var lines = Util.Split(input);
-
-            var rules = lines.Take(lines.Length-1).Select(x => x.Split(" => ")).OrderByDescending(x => x[1].Length);
-            var molecule = lines.Last();
-
-
-            var jobqueue = new LinkedList<Tuple<string, int>>();
-            jobqueue.AddFirst(Tuple.Create(molecule, 0));
-            var cache = new Dictionary<string, int>();
-
-            cache[molecule] = 0;
-
-            int best = int.MaxValue;
-            int shortest = int.MaxValue;
-
-            int step = 0;
-            int skip = 0;
-
-            while (jobqueue.Any())
+            int steps = 0;
+            
+            // first remove all the bracketed sections (Rn..Ar)
+            while (molecule.Contains("("))
             {
-                var entry = jobqueue.First();  jobqueue.RemoveFirst();
-                step++;
-
-                if (step%1000 == 0)
+                int left=0;
+                while (true)
                 {
-                    Console.WriteLine($"{step} - {shortest} - {jobqueue.Count} - {cache.Count} {skip}");
-                }
+                    left = molecule.IndexOf("(", left+1);
+                    if (left == -1) break;
 
-                if (entry.Item1.Length < shortest)
-                {
-                    Console.WriteLine($"{entry.Item1} {entry.Item1.Length}");
-                }
-                shortest = Math.Min(shortest, entry.Item1.Length);
-
-                if (entry.Item1 == "e")
-                {
-                    best = Math.Min(best, entry.Item2);
-                    continue;
-                }
-
-                foreach (var rule in rules.Where(r => entry.Item1.Contains(r[1])))
-                {
-                    int newScore = entry.Item2+1;
-
-                    if (newScore > best) 
+                    int count = 1;
+                    int i = left+1;
+                    while (count>0 && i!=left)
                     {
-                        skip++;
-                        continue;
+                        if (molecule[i]=='(') count++;
+                        if (molecule[i]==')') count--;
+                        i++;
                     }
 
+                    var substr = molecule.Substring(left, i-left);
 
-                    var indices = entry.Item1.AllIndexesOf(rule[1]);
-
-                    var replacements = indices.AsParallel().Select(i => entry.Item1.ReplaceAtIndex(i, rule[1], rule[0]));
-
-                    foreach (var newStr in replacements)
+                    var shrunk = substr;
+                    if (ReduceSubPart(ref shrunk, ref steps, rules))
                     {
-                        if (!cache.ContainsKey(newStr) || cache[newStr] > newScore)
-                        {
-                            cache[newStr] = newScore;
-                            var newitem = Tuple.Create(newStr, newScore);
-                            jobqueue.AddFirst(newitem);
-                        }
-                        else
-                        {
-                            skip++;
-                        }
-                    }
-
-                    // foreach (var i in indices)
-                    // {
-                    //     var newStr = entry.Item1.ReplaceAtIndex(i, rule[1], rule[0]);
-                        
-                    //     if (!cache.ContainsKey(newStr) || cache[newStr] > newScore)
-                    //     {
-                    //         cache[newStr] = newScore;
-                    //         var newitem = Tuple.Create(newStr, newScore);
-                    //         jobqueue.AddFirst(newitem);
-                    //     }
-                    //     else
-                    //     {
-                    //         skip++;
-                    //     }
-                    // }
+                        molecule = molecule.ReplaceLast(substr, shrunk);
+                    }            
                 }
-                //jobqueue = new Queue<Tuple<string, int>>(jobqueue.OrderBy(x => x.Item1.Length));
-                
+                ReduceSubPart(ref molecule, ref steps, rules.Where(r => r[1].Contains("(")));           
             }
 
-            return best;
+            // with brackets gone, rest should reduce
+            while (molecule != "e")
+            {
+                if (!ReduceSubPart(ref molecule, ref steps, rules))
+                {
+                    Console.WriteLine($"Stuck with {molecule} after {steps}");
+                    molecule = original;
+                    steps = 0;
+                    rules = rules.Shuffle().ToArray();
+                }
+            }
+            return steps;
         }
 
         public void Run(string input, System.IO.TextWriter console)
         {
             console.WriteLine("- Pt1 - "+Part1(input));
-            //console.WriteLine("- Pt2 - "+Part2(input));
+            console.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }
