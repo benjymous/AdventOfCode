@@ -70,6 +70,10 @@ namespace Advent.MMXIX.NPSA
 
         public ICPUInterrupt Interrupt {get;set;} = null;
 
+
+        int CycleCount = 0;
+        double speed = 0;
+
         IEnumerable<int> PossibleInstructions()
         {
             yield return 99;
@@ -104,6 +108,7 @@ namespace Advent.MMXIX.NPSA
             Memory = new AutoArray<Int64>(initialState);
             InstructionPointer = 0;
             RelBase = 0;
+            CycleCount = 0;
             Input.Clear();
             Output.Clear();
         }
@@ -184,6 +189,7 @@ namespace Advent.MMXIX.NPSA
 
         public bool Step() 
         {     
+            CycleCount++;
             DecodeInstruction();
             //Console.WriteLine($"{InstructionPointer}: {instr}");
             switch(instr.code) 
@@ -247,7 +253,16 @@ namespace Advent.MMXIX.NPSA
 
         public void Run()
         {
-            while (Step());
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            while(Step());
+            var time = sw.Elapsed.TotalSeconds;
+            speed = (double)CycleCount / time;
+        }
+
+        public string Speed()
+        {
+            return $"{CycleCount} cycles - {speed.ToEngineeringNotation()}hz";
         }
 
         public void Poke(int addr, Int64 val) => Memory[addr] = val; 
