@@ -818,6 +818,13 @@ namespace Advent
             }
         }
 
+        public static Int64 Product(this IEnumerable<int> vals)
+        {
+            Int64 res = 1;
+            foreach (var v in vals) res *= v;
+            return res;
+        }
+
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             foreach (T element in source)
