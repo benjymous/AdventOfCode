@@ -109,7 +109,7 @@ namespace Advent.MMXVI.BunniTek
         int[] Registers = new int[]{0,0,0,0};
 
         System.Diagnostics.Stopwatch sw;
-        int CycleCount = 0;
+        Int64 CycleCount = 0;
 
         int InstructionPointer = 0;
 
