@@ -11,6 +11,7 @@ namespace Advent.MMXVI.BunniTek
         dec = 2,
         jnz = 3,
         tgl = 4,
+        @out = 5
     }
 
     public enum RegisterId
@@ -57,10 +58,16 @@ namespace Advent.MMXVI.BunniTek
             }
         }
 
+        public Value(Value other)
+        {
+            intVal = other.intVal;
+            isInt = other.isInt;
+        }
+
         public static implicit operator Value(int rhs) => new Value(rhs);
         public static implicit operator Value(RegisterId rhs) => new Value(rhs);
 
-         public override string ToString() 
+        public override string ToString() 
         {
             if (isInt)
             {
@@ -92,7 +99,19 @@ namespace Advent.MMXVI.BunniTek
             }
         }
 
+        public Instruction(Instruction other)
+        {
+            Opcode = other.Opcode;
+            X = new Value(other.X);
+            if (other.Y != null) Y = new Value(other.Y);
+        }
+
         public override string ToString() => $"{Opcode} {X} {Y}";
+    }
+
+    public interface IOutput
+    {
+        bool Put(int i);
     }
 
     public class BunnyCPU
@@ -102,6 +121,8 @@ namespace Advent.MMXVI.BunniTek
 
         System.Diagnostics.Stopwatch sw;
         Int64 CycleCount = 0;
+
+        public IOutput Output = null;
 
         int InstructionPointer = 0;
 
@@ -192,7 +213,15 @@ namespace Advent.MMXVI.BunniTek
                             }
                         }
                     }
-
+                    break;
+                case OpCode.@out:
+                    if (Output != null)
+                    {
+                        if (!Output.Put(Get(instr.X)))
+                        {
+                            return false;
+                        }
+                    }
                     break;
 
                 default:
