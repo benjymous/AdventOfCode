@@ -9,13 +9,12 @@ namespace Advent.MMXVI
     {
         public string Name { get { return "2016-13";} }
  
-        static bool IsWall(int x, int y, int seed)
+        static bool IsOpen(int x, int y, int seed)
         {
             int v = (seed)+(x*x) + (3*x) + (2*x*y) + (y) + (y*y);
             var b = v.BitSequence();
             var c = b.Count();
-            if (c%2 == 0) return false;
-            return true;
+            return (c%2 == 0);
         }
 
         public class CubicleMap : AStar.IMap<ManhattanVector2>
@@ -59,13 +58,13 @@ namespace Advent.MMXVI
 
                 lock(data)
                 {
-                    if (!data.TryGetValue(pt.ToString(), out var isWall))
+                    if (!data.TryGetValue(pt.ToString(), out var isOpen))
                     {
-                        isWall = IsWall(pt.X, pt.Y, Seed);    
-                        data[pt.ToString()] = isWall;
+                        isOpen = IsOpen(pt.X, pt.Y, Seed);    
+                        data[pt.ToString()] = isOpen;
                     }
         
-                    return isWall == false;
+                    return isOpen;
                 }
             }
 
@@ -78,9 +77,7 @@ namespace Advent.MMXVI
         public static int Part1(string input)
         {
             int seed = int.Parse(input);
-
             var map = new CubicleMap(seed);
-
             var finder = new AStar.RoomPathFinder<ManhattanVector2>();
             var route = finder.FindPath(map, new ManhattanVector2(1,1), new ManhattanVector2(31,39));
             return route.Count();
@@ -89,37 +86,52 @@ namespace Advent.MMXVI
         public static int Part2(string input)
         {
             int seed = int.Parse(input);
-
             var map = new CubicleMap(seed);
-
             var finder = new AStar.RoomPathFinder<ManhattanVector2>();
-
-            var route2 = finder.FindPath(map, new ManhattanVector2(1,1), new ManhattanVector2(1,1));
 
             var start = new ManhattanVector2(1,1);
             var dest = new ManhattanVector2(0,0);
 
+            const int MaxDistance = 50;
+
             int count = 0;
-            for (int x=0; x<50; ++x)
+            for (int y=0; y<MaxDistance; ++y)
             {
-                for (int y=0; y<50-x; ++y)
+                for (int x=0; x<MaxDistance-y; ++x)
                 {
-                    if (!map.IsValidNeighbour(new ManhattanVector2(x,y))) continue;
+                    if (!map.IsValidNeighbour(new ManhattanVector2(x,y))) 
+                    {
+                        //Console.Write('#');
+                        continue;
+                    }
                     if (x==1 && y==1) 
                     {
                         count++;
+                        //Console.Write('o');
                     }
                     else
                     {
-                        if (x+y <= 50)
+                        dest.Set(x,y);
+                        var route = finder.FindPath(map, start, dest);
+                        if (route.Any())
                         {
-                            dest.Set(x,y);
-                            var route = finder.FindPath(map, start, dest);
-                            if (route.Any() && route.Count <= 50) count++;
+                            if( route.Count <= MaxDistance)
+                            {
+                                count ++;
+                                //Console.Write(" ");
+                            } 
+                            // else
+                            // {
+                            //     Console.Write("-");
+                            // }    
                         }
+                        // else
+                        // {
+                        //     Console.Write("X");
+                        // }                
                     }
-                    
                 }
+                //Console.WriteLine();
             }
 
             return count;
@@ -127,16 +139,6 @@ namespace Advent.MMXVI
 
         public void Run(string input, ILogger logger)
         {
-
-            // for (var y=0; y<10; ++y)
-            // {
-            //     for (var x=0; x<10; ++x)
-            //     {
-            //         Console.Write(IsWall(x,y,10)? "#" : " ");
-            //     }
-            //     Console.WriteLine();
-            // }
-
             logger.WriteLine("- Pt1 - "+Part1(input));
             logger.WriteLine("- Pt2 - "+Part2(input));
         }
