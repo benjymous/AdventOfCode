@@ -23,8 +23,8 @@ namespace Advent.MMXVI.BunniTek
 
     public class Value
     {
-        bool isInt = true;
-        int intVal = 0;
+        public bool isInt { get; private set; }
+        public int intVal { get; private set; }
 
         public Value(int input)
         {
@@ -42,6 +42,7 @@ namespace Advent.MMXVI.BunniTek
         {
             if (int.TryParse(input, out int v))
             {
+                isInt = true;
                 intVal = v;
             }
             else if (Enum.TryParse(input, out RegisterId r))
@@ -49,26 +50,17 @@ namespace Advent.MMXVI.BunniTek
                 intVal = (int)r;
                 isInt = false;
             }
-        }
-
-        public bool IsInt() => isInt;
-
-        public int AsInt()
-        {
-            if (isInt) return intVal;
-            throw new InvalidOperationException();
-        }
-
-        public int AsRegister()
-        {
-            if (!isInt) return intVal;
-            throw new InvalidOperationException();
+            else 
+            {
+                isInt = true;
+                intVal = 0;
+            }
         }
 
         public static implicit operator Value(int rhs) => new Value(rhs);
         public static implicit operator Value(RegisterId rhs) => new Value(rhs);
 
-        public override string ToString() 
+         public override string ToString() 
         {
             if (isInt)
             {
@@ -127,12 +119,12 @@ namespace Advent.MMXVI.BunniTek
 
         public int Get(Value source)
         {
-            if (source.IsInt())
+            if (source.isInt)
             {
-                return source.AsInt();
+                return source.intVal;
             }
 
-            return Registers[source.AsRegister()];          
+            return Registers[source.intVal];          
         }
 
         public bool Step()
@@ -151,15 +143,15 @@ namespace Advent.MMXVI.BunniTek
             switch (instr.Opcode)
             {
                 case OpCode.cpy:
-                    Set(instr.Y.AsRegister(), instr.X);
+                    Set(instr.Y.intVal, instr.X);
                     break;
 
                 case OpCode.inc:
-                    Registers[instr.X.AsRegister()]++;
+                    Registers[instr.X.intVal]++;
                     break;
 
                 case OpCode.dec:
-                    Registers[instr.X.AsRegister()]--;
+                    Registers[instr.X.intVal]--;
                     break;
 
                 case OpCode.jnz:
