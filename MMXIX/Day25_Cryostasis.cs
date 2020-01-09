@@ -65,6 +65,7 @@ namespace Advent.MMXIX
             public string Run()
             {
                 cpu.Run();
+                Console.WriteLine(cpu.Speed());
                 //Console.WriteLine($"{commandCount} commands, {combosTried} combos tried, {skippedCombos} combos skipped");
                 return buffer.Lines.Last();
             }
