@@ -20,25 +20,46 @@ namespace Advent.MMXVI
             new Direction2(1,0)
         };
 
-        public static IEnumerable<bool> Exits((string path, ManhattanVector2 position) state, string passcode)
+        struct AvailableDoors
+        {
+            public AvailableDoors(bool[] d)
+            {
+                directions = d;
+            }
+            public bool[] directions;
+        }
+
+        static AvailableDoors[,] availableDoors = GetAvailableDoors();
+
+        static AvailableDoors[,] GetAvailableDoors()
+        {
+            AvailableDoors[,] result = new AvailableDoors[4,4];
+            for (int x=0; x<4; ++x)
+            {
+                for (int y=0; y<4; ++y)
+                {
+                    bool up = y > 0;
+                    bool down = y < 3;
+                    bool left = x > 0;
+                    bool right = x < 3;
+                    result[x,y] = new AvailableDoors(new bool[] {up, down, left, right});
+                }
+            }
+            return result;
+        }
+
+        public static IEnumerable<int> Exits((string path, ManhattanVector2 position) state, string passcode)
         {
             var key = $"{passcode}{state.path}";
-            bool left = state.position.X > 0;
-            bool up = state.position.Y > 0;
-            bool down = state.position.Y < 3;
-            bool right = state.position.X < 3;
-            var possible = new bool[] {up, down, left, right};
+            var possible = availableDoors[state.position.X, state.position.Y].directions;
             var unlocked = key.GetMD5Chars().Take(4).Select(c => opens.Contains(c)).ToArray();
             for (int i=0; i<4; ++i)
             {
-                yield return possible[i]&&unlocked[i];
+                if (possible[i]&&unlocked[i]) yield return i;
             }
         }
 
-        static string Key((string path, ManhattanVector2 position) state, IEnumerable<bool> exits)
-        {
-            return $"{state.position}-{string.Join(",",exits)}";
-        }
+        static string Key((string path, ManhattanVector2 position) state, IEnumerable<int> exits) => $"{state.position}-{string.Join(",",exits)}";   
 
         public static string Part1(string input)
         {
@@ -62,12 +83,13 @@ namespace Advent.MMXVI
                 {
                     if (entry.path.Length < best)
                     {
-                        best = Math.Min(best, entry.path.Length);
+                        best = entry.path.Length;
                         path = entry.path;
                     }
+                    continue; // don't continue if the path has reached the vault
                 }
 
-                var exits = Exits(entry, passcode).ToArray();
+                var exits = Exits(entry, passcode);
 
                 var key = Key(entry, exits);
 
@@ -78,22 +100,50 @@ namespace Advent.MMXVI
 
                 cache[key] = entry.path.Length;
 
-                for (int i=0; i<4; ++i)
+                foreach (var i in exits)
                 {
-                    if (exits[i])
-                    {
-                        jobqueue.Enqueue((entry.path+direction[i], new ManhattanVector2(entry.position.X + offsets[i].DX, entry.position.Y + offsets[i].DY)));
-                    }
-                }
-               
+                    jobqueue.Enqueue((entry.path+direction[i], new ManhattanVector2(entry.position.X + offsets[i].DX, entry.position.Y + offsets[i].DY)));
+                }         
             }
 
             return path;
         }
-
+        
         public static int Part2(string input)
         {
-            return 0;
+            var passcode = input.Trim();
+
+            var jobqueue = new Queue<(string path, ManhattanVector2 position)>();
+                   
+            jobqueue.Enqueue(("", new ManhattanVector2(0,0)));
+
+            int best = int.MinValue;
+            string path = "";
+
+            var dest = new ManhattanVector2(3,3);
+
+            while (jobqueue.Any())
+            {
+                var entry = jobqueue.Dequeue();
+
+                if (entry.position == dest)
+                {
+                    if (entry.path.Length > best)
+                    {                        
+                        best = entry.path.Length;
+                        path = entry.path;                   
+                    }
+                    continue;  // don't continue if the path has reached the vault
+                }
+
+                var exits = Exits(entry, passcode);
+                foreach (var i in exits)
+                {
+                    jobqueue.Enqueue((entry.path+direction[i], new ManhattanVector2(entry.position.X + offsets[i].DX, entry.position.Y + offsets[i].DY)));
+                }             
+            }
+
+            return best;
         }
 
         public void Run(string input, ILogger logger)
@@ -101,6 +151,8 @@ namespace Advent.MMXVI
             // var dirs = Exits("", "hijkl");
             // var dirs1 = Exits("D", "hijkl");
             // var dirs2 = Exits("DR", "hijkl");
+
+            //logger.WriteLine("??"+Part2("ihgpwlah"));
 
             logger.WriteLine("- Pt1 - "+Part1(input));
             logger.WriteLine("- Pt2 - "+Part2(input));
