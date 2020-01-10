@@ -738,6 +738,17 @@ namespace Advent
                 yield return item;
             }
         }
+
+        public static IEnumerable<T> Sandwich<T>(this IEnumerable<T> items, T firstlast)
+        {
+            yield return firstlast;
+            foreach (T item in items)
+            {
+                yield return item;
+            }
+            yield return firstlast;
+        }
+
         public static IEnumerable<IEnumerable<T>> Combinations<T>(this IEnumerable<T> items)
         {
             if (!items.Any())
