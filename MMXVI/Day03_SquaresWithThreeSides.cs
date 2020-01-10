@@ -24,7 +24,7 @@ namespace Advent.MMXVI
         public static int Part1(string input)
         {
             var lines = Util.Split(input);
-            var data = lines.Select(line => Util.Parse(line, ' ')); 
+            var data = lines.Select(line => Util.Parse32(line, ' ')); 
 
             var valid = data.Where(row => TriangleValid(row));
 
@@ -33,7 +33,7 @@ namespace Advent.MMXVI
 
         public static int Part2(string input)
         {
-            var numbers = Util.Parse(input.Replace("\n", " "), ' ');
+            var numbers = Util.Parse32(input.Replace("\n", " "), ' ');
 
             var triangles = new Queue<List<int>>();
 

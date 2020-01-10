@@ -9,9 +9,9 @@ namespace Advent.MMXVI
     {
         public string Name { get { return "2016-09";} }
 
-        static (int numChars, int numRepeats) Parse(string cmd)
+        static (int numChars, int numRepeats) Parse32(string cmd)
         {
-            var bits = Util.Parse(cmd, 'x');
+            var bits = Util.Parse32(cmd, 'x');
             return (bits[0], bits[1]);
         }
  
@@ -28,7 +28,7 @@ namespace Advent.MMXVI
                     int start = i;
                     while (input[i++]!=')');
 
-                    var (numChars,numRepeats) = Parse(input.Substring(start+1, i-start-2));
+                    var (numChars,numRepeats) = Parse32(input.Substring(start+1, i-start-2));
                   
                     if (recurse)
                     {

@@ -22,8 +22,8 @@ namespace Advent.MMXIX
             return fuel;
         }
 
-        public static int Part1(string input) => Util.Parse(input).Select(module => GetFuelRequirement(module)).Sum();
-        public static int Part2(string input) => Util.Parse(input).Select(module => GetFullFuelRequirement(module)).Sum();
+        public static int Part1(string input) => Util.Parse32(input).Select(module => GetFuelRequirement(module)).Sum();
+        public static int Part2(string input) => Util.Parse32(input).Select(module => GetFullFuelRequirement(module)).Sum();
 
         public void Run(string input, ILogger logger)
         {

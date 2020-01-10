@@ -59,7 +59,7 @@ namespace Advent.MMXV
  
         public static Int64 Solve(string input, int numGroups)
         {
-            var parcels = Util.Parse(input).OrderByDescending(x => x);
+            var parcels = Util.Parse32(input).OrderByDescending(x => x);
 
             int totalSize = parcels.Sum();
             int groupSize = totalSize/numGroups;

@@ -15,7 +15,7 @@ namespace Advent.MMXVIII
             public Dictionary<string, int> durations;
         }
 
-        static Data Parse(string input)
+        static Data Parse32(string input)
         {
             string id = null;
             string sleep = null;
@@ -60,7 +60,7 @@ namespace Advent.MMXVIII
 
         public static int Part1(string input)
         {
-            var data = Parse(input);
+            var data = Parse32(input);
 
             string sleepiest = null;
             var v = 0;
@@ -90,7 +90,7 @@ namespace Advent.MMXVIII
 
         public static int Part2(string input)
         {
-            var data = Parse(input);
+            var data = Parse32(input);
 
             var m = -1;
             var mv = -1;

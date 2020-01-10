@@ -29,7 +29,7 @@ namespace Advent.MMXVIII
             }
         }
 
-        static List<Shape> Parse(string input)
+        static List<Shape> Parse32(string input)
         {
             var lines = input.Split("\n");
             List<Shape> shapes = new List<Shape>();
@@ -81,7 +81,7 @@ namespace Advent.MMXVIII
 
         public static int Part1(string input)
         {
-            var shapes = Parse(input);
+            var shapes = Parse32(input);
             var square = FindOverlaps(shapes);
 
             var count = square.Select(i => i.Value>1 ? 1 : 0).Sum();
@@ -91,7 +91,7 @@ namespace Advent.MMXVIII
 
         public static string Part2(string input)
         {
-            var shapes = Parse(input);
+            var shapes = Parse32(input);
             var square = FindOverlaps(shapes);
 
             foreach(var shape in shapes)

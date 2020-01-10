@@ -9,56 +9,13 @@ namespace Advent.MMXVIII
     {
         public string Name { get { return "2018-09"; } }
 
-        class Node
-        {
-            public Node(uint v, Node p=null, Node n=null)
-            {
-                val = v;
-                prev=p;
-                next=n;
-
-                if (prev!=null)
-                {
-                    prev.next = this;
-                }
-
-                if (next!=null)
-                {
-                    next.prev = this;
-                }
-            }
-            public uint val;
-            public Node prev;
-            public Node next;
-        };
-
-        static Node back(Node node, int distance)
-        {
-            for (int i = 0; i < distance; ++i)
-            {
-                node = node.prev;
-            }
-            return node;
-        }
-
-        static Node forward(Node node, int distance)
-        {
-            for (int i = 0; i < distance; ++i)
-            {
-                node = node.next;
-            }
-            return node;
-        }
-
         public static UInt64 MarbleGame(int players, int marbles)
         {
 
             uint nextMarble = 1;
             int player = -1;
 
-            var circle = new Node(0);
-            circle.prev = circle;
-            circle.next = circle;
+            var circle = new Circle<uint>(0);
             var scores = new Dictionary<int, UInt64>();
 
             var current = circle;
@@ -67,17 +24,14 @@ namespace Advent.MMXVIII
             {
                 if (nextMarble % 23 == 0)
                 {
-                    var removed = back(current, 7);
-                    removed.prev.next = removed.next;
-                    removed.next.prev = removed.prev;
+                    var removed = current.Back(7);
+                    current = removed.Remove();
 
-                    scores.IncrementAtIndex(player, nextMarble + removed.val);
-
-                    current = removed.next;
+                    scores.IncrementAtIndex(player, nextMarble + removed.Value);
                 }
                 else
                 {
-                    current = new Node(nextMarble, current.next, current.next.next);
+                    current = current.Next().InsertNext(nextMarble);
                 }
 
                 nextMarble++;
