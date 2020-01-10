@@ -38,11 +38,15 @@ namespace Advent
                         .ToList(); 
         }
 
-        public static int[] Parse(string input, char splitChar='\0') => Parse(Split(input, splitChar));
+        public static int[] Parse32(string input, char splitChar='\0') => Parse32(Split(input, splitChar));
+        public static uint[] ParseU32(string input, char splitChar='\0') => ParseU32(Split(input, splitChar));
         public static Int64[] Parse64(string input, char splitChar='\0') => Parse64(Split(input, splitChar));
+        public static UInt64[] ParseU64(string input, char splitChar='\0') => ParseU64(Split(input, splitChar));
 
-        public static int[] Parse(string[] input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int32.Parse(s)).ToArray();
+        public static int[] Parse32(string[] input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int32.Parse(s)).ToArray();
+        public static uint[] ParseU32(string[] input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => UInt32.Parse(s)).ToArray();
         public static Int64[] Parse64(string[] input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int64.Parse(s)).ToArray();
+        public static UInt64[] ParseU64(string[] input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => UInt64.Parse(s)).ToArray();
 
         public static IEnumerable<IEnumerable<T>> Slice<T>(IEnumerable<T> source, int sliceSize)
         {
@@ -495,6 +499,93 @@ namespace Advent
         }
     }
 
+    public class Circle<T>
+    {
+        public T Value {get;set;}
+
+        public Circle(T v, Circle<T> p=null, Circle<T> n=null)
+        {
+            Value = v;
+            prev=p;
+            next=n;
+
+            if (prev!=null)
+            {
+                prev.next = this;
+            }
+            else
+            {
+                prev = this;
+            }
+
+            if (next!=null)
+            {
+                next.prev = this;
+            }
+            else
+            {
+                next = this;
+            }
+        }
+
+        public Circle<T> Next() => next;
+        public Circle<T> Prev() => prev;
+
+        public Circle<T> Back(int distance)
+        {
+            var node = this;
+            for (int i = 0; i < distance; ++i)
+            {
+                node = node.prev;
+            }
+            return node;
+        }
+
+        public Circle<T> Forward(int distance)
+        {
+            var node = this;
+            for (int i = 0; i < distance; ++i)
+            {
+                node = node.next;
+            }
+            return node;
+        }
+
+        public Circle<T> InsertNext(T v)
+        {
+            return new Circle<T>(v, this, this.next);
+        }
+
+        public Circle<T> Remove()
+        {
+            var removed = this;              
+            removed.prev.next = removed.next;
+            removed.next.prev = removed.prev;
+
+            return removed.next;
+        }
+
+        public int Count() => Values().Count();
+  
+        public bool Solo() => next == this;
+
+        Circle<T> prev;
+        Circle<T> next;
+
+        public IEnumerable<T> Values()
+        {
+            yield return Value;
+            var current = next;
+            while (current != this)
+            {
+                yield return current.Value;
+                current = current.Next();
+            }
+        }
+
+        public override string ToString() => Value.ToString();
+    }
+
     public class TimeLogger : ILogger
     {
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -897,6 +988,18 @@ namespace Advent
             else
             {
                 return "0";
+            }
+        }
+
+        public static string MultipleWithS(this int value, string str)
+        {
+            if (value == 1)
+            {
+                return str;
+            }
+            else
+            {
+                return $"{value} {str}s";
             }
         }
     }

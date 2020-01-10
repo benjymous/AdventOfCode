@@ -11,7 +11,7 @@ namespace Advent.MMXV
  
         public static int Wrap(string line)
         {
-            var bits = Util.Parse(line,'x');
+            var bits = Util.Parse32(line,'x');
 
             const int LENGTH = 0;
             const int WIDTH = 1;
@@ -29,7 +29,7 @@ namespace Advent.MMXV
 
         public static int Ribbon(string line)
         {
-            var bits = Util.Parse(line,'x').OrderBy(x => x).ToList();
+            var bits = Util.Parse32(line,'x').OrderBy(x => x).ToList();
 
             return (bits[0]*2) + (bits[1]*2) + (bits[0]*bits[1]*bits[2]);
         }

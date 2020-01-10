@@ -9,7 +9,7 @@ namespace Advent.MMXVIII
     {
         public string Name { get { return "2018-14";} }
  
-        static List<int> Parse(string input)
+        static List<int> Parse32(string input)
         {
             List<int> recipe = new List<int>();
             foreach (var c in input.Trim())
@@ -25,7 +25,7 @@ namespace Advent.MMXVIII
         {
             int sum = r1+r2;
 
-            return Parse(sum.ToString());
+            return Parse32(sum.ToString());
         }
 
         static void Display(List<int> recipe, int[] current)
@@ -79,7 +79,7 @@ namespace Advent.MMXVIII
         public static int Part2(string input)
         {
             var recipe = new List<int>{3,7};
-            var toFind = Parse(input.Trim());
+            var toFind = Parse32(input.Trim());
 
             int[] current = {0,1};
 

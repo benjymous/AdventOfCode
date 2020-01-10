@@ -23,14 +23,14 @@ namespace Advent.MMXVIII
             public int radius;
         }
 
-        static List<Entry> Parse(string input)
+        static List<Entry> Parse32(string input)
         {
             return Util.Parse<Entry>(input);
         }
 
         public static int Part1(string input)
         {
-            var data = Parse(input);
+            var data = Parse32(input);
 
             var strongest = data.OrderBy(e => e.radius).LastOrDefault(); 
 
@@ -40,7 +40,7 @@ namespace Advent.MMXVIII
 
         public static int Part2(string input)
         {
-            var data = Parse(input);
+            var data = Parse32(input);
 
             int maxx = int.MinValue;
             int minx = int.MaxValue;

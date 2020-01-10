@@ -13,7 +13,7 @@ namespace Advent.MMXVIII
  
         static Node BuildTree(string input)
         {
-            var data = new Queue<int>(Util.Parse(input, ' '));
+            var data = new Queue<int>(Util.Parse32(input, ' '));
 
             metaTotal = 0;
             return Read(data);

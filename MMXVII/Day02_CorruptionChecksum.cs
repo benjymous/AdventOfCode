@@ -11,13 +11,13 @@ namespace Advent.MMXVII
  
         public static int RowDifference(string line)
         {
-            var data = Util.Parse(line, '\t');
+            var data = Util.Parse32(line, '\t');
             return data.Max()-data.Min();
         }
 
         public static int RowMultiple(string line)
         {
-            var data = Util.Parse(line, '\t');
+            var data = Util.Parse32(line, '\t');
             for (var x = 0; x < data.Length; ++x)
             {
                 for (var y=0; y<data.Length; ++y)

@@ -13,7 +13,7 @@ namespace Advent.MMXV
         private static Dictionary<string, int> Noggify(string input)
         {
             int i = 0;
-            var sizes = Util.Parse(input).OrderBy(x => -x).ToDictionary(x => i++, x => x);
+            var sizes = Util.Parse32(input).OrderBy(x => -x).ToDictionary(x => i++, x => x);
 
             var jobqueue = new Queue<Tuple<HashSet<int>, int>>();
             jobqueue.Enqueue(Tuple.Create(new HashSet<int>(), 0));

@@ -9,7 +9,7 @@ namespace Advent.MMXIX
     {
         public string Name { get { return "2019-10";} }
  
-        static List<ManhattanVector2> Parse(string input)
+        static List<ManhattanVector2> Parse32(string input)
         {
             var lines = Util.Split(input);
 
@@ -67,7 +67,7 @@ namespace Advent.MMXIX
 
         public static IEnumerable<IEnumerable<IGrouping<double, Tuple<ManhattanVector2,ManhattanVector2>>>> BuildGroups(string input)
         {
-            var data = Parse(input);
+            var data = Parse32(input);
 
             var groups = data.Select(a1 => data.Select(a2 => Tuple.Create(AngleBetween(a1,a2), Tuple.Create(a1,a2))).GroupBy(tup => tup.Item1, tup => tup.Item2));
 
@@ -92,7 +92,7 @@ namespace Advent.MMXIX
 
         public static List<ManhattanVector2> TargetOrder(string input)
         {
-            var data = Parse(input);
+            var data = Parse32(input);
 
             var grouped = BuildGroups(input);
 
