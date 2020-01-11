@@ -30,12 +30,16 @@ namespace Advent
             }
         }
 
+        public static List<T> Parse<T>(IEnumerable<string> input)
+        {
+            return input.Select(line => (T)Activator.CreateInstance(typeof(T), new object[] {line}))
+                        .ToList(); 
+        }
+
         public static List<T> Parse<T>(string input, char splitChar='\n')
         {
-            return input.Split(splitChar)
-                        .Where(x => !string.IsNullOrWhiteSpace(x))
-                        .Select(line => (T)Activator.CreateInstance(typeof(T), new object[] {line}))
-                        .ToList(); 
+            return Parse<T>(input.Split(splitChar)
+                                 .Where(x => !string.IsNullOrWhiteSpace(x)));
         }
 
         public static int[] Parse32(string input, char splitChar='\0') => Parse32(Split(input, splitChar));
@@ -106,7 +110,7 @@ namespace Advent
             Console.WriteLine(actual);
         }
 
-        public static int[] ExtractNumbers(string input) => input.Where(c => (c==' ' || c=='-' || (c>='0' && c<='9'))).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(w => int.Parse(w)).ToArray();
+        public static int[] ExtractNumbers(IEnumerable<char> input) => input.Where(c => (c==' ' || c=='-' || (c>='0' && c<='9'))).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(w => int.Parse(w)).ToArray();
     }
 
     public interface IVec
@@ -817,6 +821,20 @@ namespace Advent
                 foreach (var permutation in Permutations(newSubset, subset.Concat(set.Skip(i).Take(1))))
                 {
                     yield return permutation;
+                }
+            }
+        }
+
+        public static IEnumerable<(T,T)> Pairs<T>(this IEnumerable<T> set)
+        {
+            foreach (var el1 in set)
+            {
+                foreach (var el2 in set)
+                {
+                    if (!EqualityComparer<T>.Default.Equals(el1, el2))
+                    {
+                        yield return (el1, el2);
+                    }
                 }
             }
         }
