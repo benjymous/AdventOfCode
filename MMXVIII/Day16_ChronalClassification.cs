@@ -9,136 +9,7 @@ namespace Advent.MMXVIII
     {
         public string Name { get { return "2018-16";} }
  
-        public interface IInstr
-        {
-            void Do(int a, int b, int c, ref int[] regs);
-        }
-
-        class addr : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = regs[a]+regs[b];
-            }
-        }
-        class addi : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = regs[a]+b;
-            }
-        }
-
-        class mukr : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = regs[a]*regs[b];
-            }
-        }
-        class muli : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = regs[a]*b;
-            }
-        }
-
-        class banr : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = regs[a]&regs[b];
-            }
-        }
-        class bani : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = regs[a]&b;
-            }
-        }
-
-        class borr : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = regs[a]|regs[b];
-            }
-        }
-        class bori : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = regs[a]|b;
-            }
-        }
-
-        class setr : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = regs[a];
-            }
-        }
-        class seti : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = a;
-            }
-        }
-
-        class gtir : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = (a>regs[b]) ? 1 : 0;
-            }
-        }
-        class gtri : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = (regs[a]>b) ? 1 : 0;
-            }
-        }
-        class gtrr : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = (regs[a]>regs[b]) ? 1 : 0;
-            }
-        }
-
-        class eqir : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = (a==regs[b]) ? 1 : 0;
-            }
-        }
-        class eqri : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = (regs[a]==b) ? 1 : 0;
-            }
-        }
-        class eqrr : IInstr
-        {
-            public void Do(int a, int b, int c, ref int[] regs)
-            {
-                regs[c] = (regs[a]==regs[b]) ? 1 : 0;
-            }
-        }
-
-        static IEnumerable<IInstr> GetInstructions()
-        {
-            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
-                .Where(x => typeof(IInstr).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
-                .Select(x => (IInstr)Activator.CreateInstance(x));
-        }
+       
 
         public class Test
         {
@@ -193,7 +64,7 @@ namespace Advent.MMXVIII
             return true;
         }
 
-        static bool DoTest(Test test, IInstr instr)
+        static bool DoTest(Test test, ChronMatic.IInstr instr)
         {
             var data = test.before.ToArray();
             instr.Do(test.instr[1], test.instr[2], test.instr[3], ref data);
@@ -206,7 +77,7 @@ namespace Advent.MMXVIII
 
             List<Test> tests = ParseTests(lines);
 
-            var instrs = GetInstructions();
+            var instrs = ChronMatic.ChronCPU.GetInstructions();
 
             int count = 0;
             foreach (var test in tests)
@@ -222,27 +93,25 @@ namespace Advent.MMXVIII
             return count;
         }
 
-
-
         public static int Part2(string input)
         {
             var lines = input.Split('\n');
 
             IEnumerable<Test> tests = ParseTests(lines).OrderBy(t => t.instr[0]);
 
-            var instrs = new HashSet<IInstr>(GetInstructions());
+            var instrs = new HashSet<ChronMatic.IInstr>(ChronMatic.ChronCPU.GetInstructions());
 
-            var mapping = new Dictionary<int, IInstr>();
+            var mapping = new Dictionary<int, ChronMatic.IInstr>();
 
             while (mapping.Count < 16)
             {
                 for (int i=0; i<16; ++i)
                 {
                     if (mapping.ContainsKey(i)) continue;
-                    HashSet<IInstr> potentials = new HashSet<IInstr>(instrs);
+                    HashSet<ChronMatic.IInstr> potentials = new HashSet<ChronMatic.IInstr>(instrs);
                     foreach (var test in tests.Where(t => t.instr[0]==i))
                     {
-                        HashSet<IInstr> pass = new HashSet<IInstr>();
+                        HashSet<ChronMatic.IInstr> pass = new HashSet<ChronMatic.IInstr>();
                         foreach (var instr in potentials)
                         {
                             if (DoTest(test, instr))
@@ -289,7 +158,7 @@ namespace Advent.MMXVIII
             {
                 if (!string.IsNullOrEmpty(line))
                 {
-                program.Add(Util.ExtractNumbers(line));
+                    program.Add(Util.ExtractNumbers(line));
                 }
             }
 
