@@ -983,25 +983,26 @@ namespace Advent
             }
             else if (Math.Abs(d) > 0)
             {
-                switch ((int)Math.Floor(exponent))
-                {
-                    case -1: case -2: case -3:
-                        return (d * 1e3).ToString(fmt) + "m";
-                    case -4: case -5: case -6:
-                        return (d * 1e6).ToString(fmt) + "μ";
-                    case -7: case -8: case -9:
-                        return (d * 1e9).ToString(fmt) + "n";
-                    case -10: case -11: case -12:
-                        return (d * 1e12).ToString(fmt) + "p";
-                    case -13: case -14: case -15:
-                        return (d * 1e15).ToString(fmt) + "f";
-                    case -16: case -17: case -18:
-                        return (d * 1e18).ToString(fmt) + "a";
-                    case -19: case -20: case -21:
-                        return (d * 1e21).ToString(fmt) + "z";
-                    default:
-                        return (d * 1e24).ToString() + "y";
-                }
+                return d.ToString(fmt);
+                // switch ((int)Math.Floor(exponent))
+                // {
+                //     case -1: case -2: case -3:
+                //         return (d * 1e3).ToString(fmt) + "m";
+                //     case -4: case -5: case -6:
+                //         return (d * 1e6).ToString(fmt) + "μ";
+                //     case -7: case -8: case -9:
+                //         return (d * 1e9).ToString(fmt) + "n";
+                //     case -10: case -11: case -12:
+                //         return (d * 1e12).ToString(fmt) + "p";
+                //     case -13: case -14: case -15:
+                //         return (d * 1e15).ToString(fmt) + "f";
+                //     case -16: case -17: case -18:
+                //         return (d * 1e18).ToString(fmt) + "a";
+                //     case -19: case -20: case -21:
+                //         return (d * 1e21).ToString(fmt) + "z";
+                //     default:
+                //         return (d * 1e24).ToString() + "y";
+                // }
             }
             else
             {
