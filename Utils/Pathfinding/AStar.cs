@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Advent.Utils.Vectors;
 
-namespace Advent.AStar
+namespace Advent.Utils.Pathfinding
 {
     public interface IMap<TCoordinateType>
     {

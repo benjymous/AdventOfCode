@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Advent.Utils;
+using Advent.Utils.Pathfinding;
+using Advent.Utils.Vectors;
 
 namespace Advent.MMXVI
 {
@@ -17,7 +20,7 @@ namespace Advent.MMXVI
             return (c%2 == 0);
         }
 
-        public class CubicleMap : AStar.IMap<ManhattanVector2>
+        public class CubicleMap : IMap<ManhattanVector2>
         {
             public Dictionary<string, bool> data = new Dictionary<string, bool>();
 
@@ -78,7 +81,7 @@ namespace Advent.MMXVI
         {
             int seed = int.Parse(input);
             var map = new CubicleMap(seed);
-            var finder = new AStar.RoomPathFinder<ManhattanVector2>();
+            var finder = new RoomPathFinder<ManhattanVector2>();
             var route = finder.FindPath(map, new ManhattanVector2(1,1), new ManhattanVector2(31,39));
             return route.Count();
         }
@@ -87,7 +90,7 @@ namespace Advent.MMXVI
         {
             int seed = int.Parse(input);
             var map = new CubicleMap(seed);
-            var finder = new AStar.RoomPathFinder<ManhattanVector2>();
+            var finder = new RoomPathFinder<ManhattanVector2>();
 
             var start = new ManhattanVector2(1,1);
             var dest = new ManhattanVector2(0,0);

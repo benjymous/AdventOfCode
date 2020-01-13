@@ -1,3 +1,4 @@
+using Advent.Utils.Vectors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
 

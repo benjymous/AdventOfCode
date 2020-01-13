@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Advent.AStar;
+using Advent.Utils;
+using Advent.Utils.Pathfinding;
+using Advent.Utils.Vectors;
 
 namespace Advent.MMXIX
 {
@@ -28,7 +30,7 @@ namespace Advent.MMXIX
             public const int WALL = 1;
             public const int OXYGEN = 2;
 
-            class Walkable : AStar.IIsWalkable<int>
+            class Walkable : IIsWalkable<int>
             {
                 public bool IsWalkable(int cell)
                 {
@@ -36,7 +38,7 @@ namespace Advent.MMXIX
                 }
             }
 
-            public AStar.GridMap<int> map = new AStar.GridMap<int>(new Walkable());
+            public GridMap<int> map = new GridMap<int>(new Walkable());
 
             public string FindCell(int num)
             {

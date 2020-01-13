@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Advent.AStar;
+using Advent.Utils;
+using Advent.Utils.Pathfinding;
+using Advent.Utils.Vectors;
 
 namespace Advent.MMXIX
 {
@@ -57,7 +59,7 @@ namespace Advent.MMXIX
             public int Count {get;private set;}
         }
 
-        public class MapData : AStar.GridMap<char>
+        public class MapData : GridMap<char>
         {
             List<ManhattanVector2> startPositions = new List<ManhattanVector2>();
 
@@ -68,7 +70,7 @@ namespace Advent.MMXIX
             Dictionary<int, ManhattanVector2> doors = new Dictionary<int, ManhattanVector2>();
             public Dictionary<int, RoomPath> paths {get; private set;} = new Dictionary<int, RoomPath>();
 
-            class Walkable : AStar.IIsWalkable<char>
+            class Walkable : IIsWalkable<char>
             {
                 public bool IsWalkable(char cell)
                 {
@@ -173,7 +175,7 @@ namespace Advent.MMXIX
                     AllPlayers |= PlayerCode(startPositions.IndexOf(player));
                 }
 
-                var finder = new AStar.RoomPathFinder<ManhattanVector2>();
+                var finder = new RoomPathFinder<ManhattanVector2>();
                 foreach (var k1 in Bits(AllKeys))  
                 {
                     // path from start to k1's location

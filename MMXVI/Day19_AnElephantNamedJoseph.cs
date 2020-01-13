@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Advent.Utils;
+using Advent.Utils.Collections;
 
 namespace Advent.MMXVI
 {
