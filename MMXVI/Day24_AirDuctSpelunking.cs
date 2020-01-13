@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Advent.Utils;
+using Advent.Utils.Pathfinding;
+using Advent.Utils.Vectors;
 
 namespace Advent.MMXVI
 {
@@ -12,7 +15,7 @@ namespace Advent.MMXVI
         static int LocationCode(char c) => (1 << char.ToLower(c)-'0');
         static Int64 GetKey(int location, int visited) => (Int64)location << 32 | (Int64)(uint)visited;
  
-        public class MapData : AStar.GridMap<char>
+        public class MapData : GridMap<char>
         {
             public Dictionary<int, ManhattanVector2> Locations = new Dictionary<int, ManhattanVector2>();
             public Dictionary<int, int> paths = new Dictionary<int, int>();
@@ -47,7 +50,7 @@ namespace Advent.MMXVI
             public void BuildPaths()
             {
                 
-                var finder = new AStar.RoomPathFinder<ManhattanVector2>();
+                var finder = new RoomPathFinder<ManhattanVector2>();
 
                 foreach (var loc1 in Locations)
                 {
@@ -79,7 +82,7 @@ namespace Advent.MMXVI
                 return seq;
             }
 
-            class Walkable : AStar.IIsWalkable<char>
+            class Walkable : IIsWalkable<char>
             {
                 public bool IsWalkable(char cell)
                 {

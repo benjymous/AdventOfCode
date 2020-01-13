@@ -4,25 +4,17 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using Advent.Utils;
 
 namespace Advent
 {
     class Program
     {
-        static IEnumerable<IPuzzle> GetPuzzles()
-        {
-            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
-                .Where(x => typeof(IPuzzle).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
-                .Select(x => (IPuzzle)Activator.CreateInstance(x))
-                .Where(p => p.ShouldRun())
-                .OrderBy(x => x.Name);
-        }
-
         static void Main(string[] args)
         {
-            Extensions.args = args;
+            IPuzzleExtensions.args = args;
 
-            var puzzles = GetPuzzles();
+            var puzzles = Util.GetPuzzles();
             var timings = new ConcurrentDictionary<string, long>();
 
             Mutex mut = new Mutex();

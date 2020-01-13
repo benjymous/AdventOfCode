@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Advent.Utils;
+using Advent.Utils.Pathfinding;
+using Advent.Utils.Vectors;
 
 namespace Advent.MMXIX
 {
@@ -14,7 +17,7 @@ namespace Advent.MMXIX
             return c>='A' && c <='Z';
         }
 
-        class PortalMap : AStar.GridMap<char>, AStar.IIsWalkable<char>
+        class PortalMap : GridMap<char>, IIsWalkable<char>
         {
             public PortalMap(string input)
                 : base (null)
