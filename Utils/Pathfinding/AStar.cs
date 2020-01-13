@@ -79,7 +79,7 @@ namespace Advent.Utils.Pathfinding
         }
     }
 
-    public class RoomPathFinder<TCoordinateType> where TCoordinateType : class
+    public class AStar<TCoordinateType> where TCoordinateType : class
     {
 
         Dictionary<TCoordinateType, bool> closedSet = new Dictionary<TCoordinateType, bool>();
@@ -118,7 +118,6 @@ namespace Advent.Utils.Pathfinding
                     return Reconstruct(current);
                 }
 
-
                 openSet.Remove(current);
                 closedSet[current] = true;
 
@@ -150,7 +149,6 @@ namespace Advent.Utils.Pathfinding
                 }
             }
 
-
             return new List<TCoordinateType>();
         }
 
@@ -160,7 +158,6 @@ namespace Advent.Utils.Pathfinding
             gScore.TryGetValue(pt, out score);
             return score;
         }
-
 
         private int getFScore(TCoordinateType pt)
         {
@@ -195,7 +192,6 @@ namespace Advent.Utils.Pathfinding
                     best = score;
                 }
             }
-
 
             return bestPt;
         }
