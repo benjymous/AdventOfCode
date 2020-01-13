@@ -81,7 +81,7 @@ namespace Advent.MMXVI
         {
             int seed = int.Parse(input);
             var map = new CubicleMap(seed);
-            var finder = new RoomPathFinder<ManhattanVector2>();
+            var finder = new AStar<ManhattanVector2>();
             var route = finder.FindPath(map, new ManhattanVector2(1,1), new ManhattanVector2(31,39));
             return route.Count();
         }
@@ -90,7 +90,7 @@ namespace Advent.MMXVI
         {
             int seed = int.Parse(input);
             var map = new CubicleMap(seed);
-            var finder = new RoomPathFinder<ManhattanVector2>();
+            var finder = new AStar<ManhattanVector2>();
 
             var start = new ManhattanVector2(1,1);
             var dest = new ManhattanVector2(0,0);

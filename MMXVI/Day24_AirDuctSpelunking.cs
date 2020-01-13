@@ -50,7 +50,7 @@ namespace Advent.MMXVI
             public void BuildPaths()
             {
                 
-                var finder = new RoomPathFinder<ManhattanVector2>();
+                var finder = new AStar<ManhattanVector2>();
 
                 foreach (var loc1 in Locations)
                 {
