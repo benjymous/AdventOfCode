@@ -79,121 +79,91 @@ namespace Advent.Utils.Pathfinding
         }
     }
 
-    public class AStar<TCoordinateType> where TCoordinateType : class
+    public static class AStar<TCoordinateType> where TCoordinateType : class
     {
-
-        Dictionary<TCoordinateType, bool> closedSet = new Dictionary<TCoordinateType, bool>();
-        Dictionary<TCoordinateType, bool> openSet = new Dictionary<TCoordinateType, bool>();
-
-        //cost of start to this key node
-        Dictionary<TCoordinateType, int> gScore = new Dictionary<TCoordinateType, int>();
-        //cost of start to goal, passing through key node
-        Dictionary<TCoordinateType, int> fScore = new Dictionary<TCoordinateType, int>();
-
-        Dictionary<TCoordinateType, TCoordinateType> nodeLinks = new Dictionary<TCoordinateType, TCoordinateType>();
-
-        private void Reset()
+        public static IEnumerable<TCoordinateType> FindPath(IMap<TCoordinateType> map, TCoordinateType start, TCoordinateType goal)
         {
-            closedSet.Clear();
-            openSet.Clear();
-            gScore.Clear();
-            fScore.Clear();
-            nodeLinks.Clear();
-        }
-
-        public List<TCoordinateType> FindPath(IMap<TCoordinateType> graph, TCoordinateType start, TCoordinateType goal)
-        {
-            //int closest = int.MaxValue;
-            Reset();
+            var state = new State();
             
-            openSet[start] = true;
-            gScore[start] = 0;
-            fScore[start] = graph.Heuristic(start, goal);
+            state.openSet.Add(start);
+            state.gScore[start] = 0;
+            state.fScore[start] = map.Heuristic(start, goal);
 
-            while (openSet.Count > 0)
+            while (state.openSet.Count > 0)
             {
-                var current = nextBest();
+                var current = state.nextBest();
                 if (current.Equals(goal))
                 {
-                    return Reconstruct(current);
+                    return state.Reconstruct(current);
                 }
 
-                openSet.Remove(current);
-                closedSet[current] = true;
+                state.openSet.Remove(current);
+                state.closedSet.Add(current);
 
-                foreach (var neighbor in graph.GetNeighbours(current))
+                foreach (var neighbour in map.GetNeighbours(current))
                 {
-                    if (closedSet.ContainsKey(neighbor))
+                    if (state.closedSet.Contains(neighbour))
                         continue;
 
-                    var projectedG = getGScore(current) + 1;
+                    var projectedG = state.getGScore(current) + 1;
 
-                    if (!openSet.ContainsKey(neighbor))
-                        openSet[neighbor] = true;
-                    else if (projectedG >= getGScore(neighbor))
+                    if (!state.openSet.Contains(neighbour))
+                        state.openSet.Add(neighbour);
+                    else if (projectedG >= state.getGScore(neighbour))
                         continue;
 
                     //record it
-                    nodeLinks[neighbor] = current;
-                    gScore[neighbor] = projectedG;
+                    state.nodeLinks[neighbour] = current;
+                    state.gScore[neighbour] = projectedG;
 
-                    var newScore =  projectedG + graph.Heuristic(neighbor, goal);
-                    fScore[neighbor] = newScore;
-
-                    //if (newScore < closest)
-                    //{
-                        //closest = newScore;
-                        //Console.WriteLine($"Closest {closest} {neighbor}");                       
-                    //}
+                    var newScore =  projectedG + map.Heuristic(neighbour, goal);
+                    state.fScore[neighbour] = newScore;
 
                 }
             }
 
-            return new List<TCoordinateType>();
+            return Enumerable.Empty<TCoordinateType>();
         }
 
-        private int getGScore(TCoordinateType pt)
+        class State
         {
-            int score = int.MaxValue;
-            gScore.TryGetValue(pt, out score);
-            return score;
-        }
+            public HashSet<TCoordinateType> closedSet = new HashSet<TCoordinateType>();
+            public HashSet<TCoordinateType> openSet = new HashSet<TCoordinateType>();
 
-        private int getFScore(TCoordinateType pt)
-        {
-            int score = int.MaxValue;
-            fScore.TryGetValue(pt, out score);
-            return score;
-        }
+            //cost of start to this key node
+            public Dictionary<TCoordinateType, int> gScore = new Dictionary<TCoordinateType, int>();
+            //cost of start to goal, passing through key node
+            public Dictionary<TCoordinateType, int> fScore = new Dictionary<TCoordinateType, int>();
 
-        private List<TCoordinateType> Reconstruct(TCoordinateType current)
-        {
-            List<TCoordinateType> path = new List<TCoordinateType>();
-            while (nodeLinks.ContainsKey(current))
+            public Dictionary<TCoordinateType, TCoordinateType> nodeLinks = new Dictionary<TCoordinateType, TCoordinateType>();
+
+            internal int getGScore(TCoordinateType pt)
             {
-                path.Add(current);
-                current = nodeLinks[current];
+                int score = int.MaxValue;
+                gScore.TryGetValue(pt, out score);
+                return score;
             }
 
-            path.Reverse();
-            return path;
-        }
-
-        private TCoordinateType nextBest()
-        {
-            int best = int.MaxValue;
-            TCoordinateType bestPt = null;
-            foreach (var node in openSet.Keys)
+            internal int getFScore(TCoordinateType pt)
             {
-                var score = getFScore(node);
-                if (score < best)
+                int score = int.MaxValue;
+                fScore.TryGetValue(pt, out score);
+                return score;
+            }
+
+            internal IEnumerable<TCoordinateType> Reconstruct(TCoordinateType current)
+            {
+                List<TCoordinateType> path = new List<TCoordinateType>();
+                while (nodeLinks.ContainsKey(current))
                 {
-                    bestPt = node;
-                    best = score;
+                    path.Add(current);
+                    current = nodeLinks[current];
                 }
+
+                return (path as IEnumerable<TCoordinateType>).Reverse();
             }
 
-            return bestPt;
+            internal TCoordinateType nextBest() => openSet.Select(node => (node, getFScore(node))).OrderBy(v => v.Item2).First().Item1;
         }
 
     }
