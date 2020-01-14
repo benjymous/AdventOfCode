@@ -9,45 +9,61 @@ namespace Advent.MMXIX
     {
         public string Name { get { return "2019-06";} }
  
-        public class Node
+        public class Node<TKeyType, TDataType>
         {
-            public string Name {get;set;}
+            public TKeyType Key {get;set;}
 
-            public Node Parent = null;
+            public Node<TKeyType, TDataType> Parent = null;
 
-            public List<Node> Children {get;set;} = new List<Node>();
+            public List<Node<TKeyType, TDataType>> Children {get;set;} = new List<Node<TKeyType, TDataType>>();
 
             public int GetDescendantCount() => Children.Count + Children.Select(c => c.GetDescendantCount()).Sum();
         }
 
-        public class Tree
+        public class Tree<TKeyType, TDataType>
         {
-            Dictionary<string, Node> index = new Dictionary<string, Node>();
+            Dictionary<TKeyType, Node<TKeyType, TDataType>> index = new Dictionary<TKeyType, Node<TKeyType, TDataType>>();
 
-            public IEnumerable<string> GetIndex() => index.Keys;  
-            public IEnumerable<Node> GetNodes() => index.Values;      
+            public IEnumerable<TKeyType> GetIndex() => index.Keys;  
+            public IEnumerable<Node<TKeyType, TDataType>> GetNodes() => index.Values;      
 
-            public Node GetNode(string name)
+            public Node<TKeyType, TDataType> GetNode(TKeyType key)
             {
-                if (!index.ContainsKey(name))
+                if (!index.ContainsKey(key))
                 {
-                    index[name] = new Node{Name=name};
+                    index[key] = new Node<TKeyType, TDataType>{Key=key};
                 }
-                return index[name];
+                return index[key];
             }
 
-            public void AddPair(string parent, string child)
+            public void AddPair(TKeyType parent, TKeyType child)
             {
                 var p = GetNode(parent);
                 var c = GetNode(child);
                 p.Children.Add(c);
                 c.Parent = p;
             }
+
+            public List<Node<TKeyType, TDataType>> TraverseToRoot(TKeyType key)
+            {
+                var output = new List<Node<TKeyType, TDataType>>();
+                var node = GetNode(key);
+
+                while (node.Parent != null)
+                {
+                    output.Add(node.Parent);
+                    node = node.Parent;
+                }
+
+                return output;
+            }
         }
+
+        public struct none {};
         
-        public static Tree ParseTree(string input)
+        public static Tree<string, none> ParseTree(string input)
         {
-            var tree = new Tree();
+            var tree = new Tree<string, none>();
             var data = input.Split();
             foreach (var line in data) 
             {
@@ -64,24 +80,12 @@ namespace Advent.MMXIX
             return tree.GetNodes().Select(n => n.GetDescendantCount()).Sum();
         }
 
-        public static List<string> TraverseUp(Node node)
-        {
-            var output = new List<string>();
-
-            while (node.Parent != null)
-            {
-                output.Add(node.Parent.Name);
-                node = node.Parent;
-            }
-
-            return output;
-        }
 
         public static int Part2(string input)
         {
             var tree = ParseTree(input);
-            var youUp = TraverseUp(tree.GetNode("YOU"));
-            var santaUp = TraverseUp(tree.GetNode("SAN"));
+            var youUp = tree.TraverseToRoot("YOU");
+            var santaUp = tree.TraverseToRoot("SAN");
 
             return Util.Matrix(youUp.Count, santaUp.Count)
                        .Where(val => youUp[val.Item1] == santaUp[val.Item2])
