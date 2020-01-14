@@ -48,17 +48,14 @@ namespace Advent.MMXVI
             }
 
             public void BuildPaths()
-            {
-                
-                var finder = new AStar<ManhattanVector2>();
-
+            {             
                 foreach (var loc1 in Locations)
                 {
                     foreach (var loc2 in Locations)
                     {
                         if (loc1.Key != loc2.Key)
                         {
-                            var path = finder.FindPath(this, loc1.Value, loc2.Value);
+                            var path = AStar<ManhattanVector2>.FindPath(this, loc1.Value, loc2.Value);
 
                             var c1 = data.GetObjKey(loc1.Value);
                             var c2 = data.GetObjKey(loc2.Value);

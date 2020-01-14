@@ -256,10 +256,9 @@ namespace Advent.MMXIX
                 }
             }
 
-            AStar<ManhattanVector2> finder = new AStar<ManhattanVector2>();
             public IEnumerable<ManhattanVector2> FindPath(ManhattanVector2 start, ManhattanVector2 end)
             {          
-                return finder.FindPath(map, start, end);
+                return AStar<ManhattanVector2>.FindPath(map, start, end);
             }
           
         }

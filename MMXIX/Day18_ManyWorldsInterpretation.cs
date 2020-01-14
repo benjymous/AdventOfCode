@@ -175,14 +175,13 @@ namespace Advent.MMXIX
                     AllPlayers |= PlayerCode(startPositions.IndexOf(player));
                 }
 
-                var finder = new AStar<ManhattanVector2>();
                 foreach (var k1 in Bits(AllKeys))  
                 {
                     // path from start to k1's location
                     foreach (var player in startPositions)
                     {
                         int playerId = PlayerCode(startPositions.IndexOf(player));
-                        var path = finder.FindPath(this, player, keyPositions[k1]);
+                        var path = AStar<ManhattanVector2>.FindPath(this, player, keyPositions[k1]);
                         if (path.Any())
                         {
                             paths[playerId|k1] = new RoomPath(data, path);
@@ -193,7 +192,7 @@ namespace Advent.MMXIX
                         if (k2 > k1)
                         {
                             // path from k1 to k2
-                            var path = finder.FindPath(this, keyPositions[k1], keyPositions[k2]);
+                            var path = AStar<ManhattanVector2>.FindPath(this, keyPositions[k1], keyPositions[k2]);
                             if (path.Any())
                             {
                                 paths[k1|k2] = new RoomPath(data,  path); // since we're using bitwise, we just store two bits for k1|k2 it doesn't matter which way around
