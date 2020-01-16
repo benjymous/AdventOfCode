@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Advent.Utils.Collections;
+
+//using PlanetTree = Tree<string, Advent.MMXIX.Day06.none>;
+//using Planet = TreeNode<string, Advent.MMXIX.Day06.none>;
 
 namespace Advent.MMXIX
 {
@@ -9,56 +13,6 @@ namespace Advent.MMXIX
     {
         public string Name { get { return "2019-06";} }
  
-        public class Node<TKeyType, TDataType>
-        {
-            public TKeyType Key {get;set;}
-
-            public Node<TKeyType, TDataType> Parent = null;
-
-            public List<Node<TKeyType, TDataType>> Children {get;set;} = new List<Node<TKeyType, TDataType>>();
-
-            public int GetDescendantCount() => Children.Count + Children.Select(c => c.GetDescendantCount()).Sum();
-        }
-
-        public class Tree<TKeyType, TDataType>
-        {
-            Dictionary<TKeyType, Node<TKeyType, TDataType>> index = new Dictionary<TKeyType, Node<TKeyType, TDataType>>();
-
-            public IEnumerable<TKeyType> GetIndex() => index.Keys;  
-            public IEnumerable<Node<TKeyType, TDataType>> GetNodes() => index.Values;      
-
-            public Node<TKeyType, TDataType> GetNode(TKeyType key)
-            {
-                if (!index.ContainsKey(key))
-                {
-                    index[key] = new Node<TKeyType, TDataType>{Key=key};
-                }
-                return index[key];
-            }
-
-            public void AddPair(TKeyType parent, TKeyType child)
-            {
-                var p = GetNode(parent);
-                var c = GetNode(child);
-                p.Children.Add(c);
-                c.Parent = p;
-            }
-
-            public List<Node<TKeyType, TDataType>> TraverseToRoot(TKeyType key)
-            {
-                var output = new List<Node<TKeyType, TDataType>>();
-                var node = GetNode(key);
-
-                while (node.Parent != null)
-                {
-                    output.Add(node.Parent);
-                    node = node.Parent;
-                }
-
-                return output;
-            }
-        }
-
         public struct none {};
         
         public static Tree<string, none> ParseTree(string input)
@@ -79,7 +33,6 @@ namespace Advent.MMXIX
             var tree = ParseTree(input);
             return tree.GetNodes().Select(n => n.GetDescendantCount()).Sum();
         }
-
 
         public static int Part2(string input)
         {
