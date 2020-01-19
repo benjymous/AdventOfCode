@@ -108,11 +108,7 @@ namespace Advent.MMXIX.NPSA
             Output.Clear();
         }
 
-        public void Reserve(int memorySize) 
-        {
-            Memory.Reserve(memorySize);
-        }
-
+        public void Reserve(int memorySize) => Memory.Reserve(memorySize);
         Int64 GetValue(int paramIdx) => Memory[GetAddr(paramIdx)];
         void PutValue(int paramIdx, Int64 value) => Memory[GetAddr(paramIdx)] = value;
         int GetAddr(int paramIdx)
@@ -244,7 +240,9 @@ namespace Advent.MMXIX.NPSA
         {
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
+
             while(Step());
+            
             var time = sw.Elapsed.TotalSeconds;
             speed = (double)CycleCount / time;
         }
