@@ -63,6 +63,7 @@ namespace Advent.MMXIX
             public void Run()
             {
                 cpu.Run();
+                Console.WriteLine(cpu.Speed());
             }
 
             public void AddIfUnknown(ManhattanVector2 current, ManhattanVector2 neighbour)
