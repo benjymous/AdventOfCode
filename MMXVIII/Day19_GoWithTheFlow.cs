@@ -183,11 +183,11 @@ namespace Advent.MMXVIII
 
                         return GetFactorSum(r2); // We know the source number, so short circuit the rest;
 
-                        /*case 34:*/
-                        r0 = 0; r1++; //goto case 35;
-                                      // seti 0 0 1
-                        /*case 35:*/
-                        r1 = 1; break;
+                        // /*case 34:*/
+                        // r0 = 0; r1++; //goto case 35;
+                        //               // seti 0 0 1
+                        // /*case 35:*/
+                        // r1 = 1; break;
                         
                     ///////
 
