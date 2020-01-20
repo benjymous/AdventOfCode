@@ -21,7 +21,11 @@ namespace Advent.MMXIX
             cpu.Poke(0, 2);
         }
 
-        public void Run() => cpu.Run();
+        public void Run()
+        {
+            cpu.Run();
+            Console.WriteLine(cpu.Speed());
+        }
 
         public IEnumerable<ManhattanVector2> FindIntersections()
         {
