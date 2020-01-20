@@ -100,10 +100,29 @@ namespace Advent.MMXIX
             return SurveyHull(input, commandBuffer);
         }
 
+        private static void Interactive(string input)
+        {
+
+            Console.WriteLine();
+            Console.WriteLine("..@..........");
+            Console.WriteLine("###...#######");
+            Console.WriteLine("   ABCD");
+            Console.WriteLine();
+
+            var droid = new SpringDroid(input);
+            droid.SetDisplay(true);
+            droid.Interactive = true;
+            droid.Run(Enumerable.Empty<string>());
+        }
+
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            //Interactive(input);
+
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
+
+
     }
 }
