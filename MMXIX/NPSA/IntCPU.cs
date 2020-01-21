@@ -64,10 +64,10 @@ namespace Advent.MMXIX.NPSA
             Relative = 2,
         }
 
-        AutoArray<Int64> Memory {get;set;}
+        AutoArray<Int64> Memory;
         IEnumerable<Int64> initialState;
-        int InstructionPointer {get;set;} = 0;
-        int RelBase {get;set;} = 0;
+        int InstructionPointer = 0;
+        int RelBase = 0;
         public Queue<Int64> Input {get;set;} = new Queue<Int64>();
         public Queue<Int64> Output {get;set;} = new Queue<Int64>();
 
@@ -135,9 +135,9 @@ namespace Advent.MMXIX.NPSA
 
         class Instr
         {
-            public Opcode Code {get;private set;}
-            public byte Size {get;private set;}
-            public ParamMode[] Mode {get;private set;}
+            public Opcode Code;
+            public byte Size;
+            public ParamMode[] Mode;
 
             public Instr(int raw)
             {
