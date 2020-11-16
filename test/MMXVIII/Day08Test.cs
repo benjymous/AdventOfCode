@@ -8,6 +8,14 @@ namespace Advent.MMXVIII.Test
     {
         string input = Util.GetInput<Day08>();
 
+        [TestCategory("Test")]
+        [DataRow("2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2", 138)]
+        [DataTestMethod]
+        public void MetadataTest(string dataRow, int expected)
+        {
+            Assert.AreEqual(expected, MMXVIII.Day08.Part1(dataRow));
+        }
+
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Metadata_Part1_Regression()

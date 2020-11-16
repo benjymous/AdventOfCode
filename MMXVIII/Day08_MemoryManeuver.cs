@@ -7,14 +7,17 @@ namespace Advent.MMXVIII
     {
         public string Name { get { return "2018-08"; } }
 
-        static int metaTotal = 0;
-
         static Node BuildTree(string input)
+        {
+            int total = 0;
+            return BuildTree(input, ref total);
+        }
+
+        static Node BuildTree(string input, ref int metaTotal)
         {
             var data = new Queue<int>(Util.Parse32(input, ' '));
 
-            metaTotal = 0;
-            return Read(data);
+            return Read(data, ref metaTotal);
         }
 
         class Node
@@ -23,7 +26,8 @@ namespace Advent.MMXVIII
             public List<int> metaData = new List<int>();
         }
 
-        static Node Read(Queue<int> data)
+
+        static Node Read(Queue<int> data, ref int metaTotal)
         {
 
             var childCount = data.Dequeue();
@@ -33,7 +37,7 @@ namespace Advent.MMXVIII
 
             for (var i = 0; i < childCount; ++i)
             {
-                var child = Read(data);
+                var child = Read(data, ref metaTotal);
                 node.children.Add(child);
             }
 
@@ -72,7 +76,8 @@ namespace Advent.MMXVIII
 
         public static int Part1(string input)
         {
-            var tree = BuildTree(input);
+            int metaTotal = 0;
+            var tree = BuildTree(input, ref metaTotal);
             return metaTotal;
         }
 
