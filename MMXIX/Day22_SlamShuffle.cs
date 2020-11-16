@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 
 namespace Advent.MMXIX
 {
     public class Day22 : IPuzzle
     {
-        public string Name { get { return "2019-22";} }
+        public string Name { get { return "2019-22"; } }
 
         public class Deck
         {
@@ -34,18 +33,18 @@ namespace Advent.MMXIX
 
             public Deck Cut(int cut)
             {
-                int front=0;
-                int back=0;
+                int front = 0;
+                int back = 0;
 
-                if (cut>=0)
+                if (cut >= 0)
                 {
                     front = cut;
-                    back = size-front;
+                    back = size - front;
                 }
                 else
                 {
                     back = Math.Abs(cut);
-                    front = size-back;
+                    front = size - back;
                 }
 
                 var frontCards = cards.Take(front);
@@ -63,7 +62,7 @@ namespace Advent.MMXIX
                 foreach (var card in cards)
                 {
                     output[pos] = card;
-                    pos = (pos+increment)%size;
+                    pos = (pos + increment) % size;
                 }
 
                 return new Deck(size, output);
@@ -111,7 +110,7 @@ namespace Advent.MMXIX
                     throw new Exception("Unexpected line");
                 }
 
-                var str = string.Join(", ",current.cards.Take(20));
+                var str = string.Join(", ", current.cards.Take(20));
                 if (seen.Contains(str))
                 {
                     Console.WriteLine();
@@ -135,7 +134,7 @@ namespace Advent.MMXIX
         {
             return Shuffle(deck, input);
         }
- 
+
         public static int Part1(string input)
         {
             var deck = DoShuffle(10007, input);
@@ -143,7 +142,7 @@ namespace Advent.MMXIX
             return deck.IndexOf(2019);
         }
 
-        const Int64 numCards   = 119315717514047;     
+        const Int64 numCards = 119315717514047;
         const Int64 iterations = 101741582076661;
 
         class Matrix
@@ -184,7 +183,7 @@ namespace Advent.MMXIX
                 return 1;
             var a = Pow(baseVal, exp / 2);
             a = a * a % numCards;
-            if ((exp & 1)>0)
+            if ((exp & 1) > 0)
                 return (a * baseVal) % numCards;
             else
                 return a;
@@ -221,19 +220,19 @@ namespace Advent.MMXIX
                 if (line.StartsWith("deal with increment"))
                 {
                     var value = int.Parse(line.Split(" ").Last());
-                    m = m*antiInc(value);
-                    
+                    m = m * antiInc(value);
+
                 }
                 else if (line.StartsWith("cut"))
                 {
                     var value = Int64.Parse(line.Split(" ").Last());
 
-                    m = m*antiCut(value);
+                    m = m * antiCut(value);
 
                 }
                 else if (line.Contains("new stack"))
                 {
-                    m = m*antiRev();
+                    m = m * antiRev();
                 }
                 else
                 {
@@ -244,7 +243,7 @@ namespace Advent.MMXIX
 
 
             m = Pow(m, iterations);
- 
+
             var answer = (m.A * 2020 + m.B) % numCards;
 
             return (Int64)answer;
@@ -252,8 +251,8 @@ namespace Advent.MMXIX
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

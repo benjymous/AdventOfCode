@@ -1,46 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Advent.Utils;
+﻿using Advent.Utils;
 using Advent.Utils.Pathfinding;
 using Advent.Utils.Vectors;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Advent.MMXVI
 {
     public class Day24 : IPuzzle
     {
-        public string Name { get { return "2016-24";} }
+        public string Name { get { return "2016-24"; } }
 
-        static int LocationCode(char c) => (1 << char.ToLower(c)-'0');
+        static int LocationCode(char c) => (1 << char.ToLower(c) - '0');
         static Int64 GetKey(int location, int visited) => (Int64)location << 32 | (Int64)(uint)visited;
- 
+
         public class MapData : GridMap<char>
         {
             public Dictionary<int, ManhattanVector2> Locations = new Dictionary<int, ManhattanVector2>();
             public Dictionary<int, int> paths = new Dictionary<int, int>();
-            
+
             public int AllLocations = 0;
 
-            public MapData(string input) : base (new Walkable())
+            public MapData(string input) : base(new Walkable())
             {
-                var lines = Util.Split(input);                
+                var lines = Util.Split(input);
 
                 // find points of interest in the map
-                for (var y=0; y<lines.Length; ++y)
+                for (var y = 0; y < lines.Length; ++y)
                 {
                     var line = lines[y];
-                    for(var x=0; x<line.Length; ++x)
+                    for (var x = 0; x < line.Length; ++x)
                     {
                         var c = line[x];
-                        if (c>='0' && c<='9')
+                        if (c >= '0' && c <= '9')
                         {
                             // location to visit
                             var code = LocationCode(c);
-                            Locations[code] = new ManhattanVector2(x,y);
+                            Locations[code] = new ManhattanVector2(x, y);
                             AllLocations += code;
                         }
-                        data.PutStrKey($"{x},{y}",c);
+                        data.PutStrKey($"{x},{y}", c);
                     }
                 }
 
@@ -48,7 +47,7 @@ namespace Advent.MMXVI
             }
 
             public void BuildPaths()
-            {             
+            {
                 foreach (var loc1 in Locations)
                 {
                     foreach (var loc2 in Locations)
@@ -60,7 +59,7 @@ namespace Advent.MMXVI
                             var c1 = data.GetObjKey(loc1.Value);
                             var c2 = data.GetObjKey(loc2.Value);
 
-                            paths[loc1.Key+loc2.Key] = path.Count();
+                            paths[loc1.Key + loc2.Key] = path.Count();
                         }
                     }
                 }
@@ -94,8 +93,8 @@ namespace Advent.MMXVI
             var queue = new Queue<(int location, int visited, int distance)>();
 
             queue.Enqueue((LocationCode('0'), LocationCode('0'), 0));
-            var cache = new Dictionary<Int64,int>();
-            cache[GetKey(LocationCode('0'),LocationCode('0'))]=0;
+            var cache = new Dictionary<Int64, int>();
+            cache[GetKey(LocationCode('0'), LocationCode('0'))] = 0;
 
             int currentBest = int.MaxValue;
 
@@ -111,15 +110,15 @@ namespace Advent.MMXVI
                     // check locations not visited
                     foreach (var location in map.Bits(tryLocations))
                     {
-                        if (map.paths.TryGetValue(item.location|location, out var pathDistance))
+                        if (map.paths.TryGetValue(item.location | location, out var pathDistance))
                         {
                             // create new state, at next location 
-                            int visited = item.visited+location;
-                            int distance = item.distance+pathDistance;
+                            int visited = item.visited + location;
+                            int distance = item.distance + pathDistance;
                             var next = (location, visited, distance);
 
                             // check if we've visited this position with this set of keys before
-                            var cacheId = GetKey(next.location,next.visited);
+                            var cacheId = GetKey(next.location, next.visited);
                             if (!cache.TryGetValue(cacheId, out int cachedBest))
                             {
                                 cachedBest = int.MaxValue;
@@ -134,7 +133,7 @@ namespace Advent.MMXVI
                             }
                         }
                     }
-                 
+
                 }
                 else
                 {
@@ -142,7 +141,7 @@ namespace Advent.MMXVI
                     int distance = item.distance;
                     if (returnHome)
                     {
-                        distance += +map.paths[item.location+LocationCode('0')];
+                        distance += +map.paths[item.location + LocationCode('0')];
                     }
                     currentBest = Math.Min(currentBest, distance);
                 }
@@ -167,8 +166,8 @@ namespace Advent.MMXVI
         {
             //logger.WriteLine(Part1("###########\n#0.1.....2#\n#.#######.#\n#4.......3#\n###########"));
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXV
 {
     public class Day11 : IPuzzle
     {
-        public string Name { get { return "2015-11";} }
+        public string Name { get { return "2015-11"; } }
 
         static char[] bads = new char[]
         {
-            'i', 'o', 'l', 
+            'i', 'o', 'l',
         };
 
         public static bool IsBad(char c)
@@ -22,31 +20,31 @@ namespace Advent.MMXV
         public static string Increment(string pwd)
         {
             var newPwd = pwd.ToArray();
-            int i = pwd.Length-1;
+            int i = pwd.Length - 1;
             while (true)
             {
                 newPwd[i]++;
-                if (newPwd[i]<='z')
+                if (newPwd[i] <= 'z')
                 {
                     if (!IsBad(newPwd[i]))
                     {
-                        return String.Join("",newPwd);
+                        return String.Join("", newPwd);
                     }
                 }
                 else
                 {
-                    newPwd[i]='a';
+                    newPwd[i] = 'a';
                     i--;
                 }
-                if (i<0) throw new Exception("Password roll under!");
+                if (i < 0) throw new Exception("Password roll under!");
             }
         }
 
         public static bool HasStraight(string line)
         {
-            for (int i=0; i<line.Length-2; ++i)
+            for (int i = 0; i < line.Length - 2; ++i)
             {
-                if (line[i]==line[i+1]-1 && line[i]==line[i+2]-2) return true;
+                if (line[i] == line[i + 1] - 1 && line[i] == line[i + 2] - 2) return true;
             }
             return false;
         }
@@ -65,15 +63,15 @@ namespace Advent.MMXV
         public static bool HasTwoNonOverlappingPairs(string line)
         {
             int pairs = 0;
-            for (int i=0; i<line.Length-1; ++i)
+            for (int i = 0; i < line.Length - 1; ++i)
             {
-                if (line[i]==line[i+1])
+                if (line[i] == line[i + 1])
                 {
                     pairs++;
                     i++;
                 }
             }
-            return pairs>1;
+            return pairs > 1;
         }
 
         public static bool IsValid1(string line)
@@ -82,7 +80,7 @@ namespace Advent.MMXV
         }
 
         public static string FindNextValid(string input)
-        {          
+        {
             do
             {
                 input = Increment(input);
@@ -90,7 +88,7 @@ namespace Advent.MMXV
 
             return input;
         }
- 
+
         public static string Part1(string input)
         {
             return FindNextValid(input.Trim());
@@ -118,8 +116,8 @@ namespace Advent.MMXV
             //logger.WriteLine(FindNextValid("abcdefgh"));
             //logger.WriteLine(FindNextValid("ghijklmn"));
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

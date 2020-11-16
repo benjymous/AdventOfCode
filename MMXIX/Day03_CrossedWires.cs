@@ -1,16 +1,14 @@
-﻿using System;
+﻿using Advent.Utils.Vectors;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Advent.Utils.Vectors;
 
 namespace Advent.MMXIX
 {
     public class Day03 : IPuzzle
     {
-        public string Name { get { return "2019-03";} }
+        public string Name { get { return "2019-03"; } }
 
-        public enum SearchMode 
+        public enum SearchMode
         {
             Closest,
             Shortest
@@ -23,40 +21,40 @@ namespace Advent.MMXIX
             var minDist = int.MaxValue;
 
             Dictionary<string, int> seen = new Dictionary<string, int>();
-            
+
             foreach (var line in lines)
             {
                 if (string.IsNullOrEmpty(line)) continue;
                 var instructions = line.Split(",");
 
-                var position = new ManhattanVector2(0,0);
+                var position = new ManhattanVector2(0, 0);
                 int steps = 0;
-                Dictionary<string, int> current = new  Dictionary<string, int>();
+                Dictionary<string, int> current = new Dictionary<string, int>();
 
                 foreach (var i in instructions)
                 {
                     if (string.IsNullOrEmpty(i)) continue;
                     var distance = int.Parse(i.Substring(1));
 
-                    for (var j=0; j<distance; ++j)
+                    for (var j = 0; j < distance; ++j)
                     {
                         switch (i[0])
                         {
-                            case 'R':                        
-                            position.X ++;
-                            break;
+                            case 'R':
+                                position.X++;
+                                break;
 
                             case 'L':
-                            position.X --;
-                            break;
+                                position.X--;
+                                break;
 
                             case 'U':
-                            position.Y --;
-                            break;
-                            
+                                position.Y--;
+                                break;
+
                             case 'D':
-                            position.Y ++;
-                            break;
+                                position.Y++;
+                                break;
                         }
 
                         steps++;
@@ -78,21 +76,21 @@ namespace Advent.MMXIX
                         }
                         else
                         {
-                            current[searchKey] = steps; 
+                            current[searchKey] = steps;
                         }
-                    }                    
-                } 
+                    }
+                }
 
-                foreach (var s in current) seen[s.Key] = s.Value;                         
+                foreach (var s in current) seen[s.Key] = s.Value;
             }
 
             return minDist;
         }
- 
+
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+FindIntersection(input, SearchMode.Closest));  
-            logger.WriteLine("- Pt2 - "+FindIntersection(input, SearchMode.Shortest));  
+            logger.WriteLine("- Pt1 - " + FindIntersection(input, SearchMode.Closest));
+            logger.WriteLine("- Pt2 - " + FindIntersection(input, SearchMode.Shortest));
         }
     }
 }

@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 
 namespace Advent.MMXIX.Test
 {
@@ -20,7 +19,7 @@ namespace Advent.MMXIX.Test
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Painter_Part2_Regression()
-        {     
+        {
             const string expectedHash = "97A0FB4C860B850BEC2A81CDFB9595A2052DC6F1B397BD653A56975352913922";
             Assert.AreEqual(expectedHash, Day11.Part2(input, new ConsoleOut()));
         }

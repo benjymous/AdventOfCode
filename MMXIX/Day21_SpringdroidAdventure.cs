@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXIX
 {
@@ -28,8 +27,8 @@ namespace Advent.MMXIX
     }
     public class Day21 : IPuzzle
     {
-        public string Name { get { return "2019-21";} }
- 
+        public string Name { get { return "2019-21"; } }
+
         public static Int64 SurveyHull(string input, IEnumerable<string> commandBuffer)
         {
             var droid = new SpringDroid(input);
@@ -38,7 +37,7 @@ namespace Advent.MMXIX
             droid.Run(commandBuffer);
             return droid.DamageReport;
         }
-    
+
         // AND X Y sets Y to true if both X and Y are true; otherwise, it sets Y to false.
         // OR X Y sets Y to true if at least one of X or Y is true; otherwise, it sets Y to false.
         // NOT X Y sets Y to true if X is false; otherwise, it sets Y to false.

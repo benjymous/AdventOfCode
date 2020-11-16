@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVII
 {
     public class Day12 : IPuzzle
     {
-        public string Name { get { return "2017-12";} }
+        public string Name { get { return "2017-12"; } }
 
         class Pools
         {
@@ -16,7 +14,7 @@ namespace Advent.MMXVII
                 var lines = Util.Split(input, '\n');
                 foreach (var line in lines)
                 {
-                    var bits = Util.ExtractNumbers(line.Replace("-",""));
+                    var bits = Util.ExtractNumbers(line.Replace("-", ""));
                     AddGroup(bits);
                 }
             }
@@ -73,7 +71,7 @@ namespace Advent.MMXVII
 
             public int NumGroups() => pools.Count();
         }
- 
+
         public static int Part1(string input)
         {
             var pools = new Pools(input);
@@ -88,8 +86,8 @@ namespace Advent.MMXVII
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

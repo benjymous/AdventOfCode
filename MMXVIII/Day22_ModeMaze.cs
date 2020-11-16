@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Advent.Utils.Vectors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.Utils.Vectors;
 
 namespace Advent.MMXVIII
 {
     public class Day22 : IPuzzle
     {
-        public string Name { get { return "2018-22";} }
+        public string Name { get { return "2018-22"; } }
 
         public const char ROCKY = '.';
         public const char WET = '=';
@@ -23,13 +22,13 @@ namespace Advent.MMXVIII
         {
             public Cave(int targetX, int targetY, int caveDepth)
             {
-                target = new State() {position = new ManhattanVector2(targetX, targetY), tool = Tool.Torch };
+                target = new State() { position = new ManhattanVector2(targetX, targetY), tool = Tool.Torch };
                 depth = caveDepth;
-                distanceLimit = (int)((targetX + targetY)*1.25);
+                distanceLimit = (int)((targetX + targetY) * 1.25);
             }
 
-            Dictionary<string,int> GeoCache = new Dictionary<string, int>();
-            Dictionary<string,char> Map = new Dictionary<string, char>();
+            Dictionary<string, int> GeoCache = new Dictionary<string, int>();
+            Dictionary<string, char> Map = new Dictionary<string, char>();
 
             public char MapAt(ManhattanVector2 pos)
             {
@@ -38,8 +37,8 @@ namespace Advent.MMXVIII
                 if (!Map.ContainsKey(key))
                 {
                     Map[key] = TypeChar(pos);
-                }   
-                return Map[key];               
+                }
+                return Map[key];
             }
 
             public int GeologicIndex(ManhattanVector2 pos)
@@ -53,24 +52,24 @@ namespace Advent.MMXVIII
 
                 int result = 0;
 
-                if (pos.X<0 || pos.Y<0)
+                if (pos.X < 0 || pos.Y < 0)
                 {
                     throw new Exception("Invalid coordinate");
                 }
 
                 // The region at 0,0 (the mouth of the cave) has a geologic index of 0.
-                if (pos == ManhattanVector2.Zero) result =  0;
+                if (pos == ManhattanVector2.Zero) result = 0;
 
                 // The region at the coordinates of the target has a geologic index of 0.
-                else if (pos == target.position) result =  0;
+                else if (pos == target.position) result = 0;
 
                 // If the region's Y coordinate is 0, the geologic index is its X coordinate times 16807.
-                else if (pos.Y==0) result = pos.X*16807; 
+                else if (pos.Y == 0) result = pos.X * 16807;
 
                 // If the region's X coordinate is 0, the geologic index is its Y coordinate times 48271
-                else if (pos.X==0) result = pos.Y*48271;
+                else if (pos.X == 0) result = pos.Y * 48271;
 
-                else result = ErosionLevel(pos - new ManhattanVector2(1,0)) * ErosionLevel(pos - new ManhattanVector2(0,1));
+                else result = ErosionLevel(pos - new ManhattanVector2(1, 0)) * ErosionLevel(pos - new ManhattanVector2(0, 1));
 
                 GeoCache[key] = result;
                 return result;
@@ -84,7 +83,7 @@ namespace Advent.MMXVIII
 
             public char TypeChar(ManhattanVector2 pos)
             {
-                if (pos.X<0 || pos.Y<0) return BLOCKED;
+                if (pos.X < 0 || pos.Y < 0) return BLOCKED;
                 var erosionLevel = ErosionLevel(pos);
                 switch (erosionLevel % 3)
                 {
@@ -103,7 +102,7 @@ namespace Advent.MMXVIII
 
             public static int RiskLevel(char typeChar)
             {
-                switch(typeChar)
+                switch (typeChar)
                 {
                     case ROCKY:
                         return 0;
@@ -121,11 +120,11 @@ namespace Advent.MMXVIII
             public int GetScore()
             {
                 int score = 0;
-                for(int y=0; y<=target.position.Y; ++y)
+                for (int y = 0; y <= target.position.Y; ++y)
                 {
-                    for (int x=0; x<=target.position.X; ++x)
+                    for (int x = 0; x <= target.position.X; ++x)
                     {
-                        var c = MapAt( new ManhattanVector2(x,y) );
+                        var c = MapAt(new ManhattanVector2(x, y));
                         score += RiskLevel(c);
                     }
                 }
@@ -137,23 +136,23 @@ namespace Advent.MMXVIII
 
             public int distanceLimit;
         }
-        
+
         public enum Tool
         {
             None,
             Torch,
-            ClimbingGear, 
+            ClimbingGear,
         }
-        
+
         public class State : IVec
         {
-            public ManhattanVector2 position = new ManhattanVector2(0,0);
+            public ManhattanVector2 position = new ManhattanVector2(0, 0);
 
             public Tool tool = Tool.Torch;
 
             public int cost = 0;
 
-            public Int64 GetKey() => (position.X << 40)+(position.Y << 20)+(int)tool;
+            public Int64 GetKey() => (position.X << 40) + (position.Y << 20) + (int)tool;
 
             public State(ManhattanVector2 pos, Tool t)
             {
@@ -161,7 +160,7 @@ namespace Advent.MMXVIII
                 tool = t;
             }
 
-            public State() {}
+            public State() { }
 
             bool ToolValid(char cell, Tool tool)
             {
@@ -184,7 +183,7 @@ namespace Advent.MMXVIII
 
             bool CanMove(Cave cave, int dx, int dy)
             {
-                if ((position.X+dx > cave.target.position.X+20) || (position.Y+dy > cave.target.position.Y+20)) return false; // prevent the search space going crazy
+                if ((position.X + dx > cave.target.position.X + 20) || (position.Y + dy > cave.target.position.Y + 20)) return false; // prevent the search space going crazy
 
                 var newPos = position + new ManhattanVector2(dx, dy);
 
@@ -222,7 +221,7 @@ namespace Advent.MMXVIII
             {
                 if (CanMove(cave, dx, dy))
                 {
-                    newState = new State(new ManhattanVector2(position.X+dx, position.Y+dy), tool);
+                    newState = new State(new ManhattanVector2(position.X + dx, position.Y + dy), tool);
                     newState.cost = 1;
 
                     return true;
@@ -251,17 +250,17 @@ namespace Advent.MMXVIII
                 if (!(other is State)) return Int32.MaxValue;
 
                 var man2 = other as State;
-                return position.Distance(man2.position) + Math.Abs((int)tool-(int)man2.tool);
+                return position.Distance(man2.position) + Math.Abs((int)tool - (int)man2.tool);
             }
 
-            public static bool operator== (State v1, State v2)
+            public static bool operator ==(State v1, State v2)
             {
                 if (object.ReferenceEquals(v1, null) && object.ReferenceEquals(v2, null)) return true;
                 if (object.ReferenceEquals(v1, null) && !object.ReferenceEquals(v2, null)) return false;
                 return v1.Equals(v2);
             }
 
-            public static bool operator!= (State v1, State v2)
+            public static bool operator !=(State v1, State v2)
             {
                 if (object.ReferenceEquals(v1, null) && object.ReferenceEquals(v2, null)) return true;
                 if (object.ReferenceEquals(v1, null) && !object.ReferenceEquals(v2, null)) return false;
@@ -290,7 +289,7 @@ namespace Advent.MMXVIII
                 return $"{position} {tool}";
             }
         }
-        
+
         public void DrawMap(char[][] map)
         {
             foreach (var line in map)
@@ -309,7 +308,7 @@ namespace Advent.MMXVIII
 
         public static int Part1(string input)
         {
-            var bits = input.Replace("\n", ",").Replace(" ",",").Split(',');
+            var bits = input.Replace("\n", ",").Replace(" ", ",").Split(',');
             return Part1(int.Parse(bits[3]), int.Parse(bits[4]), int.Parse(bits[1]));
         }
 
@@ -317,10 +316,10 @@ namespace Advent.MMXVIII
         {
             var cave = new Cave(tx, ty, depth);
 
-            var startPos = new State(new ManhattanVector2(0,0), Tool.Torch);
+            var startPos = new State(new ManhattanVector2(0, 0), Tool.Torch);
 
-            var jobqueue = new Queue<Tuple<State,int>>();
-            jobqueue.Enqueue(Tuple.Create(startPos,0));
+            var jobqueue = new Queue<Tuple<State, int>>();
+            jobqueue.Enqueue(Tuple.Create(startPos, 0));
             int best = int.MaxValue;
             var cache = new Dictionary<Int64, int>();
 
@@ -342,11 +341,11 @@ namespace Advent.MMXVIII
                     var neighbours = entry.Item1.GetNeighbours(cave);
                     foreach (var neighbour in neighbours)
                     {
-                        int newDistance = entry.Item2+neighbour.cost;
+                        int newDistance = entry.Item2 + neighbour.cost;
 
                         if (newDistance > best) continue;
 
-                        var key = neighbour.GetKey();              
+                        var key = neighbour.GetKey();
                         if (cache.TryGetValue(key, out var dist))
                         {
                             if (dist <= newDistance)
@@ -365,14 +364,14 @@ namespace Advent.MMXVIII
 
         public static int Part2(string input)
         {
-            var bits = input.Replace("\n", ",").Replace(" ",",").Split(',');
+            var bits = input.Replace("\n", ",").Replace(" ", ",").Split(',');
             return Part2(int.Parse(bits[3]), int.Parse(bits[4]), int.Parse(bits[1]));
         }
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
 
             //Console.WriteLine(Part2(10,10,510));
         }

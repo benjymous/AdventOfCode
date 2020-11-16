@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXV
 {
     public class Day17 : IPuzzle
     {
-        public string Name { get { return "2015-17";} }
+        public string Name { get { return "2015-17"; } }
 
 
         private static Dictionary<string, int> Noggify(string input)
@@ -63,7 +62,7 @@ namespace Advent.MMXV
             Dictionary<string, int> nogCombos = Noggify(input);
 
             var results = nogCombos.Where(kvp => kvp.Value == 150)
-                                   .GroupBy(kvp => kvp.Key.Where(c=>c==',').Count()+1)
+                                   .GroupBy(kvp => kvp.Key.Where(c => c == ',').Count() + 1)
                                    .First();
 
             return results.Count();
@@ -71,8 +70,8 @@ namespace Advent.MMXV
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

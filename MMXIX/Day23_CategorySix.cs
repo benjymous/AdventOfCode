@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXIX
 {
     public class Day23 : IPuzzle
     {
-        public string Name { get { return "2019-23";} }
+        public string Name { get { return "2019-23"; } }
 
         public class BigVec
         {
@@ -77,12 +76,12 @@ namespace Advent.MMXIX
 
             NetworkController controller;
 
-            Dictionary<int,int> IdleCount = new Dictionary<int, int>();
+            Dictionary<int, int> IdleCount = new Dictionary<int, int>();
 
             public NAT(NetworkController networkController, int numNodes)
             {
                 controller = networkController;
-                for (int i=0; i<numNodes; ++i) IdleCount[i]=0;
+                for (int i = 0; i < numNodes; ++i) IdleCount[i] = 0;
             }
 
             public void NotifyStarvation(int id)
@@ -92,7 +91,7 @@ namespace Advent.MMXIX
 
             public void PacketSeen(int id)
             {
-                IdleCount[id]=0;
+                IdleCount[id] = 0;
             }
 
             public bool Step()
@@ -100,15 +99,15 @@ namespace Advent.MMXIX
                 while (controller.TryGetPacket(255, out var packet))
                 {
                     lastPacket = packet;
-                }            
+                }
 
-                var idle = IdleCount.Where(v => v.Value>2).Count();
-            
+                var idle = IdleCount.Where(v => v.Value > 2).Count();
+
                 if (idle == 50)
                 {
                     //Console.WriteLine($"{idle} nodes idle");
                     controller.QueuePacket(0, lastPacket.X, lastPacket.Y);
-                    for (int i=0; i<IdleCount.Count; ++i) IdleCount[i]=0;
+                    for (int i = 0; i < IdleCount.Count; ++i) IdleCount[i] = 0;
 
                     if (lastPacket.Y == LastY) return false;
                     LastY = lastPacket.Y;
@@ -130,21 +129,21 @@ namespace Advent.MMXIX
             {
                 messageQueue[255] = new Queue<BigVec>();
 
-                for (int i=0; i<numNodes; ++i)
+                for (int i = 0; i < numNodes; ++i)
                 {
                     nodes.Add(new NetworkNode(program, i, this));
                     messageQueue[i] = new Queue<BigVec>();
                 }
             }
 
-            public void QueuePacket(int id, Int64 x, Int64 y) 
+            public void QueuePacket(int id, Int64 x, Int64 y)
             {
                 //Console.WriteLine($"{id} - {x},{y}");
-                messageQueue[id].Enqueue(new BigVec(x,y));
+                messageQueue[id].Enqueue(new BigVec(x, y));
                 Nat?.PacketSeen(id);
             }
 
-            public bool TryGetPacket(int id, out BigVec vec) 
+            public bool TryGetPacket(int id, out BigVec vec)
             {
                 if (!messageQueue[id].TryDequeue(out vec))
                 {
@@ -174,10 +173,10 @@ namespace Advent.MMXIX
 
             public void Run()
             {
-                while (Step());
+                while (Step()) ;
             }
         }
- 
+
         public static Int64 Part1(string input)
         {
             var network = new NetworkController(input, 50);
@@ -198,8 +197,8 @@ namespace Advent.MMXIX
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

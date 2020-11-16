@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVII
 {
     public class Day24 : IPuzzle
     {
-        public string Name { get { return "2017-24";} }
+        public string Name { get { return "2017-24"; } }
 
         public struct Component
         {
@@ -17,8 +16,8 @@ namespace Advent.MMXVII
                 int x = int.Parse(bits[0]);
                 int y = int.Parse(bits[1]);
 
-                val1 = Math.Min(x,y);
-                val2 = Math.Max(x,y);
+                val1 = Math.Min(x, y);
+                val2 = Math.Max(x, y);
             }
             public int val1;
             public int val2;
@@ -30,17 +29,17 @@ namespace Advent.MMXVII
 
             public bool Has(int val)
             {
-                return val1==val || val2==val;
+                return val1 == val || val2 == val;
             }
 
             public int Other(int a)
             {
-                if (val1==a) return val2; else return val1;
+                if (val1 == a) return val2; else return val1;
             }
 
             public int Strength()
             {
-                return val1+val2;
+                return val1 + val2;
             }
         }
 
@@ -50,17 +49,17 @@ namespace Advent.MMXVII
 
             foreach (var component in first)
             {
-                yield return new List<Component>{component};
+                yield return new List<Component> { component };
                 var rest = inputs.Where(c => c.isDifferent(component));
 
-                var childResults = GetChains(component.Other(currentPort), rest); 
+                var childResults = GetChains(component.Other(currentPort), rest);
                 foreach (var item in childResults)
                 {
                     List<Component> newList = new List<Component>();
                     newList.Add(component);
                     newList.AddRange(item);
                     yield return newList;
-                } 
+                }
             }
         }
 
@@ -71,7 +70,7 @@ namespace Advent.MMXVII
 
             return Part1(chains);
         }
- 
+
         public static int Part1(IEnumerable<IEnumerable<Component>> chains)
         {
             return chains.AsParallel().Select(chain => chain.Select(comp => comp.Strength()).Sum()).Max();
@@ -91,7 +90,7 @@ namespace Advent.MMXVII
 
             var longest = groups.Select(x => x.Key).Max();
 
-            var longestGroup = groups.Where(x => x.Key == longest).SelectMany(x=>x);
+            var longestGroup = groups.Where(x => x.Key == longest).SelectMany(x => x);
 
             var longestStrongest = longestGroup.Select(chain => chain.Select(component => component.Strength()).Sum()).Max();
 
@@ -106,8 +105,8 @@ namespace Advent.MMXVII
             var data = Util.Parse<Component>(input);
             var chains = GetChains(0, data).ToList();
 
-            logger.WriteLine("- Pt1 - "+Part1(chains));
-            logger.WriteLine("- Pt2 - "+Part2(chains));
+            logger.WriteLine("- Pt1 - " + Part1(chains));
+            logger.WriteLine("- Pt2 - " + Part2(chains));
         }
     }
 }

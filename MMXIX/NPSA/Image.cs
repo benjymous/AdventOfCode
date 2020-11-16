@@ -12,7 +12,7 @@ namespace Advent.MMXIX.NPSA
             Width = width;
             Height = height;
 
-            groups = Util.Slice(chars, width*height);
+            groups = Util.Slice(chars, width * height);
 
             foreach (var layer in groups.Reverse())
             {
@@ -23,19 +23,19 @@ namespace Advent.MMXIX.NPSA
                 else
                 {
                     var l = layer.ToArray();
-                    for (var i=0; i<l.Length; ++i)
+                    for (var i = 0; i < l.Length; ++i)
                     {
-                        if (l[i]!='2')
+                        if (l[i] != '2')
                         {
-                            pixelData[i]=l[i];
+                            pixelData[i] = l[i];
                         }
                     }
                 }
             }
         }
 
-        public int Width {get; private set;}
-        public int Height {get; private set;}
+        public int Width { get; private set; }
+        public int Height { get; private set; }
 
         IEnumerable<IEnumerable<char>> groups;
         List<char> pixelData = new List<char>();
@@ -47,12 +47,12 @@ namespace Advent.MMXIX.NPSA
 
             foreach (var g in groups)
             {
-                var zeroes = g.Where(i => i=='0').Count();
+                var zeroes = g.Where(i => i == '0').Count();
 
                 if (zeroes < leastZeros)
                 {
                     leastZeros = zeroes;
-                    onesByTwos = g.Where(i => i=='1').Count() * g.Where(i => i=='2').Count();
+                    onesByTwos = g.Where(i => i == '1').Count() * g.Where(i => i == '2').Count();
                 }
             }
 
@@ -61,11 +61,11 @@ namespace Advent.MMXIX.NPSA
 
         public override string ToString()
         {
-            var final = Util.Slice(pixelData.Select(c => c=='1' ? '#' : ' '), Width);
+            var final = Util.Slice(pixelData.Select(c => c == '1' ? '#' : ' '), Width);
             var outStr = "";
             foreach (var l in final)
             {
-                outStr += string.Join("",l)+'\n';
+                outStr += string.Join("", l) + '\n';
             }
 
             return outStr;

@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 
 namespace Advent.MMXIX.Test
 {
@@ -34,7 +33,7 @@ namespace Advent.MMXIX.Test
         [TestCategory("Regression")]
         [DataTestMethod]
         public void FuelCheck_Part1_Regression()
-        {    
+        {
             Assert.AreEqual(3224048, Day01.Part1(input));
         }
 

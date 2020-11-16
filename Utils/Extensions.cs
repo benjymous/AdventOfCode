@@ -10,14 +10,14 @@ namespace Advent.Utils
         // iterate over bits, returns sequence like 1,2,4,8 (only returning set bits in input)
         public static IEnumerable<int> BitSequence(this int v)
         {
-            for(int k=1; k<=v; k<<=1)
+            for (int k = 1; k <= v; k <<= 1)
             {
-                if ((v & k)>0) 
+                if ((v & k) > 0)
                     yield return k;
             }
         }
 
-      
+
         public static string ToEngineeringNotation(this double d)
         {
             string fmt = "N2";
@@ -26,21 +26,37 @@ namespace Advent.Utils
             {
                 switch ((int)Math.Floor(exponent))
                 {
-                    case 0: case 1: case 2:
+                    case 0:
+                    case 1:
+                    case 2:
                         return d.ToString();
-                    case 3: case 4: case 5:
+                    case 3:
+                    case 4:
+                    case 5:
                         return (d / 1e3).ToString(fmt) + "k";
-                    case 6: case 7: case 8:
+                    case 6:
+                    case 7:
+                    case 8:
                         return (d / 1e6).ToString(fmt) + "M";
-                    case 9: case 10: case 11:
+                    case 9:
+                    case 10:
+                    case 11:
                         return (d / 1e9).ToString(fmt) + "G";
-                    case 12: case 13: case 14:
+                    case 12:
+                    case 13:
+                    case 14:
                         return (d / 1e12).ToString(fmt) + "T";
-                    case 15: case 16: case 17:
+                    case 15:
+                    case 16:
+                    case 17:
                         return (d / 1e15).ToString(fmt) + "P";
-                    case 18: case 19: case 20:
+                    case 18:
+                    case 19:
+                    case 20:
                         return (d / 1e18).ToString(fmt) + "E";
-                    case 21: case 22: case 23:
+                    case 21:
+                    case 22:
+                    case 23:
                         return (d / 1e21).ToString(fmt) + "Z";
                     default:
                         return (d / 1e24).ToString(fmt) + "Y";

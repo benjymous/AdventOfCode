@@ -6,7 +6,7 @@ namespace Advent.Utils.Collections
     public class TreeNode<TKeyType, TDataType>
     {
         public TKeyType Key { get; set; }
-        public TDataType Value {get; set; }
+        public TDataType Value { get; set; }
 
         public TreeNode<TKeyType, TDataType> Parent = null;
 

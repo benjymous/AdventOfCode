@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-
 namespace Advent.Utils
 {
     public static class IPuzzleExtensions
@@ -19,9 +16,9 @@ namespace Advent.Utils
             return false;
         }
 
-        public static long TimeRun(this IPuzzle puzzle,  ILogger logger)
+        public static long TimeRun(this IPuzzle puzzle, ILogger logger)
         {
-            var watch = new System.Diagnostics.Stopwatch();        
+            var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
             logger.WriteLine(puzzle.Name);
             var input = Util.GetInput(puzzle);

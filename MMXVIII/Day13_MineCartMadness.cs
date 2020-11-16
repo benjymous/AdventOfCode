@@ -1,26 +1,26 @@
-﻿using System;
+﻿using Advent.Utils.Vectors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Advent.Utils.Vectors;
 
 namespace Advent.MMXVIII
 {
     public class Day13 : IPuzzle
     {
-        public string Name { get { return "2018-13";} }
- 
+        public string Name { get { return "2018-13"; } }
+
         public class Train
         {
-            public ManhattanVector2 position = new ManhattanVector2(0,0);
-            public Direction2 direction = new Direction2(0,0);
+            public ManhattanVector2 position = new ManhattanVector2(0, 0);
+            public Direction2 direction = new Direction2(0, 0);
             public int turn;
             public bool crash;
 
 
-            public char GetTrainCh() 
+            public char GetTrainCh()
             {
                 if (crash) return 'X';
-                
+
                 return direction.AsChar();
             }
         }
@@ -31,26 +31,28 @@ namespace Advent.MMXVIII
 
             List<Train> trains = new List<Train>();
 
-            public bool Debug {get;set;} = false;
+            public bool Debug { get; set; } = false;
 
-            public bool StopOnCrash {get;set;} = true;
+            public bool StopOnCrash { get; set; } = true;
 
             void AddTrain(int x, int y, int dx, int dy)
             {
-                trains.Add(new Train{position = new ManhattanVector2(x,y), direction = new Direction2(dx,dy),turn=0,crash=false});
+                trains.Add(new Train { position = new ManhattanVector2(x, y), direction = new Direction2(dx, dy), turn = 0, crash = false });
             }
 
-            public TrainSim(string data) : this(Util.Split(data)) {}
-            
+            public TrainSim(string data) : this(Util.Split(data)) { }
+
             public TrainSim(string[] tracks)
             {
                 foreach (var line in tracks)
                 {
                     string outLine = "";
 
-                    for (var i=0; i<line.Length; ++i) {
+                    for (var i = 0; i < line.Length; ++i)
+                    {
                         var c = line[i];
-                        switch(c) {
+                        switch (c)
+                        {
                             case '>':
                                 AddTrain(i, map.Count, 1, 0);
                                 c = '-';
@@ -92,7 +94,7 @@ namespace Advent.MMXVIII
                         turn[t.position.Y][t.position.X] = t.GetTrainCh();
                     }
 
-                    for(var i=0; i<trains.Count; ++i)
+                    for (var i = 0; i < trains.Count; ++i)
                     {
                         var t = trains[i];
 
@@ -102,17 +104,18 @@ namespace Advent.MMXVIII
 
                         var newTrack = turn[t.position.Y][t.position.X];
 
-                        switch (newTrack) 
+                        switch (newTrack)
                         {
                             case '\\':
                                 t.direction.SetDirection(t.direction.DY, t.direction.DX);
                                 break;
-                            case '/':  
-                                t.direction.SetDirection(-t.direction.DY, -t.direction.DX);        
+                            case '/':
+                                t.direction.SetDirection(-t.direction.DY, -t.direction.DX);
                                 break;
 
                             case '+':
-                                switch (t.turn) {
+                                switch (t.turn)
+                                {
                                     case 0: // left
                                         t.direction.TurnLeft();
                                         t.turn = 1;
@@ -127,7 +130,7 @@ namespace Advent.MMXVIII
                                         t.turn = 0;
                                         break;
                                 }
-                                break;      
+                                break;
                         }
                         turn[t.position.Y][t.position.X] = t.GetTrainCh();
 
@@ -135,27 +138,27 @@ namespace Advent.MMXVIII
                         {
                             if (other != t)
                             {
-                                if (other.position == t.position) 
-                                {                          
-                                    if (StopOnCrash) 
-                                    {                      
+                                if (other.position == t.position)
+                                {
+                                    if (StopOnCrash)
+                                    {
                                         running = false;
-                                    } 
+                                    }
                                     t.crash = true;
                                     other.crash = true;
-                               
-                                    result = "Crash at "+t.position.X+","+ t.position.Y;
-                                    if (Debug) Console.WriteLine(result);                          
+
+                                    result = "Crash at " + t.position.X + "," + t.position.Y;
+                                    if (Debug) Console.WriteLine(result);
                                 }
                             }
                         }
                     }
 
                     // sort trains from top to bottom
-                    trains.Sort((a, b) => 
+                    trains.Sort((a, b) =>
                     {
-                        if (a.position.Y != b.position.Y) return a.position.Y-b.position.Y;
-                        return a.position.X-b.position.X;
+                        if (a.position.Y != b.position.Y) return a.position.Y - b.position.Y;
+                        return a.position.X - b.position.X;
                     });
 
 
@@ -171,15 +174,15 @@ namespace Advent.MMXVIII
                     //     Console.WriteLine();
                     // }
 
-                        // remove crashed trains
-                    
-                        trains = trains.Where(t => !t.crash).ToList();
+                    // remove crashed trains
 
-                    if (running) 
+                    trains = trains.Where(t => !t.crash).ToList();
+
+                    if (running)
                     {
                         if (trains.Count < 2)
                         {
-                            result = "Last train at "+trains.First().position;
+                            result = "Last train at " + trains.First().position;
                             running = false;
                         }
                     }
@@ -198,14 +201,14 @@ namespace Advent.MMXVIII
         public static string Part2(string input)
         {
             var t2 = new TrainSim(input);
-            t2.StopOnCrash=false;
+            t2.StopOnCrash = false;
             return t2.Run();
         }
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

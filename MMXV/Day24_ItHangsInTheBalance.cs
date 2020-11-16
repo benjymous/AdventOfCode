@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.Utils;
 
 namespace Advent.MMXV
 {
     public class Day24 : IPuzzle
     {
-        public string Name { get { return "2015-24";} }
+        public string Name { get { return "2015-24"; } }
 
         public static IEnumerable<IEnumerable<int>> Groupings(IEnumerable<int> available, int target)
         {
@@ -16,28 +15,28 @@ namespace Advent.MMXV
             {
                 if (first == target)
                 {
-                    yield return new List<int>{first};
+                    yield return new List<int> { first };
                 }
                 else if (first < target)
                 {
                     int shortest = int.MaxValue;
                     Int64 QE = Int64.MaxValue;
                     HashSet<string> seen = new HashSet<string>();
-                    foreach (var child in Groupings(available.Where(x => x != first), target-first))
+                    foreach (var child in Groupings(available.Where(x => x != first), target - first))
                     {
                         if (child.Count() <= shortest)
                         {
-                            var key = string.Join(",", child.OrderByDescending(x=>x));
+                            var key = string.Join(",", child.OrderByDescending(x => x));
                             if (seen.Contains(key)) continue;
 
                             seen.Add(key);
-                            
+
                             var qe = child.Product();
                             if (qe < QE)
                             {
                                 QE = qe;
                                 shortest = child.Count();
-                                var l = new List<int>(){first};
+                                var l = new List<int>() { first };
                                 l.AddRange(child);
 
                                 yield return l;
@@ -57,13 +56,13 @@ namespace Advent.MMXV
             var g = Groupings(remaining, target);
             return g.Any();
         }
- 
+
         public static Int64 Solve(string input, int numGroups)
         {
             var parcels = Util.Parse32(input).OrderByDescending(x => x);
 
             int totalSize = parcels.Sum();
-            int groupSize = totalSize/numGroups;
+            int groupSize = totalSize / numGroups;
 
             var groups = Groupings(parcels, groupSize);
 
@@ -76,7 +75,7 @@ namespace Advent.MMXV
             {
                 if (smallestGroup < int.MaxValue && g.Count() > smallestGroup) break;
 
-                var key = string.Join(",", g.OrderByDescending(x=>x));
+                var key = string.Join(",", g.OrderByDescending(x => x));
                 if (seen.Contains(key)) continue;
 
                 seen.Add(key);
@@ -88,10 +87,10 @@ namespace Advent.MMXV
                     {
                         QE = qe;
                         //Console.WriteLine($"{g.Count()} {qe} {string.Join(", ", g)}");
-                        smallestGroup = g.Count();   
-                    }                
+                        smallestGroup = g.Count();
+                    }
                 }
-                
+
             }
 
             return QE;
@@ -109,8 +108,8 @@ namespace Advent.MMXV
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

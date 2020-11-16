@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVIII
 {
     public class Day08 : IPuzzle
     {
-        public string Name { get { return "2018-08";} }
+        public string Name { get { return "2018-08"; } }
 
         static int metaTotal = 0;
- 
+
         static Node BuildTree(string input)
         {
             var data = new Queue<int>(Util.Parse32(input, ' '));
@@ -33,14 +31,15 @@ namespace Advent.MMXVIII
 
             var node = new Node();
 
-            for (var i=0;i<childCount;++i) 
+            for (var i = 0; i < childCount; ++i)
             {
                 var child = Read(data);
                 node.children.Add(child);
             }
 
-            for (var i=0; i<metaCount; ++i) {
-                var meta =  data.Dequeue();
+            for (var i = 0; i < metaCount; ++i)
+            {
+                var meta = data.Dequeue();
                 node.metaData.Add(meta);
                 metaTotal += meta;
             }
@@ -51,17 +50,18 @@ namespace Advent.MMXVIII
         static int GetScore(Node node)
         {
             var count = 0;
-            if (node.children.Count() == 0) 
+            if (node.children.Count() == 0)
             {
                 count += node.metaData.Sum();
             }
-            else 
+            else
             {
                 foreach (var m in node.metaData)
                 {
-                    var childIdx = m-1;
+                    var childIdx = m - 1;
 
-                    if (childIdx >=0 && childIdx < node.children.Count()) {
+                    if (childIdx >= 0 && childIdx < node.children.Count())
+                    {
                         count += GetScore(node.children[childIdx]);
                     }
                 }
@@ -84,8 +84,8 @@ namespace Advent.MMXVIII
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

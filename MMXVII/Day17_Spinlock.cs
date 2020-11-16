@@ -1,26 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Advent.Utils.Collections;
+﻿using Advent.Utils.Collections;
+using System;
 
 namespace Advent.MMXVII
 {
     public class Day17 : IPuzzle
     {
-        public string Name { get { return "2017-17";} }
- 
+        public string Name { get { return "2017-17"; } }
+
         public static Circle<int> Spinlock(int step, int totalSize, bool returnZero = false)
         {
             var circle = new Circle<int>(0);
 
             var current = circle;
 
-            for (int i=1; i<totalSize; ++i)
+            for (int i = 1; i < totalSize; ++i)
             {
                 current = current.Forward(step);
                 current = current.InsertNext(i);
-                if (i%100000 == 0) Console.WriteLine($"{i} - {circle.Next().Value}");
+                if (i % 100000 == 0) Console.WriteLine($"{i} - {circle.Next().Value}");
             }
 
             return returnZero ? circle : current;
@@ -36,15 +33,15 @@ namespace Advent.MMXVII
         {
             int step = int.Parse(input);
             int totalSize = 50000000;
-           
+
             int val = -1;
 
             int current = 0;
             // we only need to keep track of anything that falls into the 1th slot
 
-            for (int i=1; i<totalSize; ++i)
+            for (int i = 1; i < totalSize; ++i)
             {
-                current = ((current+step) % i) + 1;
+                current = ((current + step) % i) + 1;
                 if (current == 1)
                 {
                     val = i;
@@ -58,8 +55,8 @@ namespace Advent.MMXVII
         {
             //Util.Test(Part1("3"), 638);
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

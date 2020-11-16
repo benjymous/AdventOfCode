@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Advent.Utils.Vectors;
+using System;
 using System.Text;
-using Advent.Utils.Vectors;
 
 namespace Advent.MMXVIII
 {
@@ -67,9 +65,9 @@ namespace Advent.MMXVIII
                                     hit = true; break;
                                 }
                             }
-                            sb.Append( hit ? "#" : " ");
-                        }   
-                        sb.Append("\n");                
+                            sb.Append(hit ? "#" : " ");
+                        }
+                        sb.Append("\n");
                     }
                     return (steps, sb.ToString());
                 }
@@ -80,12 +78,12 @@ namespace Advent.MMXVIII
 
         public static string Part1(string input)
         {
-            return Solve(input).message;          
+            return Solve(input).message;
         }
 
         public static int Part2(string input)
         {
-            return Solve(input).steps;  
+            return Solve(input).steps;
         }
 
         public void Run(string input, ILogger logger)

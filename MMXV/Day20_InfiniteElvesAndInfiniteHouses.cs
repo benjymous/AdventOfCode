@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXV
 {
     public class Day20 : IPuzzle
     {
-        public string Name { get { return "2015-20";} }
+        public string Name { get { return "2015-20"; } }
 
         public static IEnumerable<int> getFactors(int x)
         {
-            for (int i = 1; i*i <= x; i++)
+            for (int i = 1; i * i <= x; i++)
             {
                 if (0 == (x % i))
                 {
@@ -23,14 +21,14 @@ namespace Advent.MMXV
                 }
             }
         }
- 
+
         static int NumPresents(int doorNumber)
         {
             int score = 0;
             var factors = getFactors(doorNumber);
             foreach (var factor in factors)
             {
-                score += factor*10;
+                score += factor * 10;
             }
             return score;
         }
@@ -42,15 +40,15 @@ namespace Advent.MMXV
             var factors = getFactors(doorNumber);
             foreach (var factor in factors)
             {
-                if (!elfCount.ContainsKey(factor)) elfCount[factor]=0;
+                if (!elfCount.ContainsKey(factor)) elfCount[factor] = 0;
                 if (elfCount[factor] < 50)
                 {
                     elfCount[factor]++;
-                    score += factor*11;
+                    score += factor * 11;
                 }
 
             }
-            return score; 
+            return score;
         }
 
         public static int Part1(string input)
@@ -67,8 +65,8 @@ namespace Advent.MMXV
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

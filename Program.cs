@@ -1,10 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Advent.Utils;
 
 namespace Advent
 {
@@ -22,7 +21,7 @@ namespace Advent
             int total = puzzles.Count();
             int finished = 0;
 
-            if (puzzles.Count()==1)
+            if (puzzles.Count() == 1)
             {
                 var timing = puzzles.First().TimeRun(new ConsoleOut());
                 Console.WriteLine();
@@ -30,21 +29,21 @@ namespace Advent
             }
             else
             {
-                var watch = new System.Diagnostics.Stopwatch();        
+                var watch = new System.Diagnostics.Stopwatch();
                 watch.Start();
 
-                Parallel.ForEach(puzzles, new ParallelOptions(){MaxDegreeOfParallelism=8}, (puzzle) =>
-                {
-                    TextBuffer buffer = new TextBuffer();
-                    timings[puzzle.Name] = puzzle.TimeRun(new TimeLogger(buffer));
+                Parallel.ForEach(puzzles, new ParallelOptions() { MaxDegreeOfParallelism = 8 }, (puzzle) =>
+                     {
+                         TextBuffer buffer = new TextBuffer();
+                         timings[puzzle.Name] = puzzle.TimeRun(new TimeLogger(buffer));
 
-                    mut.WaitOne();
-                    Console.WriteLine(buffer);
-                    ++finished;
-                    Console.WriteLine($"[{finished}/{total} {((finished)*100/total)}%]");
-                    Console.WriteLine();
-                    mut.ReleaseMutex();
-                });
+                         mut.WaitOne();
+                         Console.WriteLine(buffer);
+                         ++finished;
+                         Console.WriteLine($"[{finished}/{total} {((finished) * 100 / total)}%]");
+                         Console.WriteLine();
+                         mut.ReleaseMutex();
+                     });
 
                 Console.WriteLine($"All completed in {watch.ElapsedMilliseconds} ms");
             }
@@ -54,7 +53,7 @@ namespace Advent
             {
                 Console.WriteLine($"{kvp.Key} - {kvp.Value}ms");
             }
-            
+
             Console.WriteLine();
             foreach (var kvp in timings.OrderBy(kvp => kvp.Value))
             {

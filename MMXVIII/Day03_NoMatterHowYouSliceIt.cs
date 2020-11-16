@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Advent.Utils;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.Utils;
 
 namespace Advent.MMXVIII
 {
     public class Day03 : IPuzzle
     {
-        public string Name { get { return "2018-03";} }
+        public string Name { get { return "2018-03"; } }
 
         const int FabricSize = 1000;
 
@@ -50,7 +48,7 @@ namespace Advent.MMXVIII
                 var left = int.Parse(bits[2]);
                 var top = int.Parse(bits[3]);
                 var w = int.Parse(bits[4]);
-                var h = int.Parse( bits[5]);
+                var h = int.Parse(bits[5]);
 
                 shapes.Add(new Shape(id, left, top, w, h));
             }
@@ -60,19 +58,19 @@ namespace Advent.MMXVIII
 
         static int GetKey(int x, int y)
         {
-            return x+(y*FabricSize);
+            return x + (y * FabricSize);
         }
 
-        static Dictionary<int,int> FindOverlaps(List<Shape> shapes)
+        static Dictionary<int, int> FindOverlaps(List<Shape> shapes)
         {
-            Dictionary<int,int> square = new Dictionary<int, int>();
-            foreach(var shape in shapes)
+            Dictionary<int, int> square = new Dictionary<int, int>();
+            foreach (var shape in shapes)
             {
-                for (var y=shape.Top; y<shape.Top+shape.H; ++y)
+                for (var y = shape.Top; y < shape.Top + shape.H; ++y)
                 {
-                    for (var x=shape.Left; x<shape.Left+shape.W; ++x)
-                    {       
-                        square.IncrementAtIndex(GetKey(x,y));
+                    for (var x = shape.Left; x < shape.Left + shape.W; ++x)
+                    {
+                        square.IncrementAtIndex(GetKey(x, y));
                     }
                 }
             }
@@ -85,7 +83,7 @@ namespace Advent.MMXVIII
             var shapes = Parse32(input);
             var square = FindOverlaps(shapes);
 
-            var count = square.Select(i => i.Value>1 ? 1 : 0).Sum();
+            var count = square.Select(i => i.Value > 1 ? 1 : 0).Sum();
 
             return count;
         }
@@ -95,14 +93,14 @@ namespace Advent.MMXVIII
             var shapes = Parse32(input);
             var square = FindOverlaps(shapes);
 
-            foreach(var shape in shapes)
+            foreach (var shape in shapes)
             {
                 bool fail = false;
-                for (var y=shape.Top; y<shape.Top+shape.H; ++y)
+                for (var y = shape.Top; y < shape.Top + shape.H; ++y)
                 {
-                    for (var x=shape.Left; x<shape.Left+shape.W; ++x)
-                    {       
-                        if (square[GetKey(x,y)]>1)
+                    for (var x = shape.Left; x < shape.Left + shape.W; ++x)
+                    {
+                        if (square[GetKey(x, y)] > 1)
                         {
                             fail = true;
                         }
@@ -116,11 +114,11 @@ namespace Advent.MMXVIII
 
             return "";
         }
- 
+
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

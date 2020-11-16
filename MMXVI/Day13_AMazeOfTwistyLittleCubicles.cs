@@ -1,23 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Advent.Utils;
+﻿using Advent.Utils;
 using Advent.Utils.Pathfinding;
 using Advent.Utils.Vectors;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Advent.MMXVI
 {
     public class Day13 : IPuzzle
     {
-        public string Name { get { return "2016-13";} }
- 
+        public string Name { get { return "2016-13"; } }
+
         static bool IsOpen(int x, int y, int seed)
         {
-            int v = (seed)+(x*x) + (3*x) + (2*x*y) + (y) + (y*y);
+            int v = (seed) + (x * x) + (3 * x) + (2 * x * y) + (y) + (y * y);
             var b = v.BitSequence();
             var c = b.Count();
-            return (c%2 == 0);
+            return (c % 2 == 0);
         }
 
         public class CubicleMap : IMap<ManhattanVector2>
@@ -59,14 +57,14 @@ namespace Advent.MMXVI
                     return false;
                 }
 
-                lock(data)
+                lock (data)
                 {
                     if (!data.TryGetValue(pt.ToString(), out var isOpen))
                     {
-                        isOpen = IsOpen(pt.X, pt.Y, Seed);    
+                        isOpen = IsOpen(pt.X, pt.Y, Seed);
                         data[pt.ToString()] = isOpen;
                     }
-        
+
                     return isOpen;
                 }
             }
@@ -81,7 +79,7 @@ namespace Advent.MMXVI
         {
             int seed = int.Parse(input);
             var map = new CubicleMap(seed);
-            var route = AStar<ManhattanVector2>.FindPath(map, new ManhattanVector2(1,1), new ManhattanVector2(31,39));
+            var route = AStar<ManhattanVector2>.FindPath(map, new ManhattanVector2(1, 1), new ManhattanVector2(31, 39));
             return route.Count();
         }
 
@@ -90,37 +88,37 @@ namespace Advent.MMXVI
             int seed = int.Parse(input);
             var map = new CubicleMap(seed);
 
-            var start = new ManhattanVector2(1,1);
-            var dest = new ManhattanVector2(0,0);
+            var start = new ManhattanVector2(1, 1);
+            var dest = new ManhattanVector2(0, 0);
 
             const int MaxDistance = 50;
 
             int count = 0;
-            for (int y=0; y<MaxDistance; ++y)
+            for (int y = 0; y < MaxDistance; ++y)
             {
-                for (int x=0; x<MaxDistance-y; ++x)
+                for (int x = 0; x < MaxDistance - y; ++x)
                 {
-                    if (!map.IsValidNeighbour(new ManhattanVector2(x,y))) 
+                    if (!map.IsValidNeighbour(new ManhattanVector2(x, y)))
                     {
                         //Console.Write('#');
                         continue;
                     }
-                    if (x==1 && y==1) 
+                    if (x == 1 && y == 1)
                     {
                         count++;
                         //Console.Write('o');
                     }
                     else
                     {
-                        dest.Set(x,y);
+                        dest.Set(x, y);
                         var route = AStar<ManhattanVector2>.FindPath(map, start, dest);
                         if (route.Any())
                         {
-                            if( route.Count() <= MaxDistance)
+                            if (route.Count() <= MaxDistance)
                             {
-                                count ++;
+                                count++;
                                 //Console.Write(" ");
-                            } 
+                            }
                             // else
                             // {
                             //     Console.Write("-");
@@ -140,8 +138,8 @@ namespace Advent.MMXVI
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

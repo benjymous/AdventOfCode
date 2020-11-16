@@ -1,22 +1,21 @@
-﻿using System;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.Utils;
 
 namespace Advent.MMXVI
 {
     public class Day05 : IPuzzle
     {
-        public string Name { get { return "2016-05";} }
- 
+        public string Name { get { return "2016-05"; } }
+
         public static string CrackPassword1(string doorId, ILogger logger)
         {
             var sb = new List<char>();
             int hashNumber = 0;
             while (sb.Count < 8)
             {
-                hashNumber = HashBreaker.FindHash(doorId, 5, hashNumber+1);
+                hashNumber = HashBreaker.FindHash(doorId, 5, hashNumber + 1);
                 var hashString = HashBreaker.GetHashChars(hashNumber, doorId);
                 char c = hashString.Skip(5).First();
                 sb.Add(c);
@@ -33,14 +32,14 @@ namespace Advent.MMXVI
 
             while (outpass.Contains('_'))
             {
-                hashNumber = HashBreaker.FindHash(doorId, 5, hashNumber+1);
+                hashNumber = HashBreaker.FindHash(doorId, 5, hashNumber + 1);
                 var hashString = HashBreaker.GetHashChars(hashNumber, doorId).Take(7).ToArray();
                 char c = hashString[6];
                 char p = hashString[5];
 
                 int pos = p - '0';
 
-                if (pos >=0 && pos <=7 && outpass[pos] == '_')
+                if (pos >= 0 && pos <= 7 && outpass[pos] == '_')
                 {
                     outpass[pos] = c;
                 }
@@ -69,8 +68,8 @@ namespace Advent.MMXVI
 
             //Console.WriteLine(CrackPassword2("abc"));
 
-            logger.WriteLine("- Pt1 - "+Part1(input, logger));
-            logger.WriteLine("- Pt2 - "+Part2(input, logger));
+            logger.WriteLine("- Pt1 - " + Part1(input, logger));
+            logger.WriteLine("- Pt2 - " + Part2(input, logger));
         }
     }
 }

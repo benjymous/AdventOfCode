@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Advent.Utils;
 
 namespace Advent.MMXVI
 {
     public class Day08 : IPuzzle
     {
-        public string Name { get { return "2016-08";} }
- 
+        public string Name { get { return "2016-08"; } }
+
         public class Display
         {
             int GridWidth;
@@ -21,9 +21,9 @@ namespace Advent.MMXVI
                 GridWidth = w;
                 GridHeight = h;
 
-                pixels = new bool[GridWidth,GridHeight];     
+                pixels = new bool[GridWidth, GridHeight];
 
-                Perform(input);  
+                Perform(input);
             }
 
             public void Perform(string input)
@@ -41,24 +41,24 @@ namespace Advent.MMXVI
                             var width = int.Parse(size[0]);
                             var height = int.Parse(size[1]);
                             Set(width, height);
-                        break;
+                            break;
 
                         case "rotate":
                             switch (bits[1])
                             {
                                 case "row":
-                                    var row = int.Parse(bits[2].Replace("y=",""));
+                                    var row = int.Parse(bits[2].Replace("y=", ""));
                                     var shiftrow = int.Parse(bits[4]);
                                     RotateRow(row, shiftrow);
-                                break;
+                                    break;
 
                                 case "column":
-                                    var col = int.Parse(bits[2].Replace("x=",""));
+                                    var col = int.Parse(bits[2].Replace("x=", ""));
                                     var shiftcol = int.Parse(bits[4]);
                                     RotateCol(col, shiftcol);
-                                break;
+                                    break;
                             }
-                        break;
+                            break;
 
                         default:
                             Console.WriteLine($"Unknown command {line}");
@@ -70,11 +70,11 @@ namespace Advent.MMXVI
 
             void Set(int width, int height)
             {
-                for (int y=0; y<height; ++y)
+                for (int y = 0; y < height; ++y)
                 {
-                    for (int x=0; x<width; ++x)
+                    for (int x = 0; x < width; ++x)
                     {
-                        pixels[x,y] = true;
+                        pixels[x, y] = true;
                     }
                 }
             }
@@ -82,43 +82,43 @@ namespace Advent.MMXVI
             void RotateRow(int row, int shift)
             {
                 List<bool> changedRow = new List<bool>();
-                for(int x=0; x<GridWidth; ++x)
+                for (int x = 0; x < GridWidth; ++x)
                 {
-                    int nx = (GridWidth+(x-shift))%GridWidth;
+                    int nx = (GridWidth + (x - shift)) % GridWidth;
                     changedRow.Add(pixels[nx, row]);
                 }
 
-                for(int x=0; x<GridWidth; ++x)
+                for (int x = 0; x < GridWidth; ++x)
                 {
-                    pixels[x,row] = changedRow[x];
+                    pixels[x, row] = changedRow[x];
                 }
             }
 
             void RotateCol(int col, int shift)
             {
                 List<bool> changedCol = new List<bool>();
-                for(int y=0; y<GridHeight; ++y)
+                for (int y = 0; y < GridHeight; ++y)
                 {
-                    int ny = (GridHeight+(y-shift))%GridHeight;
+                    int ny = (GridHeight + (y - shift)) % GridHeight;
                     changedCol.Add(pixels[col, ny]);
                 }
 
-                for(int y=0; y<GridHeight; ++y)
+                for (int y = 0; y < GridHeight; ++y)
                 {
-                    pixels[col,y] = changedCol[y];
+                    pixels[col, y] = changedCol[y];
                 }
             }
 
-            public int NumPixelsOn() => pixels.Values().Where(x => x==true).Count();
+            public int NumPixelsOn() => pixels.Values().Where(x => x == true).Count();
 
             public override string ToString()
             {
                 var sb = new StringBuilder();
-                for (var y=0; y<GridHeight; ++y)
+                for (var y = 0; y < GridHeight; ++y)
                 {
-                    for (var x=0; x<GridWidth; ++x)
+                    for (var x = 0; x < GridWidth; ++x)
                     {
-                        sb.Append(pixels[x,y] ? "##" : "..");
+                        sb.Append(pixels[x, y] ? "##" : "..");
                     }
                     sb.AppendLine();
                 }
@@ -150,8 +150,8 @@ namespace Advent.MMXVI
             // display.Perform("rotate column x=1 by 1");
             // logger.WriteLine($"{display}\n\n");
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - \n"+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - \n" + Part2(input));
         }
     }
 }

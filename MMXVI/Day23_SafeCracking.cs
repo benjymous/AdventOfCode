@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVI
 {
     public class Day23 : IPuzzle
     {
-        public string Name { get { return "2016-23";} }
- 
+        public string Name { get { return "2016-23"; } }
+
         public static int Crack(string program, int input)
         {
             var cpu = new BunniTek.BunnyCPU(program);
@@ -38,8 +35,8 @@ namespace Advent.MMXVI
 
 
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

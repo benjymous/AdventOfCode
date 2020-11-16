@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 
 namespace Advent.MMXVIII.Test
 {
@@ -18,7 +17,7 @@ namespace Advent.MMXVIII.Test
         {
             var t = new Day13.TrainSim(input);
             var res = t.Run();
-            Assert.AreEqual(expected, res);                    
+            Assert.AreEqual(expected, res);
         }
 
         [TestCategory("Test")]
@@ -29,7 +28,7 @@ namespace Advent.MMXVIII.Test
             var t = new Day13.TrainSim(input);
             t.StopOnCrash = false;
             var res = t.Run();
-            Assert.AreEqual(expected, res);                    
+            Assert.AreEqual(expected, res);
         }
 
         [TestCategory("Regression")]
@@ -45,6 +44,6 @@ namespace Advent.MMXVIII.Test
         {
             Assert.AreEqual("Last train at 116,25", Day13.Part2(input));
         }
-     
+
     }
 }

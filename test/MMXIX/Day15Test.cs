@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 
 namespace Advent.MMXIX.Test
 {
@@ -21,7 +20,7 @@ namespace Advent.MMXIX.Test
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Oxygen_Part2_Regression()
-        {     
+        {
             Assert.AreEqual(410, Day15.Part2(input));
         }
 

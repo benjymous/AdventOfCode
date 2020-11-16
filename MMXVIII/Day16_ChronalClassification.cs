@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVIII
 {
     public class Day16 : IPuzzle
     {
-        public string Name { get { return "2018-16";} }
- 
-       
+        public string Name { get { return "2018-16"; } }
+
+
 
         public class Test
         {
@@ -57,7 +56,7 @@ namespace Advent.MMXVIII
 
         private static bool Match(int[] data, int[] after)
         {
-            for (int i=0; i<4; ++i)
+            for (int i = 0; i < 4; ++i)
             {
                 if (data[i] != after[i])
                 {
@@ -108,11 +107,11 @@ namespace Advent.MMXVIII
 
             while (mapping.Count < 16)
             {
-                for (int i=0; i<16; ++i)
+                for (int i = 0; i < 16; ++i)
                 {
                     if (mapping.ContainsKey(i)) continue;
                     HashSet<ChronMatic.IInstr> potentials = new HashSet<ChronMatic.IInstr>(instrs);
-                    foreach (var test in tests.Where(t => t.instr==i))
+                    foreach (var test in tests.Where(t => t.instr == i))
                     {
                         HashSet<ChronMatic.IInstr> pass = new HashSet<ChronMatic.IInstr>();
                         foreach (var instr in potentials)
@@ -125,31 +124,31 @@ namespace Advent.MMXVIII
                         potentials = pass;
                     }
 
-                    if (potentials.Count() == 0) 
+                    if (potentials.Count() == 0)
                     {
                         throw new Exception($"Failed to map {i}");
                     }
-                    if (potentials.Count() == 1) 
+                    if (potentials.Count() == 1)
                     {
                         var instr = potentials.First();
                         //Console.WriteLine($"instr {i} is {instr.GetType().Name}");
-                        mapping[i]=instr;
+                        mapping[i] = instr;
                         instrs.Remove(instr);
                     }
                     else
                     {
                         //Console.WriteLine($"instr {i} has {potentials.Count()} potentials"); 
-                    }           
+                    }
                 }
             }
 
             // find the three blank lines that indicate the start of the program
             int progStart = 0;
-            for (int i=3; i<lines.Length; ++i)
+            for (int i = 3; i < lines.Length; ++i)
             {
-                if (lines[i]==lines[i-1] && lines[i]==lines[i-2])
+                if (lines[i] == lines[i - 1] && lines[i] == lines[i - 2])
                 {
-                    progStart = i+1;
+                    progStart = i + 1;
                     break;
                 }
             }
@@ -181,8 +180,8 @@ namespace Advent.MMXVIII
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }
