@@ -13,6 +13,7 @@ namespace Advent.MMXVIII.Test
         [DataRow(57, 122, 79, -5)] // Fuel cell at  122,79, grid serial number 57: power level -5
         [DataRow(57, 122, 79, -5)] // Fuel cell at 217,196, grid serial number 39: power level  0
         [DataRow(57, 122, 79, -5)] // Fuel cell at 101,153, grid serial number 71: power level  4
+        [DataTestMethod]
         public void PowerLevelTest(int serial, int x, int y, int expected)
         {
             Assert.AreEqual(expected, MMXVIII.Day11.Power(serial, x, y));
