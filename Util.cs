@@ -39,6 +39,11 @@ namespace Advent
             }
         }
 
+        internal static int WrapIndex(int v, int length)
+        {
+            return v % length;
+        }
+
         public static List<T> Parse<T>(IEnumerable<string> input)
         {
             return input.Select(line => (T)Activator.CreateInstance(typeof(T), new object[] { line }))

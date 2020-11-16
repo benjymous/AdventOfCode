@@ -105,8 +105,8 @@ namespace Advent.MMXVII
             var data = Util.Parse<Component>(input);
             var chains = GetChains(0, data).ToList();
 
-            logger.WriteLine("- Pt1 - " + Part1(chains));
-            logger.WriteLine("- Pt2 - " + Part2(chains));
+            //logger.WriteLine("- Pt1 - " + Part1(chains));
+            //logger.WriteLine("- Pt2 - " + Part2(chains));
         }
     }
 }
