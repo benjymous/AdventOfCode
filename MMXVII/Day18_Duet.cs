@@ -86,7 +86,7 @@ namespace Advent.MMXVII
             //Part2("snd 1\nsnd 2\nsnd p\nrcv a\nrcv b\nrcv c\nrcv d");
 
             //logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - " + Part2(input));
+            //logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }
