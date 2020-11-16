@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 
 namespace Advent.MMXIX.Test
 {
@@ -9,7 +8,7 @@ namespace Advent.MMXIX.Test
     public class Day05Test
     {
         string input = Util.GetInput<Day05>();
-        
+
         [TestCategory("Test")]
         [DataRow("1002,4,3,4,33", "1002,4,3,4,99")]
         [DataTestMethod]
@@ -20,8 +19,8 @@ namespace Advent.MMXIX.Test
             Assert.AreEqual(expected, cpu.ToString());
         }
 
-        
-        
+
+
         // Using position mode, consider whether the input is equal to 8;
         // output 1 (if it is) or 0 (if it is not).
         [DataRow("3,9,8,9,10,9,4,9,99,-1,8", 8, "1")]

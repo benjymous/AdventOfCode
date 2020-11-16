@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.Utils;
 
 namespace Advent.MMXVI
 {
     public class Day22 : IPuzzle
     {
-        public string Name { get { return "2016-22";} }
+        public string Name { get { return "2016-22"; } }
 
         class Node
         {
@@ -20,7 +19,7 @@ namespace Advent.MMXVI
 
             public Node(string line)
             {
-                var bits = Util.ExtractNumbers(line.Select(c => (c>='0' && c<='9') ? c : ' '));
+                var bits = Util.ExtractNumbers(line.Select(c => (c >= '0' && c <= '9') ? c : ' '));
                 x = bits[0];
                 y = bits[1];
                 size = bits[2];
@@ -32,7 +31,7 @@ namespace Advent.MMXVI
         }
 
         static IEnumerable<Node> Parse(string input) => Util.Parse<Node>(Util.Split(input).Where(line => line.StartsWith("/dev/")));
- 
+
         public static int Part1(string input)
         {
             var nodes = Parse(input);
@@ -46,18 +45,18 @@ namespace Advent.MMXVI
         {
             var nodes = Parse(input);
 
-            var grid = nodes.ToDictionary(el => $"{el.x},{el.y}", el=>el);
+            var grid = nodes.ToDictionary(el => $"{el.x},{el.y}", el => el);
 
-            var sourceX = nodes.Where(n => n.y==0).Select(n => n.x).Max();
+            var sourceX = nodes.Where(n => n.y == 0).Select(n => n.x).Max();
 
-            var empty = nodes.Where(n => n.used==0).First();
+            var empty = nodes.Where(n => n.used == 0).First();
 
             var steps = 0;
-            steps += Math.Abs((sourceX-1) - empty.x); // move empty cell to N-1th column
+            steps += Math.Abs((sourceX - 1) - empty.x); // move empty cell to N-1th column
             steps += empty.y; // Move empty to 0th row
             steps++; // move payload left
-            steps += 5 * (sourceX-1); // repeated cycles of moving empty cell to left of payload, and moving payload left again
-            
+            steps += 5 * (sourceX - 1); // repeated cycles of moving empty cell to left of payload, and moving payload left again
+
             return steps;
         }
 
@@ -68,7 +67,7 @@ namespace Advent.MMXVI
 
             //Util.Test(Part2(test), 7);
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
             //logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }

@@ -1,22 +1,21 @@
-﻿using System;
+﻿using Advent.Utils;
+using Advent.Utils.Vectors;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
-using Advent.Utils;
-using Advent.Utils.Vectors;
 
 namespace Advent.MMXIX
 {
     public class Day12 : IPuzzle
     {
-        public string Name { get { return "2019-12";} }
+        public string Name { get { return "2019-12"; } }
 
 
         public class Body
         {
             public ManhattanVector3 position;
-            public ManhattanVector3 velocity = new ManhattanVector3(0,0,0);
+            public ManhattanVector3 velocity = new ManhattanVector3(0, 0, 0);
             public Body(string input)
             {
                 position = new ManhattanVector3(input);
@@ -24,12 +23,12 @@ namespace Advent.MMXIX
 
             public void ApplyGravity(Body other, int component)
             {
-                velocity.Component[component] += Math.Sign(other.position.Component[component]-position.Component[component]);
+                velocity.Component[component] += Math.Sign(other.position.Component[component] - position.Component[component]);
             }
 
             public void ApplyGravity(Body other)
             {
-                for (int i=0; i<position.ComponentCount; ++i)
+                for (int i = 0; i < position.ComponentCount; ++i)
                 {
                     ApplyGravity(other, i);
                 }
@@ -54,7 +53,7 @@ namespace Advent.MMXIX
             {
                 var pot = position.Component.Select(n => Math.Abs(n)).Sum();
                 var kin = velocity.Component.Select(n => Math.Abs(n)).Sum();
-                return pot*kin;                     
+                return pot * kin;
             }
         }
 
@@ -150,12 +149,12 @@ namespace Advent.MMXIX
                 }
             }
         }
- 
+
         public static int Part1(string input)
         {
             var system = new System(input);
 
-            for (int i=0; i<1000; ++i)
+            for (int i = 0; i < 1000; ++i)
             {
                 //Console.WriteLine($"After {i} steps");
                 //system.Print();
@@ -206,8 +205,8 @@ namespace Advent.MMXIX
         }
 
         public static Int64 Part2(string input)
-        {           
-            var results = Enumerable.Range(0,3).AsParallel().Select(i => FindCycle(input, i));
+        {
+            var results = Enumerable.Range(0, 3).AsParallel().Select(i => FindCycle(input, i));
 
             Int64 result = 1;
             foreach (var r in results)
@@ -222,8 +221,8 @@ namespace Advent.MMXIX
         {
             //logger.WriteLine(Part2("<x=-1, y=0, z=2>\n<x=2, y=-10, z=-7>\n<x=4, y=-8, z=8>\n<x=3, y=5, z=-1>"));
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 
 namespace Advent.MMXVIII.Test
 {
@@ -17,7 +16,7 @@ namespace Advent.MMXVIII.Test
         [DataTestMethod]
         public void Chocolate01(int start, int keep, string expected)
         {
-            Assert.AreEqual(expected, Day14.Part1(start, keep));                    
+            Assert.AreEqual(expected, Day14.Part1(start, keep));
         }
 
         [TestCategory("Test")]
@@ -28,7 +27,7 @@ namespace Advent.MMXVIII.Test
         [DataTestMethod]
         public void Chocolate02(string search, int expected)
         {
-            Assert.AreEqual(expected, Day14.Part2(search));                    
+            Assert.AreEqual(expected, Day14.Part2(search));
         }
 
         [TestCategory("Regression")]
@@ -44,6 +43,6 @@ namespace Advent.MMXVIII.Test
         {
             Assert.AreEqual(20253137, Day14.Part2(input));
         }
-     
+
     }
 }

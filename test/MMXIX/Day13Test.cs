@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 
 namespace Advent.MMXIX.Test
 {
@@ -20,7 +19,7 @@ namespace Advent.MMXIX.Test
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Pong_Part2_Regression()
-        {     
+        {
             Assert.AreEqual(11140, Day13.Part2(input));
         }
 

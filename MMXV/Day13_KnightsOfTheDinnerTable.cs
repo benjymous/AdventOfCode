@@ -1,22 +1,20 @@
-﻿using System;
+﻿using Advent.Utils;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.Utils;
 
 namespace Advent.MMXV
 {
     public class Day13 : IPuzzle
     {
-        public string Name { get { return "2015-13";} }
- 
+        public string Name { get { return "2015-13"; } }
+
         static int GetScore(char[] perm, Dictionary<int, int> scores)
         {
             int score = 0;
-            for (int i=0; i<perm.Length; ++i)
+            for (int i = 0; i < perm.Length; ++i)
             {
-                int j = (i+1)%perm.Length;
-                score += scores[GetKey(perm[i],perm[j])];
+                int j = (i + 1) % perm.Length;
+                score += scores[GetKey(perm[i], perm[j])];
             }
             return score;
         }
@@ -48,19 +46,19 @@ namespace Advent.MMXV
             }
 
             var starter = '?';
-            if (includeYou) 
+            if (includeYou)
             {
                 starter = 'Y';
                 foreach (var other in people)
                 {
-                    scores[GetKey(starter,other)] = 0;
-                    scores[GetKey(other,starter)] = 0;
-                }          
+                    scores[GetKey(starter, other)] = 0;
+                    scores[GetKey(other, starter)] = 0;
+                }
             }
             else
             {
                 starter = people.First();
-                people.Remove(starter);  
+                people.Remove(starter);
             }
 
             var perms = people.Permutations();
@@ -75,8 +73,8 @@ namespace Advent.MMXV
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

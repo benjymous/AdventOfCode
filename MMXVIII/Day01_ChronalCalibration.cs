@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Advent.MMXVIII
 {
     public class Day01 : IPuzzle
     {
-        public string Name { get { return "2018-01";} }
+        public string Name { get { return "2018-01"; } }
 
         public static int Part1(string input)
         {
@@ -47,7 +46,7 @@ namespace Advent.MMXVIII
                         if (seen.Contains(freq))
                         {
                             return freq;
-                        }                        
+                        }
                     }
                 }
             }

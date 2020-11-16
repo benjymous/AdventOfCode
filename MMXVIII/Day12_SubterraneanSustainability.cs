@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVIII
 {
@@ -84,7 +83,7 @@ namespace Advent.MMXVIII
 
 
             int gen = 0;
-            int lastLeft =0;
+            int lastLeft = 0;
             while (true)
             {
                 // Keep the line padded with 5 .s either side
@@ -96,30 +95,30 @@ namespace Advent.MMXVIII
                 }
 
                 var i = current.IndexOf('#');
-                if (i>5)
+                if (i > 5)
                 {
-                    current = current.Substring(i-5);
-                    left += (i-5);
+                    current = current.Substring(i - 5);
+                    left += (i - 5);
                 }
                 var j = current.LastIndexOf("#");
-                if ((current.Length-j-1) > 5)
+                if ((current.Length - j - 1) > 5)
                 {
-                    current = current.Substring(0, j+6);
+                    current = current.Substring(0, j + 6);
                 }
 
-                if (current==previous) break; // We've got a stable pattern
+                if (current == previous) break; // We've got a stable pattern
 
 
                 previous = current;
                 current = Step(rules, current) + ".....";
                 gen++;
-                
+
             }
 
-            var turnStep = left-lastLeft; // we progress this many cells each turn
+            var turnStep = left - lastLeft; // we progress this many cells each turn
 
             // we'd progress this many cells over 50 billion turns
-            Int64 finalLeft = left+((50000000000-gen) * turnStep);
+            Int64 finalLeft = left + ((50000000000 - gen) * turnStep);
 
             Int64 sum = 0;
             for (var i = 0; i < current.Length; ++i)

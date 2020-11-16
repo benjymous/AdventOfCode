@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.Utils;
 
 namespace Advent.MMXIX
 {
@@ -26,7 +25,7 @@ namespace Advent.MMXIX
             int skippedCombos = 0;
             public SearchDroid(string program) : base(program)
             {
-                cpu.Reserve(5400);
+                //cpu.Reserve(5400);
             }
 
             HashSet<string> HeldItems = new HashSet<string>();
@@ -84,19 +83,19 @@ namespace Advent.MMXIX
                     return (null, exits, items);
                 }
 
-                var startIdx = lines.IndexOf(roomName)+3;
+                var startIdx = lines.IndexOf(roomName) + 3;
 
 
                 List<string> current = null;
 
 
-                for (int i=startIdx; i<lines.Count(); ++i)
+                for (int i = startIdx; i < lines.Count(); ++i)
                 {
-                    if (lines[i]=="Doors here lead:")
+                    if (lines[i] == "Doors here lead:")
                     {
                         current = exits;
                     }
-                    else if (lines[i]=="Items here:")
+                    else if (lines[i] == "Items here:")
                     {
                         current = items;
                     }
@@ -130,7 +129,7 @@ namespace Advent.MMXIX
                 }
             }
 
-            Dictionary<string,string> reverseDir = new Dictionary<string, string>()
+            Dictionary<string, string> reverseDir = new Dictionary<string, string>()
             {
                 {"north", "south"},
                 {"south", "north"},
@@ -151,7 +150,7 @@ namespace Advent.MMXIX
                 var roomData = ParseRoom(l);
                 buffer.Clear();
 
-                
+
 
                 if (roomData.name != null)
                 {
@@ -161,7 +160,7 @@ namespace Advent.MMXIX
                         //Console.WriteLine($"New room {roomData.name}");
                         var newRoom = new Room(roomData.name, roomData.exits);
 
-                        rooms[roomData.name] = newRoom;  
+                        rooms[roomData.name] = newRoom;
 
                         foreach (var e in roomData.exits)
                         {
@@ -190,7 +189,7 @@ namespace Advent.MMXIX
                         currentRoom = newRoom;
                     }
 
-                    if (backtrack!=null && currentRoom.exits.ContainsKey(backtrack) && currentRoom.exits[backtrack] == null)
+                    if (backtrack != null && currentRoom.exits.ContainsKey(backtrack) && currentRoom.exits[backtrack] == null)
                     {
                         currentRoom.exits[backtrack] = lastRoom;
                         lastRoom.exits[lastTravel] = currentRoom;
@@ -198,7 +197,7 @@ namespace Advent.MMXIX
 
                     if (roomData.name == "== Security Checkpoint ==" && unvisited.Count == 0)
                     {
-                        if (itemCombos==null)
+                        if (itemCombos == null)
                         {
                             //Console.WriteLine(commandCount);
                             itemCombos = new Queue<IEnumerable<string>>();
@@ -288,7 +287,7 @@ namespace Advent.MMXIX
             {
                 //Console.WriteLine($"Will go {direction}");
                 inputs.Enqueue(direction);
- 
+
             }
 
             private void pathFind((Room room, string exit) location)
@@ -314,7 +313,7 @@ namespace Advent.MMXIX
                 }
             }
 
-            public List<string> RouteFind(Room from, Room to, HashSet<Room> tried=null)
+            public List<string> RouteFind(Room from, Room to, HashSet<Room> tried = null)
             {
                 if (tried == null)
                 {
@@ -325,7 +324,7 @@ namespace Advent.MMXIX
                 {
                     if (exit.Value == to)
                     {
-                        return new List<string>(){exit.Key};
+                        return new List<string>() { exit.Key };
                     }
                 }
 
@@ -337,13 +336,13 @@ namespace Advent.MMXIX
                         foreach (var room in tried)
                         {
                             newTried.Add(room);
-                        } 
+                        }
                         newTried.Add(from);
 
                         var route = RouteFind(exit.Value, to, newTried);
                         if (route != null)
                         {
-                            var commands = new List<string>{exit.Key};
+                            var commands = new List<string> { exit.Key };
                             commands.AddRange(route);
                             return commands;
                         }
@@ -365,7 +364,7 @@ namespace Advent.MMXIX
 
             droid.SetDisplay(interactive);
             droid.Interactive = interactive;
-            
+
             var result = droid.Run();
 
             if (!interactive)
@@ -380,7 +379,8 @@ namespace Advent.MMXIX
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - " + Part1(input));
+            for (int i = 0; i < 50; ++i)
+                logger.WriteLine("- Pt1 - " + Part1(input));
         }
     }
 }

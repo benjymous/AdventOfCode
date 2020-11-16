@@ -6,14 +6,14 @@ namespace Advent.Utils
 {
     public static class CollectionExtensions
     {
-        public static void IncrementAtIndex<T>(this Dictionary<T,int> dict, T key, int val=1) => IncrementAtIndex<T, int>(dict, key, val);
+        public static void IncrementAtIndex<T>(this Dictionary<T, int> dict, T key, int val = 1) => IncrementAtIndex<T, int>(dict, key, val);
 
-        static T Add<T>(T x, T y) => Add((dynamic)x,(dynamic)y);
-        static int Add(int a, int b) => a+b;
-        static long Add(long a, long b) => a+b;
-        static ulong Add(ulong a, ulong b) => a+b;
+        static T Add<T>(T x, T y) => Add((dynamic)x, (dynamic)y);
+        static int Add(int a, int b) => a + b;
+        static long Add(long a, long b) => a + b;
+        static ulong Add(ulong a, ulong b) => a + b;
 
-        public static void IncrementAtIndex<T,V>(this Dictionary<T,V> dict, T key, V val)
+        public static void IncrementAtIndex<T, V>(this Dictionary<T, V> dict, T key, V val)
         {
             if (dict.ContainsKey(key))
             {
@@ -57,11 +57,11 @@ namespace Advent.Utils
             foreach (var x in bytes)
             {
                 yield return (byte)((x & 0xF0) >> 4);
-                yield return (byte) (x & 0x0F);             
+                yield return (byte)(x & 0x0F);
             }
         }
 
-          public static IEnumerable<IEnumerable<T>> Permutations<T>(this IEnumerable<T> set, IEnumerable<T> subset = null)
+        public static IEnumerable<IEnumerable<T>> Permutations<T>(this IEnumerable<T> set, IEnumerable<T> subset = null)
         {
             if (subset == null) subset = new T[] { };
             if (!set.Any()) yield return subset;
@@ -76,7 +76,7 @@ namespace Advent.Utils
             }
         }
 
-        public static IEnumerable<(T,T)> Pairs<T>(this IEnumerable<T> set)
+        public static IEnumerable<(T, T)> Pairs<T>(this IEnumerable<T> set)
         {
             foreach (var el1 in set)
             {

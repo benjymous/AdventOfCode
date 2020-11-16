@@ -5,9 +5,9 @@ namespace Advent.MMXIX
 {
     public class Day01 : IPuzzle
     {
-        public string Name { get { return "2019-01";} }
+        public string Name { get { return "2019-01"; } }
 
-        public static int GetFuelRequirement(int moduleWeight) => Math.Max(0, (moduleWeight/3)-2);
+        public static int GetFuelRequirement(int moduleWeight) => Math.Max(0, (moduleWeight / 3) - 2);
 
         public static int GetFullFuelRequirement(int moduleWeight)
         {
@@ -17,7 +17,7 @@ namespace Advent.MMXIX
             while (additional > 0)
             {
                 fuel += additional = GetFuelRequirement(additional);
-            } 
+            }
 
             return fuel;
         }

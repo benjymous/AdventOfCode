@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Advent.MMXVII.NorthCloud;
+﻿using Advent.MMXVII.NorthCloud;
+using System;
 
 namespace Advent.MMXVII
 {
     public class Day23 : IPuzzle
     {
-        public string Name { get { return "2017-23";} }
+        public string Name { get { return "2017-23"; } }
 
         class Debug : NorthCloud.IDebugger
         {
-            public int mulCount {get; private set; } = 0;
+            public int mulCount { get; private set; } = 0;
             public void Next(int IP, IInstr instr, Variant x, Variant y, DataBus bus)
             {
                 if (instr.Name() == "mul") mulCount++;
@@ -40,7 +37,7 @@ namespace Advent.MMXVII
         public void Run(string input, ILogger logger)
         {
             //logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

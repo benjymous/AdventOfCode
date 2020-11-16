@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVII
 {
     public class Day18 : IPuzzle
     {
-        public string Name { get { return "2017-18";} }
+        public string Name { get { return "2017-18"; } }
 
         class Part1Port : NorthCloud.IOutputPort
         {
-            public Int64 Value {get;set;}
+            public Int64 Value { get; set; }
 
             public void Write(Int64 value)
             {
@@ -63,15 +62,15 @@ namespace Advent.MMXVII
             var cpu0 = new NorthCloud.Coprocessor(input, "Common,Day18Part2");
             var cpu1 = new NorthCloud.Coprocessor(input, "Common,Day18Part2");
 
-            cpu0.Set('p',0);
+            cpu0.Set('p', 0);
             cpu0.Bus.Output = port01;
             cpu0.Bus.Input = port10;
 
-            cpu0.Set('p',1);
+            cpu0.Set('p', 1);
             cpu1.Bus.Output = port10;
             cpu1.Bus.Input = port01;
 
-            while (cpu0.Bus.Waiting == false || cpu1.Bus.Waiting==false)
+            while (cpu0.Bus.Waiting == false || cpu1.Bus.Waiting == false)
             {
                 if (!cpu0.Step()) break;
                 if (!cpu1.Step()) break;
@@ -87,7 +86,7 @@ namespace Advent.MMXVII
             //Part2("snd 1\nsnd 2\nsnd p\nrcv a\nrcv b\nrcv c\nrcv d");
 
             //logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

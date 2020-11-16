@@ -1,8 +1,8 @@
+using Advent.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Advent.Utils;
 
 namespace Advent.MMXVII.NorthCloud
 {
@@ -18,7 +18,7 @@ namespace Advent.MMXVII.NorthCloud
 
     public class DataBus
     {
-        public Int64[] Registers = new Int64[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        public Int64[] Registers = new Int64[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
         public IOutputPort Output;
         public IInputPort Input;
@@ -28,9 +28,9 @@ namespace Advent.MMXVII.NorthCloud
         public override string ToString()
         {
             var sb = new StringBuilder();
-            for (int i=0; i<26; ++i)
+            for (int i = 0; i < 26; ++i)
             {
-                sb.Append(((char)(i+'a')));
+                sb.Append(((char)(i + 'a')));
                 sb.Append(":");
                 sb.Append(Registers[i]);
                 sb.Append(" ");
@@ -43,9 +43,9 @@ namespace Advent.MMXVII.NorthCloud
     {
         public Variant(string input)
         {
-            if (input.Length==1 && input[0]>='a' && input[0]<='z')
+            if (input.Length == 1 && input[0] >= 'a' && input[0] <= 'z')
             {
-                Value = input[0]-'a';
+                Value = input[0] - 'a';
                 IsReg = true;
             }
             else
@@ -54,8 +54,8 @@ namespace Advent.MMXVII.NorthCloud
             }
         }
 
-        public bool IsReg {get; private set;}= false;
-        public Int64 Value {get; private set;} = 0;
+        public bool IsReg { get; private set; } = false;
+        public Int64 Value { get; private set; } = 0;
 
         public Int64 Read(DataBus bus)
         {
@@ -73,7 +73,7 @@ namespace Advent.MMXVII.NorthCloud
         {
             if (IsReg)
             {
-                return ((char)(Value+'a')).ToString();
+                return ((char)(Value + 'a')).ToString();
             }
             else
             {
@@ -81,7 +81,7 @@ namespace Advent.MMXVII.NorthCloud
             }
         }
 
-        public static Variant Null {get;} = new Variant("0");
+        public static Variant Null { get; } = new Variant("0");
     }
 
     public interface IInstr
@@ -96,7 +96,7 @@ namespace Advent.MMXVII.NorthCloud
 
 
     namespace Instructions
-    {        
+    {
         namespace Common
         {
             class set : IInstr
@@ -110,7 +110,7 @@ namespace Advent.MMXVII.NorthCloud
 
             class mul : IInstr
             {
-                public int Do(Variant x, Variant y, DataBus bus) 
+                public int Do(Variant x, Variant y, DataBus bus)
                 {
                     bus.Registers[x.Value] *= y.Read(bus);
                     return 1;
@@ -122,7 +122,7 @@ namespace Advent.MMXVII.NorthCloud
         {
             class snd : IInstr
             {
-                public int Do(Variant x, Variant y, DataBus bus) 
+                public int Do(Variant x, Variant y, DataBus bus)
                 {
                     bus.Output.Write(x.Read(bus));
                     return 1;
@@ -140,7 +140,7 @@ namespace Advent.MMXVII.NorthCloud
 
             class mod : IInstr
             {
-                public int Do(Variant x, Variant y, DataBus bus) 
+                public int Do(Variant x, Variant y, DataBus bus)
                 {
                     bus.Registers[x.Value] %= y.Read(bus);
                     return 1;
@@ -172,7 +172,7 @@ namespace Advent.MMXVII.NorthCloud
                     if (x.Read(bus) != 0)
                     {
                         // halt execution
-                        return 9999;                       
+                        return 9999;
                     }
                     return 1;
                 }
@@ -186,9 +186,9 @@ namespace Advent.MMXVII.NorthCloud
                 public int Do(Variant x, Variant y, DataBus bus)
                 {
                     Int64 value = 0;
-                    if (bus.Input==null || bus.Input.Read(out value)==false)
+                    if (bus.Input == null || bus.Input.Read(out value) == false)
                     {
-                        bus.Waiting = true; 
+                        bus.Waiting = true;
                         return 0;
                     }
 
@@ -243,7 +243,7 @@ namespace Advent.MMXVII.NorthCloud
             }
             else
             {
-                values = new Variant[]{v[0], Variant.Null};
+                values = new Variant[] { v[0], Variant.Null };
             }
         }
         public IInstr instr;
@@ -268,15 +268,15 @@ namespace Advent.MMXVII.NorthCloud
         Dictionary<int, IInstr> InstrMap;
         InstructionLine[] Instructions;
 
-        public DataBus Bus {get; private set;} = new DataBus();
+        public DataBus Bus { get; private set; } = new DataBus();
 
         System.Diagnostics.Stopwatch sw;
         Int64 CycleCount = 0;
 
         public IDebugger Debugger = null;
 
-    
-        public Coprocessor(string input, string instructionSet="Common")
+
+        public Coprocessor(string input, string instructionSet = "Common")
         {
             var opcodes = GetInstructions(instructionSet).ToDictionary(i => i.Name(), i => i);
 
@@ -289,7 +289,7 @@ namespace Advent.MMXVII.NorthCloud
                 reverseMap[instr.Key] = reverseMap.Count();
                 InstrMap[idx] = instr.Value;
             }
-         
+
             List<InstructionLine> instrs = new List<InstructionLine>();
             var program = Util.Split(input, '\n');
             foreach (var line in program)
@@ -308,7 +308,7 @@ namespace Advent.MMXVII.NorthCloud
                 {
                     throw new Exception($"Unknown mnemonic {bits[0]}");
                 }
-                
+
             }
             Instructions = instrs.ToArray();
         }
@@ -318,7 +318,7 @@ namespace Advent.MMXVII.NorthCloud
         public bool Step()
         {
             CycleCount++;
-            if (InstructionPointer >= Instructions.Length) 
+            if (InstructionPointer >= Instructions.Length)
                 return false;
 
             if (PeekTime > 0 && CycleCount % PeekTime == 0)
@@ -328,7 +328,7 @@ namespace Advent.MMXVII.NorthCloud
             }
 
             var line = Instructions[InstructionPointer];
-            
+
             Debugger?.Next(InstructionPointer, line.instr, line.values[0], line.values[1], Bus);
             InstructionPointer += line.instr.Do(line.values[0], line.values[1], Bus);
 
@@ -339,7 +339,7 @@ namespace Advent.MMXVII.NorthCloud
         {
             sw = new System.Diagnostics.Stopwatch();
             sw.Start();
-            while(Step());
+            while (Step()) ;
             sw.Stop();
         }
 
@@ -349,11 +349,11 @@ namespace Advent.MMXVII.NorthCloud
             return $"{CycleCount} cycles - {speed.ToEngineeringNotation()}hz";
         }
 
-        public int InstructionPointer {get;set;} = 0;
-        
+        public int InstructionPointer { get; set; } = 0;
 
-        public Int64 Get(char idx) => Bus.Registers[idx-'a'];
-        public void Set(char idx, int val) => Bus.Registers[idx-'a'] = val;
+
+        public Int64 Get(char idx) => Bus.Registers[idx - 'a'];
+        public void Set(char idx, int val) => Bus.Registers[idx - 'a'] = val;
 
     }
 }

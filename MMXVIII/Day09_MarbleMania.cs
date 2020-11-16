@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Advent.Utils;
+using Advent.Utils.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.Utils;
-using Advent.Utils.Collections;
 
 namespace Advent.MMXVIII
 {
@@ -63,7 +62,7 @@ namespace Advent.MMXVIII
             var numPlayers = numbers[0];
             var numMarbles = numbers[1];
 
-            return MarbleGame(numPlayers, numMarbles*100);
+            return MarbleGame(numPlayers, numMarbles * 100);
         }
 
         public void Run(string input, ILogger logger)

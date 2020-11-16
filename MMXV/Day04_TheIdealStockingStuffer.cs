@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Security.Cryptography;
-
-namespace Advent.MMXV
+﻿namespace Advent.MMXV
 {
     public class Day04 : IPuzzle
     {
-        public string Name { get { return "2015-04";} }
+        public string Name { get { return "2015-04"; } }
 
         public static int Part1(string input)
         {
@@ -25,8 +19,8 @@ namespace Advent.MMXV
             //Console.WriteLine("abcdef609043".GetMD5String());
             //Console.WriteLine(FindHashes("abcdef", 5).First());
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

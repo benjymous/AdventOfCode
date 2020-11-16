@@ -1,8 +1,7 @@
+using Advent.Utils.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.Utils.Vectors;
 
 namespace Advent.Utils.Pathfinding
 {
@@ -32,7 +31,7 @@ namespace Advent.Utils.Pathfinding
                 Walkable = walkable;
             }
             else
-            {        
+            {
                 Walkable = this as IIsWalkable<TCellDataType>;
             }
         }
@@ -69,8 +68,8 @@ namespace Advent.Utils.Pathfinding
         }
 
         public string FindCell(TCellDataType val)
-        {       
-            return data.Where(kvp =>  EqualityComparer<TCellDataType>.Default.Equals(kvp.Value, val) ).First().Key;
+        {
+            return data.Where(kvp => EqualityComparer<TCellDataType>.Default.Equals(kvp.Value, val)).First().Key;
         }
 
         public int Heuristic(ManhattanVector2 location1, ManhattanVector2 location2)
@@ -84,7 +83,7 @@ namespace Advent.Utils.Pathfinding
         public static IEnumerable<TCoordinateType> FindPath(IMap<TCoordinateType> map, TCoordinateType start, TCoordinateType goal)
         {
             var state = new State();
-            
+
             state.openSet.Add(start);
             state.gScore[start] = 0;
             state.fScore[start] = map.Heuristic(start, goal);
@@ -116,7 +115,7 @@ namespace Advent.Utils.Pathfinding
                     state.nodeLinks[neighbour] = current;
                     state.gScore[neighbour] = projectedG;
 
-                    var newScore =  projectedG + map.Heuristic(neighbour, goal);
+                    var newScore = projectedG + map.Heuristic(neighbour, goal);
                     state.fScore[neighbour] = newScore;
 
                 }

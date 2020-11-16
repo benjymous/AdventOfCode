@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Advent.MMXV
 {
     public class Day23 : IPuzzle
     {
-        public string Name { get { return "2015-23";} }
+        public string Name { get { return "2015-23"; } }
 
         public class CPU
         {
@@ -16,7 +14,7 @@ namespace Advent.MMXV
             Dictionary<string, int> registers = new Dictionary<string, int>();
             public CPU(string input)
             {
-                program = Util.Split(input.Replace(",",""));
+                program = Util.Split(input.Replace(",", ""));
             }
 
             bool Step()
@@ -26,15 +24,15 @@ namespace Advent.MMXV
                 var bits = command.Split(" ");
                 var instr = bits[0];
 
-                switch(instr)
+                switch (instr)
                 {
                     case "hlf":
-                        registers[bits[1]]/=2;
+                        registers[bits[1]] /= 2;
                         programCounter++;
                         break;
 
                     case "tpl":
-                        registers[bits[1]]*=3;
+                        registers[bits[1]] *= 3;
                         programCounter++;
                         break;
 
@@ -48,7 +46,7 @@ namespace Advent.MMXV
                         break;
 
                     case "jie":
-                        if ((registers[bits[1]]%2) == 0)
+                        if ((registers[bits[1]] % 2) == 0)
                         {
                             programCounter += int.Parse(bits[2]);
                         }
@@ -56,7 +54,7 @@ namespace Advent.MMXV
                         {
                             programCounter++;
                         }
-                    break;
+                        break;
 
                     case "jio":
                         if (registers[bits[1]] == 1)
@@ -67,7 +65,7 @@ namespace Advent.MMXV
                         {
                             programCounter++;
                         }
-                    break;
+                        break;
 
                     default:
                         throw new Exception("Oops!");
@@ -80,28 +78,28 @@ namespace Advent.MMXV
             {
                 registers = initial;
 
-                while (Step());
+                while (Step()) ;
 
                 return registers["b"];
             }
         }
- 
+
         public static int Part1(string input)
         {
             var cpu = new CPU(input);
-            return cpu.Run(new Dictionary<string, int>(){{"a",0}, {"b", 0}});
+            return cpu.Run(new Dictionary<string, int>() { { "a", 0 }, { "b", 0 } });
         }
 
         public static int Part2(string input)
         {
             var cpu = new CPU(input);
-            return cpu.Run(new Dictionary<string, int>(){{"a",1}, {"b", 0}});
+            return cpu.Run(new Dictionary<string, int>() { { "a", 1 }, { "b", 0 } });
         }
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

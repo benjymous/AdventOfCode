@@ -1,17 +1,16 @@
-﻿using System;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.Utils;
 
 namespace Advent.MMXVI
 {
     public class Day16 : IPuzzle
     {
-        public string Name { get { return "2016-16";} }
+        public string Name { get { return "2016-16"; } }
 
-        public static bool[] pad = new bool[]{false};
- 
+        public static bool[] pad = new bool[] { false };
+
         public static IEnumerable<bool> Iterate(IEnumerable<bool> input)
         {
             var a = input;
@@ -31,12 +30,12 @@ namespace Advent.MMXVI
 
         public static IEnumerable<bool> Input(IEnumerable<char> input)
         {
-            return input.Select(c => c=='1');
+            return input.Select(c => c == '1');
         }
 
         public static string Output(IEnumerable<bool> output)
         {
-            return output.Select(b => b ? '1':'0').AsString();
+            return output.Select(b => b ? '1' : '0').AsString();
         }
 
         public static IEnumerable<bool> CheckSum(IEnumerable<bool> input)
@@ -44,13 +43,13 @@ namespace Advent.MMXVI
             var data = input.ToArray();
             while (true)
             {
-                if (data.Count()%2 !=0) return data;
+                if (data.Count() % 2 != 0) return data;
 
                 List<bool> result = new List<bool>();
 
-                for(int i=0; i<data.Length; i+=2)
+                for (int i = 0; i < data.Length; i += 2)
                 {
-                    result.Add((data[i]==data[i+1]));
+                    result.Add((data[i] == data[i + 1]));
                 }
                 data = result.ToArray();
             }
@@ -89,8 +88,8 @@ namespace Advent.MMXVI
             // var v2 = CheckSum(v1);
             // logger.WriteLine("2");
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

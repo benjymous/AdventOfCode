@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVI
 {
     public class Day20 : IPuzzle
     {
-        public string Name { get { return "2016-20";} }
+        public string Name { get { return "2016-20"; } }
 
         class Rule
         {
@@ -22,7 +20,7 @@ namespace Advent.MMXVI
 
             public override string ToString() => $"{min} - {max}";
         }
- 
+
         public static UInt64 Part1(string input)
         {
             var rules = Util.Parse<Rule>(input).OrderBy(r => r.min);
@@ -32,7 +30,7 @@ namespace Advent.MMXVI
             {
                 if (current >= rule.min && current <= rule.max)
                 {
-                    current = rule.max+1;
+                    current = rule.max + 1;
                 }
             }
 
@@ -51,19 +49,19 @@ namespace Advent.MMXVI
             {
                 if (current >= rule.min && current <= rule.max)
                 {
-                    current = rule.max+1;
+                    current = rule.max + 1;
                 }
                 if (rule.min > current)
-                {                   
+                {
                     var range = (rule.min) - current;
                     ranges += range;
-                    current = rule.max+1;                  
-                }            
+                    current = rule.max + 1;
+                }
             }
 
             if (current <= max)
             {
-                ranges += (max-current+1);
+                ranges += (max - current + 1);
             }
 
             return ranges;
@@ -71,8 +69,8 @@ namespace Advent.MMXVI
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

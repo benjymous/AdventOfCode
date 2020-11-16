@@ -1,18 +1,16 @@
-﻿using System;
+﻿using Advent.Utils;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.Utils;
 
 namespace Advent.MMXVIII
 {
     public class Day04 : IPuzzle
     {
-        public string Name { get { return "2018-04";} }
- 
+        public string Name { get { return "2018-04"; } }
+
         struct Data
         {
-            public Dictionary<string, Dictionary<int,int>> guards;
+            public Dictionary<string, Dictionary<int, int>> guards;
             public Dictionary<string, int> durations;
         }
 
@@ -22,35 +20,35 @@ namespace Advent.MMXVIII
             string sleep = null;
 
             Data d = new Data();
-            d.guards = new Dictionary<string, Dictionary<int,int>>();
+            d.guards = new Dictionary<string, Dictionary<int, int>>();
             d.durations = new Dictionary<string, int>();
 
             var lines = Util.Split(input).OrderBy(x => x);
 
             foreach (var l in lines)
             {
-                var line = l.Replace("[","").Replace("]","").Replace(":","");
+                var line = l.Replace("[", "").Replace("]", "").Replace(":", "");
                 var bits = line.Split(" ");
-                if (line.Contains("Guard")) 
+                if (line.Contains("Guard"))
                 {
                     id = bits[3];
 
-                    if (!d.guards.ContainsKey(id)) 
+                    if (!d.guards.ContainsKey(id))
                     {
                         d.guards[id] = new Dictionary<int, int>();
                         d.durations[id] = 0;
                     }
                 }
-                else if (line.Contains("asleep")) 
+                else if (line.Contains("asleep"))
                 {
                     sleep = bits[1];
                 }
-                else if (line.Contains("wakes")) 
-                {      
-                    var duration = int.Parse(bits[1])-int.Parse(sleep); 
-                    d.durations[id] += duration; 
+                else if (line.Contains("wakes"))
+                {
+                    var duration = int.Parse(bits[1]) - int.Parse(sleep);
+                    d.durations[id] += duration;
 
-                    for (var m=int.Parse(sleep); m<int.Parse(bits[1]); ++m) 
+                    for (var m = int.Parse(sleep); m < int.Parse(bits[1]); ++m)
                     {
                         d.guards[id].IncrementAtIndex(m);
                     }
@@ -66,9 +64,9 @@ namespace Advent.MMXVIII
             string sleepiest = null;
             var v = 0;
 
-            foreach (var id in data.durations.Keys) 
+            foreach (var id in data.durations.Keys)
             {
-                if (data.durations[id] > v) 
+                if (data.durations[id] > v)
                 {
                     v = data.durations[id];
                     sleepiest = id;
@@ -80,13 +78,14 @@ namespace Advent.MMXVIII
 
             foreach (var min in data.guards[sleepiest].Keys)
             {
-                if (data.guards[sleepiest][min] > mv) {
+                if (data.guards[sleepiest][min] > mv)
+                {
                     mv = data.guards[sleepiest][min];
                     m = min;
                 }
             }
 
-            return int.Parse(sleepiest.Replace("#","")) * m;
+            return int.Parse(sleepiest.Replace("#", "")) * m;
         }
 
         public static int Part2(string input)
@@ -101,7 +100,7 @@ namespace Advent.MMXVIII
             {
                 foreach (var min in data.guards[id].Keys)
                 {
-                    if (data.guards[id][min] > mv) 
+                    if (data.guards[id][min] > mv)
                     {
                         mv = data.guards[id][min];
                         m = min;
@@ -110,13 +109,13 @@ namespace Advent.MMXVIII
                 }
             }
 
-            return int.Parse(sleepiest.Replace("#","")) * m;
+            return int.Parse(sleepiest.Replace("#", "")) * m;
         }
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

@@ -1,27 +1,25 @@
-﻿using System;
+﻿using Advent.Utils.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.Utils.Collections;
 
 namespace Advent.MMXVII
 {
     public class Day07 : IPuzzle
     {
-        public string Name { get { return "2017-07";} }
+        public string Name { get { return "2017-07"; } }
 
-        static (string,int) ExtractParent(string data)
+        static (string, int) ExtractParent(string data)
         {
             var key = data.Split(" ")[0];
             var value = Util.ExtractNumbers(data).First();
-            return (key,value);
+            return (key, value);
         }
 
         public static Tree<string, int> ParseTree(string input)
         {
             var tree = new Tree<string, int>();
             var data = Util.Split(input, '\n');
-            foreach (var line in data) 
+            foreach (var line in data)
             {
                 if (string.IsNullOrEmpty(line)) continue;
 
@@ -34,7 +32,7 @@ namespace Advent.MMXVII
 
                     tree.GetNode(parentKey).Value = parentValue;
 
-                    var children = Util.Split(bits[1],',');
+                    var children = Util.Split(bits[1], ',');
                     foreach (var child in children)
                     {
                         tree.AddPair(parentKey, child.Trim());
@@ -52,10 +50,10 @@ namespace Advent.MMXVII
             }
             return tree;
         }
- 
+
         public static string Part1(string input) => ParseTree(input).GetRoot().Key;
 
-        static int GetChildScore(TreeNode<string,int> node)
+        static int GetChildScore(TreeNode<string, int> node)
         {
             int score = node.Value;
             foreach (var child in node.Children)
@@ -70,7 +68,7 @@ namespace Advent.MMXVII
             var tree = ParseTree(input);
 
             var leaves = new HashSet<TreeNode<string, int>>();
-            var currentParents = new HashSet<TreeNode<string,int>>();
+            var currentParents = new HashSet<TreeNode<string, int>>();
 
             foreach (var node in tree.GetNodes())
             {
@@ -85,10 +83,10 @@ namespace Advent.MMXVII
 
             while (currentParents.Any())
             {
-                var newParents = new HashSet<TreeNode<string,int>>();
+                var newParents = new HashSet<TreeNode<string, int>>();
                 foreach (var node in currentParents)
                 {
-                    var childWeights = node.Children.Select(child => (GetChildScore(child),child)).GroupBy(x => x.Item1).OrderBy(g => g.Count());
+                    var childWeights = node.Children.Select(child => (GetChildScore(child), child)).GroupBy(x => x.Item1).OrderBy(g => g.Count());
 
                     if (childWeights.Count() > 1)
                     {
@@ -100,7 +98,7 @@ namespace Advent.MMXVII
 
                         int scoreChange = rightScore - wrongScore;
 
-                        return wrongNode.Value+scoreChange;
+                        return wrongNode.Value + scoreChange;
                     }
                     else
                     {
@@ -109,7 +107,7 @@ namespace Advent.MMXVII
                 }
                 currentParents = newParents;
             }
-            
+
             return 0;
         }
 
@@ -120,8 +118,8 @@ namespace Advent.MMXVII
             //Util.Test(Part2(testData), 60);
 
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

@@ -6,15 +6,15 @@ namespace Advent.Utils.Collections
 
     public class Circle<T>
     {
-        public T Value {get;set;}
+        public T Value { get; set; }
 
-        public Circle(T v, Circle<T> p=null, Circle<T> n=null)
+        public Circle(T v, Circle<T> p = null, Circle<T> n = null)
         {
             Value = v;
-            prev=p;
-            next=n;
+            prev = p;
+            next = n;
 
-            if (prev!=null)
+            if (prev != null)
             {
                 prev.next = this;
             }
@@ -23,7 +23,7 @@ namespace Advent.Utils.Collections
                 prev = this;
             }
 
-            if (next!=null)
+            if (next != null)
             {
                 next.prev = this;
             }
@@ -63,7 +63,7 @@ namespace Advent.Utils.Collections
 
         public Circle<T> Remove()
         {
-            var removed = this;              
+            var removed = this;
             removed.prev.next = removed.next;
             removed.next.prev = removed.prev;
 
@@ -71,7 +71,7 @@ namespace Advent.Utils.Collections
         }
 
         public int Count() => Values().Count();
-  
+
         public bool Solo() => next == this;
 
         Circle<T> prev;

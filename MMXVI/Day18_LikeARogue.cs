@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 
 namespace Advent.MMXVI
 {
     public class Day18 : IPuzzle
     {
-        public string Name { get { return "2016-18";} }
+        public string Name { get { return "2016-18"; } }
 
         private static string Step(string current)
         {
-            current = "."+current+".";
-            var next=new StringBuilder();
+            current = "." + current + ".";
+            var next = new StringBuilder();
             for (var i = 0; i < current.Length - 2; ++i)
             {
-                if (current[i]==current[i+2])
+                if (current[i] == current[i + 2])
                 {
                     next.Append('.');
                 }
@@ -27,7 +25,7 @@ namespace Advent.MMXVI
             return next.ToString();
         }
 
-        static int Count(string line) => line.Where(x => x=='.').Count();
+        static int Count(string line) => line.Where(x => x == '.').Count();
 
         public static int BuildMap(string input, int numLines)
         {
@@ -35,7 +33,7 @@ namespace Advent.MMXVI
 
             int count = Count(currentState);
 
-            for (int i=1; i<numLines; ++i)
+            for (int i = 1; i < numLines; ++i)
             {
                 currentState = Step(currentState);
                 int score = Count(currentState);
@@ -44,7 +42,7 @@ namespace Advent.MMXVI
 
             return count;
         }
- 
+
         public static int Part1(string input)
         {
             return BuildMap(input, 40);
@@ -57,8 +55,8 @@ namespace Advent.MMXVI
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXV
 {
     public class Day16 : IPuzzle
     {
-        public string Name { get { return "2015-16";} }
+        public string Name { get { return "2015-16"; } }
 
         static Dictionary<string, int> ParseClues(string clues)
         {
-                return clues.Split(",")
-                            .Select(str => str.Split(":"))
-                            .ToDictionary(bits => bits[0].Trim(), bits => int.Parse(bits[1]));
+            return clues.Split(",")
+                        .Select(str => str.Split(":"))
+                        .ToDictionary(bits => bits[0].Trim(), bits => int.Parse(bits[1]));
         }
 
         public class Sue
@@ -23,25 +22,25 @@ namespace Advent.MMXV
             public Sue(string data)
             {
                 var part1 = data.Substring(0, data.IndexOf(":"));
-                var part2 = data.Substring(data.IndexOf(":")+1);
+                var part2 = data.Substring(data.IndexOf(":") + 1);
                 Id = int.Parse(part1.Split(" ")[1]);
                 inventory = ParseClues(part2);
             }
 
-            public int ScorePart1(Dictionary<string,int> clues)
+            public int ScorePart1(Dictionary<string, int> clues)
             {
                 int score = 0;
                 foreach (var clue in clues)
                 {
-                    if (clue.Value>0 && inventory.ContainsKey(clue.Key) && clue.Value == inventory[clue.Key])
+                    if (clue.Value > 0 && inventory.ContainsKey(clue.Key) && clue.Value == inventory[clue.Key])
                     {
                         score++;
-                    } 
+                    }
                 }
                 return score;
             }
 
-            public int ScorePart2(Dictionary<string,int> clues)
+            public int ScorePart2(Dictionary<string, int> clues)
             {
                 int score = 0;
                 foreach (var clue in clues)
@@ -66,17 +65,17 @@ namespace Advent.MMXV
                         else if (!inventory.ContainsKey(clue.Key))
                         {
                             score++;
-                        } 
+                        }
                     }
-                    else if (clue.Value>0 && inventory.ContainsKey(clue.Key) && clue.Value == inventory[clue.Key])
+                    else if (clue.Value > 0 && inventory.ContainsKey(clue.Key) && clue.Value == inventory[clue.Key])
                     {
                         score++;
-                    } 
+                    }
                 }
                 return score;
             }
         }
- 
+
         public static int Part1(string input)
         {
             var aunts = Util.Parse<Sue>(input);
@@ -101,8 +100,8 @@ namespace Advent.MMXV
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

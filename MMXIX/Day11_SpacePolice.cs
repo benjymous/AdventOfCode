@@ -1,25 +1,24 @@
-﻿using System;
+﻿using Advent.Utils;
+using Advent.Utils.Vectors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.Utils;
-using Advent.Utils.Vectors;
 
 namespace Advent.MMXIX
 {
     public class Day11 : IPuzzle
     {
-        public string Name { get { return "2019-11";} }
- 
+        public string Name { get { return "2019-11"; } }
+
         public class EmergencyHullPainterRobot : NPSA.ICPUInterrupt
         {
             NPSA.IntCPU cpu;
 
-            ManhattanVector2 position = new ManhattanVector2(0,0);
+            ManhattanVector2 position = new ManhattanVector2(0, 0);
 
             Dictionary<string, int> hullColours = new Dictionary<string, int>();
 
-            Direction2 direction = new Direction2(0,-1);
+            Direction2 direction = new Direction2(0, -1);
 
             int minx = 0;
             int miny = 0;
@@ -36,7 +35,7 @@ namespace Advent.MMXIX
                 cpu.Interrupt = this;
             }
 
-            
+
             void Forwards()
             {
                 position.Offset(direction);
@@ -47,7 +46,7 @@ namespace Advent.MMXIX
                 maxx = Math.Max(maxx, position.X);
                 maxy = Math.Max(maxy, position.Y);
             }
-          
+
             public void PaintHull(int colour)
             {
                 if (colour < 0 || colour > 1) throw new Exception("Unexpected hull colour!");
@@ -86,7 +85,7 @@ namespace Advent.MMXIX
                 {
                     if (data == 0) direction.TurnLeft();
                     else if (data == 1) direction.TurnRight();
-                    else {throw new Exception("Unexpected turn direction!");}
+                    else { throw new Exception("Unexpected turn direction!"); }
                     Forwards();
                 }
                 else
@@ -94,22 +93,22 @@ namespace Advent.MMXIX
                     throw new Exception("robot in wrong state!");
                 }
 
-                readState = (readState+1)%2;
+                readState = (readState + 1) % 2;
             }
 
             public string GetDrawnPattern()
             {
                 var outStr = "";
 
-                for (var y=miny; y<=maxy; ++y)
+                for (var y = miny; y <= maxy; ++y)
                 {
-                    for (var x=minx; x<=maxx; ++x)
+                    for (var x = minx; x <= maxx; ++x)
                     {
-                        if (hullColours.GetStrKey($"{x},{y}") == 0) outStr +=" ";
-                        else outStr +="#";
+                        if (hullColours.GetStrKey($"{x},{y}") == 0) outStr += " ";
+                        else outStr += "#";
 
                     }
-                    outStr+="\n";
+                    outStr += "\n";
                 }
 
                 return outStr;
@@ -125,18 +124,18 @@ namespace Advent.MMXIX
 
         public static string Part2(string input, ILogger logger)
         {
-            var robot = new EmergencyHullPainterRobot(input);            
+            var robot = new EmergencyHullPainterRobot(input);
             robot.PaintHull(1);
             robot.Run();
             var image = robot.GetDrawnPattern();
-            logger.WriteLine("\n"+image.ToString());
+            logger.WriteLine("\n" + image.ToString());
             return image.ToString().GetSHA256String();
         }
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input, logger));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input, logger));
         }
     }
 }

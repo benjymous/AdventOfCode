@@ -1,31 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXV
 {
     public class Day08 : IPuzzle
     {
-        public string Name { get { return "2015-08";} }
- 
+        public string Name { get { return "2015-08"; } }
+
         public static string ReplaceHexChars(string input)
         {
             if (!input.Contains("\\x")) return input;
 
             string output = "";
-            for (var i=0; i<input.Length; ++i)
+            for (var i = 0; i < input.Length; ++i)
             {
-                if (i < input.Length-3 && input[i]=='\\' && input[i+1]=='x')
+                if (i < input.Length - 3 && input[i] == '\\' && input[i + 1] == 'x')
                 {
-                    string hex = $"{input[i+2]}{input[i+3]}";
+                    string hex = $"{input[i + 2]}{input[i + 3]}";
 
                     if (Int32.TryParse(hex, System.Globalization.NumberStyles.HexNumber, null, out int parsed))
                     {
                         var decoded = (char)parsed;
 
                         output += decoded;
-                        i+=3;
+                        i += 3;
                     }
                     else
                     {
@@ -44,36 +42,36 @@ namespace Advent.MMXV
         {
             if (input.StartsWith("\"") && input.EndsWith("\""))
             {
-                return input.Substring(1, input.Length-2);
+                return input.Substring(1, input.Length - 2);
             }
             return input;
         }
 
         public static string Unescape(string input)
         {
-            return ReplaceHexChars(TrimOuterQuotes(input).Replace("\\\\", "|").Replace("\\\"","\"")).Replace("|", "\\");
+            return ReplaceHexChars(TrimOuterQuotes(input).Replace("\\\\", "|").Replace("\\\"", "\"")).Replace("|", "\\");
         }
 
         public static string Encode(char input)
         {
-            switch(input)
+            switch (input)
             {
-                case '\"' : return "\\\""; 
-                case '\\' : return "\\\\";
+                case '\"': return "\\\"";
+                case '\\': return "\\\\";
             }
             return $"{input}";
         }
 
         public static string Escape(string input)
         {
-            return '\"' + String.Join("",input.Select(c => Encode(c))) + '\"';
+            return '\"' + String.Join("", input.Select(c => Encode(c))) + '\"';
         }
 
         public static int Part1(string input)
         {
             var lines = Util.Split(input, '\n');
 
-            var result = lines.Select(line => Tuple.Create(line,Unescape(line)));
+            var result = lines.Select(line => Tuple.Create(line, Unescape(line)));
 
             // foreach (var r in result)
             // {
@@ -87,7 +85,7 @@ namespace Advent.MMXV
         {
             var lines = Util.Split(input, '\n');
 
-            var result = lines.Select(line => Tuple.Create(line,Escape(line)));
+            var result = lines.Select(line => Tuple.Create(line, Escape(line)));
 
             // foreach (var r in result)
             // {
@@ -111,8 +109,8 @@ namespace Advent.MMXV
             //Console.WriteLine(Escape("\"aaa\\\"aaa\"").Length);
             //Console.WriteLine(Escape("\"\\x27\"").Length);
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

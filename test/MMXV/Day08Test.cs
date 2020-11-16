@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 
 namespace Advent.MMXV.Test
 {
@@ -37,7 +36,7 @@ namespace Advent.MMXV.Test
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Encoding_Part2_Regression()
-        {     
+        {
             Assert.AreEqual(2074, Day08.Part2(input));
         }
 
