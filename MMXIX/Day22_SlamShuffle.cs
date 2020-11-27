@@ -111,10 +111,10 @@ namespace Advent.MMXIX
                 }
 
                 var str = string.Join(", ", current.cards.Take(20));
-                if (seen.Contains(str))
-                {
-                    Console.WriteLine();
-                }
+                //if (seen.Contains(str))
+                //{
+                //    Console.WriteLine();
+                //}
                 seen.Add(str);
 
 

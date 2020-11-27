@@ -19,7 +19,7 @@ namespace Advent.MMXIX
             commandBuffer = program;
             cpu.Reserve(3000);
             cpu.Run();
-            Console.WriteLine(cpu.Speed());
+            // Console.WriteLine(cpu.Speed());
         }
 
         public override IEnumerable<string> AutomaticInput() => commandBuffer;

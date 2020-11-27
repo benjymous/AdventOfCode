@@ -65,7 +65,7 @@ namespace Advent.MMXIX
             public string Run()
             {
                 cpu.Run();
-                Console.WriteLine(cpu.Speed());
+                //Console.WriteLine(cpu.Speed());
                 //Console.WriteLine($"{commandCount} commands, {combosTried} combos tried, {skippedCombos} combos skipped");
                 return buffer.Lines.Last();
             }
@@ -379,8 +379,7 @@ namespace Advent.MMXIX
 
         public void Run(string input, ILogger logger)
         {
-            for (int i = 0; i < 50; ++i)
-                logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
         }
     }
 }

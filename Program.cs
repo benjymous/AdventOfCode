@@ -32,16 +32,31 @@ namespace Advent
                 var watch = new System.Diagnostics.Stopwatch();
                 watch.Start();
 
-                Parallel.ForEach(puzzles, new ParallelOptions() { MaxDegreeOfParallelism = 8 }, (puzzle) =>
+                ConcurrentDictionary<string, bool> running = new ConcurrentDictionary<string, bool>();
+
+                Parallel.ForEach(puzzles, (puzzle) =>
                      {
+                         running[puzzle.Name] = true;
+
+                         mut.WaitOne();
+                         Console.WriteLine($"{puzzle.Name} starting");
+                         Console.WriteLine($"Running: [{string.Join(", ", running.Keys)}]");
+                         mut.ReleaseMutex();
+
                          TextBuffer buffer = new TextBuffer();
                          timings[puzzle.Name] = puzzle.TimeRun(new TimeLogger(buffer));
 
+                         
+                         bool ignore;
+                         running.TryRemove(puzzle.Name, out ignore);
+
                          mut.WaitOne();
+                         Console.WriteLine();
                          Console.WriteLine(buffer);
                          ++finished;
-                         Console.WriteLine($"[{finished}/{total} {((finished) * 100 / total)}%]");
                          Console.WriteLine();
+                         Console.WriteLine($"Running: [{string.Join(", ", running.Keys)}]");
+                         Console.WriteLine($"[{finished}/{total} {((finished) * 100 / total)}%]");
                          mut.ReleaseMutex();
                      });
 
