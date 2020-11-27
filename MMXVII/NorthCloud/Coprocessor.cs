@@ -321,11 +321,11 @@ namespace Advent.MMXVII.NorthCloud
             if (InstructionPointer >= Instructions.Length)
                 return false;
 
-            if (PeekTime > 0 && CycleCount % PeekTime == 0)
-            {
-                Console.WriteLine(Speed());
-                Console.WriteLine(string.Join(", ", Bus.Registers));
-            }
+            //if (PeekTime > 0 && CycleCount % PeekTime == 0)
+            //{
+            //    Console.WriteLine(Speed());
+            //    Console.WriteLine(string.Join(", ", Bus.Registers));
+            //}
 
             var line = Instructions[InstructionPointer];
 

@@ -11,7 +11,7 @@ namespace Advent.MMXVI
             var cpu = new BunniTek.BunnyCPU(program);
             cpu.Set(BunniTek.RegisterId.a, input);
             cpu.Run();
-            Console.WriteLine(cpu.Speed());
+            //Console.WriteLine(cpu.Speed());
             return cpu.Get(BunniTek.RegisterId.a);
         }
 

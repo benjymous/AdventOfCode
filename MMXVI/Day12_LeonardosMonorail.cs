@@ -10,7 +10,7 @@ namespace Advent.MMXVI
         {
             var cpu = new BunniTek.BunnyCPU(input);
             cpu.Run();
-            Console.WriteLine(cpu.Speed());
+            //Console.WriteLine(cpu.Speed());
             return cpu.Get(BunniTek.RegisterId.a);
         }
 
@@ -19,7 +19,7 @@ namespace Advent.MMXVI
             var cpu = new BunniTek.BunnyCPU(input);
             cpu.Set(BunniTek.RegisterId.c, 2);
             cpu.Run();
-            Console.WriteLine(cpu.Speed());
+            //Console.WriteLine(cpu.Speed());
             return cpu.Get(BunniTek.RegisterId.a);
         }
 

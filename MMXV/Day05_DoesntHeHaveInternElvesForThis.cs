@@ -102,19 +102,19 @@ namespace Advent.MMXV
             // Console.WriteLine(IsNice1("haegwjzuvuyypxyu")); //false
             // Console.WriteLine(IsNice1("dvszwmarrgswjxmb")); //false
 
-            Console.WriteLine(HasNonOverlappingPair("xyxy")); // true
-            Console.WriteLine(HasNonOverlappingPair("aabcdefgaa")); // true
-            Console.WriteLine(HasNonOverlappingPair("aaa")); // false
+            //Console.WriteLine(HasNonOverlappingPair("xyxy")); // true
+            //Console.WriteLine(HasNonOverlappingPair("aabcdefgaa")); // true
+            //Console.WriteLine(HasNonOverlappingPair("aaa")); // false
 
-            Console.WriteLine(HasGapRepeat("xyx")); // true
-            Console.WriteLine(HasGapRepeat("efe")); // true
-            Console.WriteLine(HasGapRepeat("aaa")); // true
-            Console.WriteLine(HasGapRepeat("abba")); // false
+            //Console.WriteLine(HasGapRepeat("xyx")); // true
+            //Console.WriteLine(HasGapRepeat("efe")); // true
+            //Console.WriteLine(HasGapRepeat("aaa")); // true
+            //Console.WriteLine(HasGapRepeat("abba")); // false
 
-            Console.WriteLine(IsNice2("qjhvhtzxzqqjkmpb")); //true
-            Console.WriteLine(IsNice2("xxyxx")); //true
-            Console.WriteLine(IsNice2("uurcxstgmygtbstg")); //false
-            Console.WriteLine(IsNice2("ieodomkazucvgmuy")); //false
+            //Console.WriteLine(IsNice2("qjhvhtzxzqqjkmpb")); //true
+            //Console.WriteLine(IsNice2("xxyxx")); //true
+            //Console.WriteLine(IsNice2("uurcxstgmygtbstg")); //false
+            //Console.WriteLine(IsNice2("ieodomkazucvgmuy")); //false
 
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));

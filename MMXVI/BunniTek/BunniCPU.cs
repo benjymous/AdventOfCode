@@ -152,11 +152,11 @@ namespace Advent.MMXVI.BunniTek
             CycleCount++;
             if (InstructionPointer >= Instructions.Length) return false;
 
-            if (CycleCount % 100000000 == 0)
-            {
-                Console.WriteLine(Speed());
-                Console.WriteLine(string.Join(", ", Registers));
-            }
+            //if (CycleCount % 100000000 == 0)
+            //{
+            //    Console.WriteLine(Speed());
+            //    Console.WriteLine(string.Join(", ", Registers));
+            //}
 
             var instr = Instructions[InstructionPointer];
 

@@ -211,11 +211,11 @@ namespace Advent.MMXVIII.ChronMatic
             if (InstructionPointer >= Instructions.Length) return false;
 
 
-            if (PeekTime > 0 && CycleCount % PeekTime == 0)
-            {
-                Console.WriteLine(Speed());
-                Console.WriteLine(string.Join(", ", Registers));
-            }
+            //if (PeekTime > 0 && CycleCount % PeekTime == 0)
+            //{
+            //    Console.WriteLine(Speed());
+            //    Console.WriteLine(string.Join(", ", Registers));
+            //}
 
             var line = Instructions[InstructionPointer];
 

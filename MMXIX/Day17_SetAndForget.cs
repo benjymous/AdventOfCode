@@ -23,7 +23,7 @@ namespace Advent.MMXIX
         public void Run()
         {
             cpu.Run();
-            Console.WriteLine(cpu.Speed());
+            //Console.WriteLine(cpu.Speed());
         }
 
         public IEnumerable<ManhattanVector2> FindIntersections()
