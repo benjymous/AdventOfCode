@@ -1,6 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Advent.MMXIX.Test
 {
@@ -28,8 +27,8 @@ namespace Advent.MMXIX.Test
         }
 
         [TestCategory("Test")]
-        [DataRow("deal with increment 7\ndeal into new stack\ndeal into new stack","0, 3, 6, 9, 2, 5, 8, 1, 4, 7")]
-        [DataRow("cut 6\ndeal with increment 7\ndeal into new stack","3, 0, 7, 4, 1, 8, 5, 2, 9, 6")]
+        [DataRow("deal with increment 7\ndeal into new stack\ndeal into new stack", "0, 3, 6, 9, 2, 5, 8, 1, 4, 7")]
+        [DataRow("cut 6\ndeal with increment 7\ndeal into new stack", "3, 0, 7, 4, 1, 8, 5, 2, 9, 6")]
         [DataRow("deal into new stack\ncut -2\ndeal with increment 7\ncut 8\ncut -4\ndeal with increment 7\ncut 3\ndeal with increment 9\ndeal with increment 3\ncut -1", "9, 2, 5, 8, 1, 4, 7, 0, 3, 6")]
         [DataRow("deal with increment 7\ndeal with increment 9\ncut -2", "6, 3, 0, 7, 4, 1, 8, 5, 2, 9")]
         [DataTestMethod]

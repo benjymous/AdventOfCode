@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVII
 {
     public class Day04 : IPuzzle
     {
-        public string Name { get { return "2017-04";} }
- 
+        public string Name { get { return "2017-04"; } }
+
         public static bool ValidationRule1(string passphrase)
         {
             var words = passphrase.Split(" ");
@@ -20,7 +18,7 @@ namespace Advent.MMXVII
 
         public static bool ValidationRule2(string passphrase)
         {
-            var words = passphrase.Split(" ").Select( x => String.Join("", x.ToCharArray().OrderBy(y=>y) ) );
+            var words = passphrase.Split(" ").Select(x => String.Join("", x.ToCharArray().OrderBy(y => y)));
             return words.GroupBy(w => w)
                         .Where(group => group.Count() > 1)
                         .Select(group => group.Key)
@@ -47,7 +45,7 @@ namespace Advent.MMXVII
 
         //     return true;
         // }
-    
+
         public static int Part1(string input)
         {
             var lines = Util.Split(input, '\n');
@@ -67,8 +65,8 @@ namespace Advent.MMXVII
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

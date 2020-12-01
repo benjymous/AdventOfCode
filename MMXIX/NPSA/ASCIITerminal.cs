@@ -1,3 +1,5 @@
+using Advent.Utils;
+using Advent.Utils.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,7 +7,7 @@ using System.Text;
 
 namespace Advent.MMXIX.NPSA
 {
-    
+
     abstract class ASCIITerminal : NPSA.ICPUInterrupt
     {
         protected NPSA.IntCPU cpu;
@@ -14,7 +16,7 @@ namespace Advent.MMXIX.NPSA
 
         protected Int64 finalOutput;
 
-        public bool Interactive {get;set;} = false;
+        public bool Interactive { get; set; } = false;
 
         public ASCIITerminal(string program)
         {
@@ -82,14 +84,14 @@ namespace Advent.MMXIX.NPSA
     {
         Dictionary<string, char> screenBuffer = new Dictionary<string, char>();
 
-        public ManhattanVector2 Cursor {get;} = new ManhattanVector2(0,0);
+        public ManhattanVector2 Cursor { get; } = new ManhattanVector2(0, 0);
 
-        public ManhattanVector2 Max {get;} = new ManhattanVector2(0,0);
+        public ManhattanVector2 Max { get; } = new ManhattanVector2(0, 0);
 
-        public bool DisplayLive {get;set;} = false;   
+        public bool DisplayLive { get; set; } = false;
 
-        public List<string> Lines {get;set;} = new List<string>();   
-        private StringBuilder sb = new StringBuilder();      
+        public List<string> Lines { get; set; } = new List<string>();
+        private StringBuilder sb = new StringBuilder();
 
         public ASCIIBuffer()
         {
@@ -102,7 +104,7 @@ namespace Advent.MMXIX.NPSA
                 Console.Write(c);
             }
 
-            switch(c)
+            switch (c)
             {
                 case '\n':
 
@@ -152,7 +154,7 @@ namespace Advent.MMXIX.NPSA
 
         public void Clear()
         {
-            Max.Set(0,0);
+            Max.Set(0, 0);
             screenBuffer.Clear();
             Lines.Clear();
             sb = new StringBuilder();

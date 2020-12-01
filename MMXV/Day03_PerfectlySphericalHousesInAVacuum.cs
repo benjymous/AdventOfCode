@@ -1,33 +1,34 @@
-﻿using System;
+﻿using Advent.Utils;
+using Advent.Utils.Vectors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXV
 {
     public class Day03 : IPuzzle
     {
-        public string Name { get { return "2015-03";} }
- 
+        public string Name { get { return "2015-03"; } }
+
         public class SantaStepper
         {
-            public ManhattanVector2 Position {get;set;} = new ManhattanVector2(0,0);
+            public ManhattanVector2 Position { get; set; } = new ManhattanVector2(0, 0);
 
             public void Step(char c)
             {
-                switch(c)
+                switch (c)
                 {
                     case '^':
-                        Position.Offset(0,-1);
+                        Position.Offset(0, -1);
                         break;
                     case 'v':
-                        Position.Offset(0,1);
+                        Position.Offset(0, 1);
                         break;
                     case '>':
-                        Position.Offset(1,0);
+                        Position.Offset(1, 0);
                         break;
                     case '<':
-                        Position.Offset(-1,0);
+                        Position.Offset(-1, 0);
                         break;
                     default:
                         throw new Exception("unexpected char!");
@@ -37,8 +38,8 @@ namespace Advent.MMXV
 
         public static int Part1(string input)
         {
-            Dictionary<string,int> visited = new Dictionary<string, int>();
-            
+            Dictionary<string, int> visited = new Dictionary<string, int>();
+
             var santa = new SantaStepper();
 
             visited.IncrementAtIndex(santa.Position.ToString());
@@ -53,8 +54,8 @@ namespace Advent.MMXV
 
         public static int Part2(string input)
         {
-            Dictionary<string,int> visited = new Dictionary<string, int>();
-            
+            Dictionary<string, int> visited = new Dictionary<string, int>();
+
             var santas = new Queue<SantaStepper>();
             santas.Enqueue(new SantaStepper());
             santas.Enqueue(new SantaStepper());
@@ -77,8 +78,8 @@ namespace Advent.MMXV
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

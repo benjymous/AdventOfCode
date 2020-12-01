@@ -1,3 +1,4 @@
+using Advent.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace Advent.MMXVIII.ChronMatic
         class addi : IInstr
         {
             public void Do(int a, int b, int c, ref int[] regs) => regs[c] = regs[a] + b;
-             public string Dump(int a, int b, int c) => $"r{c} = r{a} + {b};";
+            public string Dump(int a, int b, int c) => $"r{c} = r{a} + {b};";
         }
 
         class mulr : IInstr
@@ -118,7 +119,7 @@ namespace Advent.MMXVIII.ChronMatic
         public IInstr instr;
         public int[] values;
 
-        internal string Dump() => instr.Dump(values[0],values[1],values[2]);
+        internal string Dump() => instr.Dump(values[0], values[1], values[2]);
     }
 
     public class ChronCPU
@@ -134,14 +135,14 @@ namespace Advent.MMXVIII.ChronMatic
         Dictionary<int, IInstr> InstrMap;
         InstructionLine[] Instructions;
 
-        int[] Registers = new int[]{0,0,0,0,0,0};
+        int[] Registers = new int[] { 0, 0, 0, 0, 0, 0 };
 
         System.Diagnostics.Stopwatch sw;
         Int64 CycleCount = 0;
 
-    
+
         public ChronCPU(string program, Dictionary<int, IInstr> instrMap = null) : this(Util.Split(program, '\n'), instrMap)
-        {}
+        { }
 
         public ChronCPU(IEnumerable<string> program, Dictionary<int, IInstr> instrMap = null)
         {
@@ -210,17 +211,17 @@ namespace Advent.MMXVIII.ChronMatic
             if (InstructionPointer >= Instructions.Length) return false;
 
 
-            if (PeekTime > 0 && CycleCount % PeekTime == 0)
-            {
-                Console.WriteLine(Speed());
-                Console.WriteLine(string.Join(", ", Registers));
-            }
+            //if (PeekTime > 0 && CycleCount % PeekTime == 0)
+            //{
+            //    Console.WriteLine(Speed());
+            //    Console.WriteLine(string.Join(", ", Registers));
+            //}
 
             var line = Instructions[InstructionPointer];
 
             if (Log)
             {
-                Console.WriteLine($"[{InstructionPointer}] [{string.Join(", ", Registers)}] {line.instr.Name()} : {string.Join(" ",line.values)}");
+                Console.WriteLine($"[{InstructionPointer}] [{string.Join(", ", Registers)}] {line.instr.Name()} : {string.Join(" ", line.values)}");
             }
 
             line.instr.Do(line.values[0], line.values[1], line.values[2], ref Registers);
@@ -233,24 +234,24 @@ namespace Advent.MMXVIII.ChronMatic
         {
             sw = new System.Diagnostics.Stopwatch();
             sw.Start();
-            while(Step());
+            while (Step()) ;
             sw.Stop();
         }
 
         public IEnumerable<string> Dump()
         {
-            for (int i=0; i<Instructions.Length; ++i)
+            for (int i = 0; i < Instructions.Length; ++i)
             {
                 yield return $"// {Instructions[i].instr.Name()} {string.Join(" ", Instructions[i].values)}";
                 var dump = Instructions[i].Dump();
-                
+
                 if (dump.StartsWith("r1 ="))
-                { 
+                {
                     dump = dump.Replace(";", " +1; break;\n");
                 }
                 else
                 {
-                    dump += $" r1++; goto case {i+1};";
+                    dump += $" r1++; goto case {i + 1};";
                 }
                 yield return $"case {i}: {dump}";
             }
@@ -264,7 +265,7 @@ namespace Advent.MMXVIII.ChronMatic
 
         int pc = 0;
         bool pcIsRef = false;
-        public int InstructionPointer 
+        public int InstructionPointer
         {
             get
             {

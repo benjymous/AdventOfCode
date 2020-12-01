@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Advent.MMXV
+﻿namespace Advent.MMXV
 {
     public class Day01 : IPuzzle
     {
-        public string Name { get { return "2015-01";} }
- 
+        public string Name { get { return "2015-01"; } }
+
         public static int Part1(string input)
         {
             var data = input.Trim();
@@ -43,8 +38,8 @@ namespace Advent.MMXV
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

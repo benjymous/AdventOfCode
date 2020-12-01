@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Advent.MMXVII
+﻿namespace Advent.MMXVII
 {
     public class Day05 : IPuzzle
     {
-        public string Name { get { return "2017-05";} }
- 
+        public string Name { get { return "2017-05"; } }
+
         public static int Run(string input, bool mode2)
         {
             var instructions = Util.Parse32(input);
@@ -16,8 +11,8 @@ namespace Advent.MMXVII
             int position = 0;
             int steps = 0;
 
-            while (position >=0 && position < instructions.Length)
-            {          
+            while (position >= 0 && position < instructions.Length)
+            {
                 int offset = instructions[position];
 
                 if (mode2 && (offset >= 3))
@@ -28,7 +23,7 @@ namespace Advent.MMXVII
                 {
                     instructions[position]++;
                 }
-                
+
                 position += offset;
                 steps++;
             }
@@ -43,15 +38,15 @@ namespace Advent.MMXVII
 
         public static int Part2(string input)
         {
-           return Run(input, true);
+            return Run(input, true);
         }
 
         public void Run(string input, ILogger logger)
         {
-            
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Advent.Utils;
+using Advent.Utils.Vectors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXIX
 {
     public class Day13 : IPuzzle
     {
-        public string Name { get { return "2019-13";} }
+        public string Name { get { return "2019-13"; } }
 
         public class NPVGS : NPSA.ICPUInterrupt
         {
@@ -39,7 +40,7 @@ namespace Advent.MMXIX
 
             public void InsertCoin()
             {
-                cpu.Poke(0,2);
+                cpu.Poke(0, 2);
             }
 
             public int Score()
@@ -73,7 +74,7 @@ namespace Advent.MMXIX
                     int yPos = (int)cpu.Output.Dequeue();
                     int tile = (int)cpu.Output.Dequeue();
 
-                    screen[$"{xPos},{yPos}"]=tile;
+                    screen[$"{xPos},{yPos}"] = tile;
 
                     // if (tile == 4)
                     // {
@@ -83,15 +84,15 @@ namespace Advent.MMXIX
             }
 
             public void Draw()
-            {        
+            {
                 Console.WriteLine();
                 Console.WriteLine();
-                for (int y=0; y<25; ++y)
+                for (int y = 0; y < 25; ++y)
                 {
                     var str = "";
-                    for (int x=0; x<=40; ++x)
+                    for (int x = 0; x <= 40; ++x)
                     {
-                        str += tiles[screen.GetStrKey($"{x},{y}")]+" ";
+                        str += tiles[screen.GetStrKey($"{x},{y}")] + " ";
                     }
                     Console.WriteLine(str);
                 }
@@ -99,26 +100,26 @@ namespace Advent.MMXIX
                 System.Threading.Thread.Sleep(100);
             }
         }
- 
+
         public static int Part1(string input)
         {
             var game = new NPVGS(input);
-            
+
             return game.Run();
         }
 
         public static int Part2(string input)
         {
             var game = new NPVGS(input);
-            game.InsertCoin();            
+            game.InsertCoin();
             game.Run();
             return game.Score();
         }
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

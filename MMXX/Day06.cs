@@ -3,11 +3,11 @@
 // using System.Linq;
 // using System.Text;
 
-// namespace Advent.MMXVII
+// namespace Advent.MMXX
 // {
-//     public class Day07 : IPuzzle
+//     public class Day06 : IPuzzle
 //     {
-//         public string Name { get { return "2017-07";} }
+//         public string Name { get { return "2020-06";} }
  
 //         public static int Part1(string input)
 //         {
@@ -19,10 +19,10 @@
 //             return 0;
 //         }
 
-//         public void Run(string input, ILogger logger)
+//         public void Run(string input)
 //         {
-//             logger.WriteLine("- Pt1 - "+Part1(input));
-//             logger.WriteLine("- Pt2 - "+Part2(input));
+//             Console.WriteLine("- Pt1 - "+Part1(input));
+//             Console.WriteLine("- Pt2 - "+Part2(input));
 //         }
 //     }
 // }

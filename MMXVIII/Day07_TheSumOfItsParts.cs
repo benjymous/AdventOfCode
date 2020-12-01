@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVIII
 {
     public class Day07 : IPuzzle
     {
-        public string Name { get { return "2018-07";} }
- 
+        public string Name { get { return "2018-07"; } }
+
 
         private static void ParseInput(string input, out HashSet<string> steps, out Dictionary<string, HashSet<string>> dependencies)
         {
@@ -82,14 +80,14 @@ namespace Advent.MMXVIII
 
             const int workerCount = 5;
 
-            for (int i=0; i<workerCount; ++i)
+            for (int i = 0; i < workerCount; ++i)
             {
                 workers.Add(new Worker());
             }
 
             int time = 0;
 
-            while (steps.Count() > 0 || workers.Where(w => w.step!=null).Count() != 0)
+            while (steps.Count() > 0 || workers.Where(w => w.step != null).Count() != 0)
             {
                 foreach (var step in steps)
                 {
@@ -120,7 +118,7 @@ namespace Advent.MMXVIII
                         if (worker.timeRemaining == 0)
                         {
                             result.Add(worker.step);
-                                           
+
                             foreach (var step in steps)
                             {
                                 if (dependencies.ContainsKey(step))
@@ -143,8 +141,8 @@ namespace Advent.MMXVIII
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVI
 {
     public class Day25 : IPuzzle
     {
-        public string Name { get { return "2016-25";} }
+        public string Name { get { return "2016-25"; } }
 
         const int SAMPLE_SIZE = 10;
 
@@ -33,7 +31,7 @@ namespace Advent.MMXVI
 
         public static IEnumerable<int> Expected()
         {
-            for (int i=0; i<SAMPLE_SIZE/2; ++i)
+            for (int i = 0; i < SAMPLE_SIZE / 2; ++i)
             {
                 yield return 0;
                 yield return 1;
@@ -44,14 +42,14 @@ namespace Advent.MMXVI
 
         public static bool Test(string program, int input)
         {
-            var signal = Signal(program, input).ToArray(); 
-            for (int i=0; i<SAMPLE_SIZE; ++i)
+            var signal = Signal(program, input).ToArray();
+            for (int i = 0; i < SAMPLE_SIZE; ++i)
             {
                 if (signal[i] != expected[i]) return false;
             }
             return true;
         }
- 
+
         public static int Part1(string input)
         {
             int blockSize = 50;
@@ -59,7 +57,7 @@ namespace Advent.MMXVI
             int start = 0;
             while (true)
             {
-                var res = Enumerable.Range(start, blockSize).AsParallel().Where(i => Test(input,i));
+                var res = Enumerable.Range(start, blockSize).AsParallel().Where(i => Test(input, i));
                 if (res.Any())
                 {
                     return res.Min();
@@ -71,7 +69,7 @@ namespace Advent.MMXVI
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
         }
     }
 }

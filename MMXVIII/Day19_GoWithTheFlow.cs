@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVIII
 {
@@ -21,9 +19,9 @@ namespace Advent.MMXVIII
         public static int GetFactorSum(int test)
         {
             int result = 0;
-            for (int i=1; i<=test; ++i)
+            for (int i = 1; i <= test; ++i)
             {
-                if (test%i == 0) 
+                if (test % i == 0)
                     result += i;
             }
             return result;
@@ -183,12 +181,12 @@ namespace Advent.MMXVIII
 
                         return GetFactorSum(r2); // We know the source number, so short circuit the rest;
 
-                        // /*case 34:*/
-                        // r0 = 0; r1++; //goto case 35;
-                        //               // seti 0 0 1
-                        // /*case 35:*/
-                        // r1 = 1; break;
-                        
+                    // /*case 34:*/
+                    // r0 = 0; r1++; //goto case 35;
+                    //               // seti 0 0 1
+                    // /*case 35:*/
+                    // r1 = 1; break;
+
                     ///////
 
                     default:
@@ -214,7 +212,7 @@ namespace Advent.MMXVIII
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }

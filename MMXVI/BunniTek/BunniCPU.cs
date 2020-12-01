@@ -1,6 +1,5 @@
+using Advent.Utils;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Advent.MMXVI.BunniTek
 {
@@ -16,10 +15,10 @@ namespace Advent.MMXVI.BunniTek
 
     public enum RegisterId
     {
-        a=0,
-        b=1,
-        c=2,
-        d=3
+        a = 0,
+        b = 1,
+        c = 2,
+        d = 3
     };
 
     public class Value
@@ -51,7 +50,7 @@ namespace Advent.MMXVI.BunniTek
                 intVal = (int)r;
                 isInt = false;
             }
-            else 
+            else
             {
                 isInt = true;
                 intVal = 0;
@@ -67,7 +66,7 @@ namespace Advent.MMXVI.BunniTek
         public static implicit operator Value(int rhs) => new Value(rhs);
         public static implicit operator Value(RegisterId rhs) => new Value(rhs);
 
-        public override string ToString() 
+        public override string ToString()
         {
             if (isInt)
             {
@@ -93,7 +92,7 @@ namespace Advent.MMXVI.BunniTek
 
             X = new Value(bits[1]);
 
-            if (bits.Length==3)
+            if (bits.Length == 3)
             {
                 Y = new Value(bits[2]);
             }
@@ -117,7 +116,7 @@ namespace Advent.MMXVI.BunniTek
     public class BunnyCPU
     {
         Instruction[] Instructions;
-        int[] Registers = new int[]{0,0,0,0};
+        int[] Registers = new int[] { 0, 0, 0, 0 };
 
         System.Diagnostics.Stopwatch sw;
         Int64 CycleCount = 0;
@@ -129,14 +128,14 @@ namespace Advent.MMXVI.BunniTek
         public BunnyCPU(string program)
         {
             Instructions = Util.Parse<Instruction>(program).ToArray();
-        } 
+        }
 
         public void Set(RegisterId id, Value source) => Set((int)id, source);
 
         public void Set(int destination, Value source)
         {
-           Registers[destination] = Get(source);     
-        }  
+            Registers[destination] = Get(source);
+        }
 
         public int Get(Value source)
         {
@@ -145,7 +144,7 @@ namespace Advent.MMXVI.BunniTek
                 return source.intVal;
             }
 
-            return Registers[source.intVal];          
+            return Registers[source.intVal];
         }
 
         public bool Step()
@@ -153,11 +152,11 @@ namespace Advent.MMXVI.BunniTek
             CycleCount++;
             if (InstructionPointer >= Instructions.Length) return false;
 
-            if (CycleCount % 100000000 == 0)
-            {
-                Console.WriteLine(Speed());
-                Console.WriteLine(string.Join(", ", Registers));
-            }
+            //if (CycleCount % 100000000 == 0)
+            //{
+            //    Console.WriteLine(Speed());
+            //    Console.WriteLine(string.Join(", ", Registers));
+            //}
 
             var instr = Instructions[InstructionPointer];
 
@@ -177,7 +176,7 @@ namespace Advent.MMXVI.BunniTek
 
                 case OpCode.jnz:
                     int val = Get(instr.X);
-                    if (val !=0)
+                    if (val != 0)
                     {
                         InstructionPointer += Get(instr.Y);
                         return true;
@@ -185,12 +184,12 @@ namespace Advent.MMXVI.BunniTek
                     break;
 
                 case OpCode.tgl:
-                    int instrToChange = InstructionPointer+Get(instr.X);
-                    if (instrToChange>=0 && instrToChange < Instructions.Length)
+                    int instrToChange = InstructionPointer + Get(instr.X);
+                    if (instrToChange >= 0 && instrToChange < Instructions.Length)
                     {
                         var otherInstr = Instructions[instrToChange];
 
-                        if (otherInstr.Y==null)
+                        if (otherInstr.Y == null)
                         {
                             if (otherInstr.Opcode == OpCode.inc)
                             {
@@ -236,7 +235,7 @@ namespace Advent.MMXVI.BunniTek
         {
             sw = new System.Diagnostics.Stopwatch();
             sw.Start();
-            while(Step());
+            while (Step()) ;
             sw.Stop();
         }
 

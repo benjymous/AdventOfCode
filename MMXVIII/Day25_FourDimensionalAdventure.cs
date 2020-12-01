@@ -1,21 +1,20 @@
-﻿using System;
+﻿using Advent.Utils.Vectors;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVIII
 {
     public class Day25 : IPuzzle
     {
-        public string Name { get { return "2018-25";} }
- 
+        public string Name { get { return "2018-25"; } }
+
         class Graph
         {
             Dictionary<string, Node> index = new Dictionary<string, Node>();
 
-            public IEnumerable<string> GetIndex() => index.Keys;  
+            public IEnumerable<string> GetIndex() => index.Keys;
             public IEnumerable<Node> GetNodes() => index.Values;
-             
+
             public Node GetNode(ManhattanVector4 p)
             {
                 var key = p.ToString();
@@ -43,10 +42,10 @@ namespace Advent.MMXVIII
             {
                 return GetNodes().
                        Select(
-                            node => string.Join(":", 
+                            node => string.Join(":",
                                 node.FindAllLinks().
                                 Select(n => n.position.ToString()).
-                                OrderBy(a=>a)).
+                                OrderBy(a => a)).
                             GetHashCode()
                        ).Distinct().Count();
             }
@@ -88,7 +87,7 @@ namespace Advent.MMXVIII
                     {
                         Graph.AddLink(item1, item2);
                     }
-                }              
+                }
             }
 
             return Graph.CountGroups();
@@ -104,7 +103,7 @@ namespace Advent.MMXVIII
 
 
             //Console.WriteLine(Part1("0,0,0,0\n3,0,0,0\n0,3,0,0\n0,0,3,0\n0,0,0,3\n0,0,0,6\n9,0,0,0\n12,0,0,0\n"));
-            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
             //logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }

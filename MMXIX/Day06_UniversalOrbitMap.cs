@@ -1,55 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Advent.Utils.Collections;
 using System.Linq;
-using System.Text;
+
+//using PlanetTree = Tree<string, Advent.MMXIX.Day06.none>;
+//using Planet = TreeNode<string, Advent.MMXIX.Day06.none>;
 
 namespace Advent.MMXIX
 {
     public class Day06 : IPuzzle
     {
-        public string Name { get { return "2019-06";} }
- 
-        public class Node
+        public string Name { get { return "2019-06"; } }
+
+        public struct none { };
+
+        public static Tree<string, none> ParseTree(string input)
         {
-            public string Name {get;set;}
-
-            public Node Parent = null;
-
-            public List<Node> Children {get;set;} = new List<Node>();
-
-            public int GetDescendantCount() => Children.Count + Children.Select(c => c.GetDescendantCount()).Sum();
-        }
-
-        public class Tree
-        {
-            Dictionary<string, Node> index = new Dictionary<string, Node>();
-
-            public IEnumerable<string> GetIndex() => index.Keys;  
-            public IEnumerable<Node> GetNodes() => index.Values;      
-
-            public Node GetNode(string name)
-            {
-                if (!index.ContainsKey(name))
-                {
-                    index[name] = new Node{Name=name};
-                }
-                return index[name];
-            }
-
-            public void AddPair(string parent, string child)
-            {
-                var p = GetNode(parent);
-                var c = GetNode(child);
-                p.Children.Add(c);
-                c.Parent = p;
-            }
-        }
-        
-        public static Tree ParseTree(string input)
-        {
-            var tree = new Tree();
+            var tree = new Tree<string, none>();
             var data = input.Split();
-            foreach (var line in data) 
+            foreach (var line in data)
             {
                 if (string.IsNullOrEmpty(line)) continue;
                 var bits = line.Split(')');
@@ -64,35 +31,22 @@ namespace Advent.MMXIX
             return tree.GetNodes().Select(n => n.GetDescendantCount()).Sum();
         }
 
-        public static List<string> TraverseUp(Node node)
-        {
-            var output = new List<string>();
-
-            while (node.Parent != null)
-            {
-                output.Add(node.Parent.Name);
-                node = node.Parent;
-            }
-
-            return output;
-        }
-
         public static int Part2(string input)
         {
             var tree = ParseTree(input);
-            var youUp = TraverseUp(tree.GetNode("YOU"));
-            var santaUp = TraverseUp(tree.GetNode("SAN"));
+            var youUp = tree.TraverseToRoot("YOU");
+            var santaUp = tree.TraverseToRoot("SAN");
 
             return Util.Matrix(youUp.Count, santaUp.Count)
                        .Where(val => youUp[val.Item1] == santaUp[val.Item2])
-                       .Select(val => val.Item1+val.Item2)
+                       .Select(val => val.Item1 + val.Item2)
                        .Min();
         }
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

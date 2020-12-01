@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Advent.MMXIX
+﻿namespace Advent.MMXIX
 {
     public class Day05 : IPuzzle
     {
-        public string Name { get { return "2019-05";} }
- 
+        public string Name { get { return "2019-05"; } }
+
         public static string RunProgram(string program, int input)
         {
             var cpu = new NPSA.IntCPU(program);
@@ -33,8 +28,8 @@ namespace Advent.MMXIX
             //cpu.Run();
 
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

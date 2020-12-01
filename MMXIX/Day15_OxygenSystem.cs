@@ -1,25 +1,26 @@
-﻿using System;
+﻿using Advent.Utils;
+using Advent.Utils.Pathfinding;
+using Advent.Utils.Vectors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.AStar;
 
 namespace Advent.MMXIX
 {
     public class Day15 : IPuzzle
     {
-        public string Name { get { return "2019-15";} }
+        public string Name { get { return "2019-15"; } }
 
         public class RepairDrone : NPSA.ICPUInterrupt
         {
             NPSA.IntCPU cpu;
-            ManhattanVector2 position = new ManhattanVector2(0,0);
+            ManhattanVector2 position = new ManhattanVector2(0, 0);
 
             ManhattanVector2 tryState = null;
-            Tuple<ManhattanVector2,ManhattanVector2> target = null;
+            Tuple<ManhattanVector2, ManhattanVector2> target = null;
             bool hasTarget = false;
 
-            public int Steps {get; private set;} = 0;
+            public int Steps { get; private set; } = 0;
 
             public int minx = 0, miny = 0;
             public int maxx = 0, maxy = 0;
@@ -28,7 +29,7 @@ namespace Advent.MMXIX
             public const int WALL = 1;
             public const int OXYGEN = 2;
 
-            class Walkable : AStar.IIsWalkable<int>
+            class Walkable : IIsWalkable<int>
             {
                 public bool IsWalkable(int cell)
                 {
@@ -36,14 +37,14 @@ namespace Advent.MMXIX
                 }
             }
 
-            public AStar.GridMap<int> map = new AStar.GridMap<int>(new Walkable());
+            public GridMap<int> map = new GridMap<int>(new Walkable());
 
             public string FindCell(int num)
             {
                 return map.FindCell(num);
             }
 
-            Stack<Tuple<ManhattanVector2,ManhattanVector2>> unknowns = new Stack<Tuple<ManhattanVector2,ManhattanVector2>>();
+            Stack<Tuple<ManhattanVector2, ManhattanVector2>> unknowns = new Stack<Tuple<ManhattanVector2, ManhattanVector2>>();
 
             public enum Mode
             {
@@ -76,10 +77,10 @@ namespace Advent.MMXIX
 
             public void AddUnknowns()
             {
-                AddIfUnknown(position, new ManhattanVector2(position.X-1, position.Y));
-                AddIfUnknown(position, new ManhattanVector2(position.X+1, position.Y));
-                AddIfUnknown(position, new ManhattanVector2(position.X, position.Y-1));
-                AddIfUnknown(position, new ManhattanVector2(position.X, position.Y+1));
+                AddIfUnknown(position, new ManhattanVector2(position.X - 1, position.Y));
+                AddIfUnknown(position, new ManhattanVector2(position.X + 1, position.Y));
+                AddIfUnknown(position, new ManhattanVector2(position.X, position.Y - 1));
+                AddIfUnknown(position, new ManhattanVector2(position.X, position.Y + 1));
             }
 
             public void HasPutOutput()
@@ -89,33 +90,33 @@ namespace Advent.MMXIX
                 switch (val)
                 {
                     case 0:
-                    {
-                        if (mode == Mode.Interactive) Console.WriteLine("Wall!");
+                        {
+                            if (mode == Mode.Interactive) Console.WriteLine("Wall!");
 
-                        map.data.PutObjKey(tryState, WALL);
-                    }
-                    break;
-                    case 1: 
-                    {
-                        if (mode == Mode.Interactive) Console.WriteLine("Ok");
-                        map.data.PutObjKey(tryState, OPEN);
-                        position = tryState;
-                    }
-                    break;
-                    case 2: 
-                    {
-                        if (mode == Mode.Interactive) Console.WriteLine("Found Oxygen system"); 
-                        map.data.PutObjKey(tryState, OXYGEN);
-                        position = tryState;
-                    }
-                    break;
-                    default: 
-                    {
-                        if (mode == Mode.Interactive) Console.WriteLine("??? {val}"); 
-                        map.data.PutObjKey(tryState, (int)val);
-                        position = tryState;
-                    }
-                    break;
+                            map.data.PutObjKey(tryState, WALL);
+                        }
+                        break;
+                    case 1:
+                        {
+                            if (mode == Mode.Interactive) Console.WriteLine("Ok");
+                            map.data.PutObjKey(tryState, OPEN);
+                            position = tryState;
+                        }
+                        break;
+                    case 2:
+                        {
+                            if (mode == Mode.Interactive) Console.WriteLine("Found Oxygen system");
+                            map.data.PutObjKey(tryState, OXYGEN);
+                            position = tryState;
+                        }
+                        break;
+                    default:
+                        {
+                            if (mode == Mode.Interactive) Console.WriteLine("??? {val}");
+                            map.data.PutObjKey(tryState, (int)val);
+                            position = tryState;
+                        }
+                        break;
                 }
                 minx = Math.Min(minx, tryState.X);
                 maxx = Math.Max(maxx, tryState.X);
@@ -128,7 +129,7 @@ namespace Advent.MMXIX
             {
                 var key = $"{x},{y}";
                 if (map.data.ContainsKey(key))
-                {                  
+                {
                     return map.data.GetStrKey(key);
                 }
                 else return 0;
@@ -138,23 +139,23 @@ namespace Advent.MMXIX
             {
                 if (logger == null) return;
                 logger.WriteLine();
-                for (var y=miny; y<=maxy; ++y)
+                for (var y = miny; y <= maxy; ++y)
                 {
                     var line = "";
-                    for (int x=minx; x <=maxx; ++x)
+                    for (int x = minx; x <= maxx; ++x)
                     {
-                
+
                         if (x == position.X && y == position.Y)
                         {
                             line += "@";
                         }
-                        else if (x==0 && y==0)
+                        else if (x == 0 && y == 0)
                         {
                             line += "S";
                         }
                         else
-                        {       
-                            switch(GetMapData(x,y))
+                        {
+                            switch (GetMapData(x, y))
                             {
                                 case 0:
                                     line += "."; break;
@@ -163,7 +164,7 @@ namespace Advent.MMXIX
                                 default:
                                     line += "?"; break;
                             }
-                           
+
                         }
                     }
                     logger.WriteLine(line);
@@ -179,10 +180,10 @@ namespace Advent.MMXIX
                     DrawMap(new ConsoleOut());
                     Console.WriteLine($"Located at {position}");
                     Console.WriteLine("north (1), south (2), west (3), and east (4) ?");
-                    
+
                     int code = 0;
 
-                    while (code <1 || code > 4)
+                    while (code < 1 || code > 4)
                     {
                         Console.Write("> ");
                         var key = Console.ReadKey();
@@ -228,7 +229,7 @@ namespace Advent.MMXIX
                     }
 
                     if (target.Item2.Distance(position) == 1)
-                    {                  
+                    {
                         tryState = target.Item2;
                         hasTarget = false;
                     }
@@ -255,14 +256,13 @@ namespace Advent.MMXIX
                 }
             }
 
-            RoomPathFinder<ManhattanVector2> finder = new RoomPathFinder<ManhattanVector2>();
             public IEnumerable<ManhattanVector2> FindPath(ManhattanVector2 start, ManhattanVector2 end)
-            {          
-                return finder.FindPath(map, start, end);
+            {
+                return AStar<ManhattanVector2>.FindPath(map, start, end);
             }
-          
+
         }
-        
+
         public static int Part1(string input, ILogger logger = null)
         {
             var droid = new RepairDrone(input);
@@ -274,7 +274,7 @@ namespace Advent.MMXIX
 
             var oxygenSystemPosition = droid.FindCell(RepairDrone.OXYGEN);
 
-            var path = droid.FindPath(new ManhattanVector2(0,0), new ManhattanVector2(oxygenSystemPosition));
+            var path = droid.FindPath(new ManhattanVector2(0, 0), new ManhattanVector2(oxygenSystemPosition));
 
             return path.Count();
         }
@@ -286,28 +286,28 @@ namespace Advent.MMXIX
             var oxygenSystemPosition = new ManhattanVector2(droid.FindCell(2));
 
             var dist = 0;
-            for (int y=droid.miny+1; y<droid.maxy; ++y)
+            for (int y = droid.miny + 1; y < droid.maxy; ++y)
             {
-                for (int x=droid.minx+1; x<droid.maxx; ++x)
+                for (int x = droid.minx + 1; x < droid.maxx; ++x)
                 {
-                    if( droid.GetMapData(x,y) == 0 )
+                    if (droid.GetMapData(x, y) == 0)
                     {
-                        int score = droid.GetMapData(x+1,y) +
-                                    droid.GetMapData(x-1,y) +
-                                    droid.GetMapData(x,y+1) +
-                                    droid.GetMapData(x,y-1);
+                        int score = droid.GetMapData(x + 1, y) +
+                                    droid.GetMapData(x - 1, y) +
+                                    droid.GetMapData(x, y + 1) +
+                                    droid.GetMapData(x, y - 1);
 
                         if (score == 3)
                         {
                             // dead end
-                            var path = droid.FindPath(oxygenSystemPosition, new ManhattanVector2(x,y));
+                            var path = droid.FindPath(oxygenSystemPosition, new ManhattanVector2(x, y));
                             dist = Math.Max(dist, path.Count());
                         }
                     }
                 }
             }
 
-            
+
             // foreach (var kvp in droid.map)
             // {
             //     if (kvp.Value.Data()==0)
@@ -322,8 +322,8 @@ namespace Advent.MMXIX
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input, logger));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input, logger));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

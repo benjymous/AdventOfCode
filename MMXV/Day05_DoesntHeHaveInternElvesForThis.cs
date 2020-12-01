@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Advent.Utils;
+using System;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXV
 {
     public class Day05 : IPuzzle
     {
-        public string Name { get { return "2015-05";} }
- 
+        public string Name { get { return "2015-05"; } }
+
         public static bool HasVowels(string line, int count)
         {
             int vowelCount = line.Where(c => c.IsVowel()).Count();
@@ -18,9 +17,9 @@ namespace Advent.MMXV
 
         public static bool HasRun(string line)
         {
-            for (int i=0; i<line.Length-1; ++i)
+            for (int i = 0; i < line.Length - 1; ++i)
             {
-                if (line[i]==line[i+1]) return true;
+                if (line[i] == line[i + 1]) return true;
             }
             return false;
         }
@@ -48,13 +47,13 @@ namespace Advent.MMXV
 
         public static bool HasNonOverlappingPair(string line)
         {
-            for (int i=0; i<line.Length-1; ++i)
+            for (int i = 0; i < line.Length - 1; ++i)
             {
-                for (int j=0; j<line.Length-1; ++j)
+                for (int j = 0; j < line.Length - 1; ++j)
                 {
-                    if (Math.Abs(i-j)>=2)
+                    if (Math.Abs(i - j) >= 2)
                     {
-                        if (line[i]==line[j] && line[i+1]==line[j+1]) 
+                        if (line[i] == line[j] && line[i + 1] == line[j + 1])
                             return true;
                     }
                 }
@@ -64,11 +63,11 @@ namespace Advent.MMXV
 
         public static bool HasGapRepeat(string line)
         {
-            for (int i=0; i<line.Length-2; ++i)
+            for (int i = 0; i < line.Length - 2; ++i)
             {
-                if (line[i]==line[i+2]) return true;
+                if (line[i] == line[i + 2]) return true;
             }
-            return false;  
+            return false;
         }
 
 
@@ -103,22 +102,22 @@ namespace Advent.MMXV
             // Console.WriteLine(IsNice1("haegwjzuvuyypxyu")); //false
             // Console.WriteLine(IsNice1("dvszwmarrgswjxmb")); //false
 
-            Console.WriteLine(HasNonOverlappingPair("xyxy")); // true
-            Console.WriteLine(HasNonOverlappingPair("aabcdefgaa")); // true
-            Console.WriteLine(HasNonOverlappingPair("aaa")); // false
+            //Console.WriteLine(HasNonOverlappingPair("xyxy")); // true
+            //Console.WriteLine(HasNonOverlappingPair("aabcdefgaa")); // true
+            //Console.WriteLine(HasNonOverlappingPair("aaa")); // false
 
-            Console.WriteLine(HasGapRepeat("xyx")); // true
-            Console.WriteLine(HasGapRepeat("efe")); // true
-            Console.WriteLine(HasGapRepeat("aaa")); // true
-            Console.WriteLine(HasGapRepeat("abba")); // false
+            //Console.WriteLine(HasGapRepeat("xyx")); // true
+            //Console.WriteLine(HasGapRepeat("efe")); // true
+            //Console.WriteLine(HasGapRepeat("aaa")); // true
+            //Console.WriteLine(HasGapRepeat("abba")); // false
 
-            Console.WriteLine(IsNice2("qjhvhtzxzqqjkmpb")); //true
-            Console.WriteLine(IsNice2("xxyxx")); //true
-            Console.WriteLine(IsNice2("uurcxstgmygtbstg")); //false
-            Console.WriteLine(IsNice2("ieodomkazucvgmuy")); //false
+            //Console.WriteLine(IsNice2("qjhvhtzxzqqjkmpb")); //true
+            //Console.WriteLine(IsNice2("xxyxx")); //true
+            //Console.WriteLine(IsNice2("uurcxstgmygtbstg")); //false
+            //Console.WriteLine(IsNice2("ieodomkazucvgmuy")); //false
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

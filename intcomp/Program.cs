@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace intcomp
@@ -16,8 +16,8 @@ namespace intcomp
 
             Console.WriteLine(file);
 
-            Dictionary<string,int> variables = new Dictionary<string, int>();
-            Dictionary<string,int> keywords = new Dictionary<string, int>();
+            Dictionary<string, int> variables = new Dictionary<string, int>();
+            Dictionary<string, int> keywords = new Dictionary<string, int>();
 
             keywords["ADD"] = 1;
             keywords["MUL"] = 2;
@@ -33,30 +33,30 @@ namespace intcomp
             foreach (var line in file)
             {
                 Console.WriteLine(line);
-                if (line.Trim().StartsWith(";")) 
+                if (line.Trim().StartsWith(";"))
                     continue; // comment
 
-                var instr = line.Trim().Split(" ").Where(i => i.Length>0);
+                var instr = line.Trim().Split(" ").Where(i => i.Length > 0);
 
                 //Console.WriteLine(string.Join(",", instr));
-                
+
                 foreach (var bit in instr)
                 {
-                    
+
                     if (bit.StartsWith(':'))
                     {
-                        string var = bit.Replace(":","");
-                        variables[var]=outMem.Count;
+                        string var = bit.Replace(":", "");
+                        variables[var] = outMem.Count;
                     }
                     else
                     {
-                        outMem.Add(bit);   
-                    }             
+                        outMem.Add(bit);
+                    }
                 }
             }
 
             // second pass, replace variables
-            for (var i = 0; i<outMem.Count; ++i)
+            for (var i = 0; i < outMem.Count; ++i)
             {
                 if (variables.ContainsKey(outMem[i]))
                 {
@@ -69,14 +69,14 @@ namespace intcomp
             }
 
 
-            Dictionary<int,string> backmap = new Dictionary<int, string>();
+            Dictionary<int, string> backmap = new Dictionary<int, string>();
             foreach (var kvp in variables)
             {
                 backmap[kvp.Value] = kvp.Key;
             }
 
             Console.WriteLine("----");
-            int position=0;
+            int position = 0;
             foreach (var token in outMem)
             {
                 string comment = "";

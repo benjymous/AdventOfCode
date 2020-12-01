@@ -1,51 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using System.Security.Cryptography;
+﻿using Advent.Utils;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Advent
 {
     public class Util
     {
-        public static string[] Split(string input, char splitChar='\0')
+        public static IEnumerable<IPuzzle> GetPuzzles()
+        {
+            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
+                .Where(x => typeof(IPuzzle).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
+                .Select(x => (IPuzzle)Activator.CreateInstance(x))
+                .Where(p => p.ShouldRun())
+                .OrderBy(x => x.Name);
+        }
+
+        public static string[] Split(string input, char splitChar = '\0')
         {
             if (splitChar == '\0')
             {
-                int commaCount = input.Count( c => c == ',');
-                int linefeedCount = input.Count( c => c == '\n');
+                int commaCount = input.Count(c => c == ',');
+                int linefeedCount = input.Count(c => c == '\n');
                 if (linefeedCount > commaCount)
                 {
                     return input.Split("\n").Where(x => !string.IsNullOrEmpty(x)).ToArray();
                 }
                 else
                 {
-                    return input.Split(",").Select(e => e.Replace("\n","")).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                    return input.Split(",").Select(e => e.Replace("\n", "")).Where(x => !string.IsNullOrEmpty(x)).ToArray();
                 }
             }
             else
             {
-                return input.Split(splitChar).Select(e => e.Replace("\n","")).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                return input.Split(splitChar).Select(e => e.Replace("\n", "")).Where(x => !string.IsNullOrEmpty(x)).ToArray();
             }
+        }
+
+        internal static int WrapIndex(int v, int length)
+        {
+            return v % length;
         }
 
         public static List<T> Parse<T>(IEnumerable<string> input)
         {
-            return input.Select(line => (T)Activator.CreateInstance(typeof(T), new object[] {line}))
-                        .ToList(); 
+            return input.Select(line => (T)Activator.CreateInstance(typeof(T), new object[] { line }))
+                        .ToList();
         }
 
-        public static List<T> Parse<T>(string input, char splitChar='\n')
+        public static List<T> Parse<T>(string input, char splitChar = '\n')
         {
             return Parse<T>(input.Split(splitChar)
                                  .Where(x => !string.IsNullOrWhiteSpace(x)));
         }
 
-        public static int[] Parse32(string input, char splitChar='\0') => Parse32(Split(input, splitChar));
-        public static uint[] ParseU32(string input, char splitChar='\0') => ParseU32(Split(input, splitChar));
-        public static Int64[] Parse64(string input, char splitChar='\0') => Parse64(Split(input, splitChar));
-        public static UInt64[] ParseU64(string input, char splitChar='\0') => ParseU64(Split(input, splitChar));
+        public static int[] Parse32(string input, char splitChar = '\0') => Parse32(Split(input, splitChar));
+        public static uint[] ParseU32(string input, char splitChar = '\0') => ParseU32(Split(input, splitChar));
+        public static Int64[] Parse64(string input, char splitChar = '\0') => Parse64(Split(input, splitChar));
+        public static UInt64[] ParseU64(string input, char splitChar = '\0') => ParseU64(Split(input, splitChar));
 
         public static int[] Parse32(string[] input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int32.Parse(s)).ToArray();
         public static uint[] ParseU32(string[] input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => UInt32.Parse(s)).ToArray();
@@ -54,30 +68,30 @@ namespace Advent
 
         public static IEnumerable<IEnumerable<T>> Slice<T>(IEnumerable<T> source, int sliceSize)
         {
-            return  source
+            return source
                 .Select((x, i) => new { Index = i, Value = x })
                 .GroupBy(x => x.Index / sliceSize)
                 .Select(x => x.Select(v => v.Value));
         }
 
-        public static IEnumerable<(T1 x, T2 y)> Matrix<T1,T2>(IEnumerable<T1> set1, IEnumerable<T2> set2)
+        public static IEnumerable<(T1 x, T2 y)> Matrix<T1, T2>(IEnumerable<T1> set1, IEnumerable<T2> set2)
         {
             foreach (T1 x in set1)
             {
                 foreach (T2 y in set2)
                 {
-                    yield return (x,y);
+                    yield return (x, y);
                 }
             }
         }
 
-        public static IEnumerable<(int x, int y)> Matrix(int maxX, int maxY) => Matrix<int,int>(Enumerable.Range(0, maxX), Enumerable.Range(0, maxY));
+        public static IEnumerable<(int x, int y)> Matrix(int maxX, int maxY) => Matrix<int, int>(Enumerable.Range(0, maxX), Enumerable.Range(0, maxY));
 
-        public static string GetInput(IPuzzle puzzle) => System.IO.File.ReadAllText(System.IO.Path.Combine("Data",puzzle.Name+".txt")).Replace("\r","");   
+        public static string GetInput(IPuzzle puzzle) => System.IO.File.ReadAllText(System.IO.Path.Combine("Data", puzzle.Name + ".txt")).Replace("\r", "");
 
         public static string GetInput<T>() where T : IPuzzle, new() => GetInput(new T());
 
-        public static IEnumerable<int> Forever(int start=0) => Enumerable.Range(start, int.MaxValue);
+        public static IEnumerable<int> Forever(int start = 0) => Enumerable.Range(start, int.MaxValue);
 
         public static IEnumerable<int> RepeatForever(IEnumerable<int> input)
         {
@@ -94,7 +108,7 @@ namespace Advent
         {
             foreach (var i in input)
             {
-                for (int j=0; j<repeats; ++j)
+                for (int j = 0; j < repeats; ++j)
                 {
                     yield return i;
                 }
@@ -105,300 +119,14 @@ namespace Advent
         {
             if (!EqualityComparer<T>.Default.Equals(actual, expected))
             {
-                throw new Exception($"Expected {expected} but got {actual}" );
+                throw new Exception($"Expected {expected} but got {actual}");
             }
             Console.WriteLine(actual);
         }
 
-        public static int[] ExtractNumbers(IEnumerable<char> input) => input.Where(c => (c==' ' || c=='-' || (c>='0' && c<='9'))).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(w => int.Parse(w)).ToArray();
+        public static int[] ExtractNumbers(IEnumerable<char> input) => input.Where(c => (c == ' ' || c == '-' || (c >= '0' && c <= '9'))).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(w => int.Parse(w)).ToArray();
     }
 
-    public interface IVec
-    {
-        int Distance(IVec other);
-    }
-
-
-    public class ManhattanVectorN : IVec
-    {    
-        public ManhattanVectorN(int[] components)
-        {
-            Component = components;
-        }
-
-        public ManhattanVectorN(string val)
-        {
-            var bits = Split(val);
-            Component = bits.Select(s => int.Parse(s)).ToArray();
-        }
-
-        public int[] Component = null;
-
-        public int ComponentCount { get { return Component.Length; } }
-
-        public override string ToString()
-        {
-            return string.Join(",", Component);
-        }
-
-        private string[] Split(string val)
-        {
-            const string keep = "0192345678,-";
-            StringBuilder sb = new StringBuilder();
-            foreach (var c in val)
-            {
-               if (keep.Contains(c)) sb.Append(c);
-            }
-            return sb.ToString().Split(",");
-        }
-
-        public void Set(params int [] newVal)
-        {
-            if (newVal.Length != ComponentCount) throw new System.Exception("Incompatible vectors");
-            Component = newVal;
-        }
-
-        public void Offset(params int [] offset)
-        {
-            if (offset.Length != ComponentCount) throw new System.Exception("Incompatible vectors");
-            for (int i=0; i<offset.Length; ++i)
-            {
-                Component[i] += offset[i];
-            }
-        }
-
-        protected void Offset(ManhattanVectorN offset)
-        {
-            Offset(offset.Component);
-        }
-
-        public static ManhattanVectorN operator+ (ManhattanVectorN a, ManhattanVectorN b)
-        {
-            if (a.ComponentCount != b.ComponentCount) throw new System.Exception("Incompatible vectors");
-            int [] newVal = (int[]) (a.Component.Clone());
-            for (int i=0; i<a.ComponentCount; ++i)
-            {
-                newVal[i]+=b.Component[i];
-            }
-            return new ManhattanVectorN(newVal);   
-        }
-
-        public static ManhattanVectorN operator- (ManhattanVectorN a, ManhattanVectorN b)
-        {
-            if (a.ComponentCount != b.ComponentCount) throw new System.Exception("Incompatible vectors");
-            int [] newVal = (int[]) (a.Component.Clone());
-            for (int i=0; i<a.ComponentCount; ++i)
-            {
-                newVal[i]-=b.Component[i];
-            }  
-            return new ManhattanVectorN(newVal);  
-        }
-
-        public int Distance(IVec other)
-        {
-            if (!(other is ManhattanVectorN)) return Int32.MaxValue;
-            
-            var man2 = other as ManhattanVectorN;
-
-            return Distance(man2.Component);
-        }
-
-        public int Distance(params int[] other)
-        {
-            if (other.Length != ComponentCount) return Int32.MaxValue;
-
-            int distance = 0;
-            for (var i=0; i<ComponentCount; ++i)
-            {
-                distance += Math.Abs(Component[i]-other[i]);
-            }
-            return distance;
-        }
-
-
-        public static bool operator== (ManhattanVectorN v1, ManhattanVectorN v2)
-        {
-            return v1.Equals(v2);
-        }
-
-        public static bool operator!= (ManhattanVectorN v1, ManhattanVectorN v2)
-        {
-            return !v1.Equals(v2);
-        }
-
-        public override bool Equals(object other)
-        {
-            if (!(other is ManhattanVectorN)) return false;
-            return Distance(other as ManhattanVectorN) == 0;
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hash = 17;
-                for (int i=0; i<ComponentCount; ++i)
-                {
-                    hash = hash * 31 + Component[i];
-                }
-                return hash;
-            }
-        }
-    }
-
-    public class ManhattanVector2 : ManhattanVectorN
-    {
-        public ManhattanVector2(params int[] vals)
-            : base(vals)
-        {
-            if (ComponentCount != 2) throw new Exception("Invalid component count for Vector2");
-        }
-
-        public ManhattanVector2(string val)
-            : base(val)
-        {
-            if (ComponentCount != 2) throw new Exception("Invalid component count for Vector2");   
-        }
-
-        public ManhattanVector2(ManhattanVectorN other)
-            : base(other.Component)
-        {
-            if (ComponentCount != 2) throw new Exception("Invalid component count for Vector2"); 
-        }
-
-        public int X { get{ return Component[0]; } set { Component[0] = value;} }
-        public int Y { get{ return Component[1]; } set { Component[1] = value;} }
-
-        public void Offset(Direction2 dir, int multiple=1)
-        {
-            Offset(dir.DX*multiple, dir.DY*multiple);
-        }
-
-        public static ManhattanVector2 operator+ (ManhattanVector2 a, ManhattanVector2 b) => new ManhattanVector2((ManhattanVectorN)a + (ManhattanVectorN)b);
-
-        public static ManhattanVector2 operator- (ManhattanVector2 a, ManhattanVector2 b) => new ManhattanVector2((ManhattanVectorN)a - (ManhattanVectorN)b);
-
-        public static ManhattanVector2 Zero = new ManhattanVector2(0,0);
-    }
-
-    public class ManhattanVector3 : ManhattanVectorN
-    {
-        public ManhattanVector3(params int[] vals)
-            : base(vals)
-        {
-            if (ComponentCount != 3) throw new Exception("Invalid component count for Vector2");
-        }
-
-        public ManhattanVector3(string val)
-            : base(val)
-        {
-            if (ComponentCount != 3) throw new Exception("Invalid component count for Vector2");   
-        }
-
-        public ManhattanVector3(ManhattanVectorN other)
-            : base(other.Component)
-        {
-            if (ComponentCount != 3) throw new Exception("Invalid component count for Vector2"); 
-        }
-
-        public int X { get{ return Component[0]; } set { Component[0] = value;} }
-        public int Y { get{ return Component[1]; } set { Component[1] = value;} }
-        public int Z { get{ return Component[2]; } set { Component[2] = value;} }
-
-        public static ManhattanVector3 operator+ (ManhattanVector3 a, ManhattanVector3 b) => new ManhattanVector3(a + (ManhattanVectorN)b);
-        public static ManhattanVector3 operator- (ManhattanVector3 a, ManhattanVector3 b) => new ManhattanVector3((ManhattanVectorN)a - (ManhattanVectorN)b);
-
-        public static ManhattanVector3 Zero = new ManhattanVector3(0,0,0);
-    }
-
-    public class ManhattanVector4 : ManhattanVectorN
-    {
-        public ManhattanVector4(params int[] vals)
-            : base(vals)
-        {
-            if (ComponentCount != 4) throw new Exception("Invalid component count for Vector4");
-        }
-
-        public ManhattanVector4(string val)
-            : base(val)
-        {
-            if (ComponentCount != 4) throw new Exception("Invalid component count for Vector4");   
-        }
-
-        public ManhattanVector4(ManhattanVectorN other)
-            : base(other.Component)
-        {
-            if (ComponentCount != 4) throw new Exception("Invalid component count for Vector4"); 
-        }
-
-        public int X { get{ return Component[0]; } set { Component[0] = value;} }
-        public int Y { get{ return Component[1]; } set { Component[1] = value;} }
-        public int Z { get{ return Component[2]; } set { Component[2] = value;} }
-        public int W { get{ return Component[3]; } set { Component[3] = value;} }
-
-        public static ManhattanVector4 operator+ (ManhattanVector4 a, ManhattanVector4 b) => new ManhattanVector4(a + (ManhattanVectorN)b);
-        public static ManhattanVector4 operator- (ManhattanVector4 a, ManhattanVector4 b) => new ManhattanVector4((ManhattanVectorN)a - (ManhattanVectorN)b);
-
-        public static ManhattanVector4 Zero = new ManhattanVector4(0,0,0,0);
-    }
-
-    public class Direction2
-    {
-        public int DX {get;set;} = 0;
-        public int DY {get;set;} = 0;
-
-        public Direction2(int dx, int dy)
-        {
-            DX = dx;
-            DY = dy;
-        }
-
-        public void SetDirection(int dirx, int diry)
-        {
-            DX = dirx;
-            DY = diry;
-        }
-
-        public void TurnLeft()
-        {
-            // up :  0,-1 ->  -1,0;
-            // left: -1,0 -> 0,1
-            // down: 0,1 -> 1,0
-            // right: 1,0 -> 0,-1
-
-            if (DX==0 && DY == -1) SetDirection(-1,0);
-            else if (DX==-1 && DY==0) SetDirection(0,1);
-            else if (DX==0 && DY==1) SetDirection(1,0);
-            else if (DX==1 && DY==0) SetDirection(0,-1);
-
-            else throw new Exception("Unrecognised train direction: "+DX+","+DY);
-        }
-
-        public void TurnRight()
-        {
-            // up :  0,-1 ->  1,0;
-            // right: 1,0 -> 0,1
-            // down: 0,1 -> -1,0
-            // left: -1,0 -> 0,-1
-
-            if (DX==0 && DY == -1) SetDirection(1,0);
-            else if (DX==1 && DY==0) SetDirection(0,1);
-            else if (DX==0 && DY==1) SetDirection(-1,0);
-            else if (DX==-1 && DY==0) SetDirection(0,-1);
-
-            else throw new Exception("Unrecognised train direction :"+DX+","+DY);
-        }
-
-            public char AsChar() 
-            {
-                if (DX > 0) return '>';
-                if (DX < 0) return '<';
-                if (DY < 0) return '^';
-                if (DY > 0) return 'v';
-
-                throw new Exception("Unknown direction state");
-            }
-    }
 
     public class AutoArray<DataType> : IEnumerable<DataType>
     {
@@ -408,19 +136,19 @@ namespace Advent
 
         DataType Get(int key)
         {
-            if (key>=data.Length) return default(DataType);
+            if (key >= data.Length) return default(DataType);
             return data[key];
         }
 
         void Set(int key, DataType value)
         {
-            if (key>=data.Length)
+            if (key >= data.Length)
             {
                 Console.Write($"Resize from {data.Length} to ");
-                Reserve(data.Length + ((key-data.Length+1)*250));
+                Reserve(data.Length + ((key - data.Length + 1) * 250));
                 Console.WriteLine($"{data.Length}");
             }
-            data[key]=value;
+            data[key] = value;
         }
 
         public void Reserve(int memorySize)
@@ -472,24 +200,24 @@ namespace Advent
         static public byte[] GetHash(int num, string baseStr)
         {
             string hashInput = baseStr + num.ToString();
-            return hashInput.GetMD5(); 
+            return hashInput.GetMD5();
         }
 
         public static IEnumerable<char> GetHashChars(int num, string baseStr)
         {
             string hashInput = baseStr + num.ToString();
-            return hashInput.GetMD5Chars();  
+            return hashInput.GetMD5Chars();
         }
 
         static bool IsHash(int num, string baseStr, int numZeroes)
         {
-            var hashed = GetHash(num, baseStr).AsNybbles().Take(numZeroes);       
-            return hashed.Where(b => b!=0).Count() == 0;
+            var hashed = GetHash(num, baseStr).AsNybbles().Take(numZeroes);
+            return hashed.Where(b => b != 0).Count() == 0;
         }
- 
+
         const int blockSize = 100000;
-        public static int FindHash(string baseStr, int numZeroes, int start=0)
-        {            
+        public static int FindHash(string baseStr, int numZeroes, int start = 0)
+        {
             while (true)
             {
                 var hashes = Enumerable.Range(start, blockSize).AsParallel().Where(n => IsHash(n, baseStr, numZeroes));
@@ -503,99 +231,12 @@ namespace Advent
         }
     }
 
-    public class Circle<T>
-    {
-        public T Value {get;set;}
-
-        public Circle(T v, Circle<T> p=null, Circle<T> n=null)
-        {
-            Value = v;
-            prev=p;
-            next=n;
-
-            if (prev!=null)
-            {
-                prev.next = this;
-            }
-            else
-            {
-                prev = this;
-            }
-
-            if (next!=null)
-            {
-                next.prev = this;
-            }
-            else
-            {
-                next = this;
-            }
-        }
-
-        public Circle<T> Next() => next;
-        public Circle<T> Prev() => prev;
-
-        public Circle<T> Back(int distance)
-        {
-            var node = this;
-            for (int i = 0; i < distance; ++i)
-            {
-                node = node.prev;
-            }
-            return node;
-        }
-
-        public Circle<T> Forward(int distance)
-        {
-            var node = this;
-            for (int i = 0; i < distance; ++i)
-            {
-                node = node.next;
-            }
-            return node;
-        }
-
-        public Circle<T> InsertNext(T v)
-        {
-            return new Circle<T>(v, this, this.next);
-        }
-
-        public Circle<T> Remove()
-        {
-            var removed = this;              
-            removed.prev.next = removed.next;
-            removed.next.prev = removed.prev;
-
-            return removed.next;
-        }
-
-        public int Count() => Values().Count();
-  
-        public bool Solo() => next == this;
-
-        Circle<T> prev;
-        Circle<T> next;
-
-        public IEnumerable<T> Values()
-        {
-            yield return Value;
-            var current = next;
-            while (current != this)
-            {
-                yield return current.Value;
-                current = current.Next();
-            }
-        }
-
-        public override string ToString() => Value.ToString();
-    }
-
     public class TimeLogger : ILogger
     {
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         System.IO.TextWriter output;
 
-        public TimeLogger (System.IO.TextWriter tw)
+        public TimeLogger(System.IO.TextWriter tw)
         {
             output = tw;
             sw.Start();
@@ -603,7 +244,7 @@ namespace Advent
 
         public void WriteLine(string log = null)
         {
-            if (log!=null)
+            if (log != null)
             {
                 output.Write($"[{sw.ElapsedMilliseconds,6}] ");
                 output.WriteLine(log);
@@ -627,399 +268,4 @@ namespace Advent
         }
     }
 
-    public static class Extensions
-    {
-        public static string[] args;
-
-        public static bool ShouldRun(this IPuzzle puzzle)
-        {
-            if (args.Length == 0) return true;
-
-            foreach (var line in args)
-            {
-                if (puzzle.Name.Contains(line.Trim())) return true;
-            }
-
-            return false;
-        }
-
-        public static long TimeRun(this IPuzzle puzzle,  ILogger logger)
-        {
-            var watch = new System.Diagnostics.Stopwatch();        
-            watch.Start();
-            logger.WriteLine(puzzle.Name);
-            var input = Util.GetInput(puzzle);
-            puzzle.Run(input, logger);
-            return watch.ElapsedMilliseconds;
-        }
-
-        static T Add<T>(T x, T y) => Add((dynamic)x,(dynamic)y);
-        static int Add(int a, int b) => a+b;
-        static long Add(long a, long b) => a+b;
-        static ulong Add(ulong a, ulong b) => a+b;
-
-        public static void IncrementAtIndex<T,V>(this Dictionary<T,V> dict, T key, V val)
-        {
-            if (dict.ContainsKey(key))
-            {
-                dict[key] = Add(dict[key], val);
-            }
-            else
-            {
-                dict[key] = val;
-            }
-        }
-
-        public static void IncrementAtIndex<T>(this Dictionary<T,int> dict, T key, int val=1) => IncrementAtIndex<T, int>(dict, key, val);
-
-        public static void PutObjKey<T>(this Dictionary<string, T> dict, object key, T value)
-        {
-            PutStrKey(dict, key.ToString(), value);
-        }
-
-        public static void PutStrKey<T>(this Dictionary<string, T> dict, string key, T value)
-        {
-            dict[key] = value;
-        }
-
-        public static T GetStrKey<T>(this Dictionary<string, T> dict, string key)
-        {
-            if (dict.TryGetValue(key, out T val)) return val;
-            return default(T);
-        }
-
-        public static T GetObjKey<T>(this Dictionary<string, T> dict, object key)
-        {
-            var k = key.ToString();
-            return GetStrKey(dict, k);
-        }
-
-        public static byte[] GetSHA256(this string inputString)
-        {
-            HashAlgorithm algorithm = SHA256.Create();
-            return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
-        }
-
-        public static string GetSHA256String(this string inputString)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (byte b in GetSHA256(inputString))
-                sb.Append(b.ToString("X2"));
-
-            return sb.ToString();
-        }
-
-        public static byte[] GetMD5(this string inputString)
-        {
-            HashAlgorithm algorithm = MD5.Create();
-            return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
-        }
-
-        public static string GetMD5String(this string inputString)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (byte b in GetMD5(inputString))
-            {
-                sb.Append(b.ToString("X2"));
-            }
-
-            return sb.ToString();
-        }
-
-        public static IEnumerable<char> GetMD5Chars(this string inputString)
-        {
-            foreach (byte b in GetMD5(inputString))
-            {
-                foreach (var c in b.ToString("X2"))
-                {
-                    yield return c;
-                }
-            }
-        }
-
-        public static string AsString(this IEnumerable<char> input)
-        {
-            return String.Join("", input);
-        }
-
-        public static IEnumerable<byte> AsNybbles(this byte[] bytes)
-        {
-            foreach (var x in bytes)
-            {
-                yield return (byte)((x & 0xF0) >> 4);
-                yield return (byte) (x & 0x0F);             
-            }
-        }
-
-
-        private static string vowels = "aeiouAEIOU";
-
-        public static bool IsVowel(this char c)
-        {
-            return vowels.Contains(c);
-        }
-
-        public static IEnumerable<int> AllIndexesOf(this string str, string value)
-        {
-            if (String.IsNullOrEmpty(value))
-                throw new ArgumentException("the string to find may not be empty", "value");
-            for (int index = 0; ; index += value.Length)
-            {
-                index = str.IndexOf(value, index);
-                if (index == -1)
-                    break;
-                yield return index;
-            }
-        }
-
-        public static string ReplaceAtIndex(this string str, int index, string from, string replacement)
-        {
-            var sb = new StringBuilder(str);
-            sb.Remove(index, from.Length);
-            sb.Insert(index, replacement);
-            return sb.ToString();
-        }
-
-        public static string ReplaceFirst(this string str, string from, string replacement)
-        {
-            int pos = str.IndexOf(from);
-            if (pos < 0)
-            {
-                return str;
-            }
-            return ReplaceAtIndex(str, pos, from, replacement);
-        }
-
-        public static string ReplaceLast(this string str, string from, string replacement)
-        {
-            int pos = str.LastIndexOf(from);
-            if (pos < 0)
-            {
-                return str;
-            }
-            return ReplaceAtIndex(str, pos, from, replacement);
-        }
-
-        // iterate over bits, returns sequence like 1,2,4,8 (only returning set bits in input)
-        public static IEnumerable<int> BitSequence(this int v)
-        {
-            for(int k=1; k<=v; k<<=1)
-            {
-                if ((v & k)>0) 
-                    yield return k;
-            }
-        }
-
-        public static IEnumerable<IEnumerable<T>> Permutations<T>(this IEnumerable<T> set, IEnumerable<T> subset = null)
-        {
-            if (subset == null) subset = new T[] { };
-            if (!set.Any()) yield return subset;
-
-            for (var i = 0; i < set.Count(); i++)
-            {
-                var newSubset = set.Take(i).Concat(set.Skip(i + 1));
-                foreach (var permutation in Permutations(newSubset, subset.Concat(set.Skip(i).Take(1))))
-                {
-                    yield return permutation;
-                }
-            }
-        }
-
-        public static IEnumerable<(T,T)> Pairs<T>(this IEnumerable<T> set)
-        {
-            foreach (var el1 in set)
-            {
-                foreach (var el2 in set)
-                {
-                    if (!EqualityComparer<T>.Default.Equals(el1, el2))
-                    {
-                        yield return (el1, el2);
-                    }
-                }
-            }
-        }
-
-        public static IEnumerable<T> Prepend<T>(this IEnumerable<T> items, T first)
-        {
-            yield return first;
-            foreach (T item in items)
-            {
-                yield return item;
-            }
-        }
-
-        public static IEnumerable<T> Sandwich<T>(this IEnumerable<T> items, T firstlast)
-        {
-            yield return firstlast;
-            foreach (T item in items)
-            {
-                yield return item;
-            }
-            yield return firstlast;
-        }
-
-        public static IEnumerable<IEnumerable<T>> Combinations<T>(this IEnumerable<T> items)
-        {
-            if (!items.Any())
-            {
-                yield return items;
-            }
-            else
-            {
-                var head = items.First();
-                var tail = items.Skip(1);
-                foreach (var sequence in tail.Combinations())
-                {
-                    yield return sequence; // Without first
-                    yield return sequence.Prepend(head);
-                }
-            }
-        }
-
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items)
-        {
-            var rnd = new Random();
-            return items.OrderBy(_ => rnd.Next());
-        }
-
-        public static IEnumerable<IEnumerable<T>> DuplicateSequence<T>(this IEnumerable<T> input)
-        {
-            while (true)
-            {
-                yield return input;
-            }
-        }
-
-        // returns how similar two strings are - smaller = more similar
-        public static int LevenshteinDistance(this string s, string t)
-        {
-            if (string.IsNullOrEmpty(s))
-            {
-                if (string.IsNullOrEmpty(t))
-                    return 0;
-                return t.Length;
-            }
-
-            if (string.IsNullOrEmpty(t))
-            {
-                return s.Length;
-            }
-
-            int n = s.Length;
-            int m = t.Length;
-            int[,] d = new int[n + 1, m + 1];
-
-            // initialize the top and right of the table to 0, 1, 2, ...
-            for (int i = 0; i <= n; d[i, 0] = i++);
-            for (int j = 1; j <= m; d[0, j] = j++);
-
-            for (int i = 1; i <= n; i++)
-            {
-                for (int j = 1; j <= m; j++)
-                {
-                    int cost = (t[j - 1] == s[i - 1]) ? 0 : 1;
-                    int min1 = d[i - 1, j] + 1;
-                    int min2 = d[i, j - 1] + 1;
-                    int min3 = d[i - 1, j - 1] + cost;
-                    d[i, j] = Math.Min(Math.Min(min1, min2), min3);
-                }
-            }
-            return d[n, m];
-        }
-
-        public static IEnumerable<T> Values<T>(this T[,] array2d)
-        {
-            for (int row = 0; row < array2d.GetLength(0); row++)
-            {
-                for (int col = 0; col < array2d.GetLength(1); col++)
-                {
-                    yield return array2d[row, col];
-                }
-            }
-        }
-
-        public static Int64 Product(this IEnumerable<int> vals)
-        {
-            Int64 res = 1;
-            foreach (var v in vals) res *= v;
-            return res;
-        }
-
-        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
-        {
-            foreach (T element in source)
-            {
-                action(element);
-            }
-        }
-
-        public static string ToEngineeringNotation(this double d)
-        {
-            string fmt = "N2";
-            double exponent = Math.Log10(Math.Abs(d));
-            if (Math.Abs(d) >= 1)
-            {
-                switch ((int)Math.Floor(exponent))
-                {
-                    case 0: case 1: case 2:
-                        return d.ToString();
-                    case 3: case 4: case 5:
-                        return (d / 1e3).ToString(fmt) + "k";
-                    case 6: case 7: case 8:
-                        return (d / 1e6).ToString(fmt) + "M";
-                    case 9: case 10: case 11:
-                        return (d / 1e9).ToString(fmt) + "G";
-                    case 12: case 13: case 14:
-                        return (d / 1e12).ToString(fmt) + "T";
-                    case 15: case 16: case 17:
-                        return (d / 1e15).ToString(fmt) + "P";
-                    case 18: case 19: case 20:
-                        return (d / 1e18).ToString(fmt) + "E";
-                    case 21: case 22: case 23:
-                        return (d / 1e21).ToString(fmt) + "Z";
-                    default:
-                        return (d / 1e24).ToString(fmt) + "Y";
-                }
-            }
-            else if (Math.Abs(d) > 0)
-            {
-                return d.ToString(fmt);
-                // switch ((int)Math.Floor(exponent))
-                // {
-                //     case -1: case -2: case -3:
-                //         return (d * 1e3).ToString(fmt) + "m";
-                //     case -4: case -5: case -6:
-                //         return (d * 1e6).ToString(fmt) + "μ";
-                //     case -7: case -8: case -9:
-                //         return (d * 1e9).ToString(fmt) + "n";
-                //     case -10: case -11: case -12:
-                //         return (d * 1e12).ToString(fmt) + "p";
-                //     case -13: case -14: case -15:
-                //         return (d * 1e15).ToString(fmt) + "f";
-                //     case -16: case -17: case -18:
-                //         return (d * 1e18).ToString(fmt) + "a";
-                //     case -19: case -20: case -21:
-                //         return (d * 1e21).ToString(fmt) + "z";
-                //     default:
-                //         return (d * 1e24).ToString() + "y";
-                // }
-            }
-            else
-            {
-                return "0";
-            }
-        }
-
-        public static string MultipleWithS(this int value, string str)
-        {
-            if (value == 1)
-            {
-                return str;
-            }
-            else
-            {
-                return $"{value} {str}s";
-            }
-        }
-    }
 }
