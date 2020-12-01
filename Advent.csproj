@@ -11,6 +11,11 @@
   </PropertyGroup>
 
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+
+
   <ItemGroup>
     <Compile Remove="test\**" />
     <EmbeddedResource Remove="test\**" />
