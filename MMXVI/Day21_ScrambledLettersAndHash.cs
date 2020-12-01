@@ -1,21 +1,21 @@
-﻿using System;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVI
 {
     public class Day21 : IPuzzle
     {
-        public string Name { get { return "2016-21";} }
- 
+        public string Name { get { return "2016-21"; } }
+
         public static char Switch(char c, char from, char to)
         {
-            if (c==from)
+            if (c == from)
             {
                 return to;
             }
-            else if (c==to)
+            else if (c == to)
             {
                 return from;
             }
@@ -28,7 +28,7 @@ namespace Advent.MMXVI
         {
             var length = input.Count();
 
-            IEnumerable<char>password = input;
+            IEnumerable<char> password = input;
 
             foreach (var instr in instructions)
             {
@@ -99,7 +99,7 @@ namespace Advent.MMXVI
                 }
 
             }
-            
+
             //Console.WriteLine(password.AsString());
             //Console.WriteLine("----");
             return password.AsString();
@@ -214,7 +214,7 @@ namespace Advent.MMXVI
             return last.Concat(rest);
         }
 
-        static Dictionary<int,int> RotateLetterForward = new Dictionary<int, int>()
+        static Dictionary<int, int> RotateLetterForward = new Dictionary<int, int>()
         {
             {0,1},
             {1,2},
@@ -226,15 +226,15 @@ namespace Advent.MMXVI
             {7,9},
         };
 
-        static Dictionary<int,int> RotateLetterBackward = new Dictionary<int, int>()
+        static Dictionary<int, int> RotateLetterBackward = new Dictionary<int, int>()
         {
             {0,1},
-            {1,1}, 
-            {2,6}, 
-            {3,2}, 
-            {4,7}, 
-            {5,3},      
-            {6,0}, 
+            {1,1},
+            {2,6},
+            {3,2},
+            {4,7},
+            {5,3},
+            {6,0},
             {7,4},
         };
 
@@ -252,7 +252,7 @@ namespace Advent.MMXVI
         private static IEnumerable<char> RotateLeftBasedOnLetter(IEnumerable<char> password, int length, char letter)
         {
             var pos = password.AsString().IndexOf(letter);
-            var dist = (-pos / 2 + (pos % 2 == 1 || pos == 0 ? 1 : 5))+8;
+            var dist = (-pos / 2 + (pos % 2 == 1 || pos == 0 ? 1 : 5)) + 8;
             //var dist1 = RotateLetterBackward[pos];
             //Util.Test(dist, dist1);
             return RotateRight(password, length, dist);
@@ -260,7 +260,7 @@ namespace Advent.MMXVI
 
         private static IEnumerable<char> Reverse(IEnumerable<char> password, int start, int end)
         {
-            return password.Take(start).Concat(password.Skip(start).Take(end - start+1).Reverse()).Concat(password.Skip(end + 1));
+            return password.Take(start).Concat(password.Skip(start).Take(end - start + 1).Reverse()).Concat(password.Skip(end + 1));
         }
 
         private static IEnumerable<char> Move(IEnumerable<char> password, int from, int to)
@@ -284,7 +284,7 @@ namespace Advent.MMXVI
 
             var perms = "abcdefgh".Permutations();
 
-            return perms.AsParallel().Where(p => Scramble(instructions, p)==scrambled).First().AsString();
+            return perms.AsParallel().Where(p => Scramble(instructions, p) == scrambled).First().AsString();
         }
 
         // public static string _Part2(string input)
@@ -322,8 +322,8 @@ namespace Advent.MMXVI
 
             // Util.Test(Part1(input), "dbfgaehc");
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

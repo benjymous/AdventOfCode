@@ -5,7 +5,7 @@ namespace Advent.MMXIX
 {
     public class Day02 : IPuzzle
     {
-        public string Name { get { return "2019-02";} }
+        public string Name { get { return "2019-02"; } }
 
         public static Int64 RunProgram(string input, int noun, int verb)
         {
@@ -20,9 +20,9 @@ namespace Advent.MMXIX
 
         const int Part2_Target = 19690720;
 
-        public static int Part2(string input) => Util.Matrix(100,100)
+        public static int Part2(string input) => Util.Matrix(100, 100)
                    .Where(val => RunProgram(input, val.Item1, val.Item2) == Part2_Target)
-                   .Select(val => (100*val.Item1)+val.Item2).FirstOrDefault();
+                   .Select(val => (100 * val.Item1) + val.Item2).FirstOrDefault();
 
         public void Run(string input, ILogger logger)
         {

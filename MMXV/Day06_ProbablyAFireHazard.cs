@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Advent.Utils.Vectors;
+using System;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXV
 {
     public class Day06 : IPuzzle
     {
-        public string Name { get { return "2015-06";} }
- 
+        public string Name { get { return "2015-06"; } }
+
         public enum Mode
         {
             on,
@@ -27,7 +26,7 @@ namespace Advent.MMXV
                 line = line.Replace("toggle", "T")
                            .Replace("turn on", "N")
                            .Replace("turn off", "F");
-                
+
                 var bits = line.Split(" ");
                 switch (bits[0])
                 {
@@ -39,12 +38,12 @@ namespace Advent.MMXV
                 bl = new ManhattanVector2(bits[1]);
                 tr = new ManhattanVector2(bits[3]);
 
-                if (bits[2] != "through") throw new Exception("Malformed instruction");                       
+                if (bits[2] != "through") throw new Exception("Malformed instruction");
             }
 
             bool Apply(bool val)
             {
-                switch(mode)
+                switch (mode)
                 {
                     case Mode.on: return true;
                     case Mode.off: return false;
@@ -56,11 +55,11 @@ namespace Advent.MMXV
 
             int Apply(int val)
             {
-                switch(mode)
+                switch (mode)
                 {
-                    case Mode.on: return val+1;
-                    case Mode.off: return Math.Max(0, val-1);
-                    case Mode.toggle: return val+2;
+                    case Mode.on: return val + 1;
+                    case Mode.off: return Math.Max(0, val - 1);
+                    case Mode.toggle: return val + 2;
                 }
 
                 throw new Exception("Unexpected light mode");
@@ -68,22 +67,22 @@ namespace Advent.MMXV
 
             public void Apply(bool[,] grid)
             {
-                for (var y=bl.Y; y<=tr.Y; ++y)
+                for (var y = bl.Y; y <= tr.Y; ++y)
                 {
-                    for (var x=bl.X; x<=tr.X; ++x)
+                    for (var x = bl.X; x <= tr.X; ++x)
                     {
-                        grid[x,y] = Apply(grid[x,y]);
+                        grid[x, y] = Apply(grid[x, y]);
                     }
                 }
             }
 
             public void Apply(int[,] grid)
             {
-                for (var y=bl.Y; y<=tr.Y; ++y)
+                for (var y = bl.Y; y <= tr.Y; ++y)
                 {
-                    for (var x=bl.X; x<=tr.X; ++x)
+                    for (var x = bl.X; x <= tr.X; ++x)
                     {
-                        grid[x,y] = Apply(grid[x,y]);
+                        grid[x, y] = Apply(grid[x, y]);
                     }
                 }
             }
@@ -94,15 +93,15 @@ namespace Advent.MMXV
             }
         }
 
-    
+
         public static int Part1(string input)
         {
-            bool[,] grid = new bool[1000,1000];
-            for (var y=0; y<1000; ++y)
+            bool[,] grid = new bool[1000, 1000];
+            for (var y = 0; y < 1000; ++y)
             {
-                for (var x=0; x<1000; ++x)
+                for (var x = 0; x < 1000; ++x)
                 {
-                    grid[x,y] = false;
+                    grid[x, y] = false;
                 }
             }
 
@@ -114,20 +113,20 @@ namespace Advent.MMXV
             }
 
             var query = from bool item in grid
-                where item
-                select item;
+                        where item
+                        select item;
 
             return query.Count();
         }
 
         public static int Part2(string input)
         {
-            int[,] grid = new int[1000,1000];
-            for (var y=0; y<1000; ++y)
+            int[,] grid = new int[1000, 1000];
+            for (var y = 0; y < 1000; ++y)
             {
-                for (var x=0; x<1000; ++x)
+                for (var x = 0; x < 1000; ++x)
                 {
-                    grid[x,y] = 0;
+                    grid[x, y] = 0;
                 }
             }
 
@@ -139,7 +138,7 @@ namespace Advent.MMXV
             }
 
             var query = from int item in grid
-                select item;
+                        select item;
 
             return query.Sum();
         }
@@ -150,8 +149,8 @@ namespace Advent.MMXV
             // var bit2 = new Instruction("turn off 70,873 through 798,923");
             // var bit3 = new Instruction("turn on 258,985 through 663,998");
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

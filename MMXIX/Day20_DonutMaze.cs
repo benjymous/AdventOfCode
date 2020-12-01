@@ -1,23 +1,25 @@
-﻿using System;
+﻿using Advent.Utils;
+using Advent.Utils.Pathfinding;
+using Advent.Utils.Vectors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXIX
 {
     public class Day20 : IPuzzle
     {
-        public string Name { get { return "2019-20";} }
+        public string Name { get { return "2019-20"; } }
 
         public static bool IsCapitalLetter(char c)
         {
-            return c>='A' && c <='Z';
+            return c >= 'A' && c <= 'Z';
         }
 
-        class PortalMap : AStar.GridMap<char>, AStar.IIsWalkable<char>
+        class PortalMap : GridMap<char>, IIsWalkable<char>
         {
             public PortalMap(string input)
-                : base (null)
+                : base(null)
             {
                 var lines = Util.Split(input);
                 var portals = new Dictionary<ManhattanVector2, string>();
@@ -26,18 +28,18 @@ namespace Advent.MMXIX
                 Height = lines.Length;
                 Width = lines.First().Length;
 
-                for (var y=0; y<lines.Length; ++y)
+                for (var y = 0; y < lines.Length; ++y)
                 {
                     var line = lines[y];
-                    for(var x=0; x<line.Length; ++x)
+                    for (var x = 0; x < line.Length; ++x)
                     {
                         var c = line[x];
                         if (IsCapitalLetter(c))
                         {
                             // part of a portal
 
-                            var leftNeighbour = data.GetStrKey($"{x-1},{y}");
-                            var aboveNeighbour = data.GetStrKey($"{x},{y-1}");
+                            var leftNeighbour = data.GetStrKey($"{x - 1},{y}");
+                            var aboveNeighbour = data.GetStrKey($"{x},{y - 1}");
 
                             string code = null;
 
@@ -48,37 +50,37 @@ namespace Advent.MMXIX
                             {
                                 code = $"{leftNeighbour}{c}";
 
-                                var leftLeftNeighbour = data.GetStrKey($"{x-2},{y}");
-                                
+                                var leftLeftNeighbour = data.GetStrKey($"{x - 2},{y}");
+
                                 if (leftLeftNeighbour == '.')
                                 {
-                                    v = new ManhattanVector2(x-2, y);
-                                    isInner = v.X != Width-3;
+                                    v = new ManhattanVector2(x - 2, y);
+                                    isInner = v.X != Width - 3;
                                 }
                                 else
                                 {
-                                    v = new ManhattanVector2(x+1, y);
+                                    v = new ManhattanVector2(x + 1, y);
                                     isInner = v.X != 2;
                                 }
-                                
+
                             }
                             else if (IsCapitalLetter(aboveNeighbour))
                             {
                                 code = $"{aboveNeighbour}{c}";
-                                var aboveAboveNeighbour = data.GetStrKey($"{x},{y-2}");
+                                var aboveAboveNeighbour = data.GetStrKey($"{x},{y - 2}");
                                 if (aboveAboveNeighbour == '.')
                                 {
-                                    v = new ManhattanVector2(x, y-2);
-                                    isInner = v.Y != Height-3;
+                                    v = new ManhattanVector2(x, y - 2);
+                                    isInner = v.Y != Height - 3;
                                 }
                                 else
                                 {
-                                    v = new ManhattanVector2(x, y+1);
+                                    v = new ManhattanVector2(x, y + 1);
                                     isInner = v.Y != 2;
                                 }
                             }
 
-                            if (!ReferenceEquals(v,null))
+                            if (!ReferenceEquals(v, null))
                             {
                                 portals[v] = code;
                                 innerPortals[v] = isInner;
@@ -94,30 +96,30 @@ namespace Advent.MMXIX
 
                 foreach (var group in groups)
                 {
-                    if (group.Count()==2)
+                    if (group.Count() == 2)
                     {
                         Portals[GetKey(group.First().Key)] = Tuple.Create(group.Last().Key, innerPortals[group.First().Key]);
                         Portals[GetKey(group.Last().Key)] = Tuple.Create(group.First().Key, innerPortals[group.Last().Key]);
                     }
                 }
-                
+
                 Start = portals.Where(kvp => kvp.Value == "AA").First().Key;
                 End = portals.Where(kvp => kvp.Value == "ZZ").First().Key;
 
             }
 
-            public bool Part2 {get;set;} = false;
+            public bool Part2 { get; set; } = false;
 
-            public Dictionary<int, Tuple<ManhattanVector2, bool>> Portals {get;private set;} = new Dictionary<int, Tuple<ManhattanVector2, bool>>();
+            public Dictionary<int, Tuple<ManhattanVector2, bool>> Portals { get; private set; } = new Dictionary<int, Tuple<ManhattanVector2, bool>>();
 
-            public ManhattanVector2 Start {get;private set;}
-            public ManhattanVector2 End {get;private set;}
+            public ManhattanVector2 Start { get; private set; }
+            public ManhattanVector2 End { get; private set; }
 
-            public int Width {get;private set;}
-            public int Height {get;private set;}
+            public int Width { get; private set; }
+            public int Height { get; private set; }
 
-            public int MaxDepth {get;set;} = 25;
-        
+            public int MaxDepth { get; set; } = 25;
+
 
             public override IEnumerable<ManhattanVector2> GetNeighbours(ManhattanVector2 centre)
             {
@@ -142,7 +144,7 @@ namespace Advent.MMXIX
                     {
                         newLevel--;
                     }
-                    if (newLevel >=0 && newLevel <= MaxDepth)
+                    if (newLevel >= 0 && newLevel <= MaxDepth)
                     {
                         yield return Tuple.Create(other.Item1, newLevel);
                     }
@@ -157,15 +159,15 @@ namespace Advent.MMXIX
             }
         }
 
-        public static int GetKey(ManhattanVector2 pos) => (pos.X << 8)+(pos.Y);
-        public static int GetKey(ManhattanVector2 pos, int level) => (pos.X << 16)+(pos.Y << 8)+level;
+        public static int GetKey(ManhattanVector2 pos) => (pos.X << 8) + (pos.Y);
+        public static int GetKey(ManhattanVector2 pos, int level) => (pos.X << 16) + (pos.Y << 8) + level;
 
         public static int Part1(string input)
         {
             var map = new PortalMap(input);
 
-            var jobqueue = new Queue<Tuple<ManhattanVector2,int>>();
-            jobqueue.Enqueue(Tuple.Create(map.End,0));
+            var jobqueue = new Queue<Tuple<ManhattanVector2, int>>();
+            jobqueue.Enqueue(Tuple.Create(map.End, 0));
             int best = int.MaxValue;
             var cache = new Dictionary<int, int>();
 
@@ -186,9 +188,9 @@ namespace Advent.MMXIX
                 {
                     foreach (var neighbour in map.GetNeighbours(entry.Item1))
                     {
-                        var key = GetKey(neighbour);                        
+                        var key = GetKey(neighbour);
 
-                        int newDistance = entry.Item2+1;
+                        int newDistance = entry.Item2 + 1;
                         if (cache.TryGetValue(key, out var dist))
                         {
                             if (dist < newDistance)
@@ -238,14 +240,14 @@ namespace Advent.MMXIX
 
 
 
-  
+
 
         public static int Part2(string input)
         {
             var map = new PortalMap(input);
 
-            var jobqueue = new Queue<Tuple<ManhattanVector2,int,int>>();
-            jobqueue.Enqueue(Tuple.Create(map.End,0,0));
+            var jobqueue = new Queue<Tuple<ManhattanVector2, int, int>>();
+            jobqueue.Enqueue(Tuple.Create(map.End, 0, 0));
             int best = int.MaxValue;
             var cache = new Dictionary<int, int>();
 
@@ -274,7 +276,7 @@ namespace Advent.MMXIX
                     {
                         var key = GetKey(neighbour.Item1, neighbour.Item2);
 
-                        int newDistance = entry.Item3+1;
+                        int newDistance = entry.Item3 + 1;
                         if (cache.TryGetValue(key, out var dist))
                         {
                             if (dist < newDistance)
@@ -292,9 +294,9 @@ namespace Advent.MMXIX
         }
 
         public void Run(string input, ILogger logger)
-        {       
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+        {
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

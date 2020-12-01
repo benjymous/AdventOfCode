@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXV
 {
     public class Day07 : IPuzzle
     {
-        public string Name { get { return "2015-07";} }
- 
+        public string Name { get { return "2015-07"; } }
+
         public class Component
         {
             public Component(string line)
@@ -16,56 +15,56 @@ namespace Advent.MMXV
                 var split1 = line.Split("->");
                 OutName = split1[1].Trim();
 
-                    var split2 = split1[0].Trim().Split(" ");
+                var split2 = split1[0].Trim().Split(" ");
 
-                switch(split2.Length)
+                switch (split2.Length)
                 {
                     case 1:
-                    {
-                        if (int.TryParse(split2[0], out int v))
                         {
-                            Value = int.Parse(split2[0]);
-                            HasValue = true;
+                            if (int.TryParse(split2[0], out int v))
+                            {
+                                Value = int.Parse(split2[0]);
+                                HasValue = true;
+                            }
+                            else
+                            {
+                                Input1 = split2[0];
+                            }
                         }
-                        else
-                        {
-                            Input1 = split2[0];
-                        }
-                    }
-                    break;
+                        break;
 
                     case 2:
-                    {
-                        Operator = split2[0];
-                        Input1 = split2[1];
-                    }
-                    break;
+                        {
+                            Operator = split2[0];
+                            Input1 = split2[1];
+                        }
+                        break;
                     case 3:
-                    {
+                        {
 
-                        Input1 = split2[0];
-                        Operator = split2[1];
-                        Input2 = split2[2];
-                    }
-                    break;
+                            Input1 = split2[0];
+                            Operator = split2[1];
+                            Input2 = split2[2];
+                        }
+                        break;
 
                     default:
-                    throw new Exception("malformed circuit!");
+                        throw new Exception("malformed circuit!");
                 }
 
-        
+
 
             }
 
-            public bool HasValue {get;set;} = false;
-            public int Value {get; set;}
+            public bool HasValue { get; set; } = false;
+            public int Value { get; set; }
 
-            public string OutName {get; private set;} = null;
+            public string OutName { get; private set; } = null;
 
-            public string Input1 {get; private set;} = null;
-            public string Input2 {get; private set;} = null;
+            public string Input1 { get; private set; } = null;
+            public string Input2 { get; private set; } = null;
 
-            public string Operator {get; private set;} = null;
+            public string Operator { get; private set; } = null;
         }
 
         public class Circuit
@@ -111,7 +110,7 @@ namespace Advent.MMXV
                 }
                 else
                 {
-                    
+
                     switch (comp.Operator)
                     {
                         case "AND":
@@ -126,7 +125,7 @@ namespace Advent.MMXV
                             comp.Value = Solve(comp.Input1) << Solve(comp.Input2);
                             break;
 
-                        
+
                         case "RSHIFT":
                             comp.Value = Solve(comp.Input1) >> Solve(comp.Input2);
                             break;
@@ -179,8 +178,8 @@ namespace Advent.MMXV
             // Console.WriteLine(circuit.Solve("y"));
 
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

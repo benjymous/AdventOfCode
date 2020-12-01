@@ -1,21 +1,21 @@
-﻿using System;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVI
 {
     public class Day06 : IPuzzle
     {
-        public string Name { get { return "2016-06";} }
- 
-        static List<Dictionary<char,int>> BuildDataMaps(string input)
+        public string Name { get { return "2016-06"; } }
+
+        static List<Dictionary<char, int>> BuildDataMaps(string input)
         {
             var lines = Util.Split(input);
 
             var first = lines.First();
 
-            var storage = new List<Dictionary<char,int>>();
+            var storage = new List<Dictionary<char, int>>();
             foreach (var c in first)
             {
                 storage.Add(new Dictionary<char, int>());
@@ -23,7 +23,7 @@ namespace Advent.MMXVI
 
             foreach (var line in lines)
             {
-                for (int i=0; i<line.Length; ++i)
+                for (int i = 0; i < line.Length; ++i)
                 {
                     storage[i].IncrementAtIndex(line[i]);
                 }
@@ -49,8 +49,8 @@ namespace Advent.MMXVI
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

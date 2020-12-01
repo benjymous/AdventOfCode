@@ -1,51 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVI
 {
     public class Day09 : IPuzzle
     {
-        public string Name { get { return "2016-09";} }
+        public string Name { get { return "2016-09"; } }
 
         static (int numChars, int numRepeats) Parse32(string cmd)
         {
             var bits = Util.Parse32(cmd, 'x');
             return (bits[0], bits[1]);
         }
- 
+
         static Int64 Decompress(string input, bool recurse)
         {
             Int64 length = 0;
-            int i=0;
-            while (i<input.Length)
+            int i = 0;
+            while (i < input.Length)
             {
                 var c = input[i];
-               
-                if (c=='(')
+
+                if (c == '(')
                 {
                     int start = i;
-                    while (input[i++]!=')');
+                    while (input[i++] != ')') ;
 
-                    var (numChars,numRepeats) = Parse32(input.Substring(start+1, i-start-2));
-                  
+                    var (numChars, numRepeats) = Parse32(input.Substring(start + 1, i - start - 2));
+
                     if (recurse)
                     {
                         length += Decompress(input.Substring(i, numChars), true) * numRepeats;
                     }
                     else
                     {
-                        length += numChars * numRepeats;  
+                        length += numChars * numRepeats;
                     }
-                    i+=numChars;                
+                    i += numChars;
 
                 }
                 else
                 {
                     i++;
                     length++;
-                }            
+                }
             }
             return length;
         }
@@ -56,7 +53,7 @@ namespace Advent.MMXVI
         }
 
         public static Int64 Part2(string input)
-        {        
+        {
             return Decompress(input.Trim(), true);
         }
 
@@ -73,8 +70,8 @@ namespace Advent.MMXVI
             // Util.Test(Part2("(27x12)(20x12)(13x14)(7x10)(1x12)A"), 241920UL);
             // Util.Test(Part2("(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN"), 445UL);
 
-            logger.WriteLine("- Pt1 - "+Part1(input));  // 107035
-            logger.WriteLine("- Pt2 - "+Part2(input));  // 11451628995
+            logger.WriteLine("- Pt1 - " + Part1(input));  // 107035
+            logger.WriteLine("- Pt2 - " + Part2(input));  // 11451628995
         }
     }
 }

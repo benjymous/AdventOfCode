@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXIX
 {
     public class Day07 : IPuzzle
     {
-        public string Name { get { return "2019-07";} }
- 
+        public string Name { get { return "2019-07"; } }
+
         public static Int64 RunAmplifiers01(string program, IEnumerable<int> inputs)
         {
             Int64 signal = 0;
@@ -44,12 +44,12 @@ namespace Advent.MMXIX
             int steps = 0;
 
             Int64 output = 0;
-            
+
             while (true)
             {
                 bool running = true;
                 cpus[current].Input.Enqueue(signal);
-                while (running && cpus[current].Output.Count==0)
+                while (running && cpus[current].Output.Count == 0)
                 {
                     running = cpus[current].Step();
                 }
@@ -59,15 +59,15 @@ namespace Advent.MMXIX
                 }
                 signal = cpus[current].Output.Dequeue();
 
-                if (current == cpus.Count-1)
+                if (current == cpus.Count - 1)
                 {
                     output = signal;
                 }
 
-                current = (current+1) % cpus.Count;
+                current = (current + 1) % cpus.Count;
                 steps++;
             }
-        }       
+        }
 
         public static Int64 Part1(string input)
         {
@@ -79,14 +79,14 @@ namespace Advent.MMXIX
         public static Int64 Part2(string input)
         {
             var permutations = Enumerable.Range(5, 5).Permutations();
-          
+
             return permutations.Select(set => RunAmplifiers02(input, set)).Max();
         }
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

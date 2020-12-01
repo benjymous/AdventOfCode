@@ -1,31 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVI
 {
     public class Day07 : IPuzzle
     {
-        public string Name { get { return "2016-07";} }
+        public string Name { get { return "2016-07"; } }
 
         static bool HasAbba(string address)
         {
             bool hasAbba = false;
             int bracketCount = 0;
-            for (int i=0; i<address.Length-3; ++i)
+            for (int i = 0; i < address.Length - 3; ++i)
             {
-                if (address[i]=='[') 
+                if (address[i] == '[')
                 {
                     bracketCount++;
                 }
-                else if (address[i]==']')
+                else if (address[i] == ']')
                 {
                     bracketCount--;
                 }
-                else  if (address[i] == address[i+3] && address[i+1] == address[i+2] && address[i]!=address[i+1])
+                else if (address[i] == address[i + 3] && address[i + 1] == address[i + 2] && address[i] != address[i + 1])
                 {
-                    if (bracketCount > 0) 
+                    if (bracketCount > 0)
                     {
                         return false;
                     }
@@ -46,20 +44,20 @@ namespace Advent.MMXVI
             HashSet<string> abas = new HashSet<string>();
             HashSet<string> babs = new HashSet<string>();
 
-            for (int i=0; i<address.Length-2; ++i)
+            for (int i = 0; i < address.Length - 2; ++i)
             {
-                if (address[i]=='[') 
+                if (address[i] == '[')
                 {
                     bracketCount++;
                 }
-                else if (address[i]==']')
+                else if (address[i] == ']')
                 {
                     bracketCount--;
                 }
-                else  if (address[i] == address[i+2] && address[i]!=address[i+1])
+                else if (address[i] == address[i + 2] && address[i] != address[i + 1])
                 {
-                    var tla = $"{address[i]}{address[i+1]}{address[i+2]}";
-                    if (bracketCount > 0) 
+                    var tla = $"{address[i]}{address[i + 1]}{address[i + 2]}";
+                    if (bracketCount > 0)
                     {
                         babs.Add(tla);
                     }
@@ -77,7 +75,7 @@ namespace Advent.MMXVI
 
             return false;
         }
- 
+
         public static int Part1(string input)
         {
             return Util.Split(input).Where(i => HasAbba(i)).Count();
@@ -106,8 +104,8 @@ namespace Advent.MMXVI
             //logger.WriteLine(HasAbaBab("aaa[kek]eke")); // true
             //logger.WriteLine(HasAbaBab("zazbz[bzb]cdb")); // true
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

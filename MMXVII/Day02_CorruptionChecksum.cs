@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVII
 {
     public class Day02 : IPuzzle
     {
-        public string Name { get { return "2017-02";} }
- 
+        public string Name { get { return "2017-02"; } }
+
         public static int RowDifference(string line)
         {
             var data = Util.Parse32(line, '\t');
-            return data.Max()-data.Min();
+            return data.Max() - data.Min();
         }
 
         public static int RowMultiple(string line)
@@ -20,13 +18,13 @@ namespace Advent.MMXVII
             var data = Util.Parse32(line, '\t');
             for (var x = 0; x < data.Length; ++x)
             {
-                for (var y=0; y<data.Length; ++y)
+                for (var y = 0; y < data.Length; ++y)
                 {
-                    if (x!=y)
+                    if (x != y)
                     {
                         if (data[x] % data[y] == 0)
                         {
-                            return data[x]/data[y];
+                            return data[x] / data[y];
                         }
                     }
                 }
@@ -48,8 +46,8 @@ namespace Advent.MMXVII
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

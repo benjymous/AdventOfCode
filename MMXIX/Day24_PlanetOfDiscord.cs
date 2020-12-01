@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -199,11 +200,11 @@ namespace Advent.MMXIX
                 foreach (var kvp in cells.OrderBy(kvp => kvp.Key))
                 {
                     Console.WriteLine($"{kvp.Key} - {kvp.Value}");
-                    for (var y=0; y<5; ++y)
+                    for (var y = 0; y < 5; ++y)
                     {
-                        for (var x=0; x<5; ++x)
+                        for (var x = 0; x < 5; ++x)
                         {
-                            Console.Write((Get(x, y, kvp.Key)==1) ? '#' : '.');
+                            Console.Write((Get(x, y, kvp.Key) == 1) ? '#' : '.');
                         }
                         Console.WriteLine();
                     }
@@ -241,7 +242,7 @@ namespace Advent.MMXIX
                 {
                     for (var x = 0; x < 5; ++x)
                     {
-                        if (x!=2 || y!=2) newState.Tick(oldState, x, y, level);
+                        if (x != 2 || y != 2) newState.Tick(oldState, x, y, level);
                     }
                 }
             }
@@ -273,9 +274,9 @@ namespace Advent.MMXIX
             }
         }
 
-        
 
-        public static int Part2(string input, int runs=200)
+
+        public static int Part2(string input, int runs = 200)
         {
             Queue<State> states = new Queue<State>();
             states.Enqueue(new State(input) { Infinite = true });
@@ -309,8 +310,8 @@ namespace Advent.MMXIX
 
             //logger.WriteLine(Part2("....#\n#..#.\n#..##\n..#..\n#....", 10));
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input, 200));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input, 200));
         }
     }
 }

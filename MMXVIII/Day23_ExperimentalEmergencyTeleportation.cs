@@ -1,22 +1,22 @@
-﻿using System;
+﻿using Advent.Utils.Vectors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVIII
 {
     public class Day23 : IPuzzle
     {
-        public string Name { get { return "2018-23";} }
- 
+        public string Name { get { return "2018-23"; } }
+
         struct Entry
         {
             public Entry(string line)
             {
-                line = line.Replace("<", "").Replace(">", "").Replace(",", " ").Replace("=", " ").Replace("  "," ");
+                line = line.Replace("<", "").Replace(">", "").Replace(",", " ").Replace("=", " ").Replace("  ", " ");
                 var bits = line.Split(" ");
 
-                position = new ManhattanVector3(Int32.Parse(bits[1]),Int32.Parse(bits[2]),Int32.Parse(bits[3]));
+                position = new ManhattanVector3(Int32.Parse(bits[1]), Int32.Parse(bits[2]), Int32.Parse(bits[3]));
                 radius = Int32.Parse(bits[5]);
             }
             public ManhattanVector3 position;
@@ -32,7 +32,7 @@ namespace Advent.MMXVIII
         {
             var data = Parse32(input);
 
-            var strongest = data.OrderBy(e => e.radius).LastOrDefault(); 
+            var strongest = data.OrderBy(e => e.radius).LastOrDefault();
 
 
             return data.Where(e => e.position.Distance(strongest.position) <= strongest.radius).Count();
@@ -59,9 +59,9 @@ namespace Advent.MMXVIII
                 minz = Math.Min(minz, e.position.Z);
             }
 
-            var weakest = data.OrderBy(e => e.radius).FirstOrDefault(); 
+            var weakest = data.OrderBy(e => e.radius).FirstOrDefault();
 
-            int step = Math.Max(1,weakest.radius/2);
+            int step = Math.Max(1, weakest.radius / 2);
 
             ManhattanVector3 bestPos = null;
             int bestDistance = int.MaxValue;
@@ -71,12 +71,12 @@ namespace Advent.MMXVIII
             {
                 //Console.WriteLine(step);
 
-                ManhattanVector3 pos = new ManhattanVector3(0,0,0);
-                for (pos.X=minx; pos.X<=maxx; pos.X+=step)
+                ManhattanVector3 pos = new ManhattanVector3(0, 0, 0);
+                for (pos.X = minx; pos.X <= maxx; pos.X += step)
                 {
-                    for (pos.Y=miny; pos.Y<=maxy; pos.Y+=step)
+                    for (pos.Y = miny; pos.Y <= maxy; pos.Y += step)
                     {
-                        for (pos.Z=minz; pos.Z<=maxz; pos.Z+=step)
+                        for (pos.Z = minz; pos.Z <= maxz; pos.Z += step)
                         {
                             var count = data.Where(e => pos.Distance(e.position) <= e.radius).Count();
 
@@ -101,15 +101,15 @@ namespace Advent.MMXVIII
 
                 //Console.WriteLine($"{bestPos} {bestDistance} {step}");
 
-                minx = bestPos.X - (step*2);
-                miny = bestPos.Y - (step*2);
-                minz = bestPos.Z - (step*2);
+                minx = bestPos.X - (step * 2);
+                miny = bestPos.Y - (step * 2);
+                minz = bestPos.Z - (step * 2);
 
-                maxx = bestPos.X + (step*2);
-                maxy = bestPos.Y + (step*2);
-                maxz = bestPos.Z + (step*2);
+                maxx = bestPos.X + (step * 2);
+                maxy = bestPos.Y + (step * 2);
+                maxz = bestPos.Z + (step * 2);
 
-                step/=2;
+                step /= 2;
 
             }
 
@@ -122,8 +122,8 @@ namespace Advent.MMXVIII
 
             //Console.WriteLine(Part2("pos=<10,12,12>, r=2\npos=<12,14,12>, r=2\npos=<16,12,12>, r=4\npos=<14,14,14>, r=6\npos=<50,50,50>, r=200\npos=<10,10,10>, r=5"));
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

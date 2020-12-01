@@ -1,5 +1,5 @@
+using Advent.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 
 namespace Advent.MMXVIII.Test
 {

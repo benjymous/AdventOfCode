@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXIX
 {
@@ -20,7 +19,7 @@ namespace Advent.MMXIX
             commandBuffer = program;
             cpu.Reserve(3000);
             cpu.Run();
-            Console.WriteLine(cpu.Speed());
+            // Console.WriteLine(cpu.Speed());
         }
 
         public override IEnumerable<string> AutomaticInput() => commandBuffer;
@@ -28,8 +27,8 @@ namespace Advent.MMXIX
     }
     public class Day21 : IPuzzle
     {
-        public string Name { get { return "2019-21";} }
- 
+        public string Name { get { return "2019-21"; } }
+
         public static Int64 SurveyHull(string input, IEnumerable<string> commandBuffer)
         {
             var droid = new SpringDroid(input);
@@ -38,7 +37,7 @@ namespace Advent.MMXIX
             droid.Run(commandBuffer);
             return droid.DamageReport;
         }
-    
+
         // AND X Y sets Y to true if both X and Y are true; otherwise, it sets Y to false.
         // OR X Y sets Y to true if at least one of X or Y is true; otherwise, it sets Y to false.
         // NOT X Y sets Y to true if X is false; otherwise, it sets Y to false.
@@ -101,10 +100,29 @@ namespace Advent.MMXIX
             return SurveyHull(input, commandBuffer);
         }
 
+        private static void Interactive(string input)
+        {
+
+            Console.WriteLine();
+            Console.WriteLine("..@..........");
+            Console.WriteLine("###...#######");
+            Console.WriteLine("   ABCD");
+            Console.WriteLine();
+
+            var droid = new SpringDroid(input);
+            droid.SetDisplay(true);
+            droid.Interactive = true;
+            droid.Run(Enumerable.Empty<string>());
+        }
+
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            //Interactive(input);
+
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
+
+
     }
 }

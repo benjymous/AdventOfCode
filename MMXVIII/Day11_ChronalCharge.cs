@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Advent.Utils.Vectors;
 
 namespace Advent.MMXVIII
 {
@@ -108,7 +105,7 @@ namespace Advent.MMXVIII
                     }
                 }
 
-                if (sizeBest+10 < lastBest)
+                if (sizeBest + 10 < lastBest)
                 {
                     return pos.ToString();
                 }

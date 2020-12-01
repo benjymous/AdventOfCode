@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 
 namespace Advent.MMXIX.Test
 {
@@ -19,7 +18,7 @@ namespace Advent.MMXIX.Test
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Image_Part2_Regression()
-        {     
+        {
             const string expectedHash = "83314289071513F5D831987A2AE99D107ACF077F8A950D9D9EBA5437B8434833";
             Assert.AreEqual(expectedHash, Day08.Part2(input, new ConsoleOut()));
         }

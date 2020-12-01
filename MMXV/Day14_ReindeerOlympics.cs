@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXV
 {
     public class Day14 : IPuzzle
     {
-        public string Name { get { return "2015-14";} }
+        public string Name { get { return "2015-14"; } }
 
         public class Reindeer
         {
@@ -34,7 +34,7 @@ namespace Advent.MMXV
                 int total = 0;
                 yield return total;
                 while (true)
-                {                   
+                {
                     for (int fly = 0; fly < sprint; ++fly)
                     {
                         total += speed;
@@ -52,7 +52,7 @@ namespace Advent.MMXV
         {
             return deer.Select(d => d.Distance().Skip(seconds).First()).Max();
         }
- 
+
         public static int Part1(string input)
         {
             var deer = Util.Parse<Reindeer>(input);
@@ -64,16 +64,16 @@ namespace Advent.MMXV
         {
             var distances = deer.Select(d => d.Distance().Take(seconds).ToArray()).ToArray();
 
-            Dictionary<int,int> scores = new Dictionary<int, int>();
+            Dictionary<int, int> scores = new Dictionary<int, int>();
 
-            for(int timeIdx=1; timeIdx<seconds; ++timeIdx)
+            for (int timeIdx = 1; timeIdx < seconds; ++timeIdx)
             {
                 int maxDistanceAtTime = 0;
-                for(int deerIdx=0; deerIdx<distances.Length; ++deerIdx)
+                for (int deerIdx = 0; deerIdx < distances.Length; ++deerIdx)
                 {
-                    maxDistanceAtTime = Math.Max(distances[deerIdx][timeIdx],maxDistanceAtTime);
+                    maxDistanceAtTime = Math.Max(distances[deerIdx][timeIdx], maxDistanceAtTime);
                 }
-                for(int deerIdx=0; deerIdx<distances.Length; ++deerIdx)
+                for (int deerIdx = 0; deerIdx < distances.Length; ++deerIdx)
                 {
                     if (distances[deerIdx][timeIdx] == maxDistanceAtTime)
                     {
@@ -103,8 +103,8 @@ namespace Advent.MMXV
 
             //logger.WriteLine(MaxScoreAfterTime(new List<Reindeer>{d1,d2}, 1000));
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

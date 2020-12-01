@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Advent.Utils.Vectors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Advent.MMXIX
@@ -23,22 +23,22 @@ namespace Advent.MMXIX
         public void Run()
         {
             cpu.Run();
-            Console.WriteLine(cpu.Speed());
+            //Console.WriteLine(cpu.Speed());
         }
 
         public IEnumerable<ManhattanVector2> FindIntersections()
         {
-            for (int y=1; y<buffer.Max.Y; ++y)
+            for (int y = 1; y < buffer.Max.Y; ++y)
             {
-                for (int x=1; x<buffer.Max.X; ++x)
+                for (int x = 1; x < buffer.Max.X; ++x)
                 {
-                    if ((buffer.GetAt(x,y)=='#') &&
-                        (buffer.GetAt(x-1,y)=='#') &&
-                        (buffer.GetAt(x+1,y)=='#') &&
-                        (buffer.GetAt(x,y-1)=='#') &&
-                        (buffer.GetAt(x,y+1)=='#'))
+                    if ((buffer.GetAt(x, y) == '#') &&
+                        (buffer.GetAt(x - 1, y) == '#') &&
+                        (buffer.GetAt(x + 1, y) == '#') &&
+                        (buffer.GetAt(x, y - 1) == '#') &&
+                        (buffer.GetAt(x, y + 1) == '#'))
                     {
-                        yield return new ManhattanVector2(x,y);
+                        yield return new ManhattanVector2(x, y);
                     }
                 }
             }
@@ -64,8 +64,8 @@ namespace Advent.MMXIX
                 var finalc = pattern.Reverse().Skip(1).First();
                 var firstc = pattern.First();
                 bool startsWithCommand = (firstc == 'L' || firstc == 'R');
-                bool endsNumeric = finalc >='0' && finalc <='9';
-                bool containsSubroutine = pattern.Contains("-");                
+                bool endsNumeric = finalc >= '0' && finalc <= '9';
+                bool containsSubroutine = pattern.Contains("-");
                 if (pattern.Length <= 21 && !containsSubroutine && startsWithCommand && pattern.EndsWith(",") && endsNumeric)
                 {
                     results[pattern] = occurence;
@@ -78,15 +78,15 @@ namespace Advent.MMXIX
 
         public static string Optimise(string unoptimised)
         {
-            var shrunk = unoptimised.Replace(" ","");
+            var shrunk = unoptimised.Replace(" ", "");
 
-            if (!shrunk.EndsWith(",")) shrunk = shrunk+",";
+            if (!shrunk.EndsWith(",")) shrunk = shrunk + ",";
 
             List<string> subs = new List<string>();
 
             var result = TrySubstitute(shrunk, subs);
 
-            if (result==null)
+            if (result == null)
             {
                 return null;
             }
@@ -105,7 +105,7 @@ namespace Advent.MMXIX
 
             if (input.EndsWith(","))
             {
-                input = input.Substring(0, input.Length-1);
+                input = input.Substring(0, input.Length - 1);
             }
 
             return input;
@@ -145,7 +145,7 @@ namespace Advent.MMXIX
             foreach (var pattern in patterns)
             {
 
-                var result = shrunk.Replace(pattern, $"-{(char)('A'+used.Count)}-,");
+                var result = shrunk.Replace(pattern, $"-{(char)('A' + used.Count)}-,");
                 var newUsed = new List<string>();
                 newUsed.AddRange(used);
                 newUsed.Add(Filter(pattern));
@@ -162,8 +162,8 @@ namespace Advent.MMXIX
                     if (recurse != null)
                     {
                         return recurse;
-                    }   
-                }        
+                    }
+                }
             }
 
             return null;
@@ -171,7 +171,7 @@ namespace Advent.MMXIX
 
         IEnumerable<string> Compile(string program)
         {
-            var shrunk = program.Replace(" ","");
+            var shrunk = program.Replace(" ", "");
 
             var lines = shrunk.Split('\n');
 
@@ -181,10 +181,10 @@ namespace Advent.MMXIX
         int countNeighbours(int x, int y)
         {
             int count = 0;
-            if (buffer.GetAt(x-1, y) == '#') count++;
-            if (buffer.GetAt(x+1, y) == '#') count++;
-            if (buffer.GetAt(x, y-1) == '#') count++;
-            if (buffer.GetAt(x, y+1) == '#') count++;
+            if (buffer.GetAt(x - 1, y) == '#') count++;
+            if (buffer.GetAt(x + 1, y) == '#') count++;
+            if (buffer.GetAt(x, y - 1) == '#') count++;
+            if (buffer.GetAt(x, y + 1) == '#') count++;
             return count;
         }
 
@@ -198,7 +198,7 @@ namespace Advent.MMXIX
                 if (countNeighbours(position.X, position.Y) == 1 && command.Any()) break;
 
                 int spins = 0;
-                while (buffer.GetAt(position.X+direction.DX, position.Y+direction.DY)!='#' || spins ==2)
+                while (buffer.GetAt(position.X + direction.DX, position.Y + direction.DY) != '#' || spins == 2)
                 {
                     direction.TurnRight();
                     spins++;
@@ -208,7 +208,7 @@ namespace Advent.MMXIX
                 else command += "L,";
 
                 int distance = 0;
-                while (buffer.GetAt(position.X+direction.DX, position.Y+direction.DY)=='#')
+                while (buffer.GetAt(position.X + direction.DX, position.Y + direction.DY) == '#')
                 {
                     position.Offset(direction);
                     distance++;
@@ -220,7 +220,7 @@ namespace Advent.MMXIX
                     Console.WriteLine("?");
                 }
             }
-            
+
 
             return command;
         }
@@ -239,8 +239,8 @@ namespace Advent.MMXIX
 
     public class Day17 : IPuzzle
     {
-        public string Name { get { return "2019-17";} }
- 
+        public string Name { get { return "2019-17"; } }
+
         public static int Part1(string input)
         {
             var robot = new Hoovamatic(input);
@@ -249,7 +249,7 @@ namespace Advent.MMXIX
 
             var intersections = robot.FindIntersections();
 
-            return intersections.Select(v => v.X*v.Y).Sum();
+            return intersections.Select(v => v.X * v.Y).Sum();
         }
 
         public static Int64 Part2(string input)
@@ -270,8 +270,8 @@ namespace Advent.MMXIX
             //var shrunk = Hoovamatic.Optimise("L,1, R,1, L,2, R,2, L,1, R,1, L,1, R,2, R,2");
             //var shrunk2 = Hoovamatic.Optimise(Hoovamatic.programUnoptimised);
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

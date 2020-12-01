@@ -1,30 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVI
 {
     public class Day03 : IPuzzle
     {
-        public string Name { get { return "2016-03";} }
- 
+        public string Name { get { return "2016-03"; } }
+
         public static bool TriangleValid(params int[] row)
         {
             if (row[0] + row[1] <= row[2] || row[0] + row[2] <= row[1] || row[1] + row[2] <= row[0])
-            { 
-                return false; 
+            {
+                return false;
             }
             else
             {
-                return true;  
-            }   
+                return true;
+            }
         }
 
         public static int Part1(string input)
         {
             var lines = Util.Split(input);
-            var data = lines.Select(line => Util.Parse32(line, ' ')); 
+            var data = lines.Select(line => Util.Parse32(line, ' '));
 
             var valid = data.Where(row => TriangleValid(row));
 
@@ -39,7 +37,7 @@ namespace Advent.MMXVI
 
             var count = 0;
 
-            for (var i=0; i<3; ++i)
+            for (var i = 0; i < 3; ++i)
             {
                 triangles.Enqueue(new List<int>());
             }
@@ -69,8 +67,8 @@ namespace Advent.MMXVI
 
             //logger.WriteLine(Part2("101 301 501\n102 302 502\n103 303 503\n201 401 601\n202 402 602\n203 403 603"));
 
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

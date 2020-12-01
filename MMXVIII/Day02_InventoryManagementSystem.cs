@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Advent.Utils;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Advent.MMXVIII
 {
     public class Day02 : IPuzzle
     {
-        public string Name { get { return "2018-02";} }
- 
+        public string Name { get { return "2018-02"; } }
+
         public static int Part1(string input)
         {
             var keys = Util.Split(input);
@@ -16,10 +15,10 @@ namespace Advent.MMXVIII
             int doubles = 0;
             int triples = 0;
 
-            foreach(var id in keys)
+            foreach (var id in keys)
             {
                 var chars = new Dictionary<char, int>();
-                for (var i=0; i<id.Length; ++i)
+                for (var i = 0; i < id.Length; ++i)
                 {
                     chars.IncrementAtIndex(id[i]);
                 }
@@ -28,37 +27,38 @@ namespace Advent.MMXVIII
                 bool hasTriple = chars.Any(kvp => kvp.Value == 3);
 
                 if (hasDouble) doubles++;
-	            if (hasTriple) triples++;
+                if (hasTriple) triples++;
             }
 
-            return doubles*triples;
+            return doubles * triples;
         }
 
         public static string Part2(string input)
         {
             var keys = Util.Split(input);
             foreach (var s1 in keys)
-            {                
+            {
                 foreach (var s2 in keys)
                 {
                     var diff = 0;
                     var answer = "";
 
-                    for (int i=0; i<s1.Length; ++i)
+                    for (int i = 0; i < s1.Length; ++i)
                     {
-                        if (s1[i]!=s2[i])
+                        if (s1[i] != s2[i])
                         {
                             diff++;
                         }
-                        else {
+                        else
+                        {
                             answer += s1[i];
                         }
                     }
 
-                    if (diff == 1) 
+                    if (diff == 1)
                     {
                         return answer;
-                    }               
+                    }
                 }
             }
             return "FAIL";
@@ -67,8 +67,8 @@ namespace Advent.MMXVIII
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

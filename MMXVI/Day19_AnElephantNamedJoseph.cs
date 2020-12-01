@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Advent.Utils;
+using Advent.Utils.Collections;
 
 namespace Advent.MMXVI
 {
     public class Day19 : IPuzzle
     {
-        public string Name { get { return "2016-19";} }
+        public string Name { get { return "2016-19"; } }
 
         class Elf
         {
@@ -31,17 +29,17 @@ namespace Advent.MMXVI
 
         static Circle<Elf> CreateCircle(int numElves)
         {
-            Circle<Elf> start = new Circle<Elf>(new Elf(1,1));
+            Circle<Elf> start = new Circle<Elf>(new Elf(1, 1));
             var node = start;
-            for (int i=1; i<numElves; ++i)
+            for (int i = 1; i < numElves; ++i)
             {
-                node = node.InsertNext(new Elf(i+1,1));
+                node = node.InsertNext(new Elf(i + 1, 1));
             }
             return start;
         }
- 
+
         public static int Part1(string input)
-        {   
+        {
             var node = CreateCircle(int.Parse(input));
 
             while (!node.Solo())
@@ -60,13 +58,13 @@ namespace Advent.MMXVI
             int count = int.Parse(input);
             var node = CreateCircle(count);
 
-            var nextVictim = node.Forward(count/2);
+            var nextVictim = node.Forward(count / 2);
 
-            while (count>1)
-            {        
+            while (count > 1)
+            {
                 var victim = nextVictim;
                 node.Value.TakePresents(victim.Value);
-                nextVictim = victim.Forward(1+(count%2));    
+                nextVictim = victim.Forward(1 + (count % 2));
                 victim.Remove();
 
                 count--;
@@ -78,8 +76,8 @@ namespace Advent.MMXVI
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }
