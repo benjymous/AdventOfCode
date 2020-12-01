@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,12 +13,12 @@ namespace Advent.MMXX
         public static int Part1(string input)
         {
             var numbers = Util.Parse32(input).OrderByDescending(x => x).ToArray();
-
+           
             for (var i=0; i<numbers.Length; ++i)
             {
                 for (var j=numbers.Length-1; j>=0; --j)
                 {
-                    if (numbers[i]+numbers[j] == 2020)
+                    if (numbers[i] + numbers[j] == 2020)
                     {
                         return numbers[i] * numbers[j];
                     }
@@ -41,7 +42,9 @@ namespace Advent.MMXX
                         {
                             return numbers[i] * numbers[j] * numbers[k];
                         }
+                        if (numbers[i] + numbers[j] + numbers[k] > 2020) break;
                     }
+                    if (numbers[i] + numbers[j] > 2020) break;
                 }
             }
             return 0;
