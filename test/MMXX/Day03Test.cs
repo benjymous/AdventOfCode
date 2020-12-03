@@ -4,7 +4,7 @@ namespace Advent.MMXX.Test
 {
     [TestCategory("2020")]
     [TestClass]
-    class Day03Test
+    public class Day03Test
     {
         string input = Util.GetInput<Day03>();
 
@@ -19,7 +19,7 @@ namespace Advent.MMXX.Test
         [DataTestMethod]
         public void Toboggans_Part2_Regression()
         {
-            Assert.AreEqual(178724430, Day03.Part2(input));
+            Assert.AreEqual(2431272960, Day03.Part2(input));
         }
 
     }
