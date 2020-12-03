@@ -6,19 +6,37 @@ namespace Advent.MMXX.Test
     [TestClass]
     public class Day02Test
     {
-        // string input = Util.GetInput<Day02>();
-        //[TestCategory("Regression")]
-        //[DataTestMethod]
-        //public void _Part1_Regression()
-        //{
-        //    Assert.AreEqual(, Day02.Part1(input));
-        //}
 
-        //[TestCategory("Regression")]
-        //[DataTestMethod]
-        //public void _Part2_Regression()
-        //{
-        //    Assert.AreEqual(, Day02.Part2(input));
-        //}
+        string input = Util.GetInput<Day02>();
+
+        [TestCategory("Test")]
+        [DataRow("1-3 a: abcde\n1-3 b: cdefg\n2-9 c: ccccccccc", 2)]
+        [DataTestMethod]
+        public void Password01Test(string input, int expected)
+        {
+            Assert.IsTrue(MMXX.Day02.Part1(input) == expected);
+        }
+
+        [TestCategory("Test")]
+        [DataRow("1-3 a: abcde\n1-3 b: cdefg\n2-9 c: ccccccccc", 1)]
+        [DataTestMethod]
+        public void Password02Test(string input, int expected)
+        {
+            Assert.IsTrue(MMXX.Day02.Part2(input) == expected);
+        }
+
+        [TestCategory("Regression")]
+        [DataTestMethod]
+        public void Passwords_Part1_Regression()
+        {
+            Assert.AreEqual(524, Day02.Part1(input));
+        }
+
+        [TestCategory("Regression")]
+        [DataTestMethod]
+        public void Passwords_Part2_Regression()
+        {
+            Assert.AreEqual(485, Day02.Part2(input));
+        }
     }
 }
