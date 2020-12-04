@@ -1,75 +1,50 @@
-﻿using System;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Advent.MMXX
 {
+    public static class MapRowExtension
+    {
+        const char Tree = '#';
+        public static bool IsTree(this string row, int x) => row[x % row.Length] == Tree;
+    }
+
     public class Day03 : IPuzzle
     {
         public string Name { get { return "2020-03"; } }
 
-        class MapRow
+        private static int CountTrees(string[] map, int dx, int dy)
         {
-            public MapRow(string row)
-            {
-                Row = row;
-            }
-
-            string Row;
-
-            public char Get(int x)
-            {
-                return Row[x % Row.Length];
-            }
-        }
-
-        private static int CountTrees(MapRow[] map, int dx, int dy)
-        {
-            int x = 0;
-            int y = 0;
             int treeCount = 0;
-            while (y < map.Count())
+            for (int x=0, y=0; y<map.Count(); y+=dy, x+=dx)
             {
-                var cell = map[y].Get(x);
-                if (cell == '#') treeCount++;
-                x += dx;
-                y += dy;
+                if (map[y].IsTree(x)) treeCount++;
             }
             return treeCount;
         }
 
-        public static int Part1(string input)
+        public static Int64 Part1(string input)
         {
-            var map = Util.Parse<MapRow>(input).ToArray();
+            var map = Util.Split(input).ToArray();
+
             return CountTrees(map, 3, 1);
         }
 
         public static Int64 Part2(string input)
         {
-            var map = Util.Parse<MapRow>(input).ToArray();
-            var results = new List<Int64>();
+            var map = Util.Split(input).ToArray();
 
-            //Right 1, down 1.
-            results.Add(CountTrees(map, 1, 1));
-            //Right 3, down 1. (This is the slope you already checked.)
-            results.Add(CountTrees(map, 3, 1));
-            //Right 5, down 1.
-            results.Add(CountTrees(map, 5, 1));
-            //Right 7, down 1.
-            results.Add(CountTrees(map, 7, 1));
-            //Right 1, down 2.
-            results.Add(CountTrees(map, 1, 2));
-
-            return results.Aggregate((total, next) => total * next);
-            
-
-            Int64 prod = 1;
-            foreach (int value in results)
-            {
-                prod *= value;
-            }
-            return prod;
+            return new List<(int dx, int dy)> {
+                ( 1, 1 ),   //Right 1, down 1.
+                ( 3, 1 ),   //Right 3, down 1. (This is the slope you already checked.)
+                ( 5, 1 ),   //Right 5, down 1.
+                ( 7, 1 ),   //Right 7, down 1.
+                ( 1, 2 )    //Right 1, down 2.
+            }.Select(dir => CountTrees(map, dir.dx, dir.dy))
+             .Product();
         }
 
         public void Run(string input, ILogger logger)
