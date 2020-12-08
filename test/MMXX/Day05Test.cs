@@ -6,20 +6,20 @@ namespace Advent.MMXX.Test
     [TestClass]
     public class Day05Test
     {
-        //string input = Util.GetInput<Day05>();
+        string input = Util.GetInput<Day05>();
 
-        //[TestCategory("Regression")]
-        //[DataTestMethod]
-        //public void _Part1_Regression()
-        //{
-        //    Assert.AreEqual(, Day05.Part1(input));
-        //}
+        [TestCategory("Regression")]
+        [DataTestMethod]
+        public void Boarding_Part1_Regression()
+        {
+            Assert.AreEqual(938, Day05.Part1(input));
+        }
 
-        //[TestCategory("Regression")]
-        //[DataTestMethod]
-        //public void _Part2_Regression()
-        //{
-        //    Assert.AreEqual(, Day05.Part2(input));
-        //}
+        [TestCategory("Regression")]
+        [DataTestMethod]
+        public void Boarding_Part2_Regression()
+        {
+            Assert.AreEqual(696, Day05.Part2(input));
+        }
     }
 }
