@@ -57,7 +57,6 @@ namespace Advent.MMXX
             for (var i=0; i<numbers.Length; ++i)
             {
                 var accumulator = new Accumulator( numbers[i] );
-
                 foreach (var n in numbers.Skip(i+1))
                 {
                     accumulator.Add(n);

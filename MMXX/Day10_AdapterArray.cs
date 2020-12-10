@@ -38,46 +38,44 @@ namespace Advent.MMXX
             return diff1 * diff3;
         }
 
-        static List<List<int>> GetCombinations(IEnumerable<int> values, List<int> current)
+        static Dictionary<int, Int64> GetCombinations(IEnumerable<int> values)
         {
-            List<List<int>> results = new List<List<int>>();
+            var results = new Dictionary<int, Int64> { { 0, 1 } };
 
-            var last = current.Last();
-
-            foreach (var num in values)
+            var offsets = new int[] { 1, 2, 3 };
+            foreach (var value in values)
             {
-                if (num == last+1 || num == last+3)
+                Int64 combinations = 0;
+                foreach (var offset in offsets)
                 {
-                    var newList = new List<int>(current);
-                    newList.Add(num);
+                    var testVal = value - offset;
+                    if (results.ContainsKey(testVal))
+                    {
+                        combinations += results[testVal];
+                    }
+                }
 
-                    results.AddRange(GetCombinations(values, newList));
-                }
-                else if (num > last+3) 
-                {
-                    break;
-                }
+                results[value] = combinations;
             }
 
             return results;
         }
 
-        public static int Part2(string input)
+        public static Int64 Part2(string input)
         {
             var values = GetValues(input).Skip(1);
 
-            var results = GetCombinations(values, new List<int>{0});
+            var results = GetCombinations(values);
 
-            return results.Count;
+            var final = values.Last();
+
+            return results[final];
         }
 
         public void Run(string input, ILogger logger)
         {
-
-            logger.WriteLine("test2 "+Part2("16\n10\n15\n5\n1\n11\n7\n19\n6\n12\n4"));
-
             logger.WriteLine("- Pt1 - "+Part1(input));
-            //logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }
