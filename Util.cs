@@ -9,6 +9,12 @@ namespace Advent
 {
     public class Util
     {
+        public enum QuestionPart
+        {
+            Part1 = 1,
+            Part2 = 2
+        }
+
         public static IEnumerable<IPuzzle> GetPuzzles()
         {
             return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())

@@ -1,36 +1,37 @@
-﻿using System;
+﻿using Advent.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Advent.Utils;
-
 
 namespace Advent.MMXX
 {
     public class Day11 : IPuzzle
     {
-        public string Name { get { return "2020-11";} }
- 
-      public class State
+        public string Name { get { return "2020-11"; } }
+
+        public class State
         {
-            public State(int w, int h)
+            public State(int w, int h, Util.QuestionPart p)
             {
-                width = w;
-                height = h;
-                cells = new char[width, height];
+                Width = w;
+                Height = h;
+                part = p;
+                Cells = new char[Width, Height];
             }
 
-            public int height;
-            public int width;
+            public int Height { get; private set; }
+            public int Width { get; private set; }
+            Util.QuestionPart part;
 
-            public State(string input)
+            public State(string input, Util.QuestionPart p)
             {
+                part = p;
                 var lines = Util.Split(input);
 
-                height = lines.Length;
-                width = lines[0].Length;
+                Height = lines.Length;
+                Width = lines[0].Length;
 
-                cells = new char[width, height];
+                Cells = new char[Width, Height];
 
                 for (var y = 0; y < lines.Length; ++y)
                 {
@@ -41,68 +42,81 @@ namespace Advent.MMXX
                 }
             }
 
-            public char[,] cells;
+            public char[,] Cells { get; private set; }
 
-            public void Set(int x, int y, char c) => cells[x, y] = c;
+            int MaxOccupancy { get => part == Util.QuestionPart.Part1 ? 4 : 5; }
 
-            public char Get(int x, int y = 0) => cells[x, y];
+            public void Set(int x, int y, char c) => Cells[x, y] = c;
 
-            int Neighbours(int xs, int ys)
+            public char Get(int x, int y = 0) =>
+                (x < 0 || x >= Width || y < 0 || y >= Height) ? ' ' : Cells[x, y];
+
+            public char CheckDirection(int x, int y, int dx, int dy)
             {
-                int count = 0;
-                for (int x = xs - 1; x <= xs + 1; x++)
+                if (part == Util.QuestionPart.Part1)
                 {
-                    if (x >= 0 && x < width)
+                    return Get(x + dx, y + dy);     
+                }
+                else
+                {
+                    while (true)
                     {
-                        for (int y = ys - 1; y <= ys + 1; y++)
-                        {
-                            if (y >= 0 && y < height)
-                            {
-                                if (x != xs || y != ys)
-                                {
-                                    count += (Get(x, y) == '#' ? 1 : 0);
-                                }
-                            }
-                        }
+                        x += dx;
+                        y += dy;
+                        char c = Get(x, y);
+                        if (c != '.') return c;
                     }
                 }
-                return count;
             }
+
+            static (int dx, int dy)[] directions = new (int, int)[]
+            {
+                (0, 1),   // N
+                (1, 1),   // NE
+                (1, 0),   // E
+                (1, -1),  // SE
+                (0, -1),  // S 
+                (-1, -1), // SW
+                (-1, 0),  // W
+                (-1, 1),  // NW
+            };
+
+            public int Neighbours(int xs, int ys) =>
+                directions.Select(d => CheckDirection(xs, ys, d.dx, d.dy)).Where(d => d == '#').Count();
 
             public bool Tick(State oldState, int x, int y)
             {
-                bool changed = false;           
                 int neighbours = oldState.Neighbours(x, y);
-                char old = oldState.Get(x, y);
-                char newVal = old;
-                if (old == 'L') // empty
+                var oldVal = oldState.Get(x, y);
+                switch (oldVal)
                 {
-                    if (neighbours == 0)
-                    {
-                        newVal = '#';
-                        changed = true;
-                    }
+                    case 'L': // empty seat
+                        if (neighbours == 0)
+                        {
+                            Cells[x, y] = '#';
+                            return true;
+                        }
+                        break;
+
+                    case '#': // occupied seat
+                        if (neighbours >= MaxOccupancy)
+                        {
+                            Cells[x, y] = 'L';
+                            return true;
+                        }
+                        break;
                 }
-                else if (old == '#')
-                {
-                    if (neighbours >= 4)
-                    {
-                        newVal = 'L';
-                        changed = true;
-                    }
-                }
-                cells[x, y] = newVal;
-                return changed;
+                Cells[x, y] = oldVal;
+                return false;
             }
 
             public void Display()
             {
-                for (int y = 0; y < height; ++y)
+                for (int y = 0; y < Height; ++y)
                 {
-                    for (int x = 0; x < width; ++x)
+                    for (int x = 0; x < Width; ++x)
                     {
-                        var v = cells[x, y];
-                        Console.Write(v);
+                        Console.Write(Cells[x, y]);
                     }
                     Console.WriteLine();
                 }
@@ -114,9 +128,9 @@ namespace Advent.MMXX
         public static bool Tick(State oldState, State newState)
         {
             bool changed = false;
-            for (var y = 0; y < oldState.height; ++y)
+            for (var y = 0; y < oldState.Height; ++y)
             {
-                for (var x = 0; x < oldState.width; ++x)
+                for (var x = 0; x < oldState.Width; ++x)
                 {
                     changed |= newState.Tick(oldState, x, y);
                 }
@@ -124,47 +138,50 @@ namespace Advent.MMXX
             return changed;
         }
 
-        public static int Run(string input)
+        public static int Run(string input, Util.QuestionPart part)
         {
-            Queue<State> states = new Queue<State>();
-            states.Enqueue(new State(input));
-            states.Enqueue(new State(states.First().width, states.First().height));
+            State[] states = new State[2];
+            states[0] = new State(input, part);
+            states[1] = new State(states[0].Width, states[0].Height, part);
 
             bool changed = true;
+            int current = 0;
             while (changed)
             {
-                var oldState = states.Dequeue();
-                var newState = states.Dequeue();
+                var oldState = states[current];
+                var newState = states[(current + 1) % 2];
 
                 changed = Tick(oldState, newState);
 
-                newState.Display();
+                //newState.Display();
 
-                states.Enqueue(newState);
-                states.Enqueue(oldState);
+                current = 1 - current;
             }
 
-            var end = states.Dequeue();
-            var count = end.cells.Values().Where(v => v == '#').Count();
+            return states[current].Cells.Values().Where(v => v == '#').Count();
+        }
 
-            return count;
+        public static int TestNeighbours(string input, int tx, int ty)
+        {
+            var state = new State(input, Util.QuestionPart.Part2);
+            if (state.Get(tx, ty) != 'L') return -1;
+            return state.Neighbours(tx, ty);
         }
 
         public static int Part1(string input)
         {
-            return Run(input);
-            return 0;
+            return Run(input, Util.QuestionPart.Part1);
         }
 
         public static int Part2(string input)
         {
-            return 0;
+            return Run(input, Util.QuestionPart.Part2);
         }
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }
