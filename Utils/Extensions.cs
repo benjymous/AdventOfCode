@@ -17,6 +17,15 @@ namespace Advent.Utils
             }
         }
 
+        public static IEnumerable<Int64> BitSequence(this Int64 v)
+        {
+            for (Int64 k = 1; k <= v; k <<= 1)
+            {
+                if ((v & k) > 0)
+                    yield return k;
+            }
+        }
+
 
         public static string ToEngineeringNotation(this double d)
         {
