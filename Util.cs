@@ -132,16 +132,14 @@ namespace Advent
 
         public static int[] ExtractNumbers(IEnumerable<char> input) => input.Where(c => (c == ' ' || c == '-' || (c >= '0' && c <= '9'))).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(w => int.Parse(w)).ToArray();
 
-        public static Int64 SetBit(Int64 value, int i) 
+        public static void SetBit(ref Int64 value, int i) 
         {
             value |= (1L) << i;
-            return value;
         }
 
-        public static Int64 ClearBit(Int64 value, int i) 
+        public static void ClearBit(ref Int64 value, int i) 
         {
             value &= ~(1L << i);
-            return value;
         }
     }
 
