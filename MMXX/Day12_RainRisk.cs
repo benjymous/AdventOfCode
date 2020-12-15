@@ -124,9 +124,9 @@ namespace Advent.MMXX
 
             foreach(var i in instructions)
             {
-                Console.WriteLine(i);
+                //Console.WriteLine(i);
                 i.Apply2(position, waypoint);
-                Console.WriteLine($"{position} {waypoint}");
+                //Console.WriteLine($"{position} {waypoint}");
                 
             }
 
@@ -134,9 +134,7 @@ namespace Advent.MMXX
         }
 
         public void Run(string input, ILogger logger)
-        {
-//Part2("F10\nN3\nF7\nR90\nF11");
-            
+        {  
             logger.WriteLine("- Pt1 - "+Part1(input));
             logger.WriteLine("- Pt2 - "+Part2(input));
         }
