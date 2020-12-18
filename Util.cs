@@ -56,9 +56,14 @@ namespace Advent
                         .ToList();
         }
 
-        public static List<T> Parse<T>(string input, char splitChar = '\n')
+        public static List<T> Parse<T>(string input, char splitChar ='\n')
         {
-            return Parse<T>(input.Split(splitChar)
+            return Parse<T>(input, splitChar.ToString());
+        }
+
+        public static List<T> Parse<T>(string input, string splitter)
+        {
+            return Parse<T>(input.Split(splitter)
                                  .Where(x => !string.IsNullOrWhiteSpace(x)));
         }
 
@@ -282,6 +287,52 @@ namespace Advent
         public ConsoleOut() : base(Console.Out)
         {
         }
+    }
+
+    public class Accumulator
+    {
+        public Accumulator(Int64 initial)
+        {
+            Min = initial;
+            Max = initial;
+            Sum = initial;
+        }
+
+        public Accumulator()
+        {
+            Min = Int64.MaxValue;
+            Max = Int64.MinValue;
+            Sum = 0;
+        }
+
+        public void Reset()
+        {
+            Min = Int64.MaxValue;
+            Max = Int64.MinValue;
+            Sum = 0;
+        }
+
+        public void Add(Int64 val)
+        {
+            Sum += val;
+            Min = Math.Min(Min, val);
+            Max = Math.Max(Max, val);
+        }
+
+        public IEnumerable<Int64> RangeInclusive()
+        {
+            for (var i = Min; i <= Max; ++i) yield return i;
+        }
+
+        public IEnumerable<Int64> RangeBuffered(Int64 buffer)
+        {
+            for (var i = Min-buffer; i <= Max+buffer; ++i) yield return i;
+        }
+
+
+        public Int64 Min { get; private set; }
+        public Int64 Max { get; private set; }
+        public Int64 Sum { get; private set; }
     }
 
 }
