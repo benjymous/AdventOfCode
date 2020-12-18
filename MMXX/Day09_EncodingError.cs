@@ -20,27 +20,6 @@ namespace Advent.MMXX
                 .Select(i => numbers[i]).First();
 
 
-        class Accumulator
-        {
-            public Accumulator(Int64 initial)
-            {
-                Min = initial;
-                Max = initial;
-                Sum = initial;
-            }
-
-            public void Add(Int64 val)
-            {
-                Sum += val;
-                Min = Math.Min(Min, val);
-                Max = Math.Max(Max, val);
-            }
-
-            public Int64 Min { get; private set; }
-            public Int64 Max { get; private set; }
-            public Int64 Sum { get; private set; }
-        }
-
         public static Int64 Part1(string input, int preamble = 25)
         {
             var numbers = Util.Parse64(input);
