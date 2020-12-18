@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static Advent.Util;
 
 namespace Advent.MMXX
 {
@@ -9,10 +10,18 @@ namespace Advent.MMXX
     {
         public string Name { get { return "2020-18"; } }
 
-        static Int64 Solve1(Queue<char> data)
+        enum Operation
         {
-            Int64 sum = 0;
-            char op = ' ';
+            blank,
+            add,
+            multiply
+        }
+
+        static Int64 Solve(Queue<char> data, QuestionPart part)
+        {
+            var stack = new Stack<Int64>();
+            Int64 result = 0;
+            Operation op = Operation.blank;
             while (data.Count > 0)
             {
                 var ch = data.Dequeue();
@@ -24,115 +33,74 @@ namespace Advent.MMXX
                 }
                 else if (ch == '(')
                 {
-                    val = Solve1(data);
+                    // solve brackets
+                    val = Solve(data, part);
                 }
                 else if (ch == ')')
                 {
-                    break;
-                }
-                else if (ch == '+' || ch == '*')
-                {
-                    op = ch;
-                }
-
-                if (val != -1)
-                {
-                    if (op == ' ')
-                    {
-                        sum = val;
-                    }
-                    else if (op == '+')
-                    {
-                        sum += val;
-                    }
-                    else
-                    {
-                        sum *= val;
-                    }
-                }
-            }
-
-            return sum;
-        }
-
-        public static Int64 Solve1(string sum)
-        {
-            sum = sum.Replace(" ", "");
-            return Solve1(new Queue<char>(sum));
-        }
-
-        static Int64 Solve2(Queue<char> data)
-        {
-            Stack<Int64> stack = new Stack<Int64>();
-
-            Int64 sum = 0;
-            char op = ' ';
-            while (data.Count > 0)
-            {
-                var ch = data.Dequeue();
-                Int64 val = -1;
-
-                if (ch >= '0' && ch <= '9')
-                {
-                    val = ch - '0';
-                }
-                else if (ch == '(')
-                {
-                    val = Solve2(data);
-                }
-                else if (ch == ')')
-                {
+                    // end of bracketed section
                     break;
                 }
                 else if (ch == '+')
                 {
-                    op = ch;
+                    op = Operation.add;
                 }
-                else if (ch =='*')
+                else if (ch=='*')
                 {
-                    stack.Push(sum);
-                    sum = 0;
-                    op = ' ';
+                    if (part == QuestionPart.Part1)
+                    {
+                        op = Operation.multiply;
+                    }
+                    else
+                    {
+                        stack.Push(result);
+                        result = 0;
+                        op = Operation.blank;
+                    }
                 }
 
                 if (val != -1)
                 {
-                    if (op == ' ')
+                    switch(op)
                     {
-                        sum = val;
-                    }
-                    else if (op == '+')
-                    {
-                        sum += val;
+                        case Operation.blank:
+                            result = val;
+                            break;
+
+                        case Operation.add:
+                            result += val;
+                            break;
+
+                        case Operation.multiply:
+                            result *= val;
+                            break;
                     }
                 }
             }
 
-            while (stack.Count>0)
+            while (stack.Count > 0)
             {
-                sum *= stack.Pop();
+                result *= stack.Pop();
             }
 
-            return sum;
+            return result;
         }
 
-        public static Int64 Solve2(string sum)
-        {
-            sum = sum.Replace(" ", "");
-            return Solve2(new Queue<char>(sum));
-        }
+        static Queue<char> ToQueue(string input) 
+            => new Queue<char>(input.Replace(" ", ""));
+
+        public static Int64 Solve1(string input) 
+            => Solve(ToQueue(input), QuestionPart.Part1);
+
+        public static Int64 Solve2(string input)
+            => Solve(ToQueue(input), QuestionPart.Part2);
+        
 
         public static Int64 Part1(string input)
-        {
-            var lines = input.Split("\n");
-            return lines.Select(line => Solve1(line)).Sum();
-        }
+            => input.Split("\n").Select(line => Solve1(line)).Sum();
 
         public static Int64 Part2(string input)
-        {
-            var lines = input.Split("\n");
-            return lines.Select(line => Solve2(line)).Sum();
-        }
+            => input.Split("\n").Select(line => Solve2(line)).Sum();        
 
 
         public void Run(string input, ILogger logger)
