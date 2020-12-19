@@ -195,6 +195,7 @@ namespace Advent.MMXX
                 }
             }
 
+            Console.WriteLine(memory.Count);
             return memory.Values.Sum();
         }
 
