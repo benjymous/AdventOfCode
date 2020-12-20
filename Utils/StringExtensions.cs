@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -134,6 +135,11 @@ namespace Advent.Utils
                 }
             }
             return d[n, m];
+        }
+
+        public static string Reversed(this string str)
+        {
+            return new string(str.Reverse().ToArray());
         }
 
 
