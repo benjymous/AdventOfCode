@@ -10,6 +10,14 @@ namespace Advent.MMXX
     {
         public string Name { get { return "2020-20";} }
  
+        enum Edge
+        {
+            top = 0,
+            right,
+            bottom,
+            left
+        }
+
         public class Tile
         {
             public Tile(string input)
@@ -64,15 +72,15 @@ namespace Advent.MMXX
                 Orientation = ((Orientation + 1) % 8);
 
 
-                var top = edges[0];
-                var right = edges[1];
-                var bottom = edges[2];
-                var left = edges[3];
+                var top = edges[(int)Edge.top];
+                var right = edges[(int)Edge.right];
+                var bottom = edges[(int)Edge.bottom];
+                var left = edges[(int)Edge.left];
 
-                edges[0] = left;
-                edges[1] = top;
-                edges[2] = right;
-                edges[3] = bottom;
+                edges[(int)Edge.top] = left;
+                edges[(int)Edge.right] = top;
+                edges[(int)Edge.bottom] = right;
+                edges[(int)Edge.left] = bottom;
 
                 if (Orientation == 0 || Orientation == 4)
                 {
@@ -80,6 +88,7 @@ namespace Advent.MMXX
                     {
                         edges[i] = edges[i].Reversed();
                     }
+                    edges = edges.Reverse().ToArray();
                 }
 
             }
@@ -133,6 +142,8 @@ namespace Advent.MMXX
             public Tile FindNeigbour(Tile nextTo, int position)
             {
                 string edge = nextTo.edges[position];
+                string revEdge = edge.Reversed();
+                //Console.WriteLine($"{nextTo.ID} : {position} : {edge}");
 
                 var options = Map[edge];
 
@@ -145,10 +156,12 @@ namespace Advent.MMXX
 
                 int pos2 = (position + 2) % 4;
 
-                while (n.edges[pos2] != edge)
+                while (n.edges[pos2] != revEdge)
                 {
                     n.Twizzle();
                 }
+
+                //Console.WriteLine($"{n.ID} : {pos2} : {n.edges[pos2]}");
 
                 return n;
             }
@@ -178,12 +191,11 @@ namespace Advent.MMXX
 
             Tile corner = corners.First();
 
-
-            while (!(solver.Map[corner.edges[0]].Count==1 && solver.Map[corner.edges[3]].Count == 1))
+            // orient so its in position to be top left corner
+            while (!(solver.Map[corner.edges[(int)Edge.top]].Count==1 && solver.Map[corner.edges[(int)Edge.left]].Count == 1))
             {
                 corner.Twizzle();
             }
-            
 
             var solution = new Dictionary<(int x, int y), Tile>();
 
@@ -204,8 +216,14 @@ namespace Advent.MMXX
                 }
                 else
                 {
+                    Console.WriteLine();
+                    Console.WriteLine("-end of row-");
+                    Console.WriteLine();
                     tile = solver.FindNeigbour(solution[(0, pos.y)], 2); // find lower neighbour
-                    if (tile == null) break;
+                    if (tile == null)
+                    {
+                        break;
+                    }
                     pos = (0, pos.y + 1);
                     solution[pos] = tile;
                     Console.WriteLine($"Position{pos} = {tile.ID}:{tile.Orientation}");
@@ -236,7 +254,116 @@ namespace Advent.MMXX
             //    Console.WriteLine();
             //    tile.Twizzle();
             //}
-            
+
+//            var test = "Tile 2311:\n" +
+//"..##.#..#.\n" +
+//"##..#.....\n" +
+//"#...##..#.\n" +
+//"####.#...#\n" +
+//"##.##.###.\n" +
+//"##...#.###\n" +
+//".#.#.#..##\n" +
+//"..#....#..\n" +
+//"###...#.#.\n" +
+//"..###..###\n" +
+//"\n" +
+//"Tile 1951:\n" +
+//"#.##...##.\n" +
+//"#.####...#\n" +
+//".....#..##\n" +
+//"#...######\n" +
+//".##.#....#\n" +
+//".###.#####\n" +
+//"###.##.##.\n" +
+//".###....#.\n" +
+//"..#.#..#.#\n" +
+//"#...##.#..\n" +
+//"\n" +
+//"Tile 1171:\n" +
+//"####...##.\n" +
+//"#..##.#..#\n" +
+//"##.#..#.#.\n" +
+//".###.####.\n" +
+//"..###.####\n" +
+//".##....##.\n" +
+//".#...####.\n" +
+//"#.##.####.\n" +
+//"####..#...\n" +
+//".....##...\n" +
+//"\n" +
+//"Tile 1427:\n" +
+//"###.##.#..\n" +
+//".#..#.##..\n" +
+//".#.##.#..#\n" +
+//"#.#.#.##.#\n" +
+//"....#...##\n" +
+//"...##..##.\n" +
+//"...#.#####\n" +
+//".#.####.#.\n" +
+//"..#..###.#\n" +
+//"..##.#..#.\n" +
+//"\n" +
+//"Tile 1489:\n" +
+//"##.#.#....\n" +
+//"..##...#..\n" +
+//".##..##...\n" +
+//"..#...#...\n" +
+//"#####...#.\n" +
+//"#..#.#.#.#\n" +
+//"...#.#.#..\n" +
+//"##.#...##.\n" +
+//"..##.##.##\n" +
+//"###.##.#..\n" +
+//"\n" +
+//"Tile 2473:\n" +
+//"#....####.\n" +
+//"#..#.##...\n" +
+//"#.##..#...\n" +
+//"######.#.#\n" +
+//".#...#.#.#\n" +
+//".#########\n" +
+//".###.#..#.\n" +
+//"########.#\n" +
+//"##...##.#.\n" +
+//"..###.#.#.\n" +
+//"\n" +
+//"Tile 2971:\n" +
+//"..#.#....#\n" +
+//"#...###...\n" +
+//"#.#.###...\n" +
+//"##.##..#..\n" +
+//".#####..##\n" +
+//".#..####.#\n" +
+//"#..#.#..#.\n" +
+//"..####.###\n" +
+//"..#.#.###.\n" +
+//"...#.#.#.#\n" +
+//"\n" +
+//"Tile 2729:\n" +
+//"...#.#.#.#\n" +
+//"####.#....\n" +
+//"..#.#.....\n" +
+//"....#..#.#\n" +
+//".##..##.#.\n" +
+//".#.####...\n" +
+//"####.#.#..\n" +
+//"##.####...\n" +
+//"##..#.##..\n" +
+//"#.##...##.\n" +
+//"\n" +
+//"Tile 3079:\n" +
+//"#.#.#####.\n" +
+//".#..######\n" +
+//"..#.......\n" +
+//"######....\n" +
+//"####.#..#.\n" +
+//".#...#.##.\n" +
+//"#.#####.##\n" +
+//"..#.###...\n" +
+//"..#.......\n" +
+//"..#.###...";
+
+//            Part2(test);
             
 
             logger.WriteLine("- Pt1 - "+Part1(input));  // 8581320593371
