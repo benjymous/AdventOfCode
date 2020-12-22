@@ -162,7 +162,7 @@ namespace Advent.MMXX.Test
             }
             Assert.AreEqual(orientation % 8, tile.Orientation);
             Assert.AreEqual(expected, tile.Transformed().Trim().Replace("\r", ""));
-            Assert.AreEqual(tile.Edges[0], tile.Transformed().Substring(0, 3));
+            Assert.AreEqual(tile.Edges[0], tile.Transformed().Substring(0, 3)); // top edge should match transform
         }
 
         [TestCategory("Regression")]

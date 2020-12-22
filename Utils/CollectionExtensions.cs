@@ -183,7 +183,22 @@ namespace Advent.Utils
             return maxIndex;
         }
 
+        public static int CombinedHashCode<T>(this IEnumerable<T> sequence)
+        {
+            HashCode hc = new HashCode();
+            foreach (var v in sequence)
+            {
+                hc.Add(v);
+            }
+            return hc.ToHashCode();
+        }
 
+        public static Queue<T> ToQueue<T>(this IEnumerable<T> sequence) => new Queue<T>(sequence);
+
+        public static void EnqueueRange<T>(this Queue<T> queue, IEnumerable<T> sequence)
+        {
+            foreach (var t in sequence) queue.Enqueue(t);
+        }
 
     }
 
