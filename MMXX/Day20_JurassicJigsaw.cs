@@ -95,10 +95,6 @@ namespace Advent.MMXX
 
             0    1    2    3    4    5    6    7
 
-            0A1  3D0  2C3  1B2  1A0  2B1  3C2  0D3
-            DXB  CXA  BXD  AXC  BXD  CXA  DXB  AXC
-            3C2  2B1  1A0  0D3  2C3  3D0  0A1  1B2
-
             0A1  3D0  2C3  1B2  0D3  1A0  2B1  3C2
             DXB  CXA  BXD  AXC  AXC  BXD  CXA  DXB
             3C2  2B1  1A0  0D3  1B2  2C3  3D0  0A1
@@ -127,13 +123,13 @@ namespace Advent.MMXX
                         return Grid[x][y];
 
                     case 5:
-                        return Grid[y][w - x];
+                        return Grid[y][w-x];
 
                     case 6:
-                        return Grid[w - x][h - y];
+                        return Grid[w-x][h-y];
 
                     case 7:
-                        return Grid[h - y][x];
+                        return Grid[h-y][x];
                 }
 
                 throw new Exception("Bad orientation");
