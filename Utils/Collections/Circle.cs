@@ -8,9 +8,29 @@ namespace Advent.Utils.Collections
     {
         public T Value { get; set; }
 
+        Dictionary<T, Circle<T>> index;
+
         public Circle(T v, Circle<T> p = null, Circle<T> n = null)
         {
+            if (p == null)
+            {
+                index = new Dictionary<T, Circle<T>>();
+            }
+            else
+            {
+                index = p.index;
+            }
+            
+            index[v] = this;
+
             Value = v;
+
+            Insert(p, n);
+        }
+
+        void Insert(Circle<T> p = null, Circle<T> n = null)
+        {
+            orphaned = false;
             prev = p;
             next = n;
 
@@ -61,21 +81,62 @@ namespace Advent.Utils.Collections
             return new Circle<T>(v, this, this.next);
         }
 
+        public Circle<T> InsertNext(Circle<T> v)
+        {
+            v.Insert(this, this.next);
+            return v;
+        }
+
+        public Circle<T> PopNext()
+        {
+            var next = Next();
+            next.Remove();
+            return next;
+        }
+
+        public Circle<T> InsertRange(IEnumerable<T> vals)
+        {
+            var current = this;
+            foreach (var v in vals)
+            {
+                current = current.InsertNext(v);
+            }
+            return current;
+        }
+
+        public Circle<T> InsertRange(IEnumerable<Circle<T>> vals)
+        {
+            var current = this;
+            foreach (var v in vals)
+            {
+                current = current.InsertNext(v);
+            }
+            return current;
+        }
+
         public Circle<T> Remove()
         {
             var removed = this;
+            orphaned = true;
             removed.prev.next = removed.next;
             removed.next.prev = removed.prev;
 
             return removed.next;
         }
 
-        public int Count() => Values().Count();
+        public int Count() => index.Count();
+
+        public Circle<T> Find(T v)
+        {
+            var val = index[v]; return val.orphaned ? null : val;       
+        }
 
         public bool Solo() => next == this;
 
         Circle<T> prev;
         Circle<T> next;
+
+        bool orphaned = false;
 
         public IEnumerable<T> Values()
         {
