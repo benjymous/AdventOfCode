@@ -79,9 +79,9 @@ namespace Advent.MMXX
 
             public IEnumerable<(int x, int y, int z)> Range()
             {
-                foreach (var y in YRange.RangeBuffered(5))
+                foreach (var y in YRange.RangeBuffered(1))
                 {
-                    foreach (var x in XRange.RangeBuffered(5))
+                    foreach (var x in XRange.RangeBuffered(1))
                     {
                         yield return ((int)x, (int)y, (int)(-x-y));
                     }
