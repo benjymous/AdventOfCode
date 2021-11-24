@@ -1,0 +1,93 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Advent.Utils.Vectors
+{
+    public class HexVector
+    {
+        public int X { get; set; } = 0;
+        public int Y { get; set; } = 0;
+        public int Z { get; set; } = 0;
+
+        public bool Pointy { get; set; } = true;
+
+        public HexVector(int x, int y, int z, bool pointy=true)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+            Pointy = pointy;
+        }
+
+        // east/west sides
+        static Dictionary<string, (int x, int y, int z)> directions_pointy = new Dictionary<string, (int x, int y, int z)>()
+        {
+            { "ne", (+1,-1, 0) },
+            { "e",  (+1, 0, -1) },
+            { "se", (0, +1, -1) },
+            { "sw", (-1, +1, 0) },
+            { "w",  (-1, 0, +1) },
+            { "nw", (0, -1, +1) }
+        };
+
+        // flat topped north
+        static Dictionary<string, (int x, int y, int z)> directions_flat = new Dictionary<string, (int x, int y, int z)>()
+        {
+            { "ne", (+1,-1, 0) },
+            { "se",  (+1, 0, -1) },
+            { "s", (0, +1, -1) },
+            { "sw", (-1, +1, 0) },
+            { "nw",  (-1, 0, +1) },
+            { "n", (0, -1, +1) }
+        };
+
+        public Dictionary<string, (int x, int y, int z)> Directions
+        {
+            get
+            {
+                if (Pointy) return directions_pointy;
+                return directions_flat;
+            }
+        }
+
+        public void Translate((int x, int y, int z) dir)
+        {
+            X += dir.x;
+            Y += dir.y;
+            Z += dir.z;
+        }
+
+        public void TranslateHex(string dir)  => Translate(Directions[dir]);
+
+        private static HexVector Subtract(HexVector a, HexVector b)
+        {
+            return new HexVector(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+        }
+
+        public static int Distance(HexVector a, HexVector b)
+        {
+            var vec = Subtract(a, b);
+            return (Math.Abs(vec.X) + Math.Abs(vec.Y) + Math.Abs(vec.Z)) / 2;
+        }
+
+        public int Distance(HexVector other)
+        {
+            return Distance(this, other);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is HexVector vector &&
+                   X == vector.X &&
+                   Y == vector.Y &&
+                   Z == vector.Z &&
+                   Pointy == vector.Pointy;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(X, Y, Z, Pointy);
+        }
+    }
+}
