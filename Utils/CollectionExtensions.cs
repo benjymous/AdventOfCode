@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Advent.Utils
+namespace AoC.Utils
 {
     public static class CollectionExtensions
     {
@@ -155,6 +155,11 @@ namespace Advent.Utils
         public static Int64 Product(this IEnumerable<int> vals)
         {
             return vals.Aggregate((Int64)1, (total, val) => total * val);
+        }
+
+        public static int Xor(this IEnumerable<int> vals)
+        {
+            return vals.Aggregate(0, (total, val) => total ^ val);
         }
 
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)

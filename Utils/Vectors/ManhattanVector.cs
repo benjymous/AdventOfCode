@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Text;
 
-namespace Advent.Utils.Vectors
+namespace AoC.Utils.Vectors
 {
 
     public interface IVec

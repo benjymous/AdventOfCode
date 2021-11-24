@@ -17,8 +17,11 @@
 
 
   <ItemGroup>
+    <Compile Remove="MMXIX\**" />
     <Compile Remove="test\**" />
+    <EmbeddedResource Remove="MMXIX\**" />
     <EmbeddedResource Remove="test\**" />
+    <None Remove="MMXIX\**" />
     <None Remove="test\**" />
     
     <Compile Remove="intcomp\**" />
@@ -28,10 +31,6 @@
     <Compile Remove="IntCpuCmd\**" />
     <EmbeddedResource Remove="IntCpuCmd\**" />
     <None Remove="IntCpuCmd\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="MMXIX\" />
   </ItemGroup>
 
   <ItemGroup>
