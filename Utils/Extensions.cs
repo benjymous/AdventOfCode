@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Advent.Utils
+namespace AoC.Utils
 {
 
     public static class Extensions

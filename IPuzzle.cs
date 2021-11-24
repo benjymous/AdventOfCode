@@ -1,4 +1,4 @@
-namespace Advent
+namespace AoC
 {
     public interface IPuzzle
     {

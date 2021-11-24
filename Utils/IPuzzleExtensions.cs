@@ -1,4 +1,4 @@
-namespace Advent.Utils
+namespace AoC.Utils
 {
     public static class IPuzzleExtensions
     {

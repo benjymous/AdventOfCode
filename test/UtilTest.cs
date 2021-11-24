@@ -1,9 +1,13 @@
-﻿using Advent.Utils.Vectors;
+﻿using AoC.Utils;
+using AoC.Utils.Collections;
+using AoC.Utils.Vectors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.Linq;
 
 [assembly: Parallelize(Workers = 0, Scope = ExecutionScope.MethodLevel)]
 
-namespace Advent.Test
+namespace AoC.Test
 {
     [TestCategory("Test")]
     [TestClass]
@@ -80,7 +84,63 @@ namespace Advent.Test
             Assert.AreEqual(expected, b.Distance(a));
         }
 
+        [DataTestMethod]
+        public void CircleCreateTest()
+        {
+            var circle = Circle<int>.Create(Enumerable.Range(0, 10));
 
+            Assert.AreEqual("0,1,2,3,4,5,6,7,8,9", string.Join(',', circle.Values()));
+        }
+
+        [DataTestMethod]
+        public void CircleRemoveTest()
+        {
+            var circle = Circle<int>.Create(Enumerable.Range(0, 10));
+
+            circle = circle.Remove(5);
+
+            Assert.AreEqual("5,6,7,8,9", string.Join(',', circle.Values()));
+        }
+
+        [DataTestMethod]
+        public void CircleReverseTest()
+        {
+            var circle = Circle<int>.Create(Enumerable.Range(0, 10));
+
+            circle = circle.Reverse(5);
+
+            Assert.AreEqual("4,3,2,1,0,5,6,7,8,9", string.Join(',', circle.Values()));
+        }
+
+        [DataTestMethod]
+        public void CircleReverseTest2()
+        {
+            var circle = Circle<int>.Create(Enumerable.Range(0, 10));
+
+            circle.Forward(3).Reverse(5);
+
+            Assert.AreEqual("0,1,2,7,6,5,4,3,8,9", string.Join(',', circle.Values()));
+        }
+
+
+        [DataTestMethod]
+        public void XorTest()
+        {
+            var nums = new List<int> { 65, 27, 9, 1, 4, 3, 40, 50, 91, 7, 6, 0, 2, 5, 68, 22 };
+
+            Assert.AreEqual(64, nums.Xor());
+        }
+
+
+        [DataTestMethod]
+        [DataRow(1, "01")]
+        [DataRow(10, "0a")]
+        [DataRow(15, "0f")]
+        [DataRow(255, "ff")]
+        public void HexTest(int val, string expected)
+        {
+            Assert.AreEqual(expected, val.ToHex());
+        }
 
     }
 }

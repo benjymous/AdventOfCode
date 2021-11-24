@@ -1,11 +1,12 @@
-﻿using Advent.Utils;
+﻿using AoC.Utils;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Advent
+namespace AoC
+
 {
     class Program
     {

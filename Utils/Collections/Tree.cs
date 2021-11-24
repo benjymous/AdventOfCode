@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Advent.Utils.Collections
+namespace AoC.Utils.Collections
 {
     public class TreeNode<TKeyType, TDataType>
     {

@@ -1,9 +1,9 @@
-using Advent.Utils.Vectors;
+using AoC.Utils.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Advent.Utils.Pathfinding
+namespace AoC.Utils.Pathfinding
 {
     public interface IMap<TCoordinateType>
     {

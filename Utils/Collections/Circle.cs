@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Advent.Utils.Collections
+namespace AoC.Utils.Collections
 {
 
     public class Circle<T>
@@ -9,6 +9,14 @@ namespace Advent.Utils.Collections
         public T Value { get; set; }
 
         Dictionary<T, Circle<T>> index;
+
+        public static Circle<T> Create(IEnumerable<T> input)
+        {
+            Circle<T> first = new Circle<T>(input.First());
+            var current = first;
+            current.InsertRange(input.Skip(1));
+            return first;
+        }
 
         public Circle(T v, Circle<T> p = null, Circle<T> n = null)
         {
@@ -124,11 +132,40 @@ namespace Advent.Utils.Collections
             return removed.next;
         }
 
+        public Circle<T> Remove(int count)
+        {
+            var current = this;
+            while (!Solo() && count-- > 0)
+            {
+                current = current.Remove();
+            }
+            return current;
+        }
+
+        public void Set(T val)
+        {
+            this.Value = val;
+        }
+
         public int Count() => index.Count();
 
         public Circle<T> Find(T v)
         {
             var val = index[v]; return val.orphaned ? null : val;       
+        }
+
+        public Circle<T> Reverse(int count)
+        {
+            var vals = Values().Take(count).Reverse();
+
+            var current = this;
+            foreach(var i in vals)
+            {
+                current.Set(i);
+                current = current.Forward(1);
+            }
+
+            return this;
         }
 
         public bool Solo() => next == this;
