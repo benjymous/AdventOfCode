@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Advent.Utils.Vectors
 {
+    // https://www.redblobgames.com/grids/hexagons/
     public class HexVector
     {
         public int X { get; set; } = 0;
@@ -35,20 +36,16 @@ namespace Advent.Utils.Vectors
         static Dictionary<string, (int x, int y, int z)> directions_flat = new Dictionary<string, (int x, int y, int z)>()
         {
             { "ne", (+1,-1, 0) },
-            { "se",  (+1, 0, -1) },
-            { "s", (0, +1, -1) },
+            { "se", (+1, 0, -1) },
+            { "s",  (0, +1, -1) },
             { "sw", (-1, +1, 0) },
-            { "nw",  (-1, 0, +1) },
-            { "n", (0, -1, +1) }
+            { "nw", (-1, 0, +1) },
+            { "n",  (0, -1, +1) }
         };
 
         public Dictionary<string, (int x, int y, int z)> Directions
         {
-            get
-            {
-                if (Pointy) return directions_pointy;
-                return directions_flat;
-            }
+            get => Pointy ? directions_pointy : directions_flat;
         }
 
         public void Translate((int x, int y, int z) dir)
@@ -58,12 +55,9 @@ namespace Advent.Utils.Vectors
             Z += dir.z;
         }
 
-        public void TranslateHex(string dir)  => Translate(Directions[dir]);
+        public void TranslateHex(string dir) => Translate(Directions[dir]);
 
-        private static HexVector Subtract(HexVector a, HexVector b)
-        {
-            return new HexVector(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
-        }
+        private static (int X, int Y, int Z) Subtract(HexVector a, HexVector b) => (a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 
         public static int Distance(HexVector a, HexVector b)
         {
@@ -71,10 +65,7 @@ namespace Advent.Utils.Vectors
             return (Math.Abs(vec.X) + Math.Abs(vec.Y) + Math.Abs(vec.Z)) / 2;
         }
 
-        public int Distance(HexVector other)
-        {
-            return Distance(this, other);
-        }
+        public int Distance(HexVector other) => Distance(this, other);
 
         public override bool Equals(object obj)
         {
@@ -85,9 +76,6 @@ namespace Advent.Utils.Vectors
                    Pointy == vector.Pointy;
         }
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(X, Y, Z, Pointy);
-        }
+        public override int GetHashCode() => HashCode.Combine(X, Y, Z, Pointy);
     }
 }
