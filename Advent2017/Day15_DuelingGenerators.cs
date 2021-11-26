@@ -10,22 +10,19 @@ namespace AoC.Advent2017
     {
         public string Name { get { return "2017-15"; } }
 
-        public static IEnumerable<Int64> Generator(Int64 input, int factor, int multiple)
+        public static IEnumerable<int> Generator(int value, int factor, int multiple)
         {
             while (true)
             {
-                Int64 val = input * factor;
-                Int64 remainder = val % 2147483647;
-                if (multiple==0 || (remainder % multiple) == 0) 
-                    yield return remainder;
-                input = remainder;
+                value = (int)(((Int64)value * factor) % 2147483647);
+                if (value % multiple == 0) yield return value;
             }
         }
 
-        public static IEnumerable<Int64> GeneratorA(Int64 input, bool picky) => Generator(input, 16807, picky ? 4 : 0);
-        public static IEnumerable<Int64> GeneratorB(Int64 input, bool picky) => Generator(input, 48271, picky ? 8 : 0);
+        public static IEnumerable<int> GeneratorA(int input, bool picky) => Generator(input, 16807, picky ? 4 : 1);
+        public static IEnumerable<int> GeneratorB(int input, bool picky) => Generator(input, 48271, picky ? 8 : 1);
 
-        public static IEnumerable<Tuple<Int64, Int64>> GeneratorDual(Int64 inputA, Int64 inputB, bool picky)
+        public static IEnumerable<Tuple<int, int>> GeneratorDual(int inputA, int inputB, bool picky)
         {
             var gena = GeneratorA(inputA, picky).GetEnumerator();
             var genb = GeneratorB(inputB, picky).GetEnumerator();
