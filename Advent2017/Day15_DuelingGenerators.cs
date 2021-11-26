@@ -43,15 +43,12 @@ namespace AoC.Advent2017
             var values = Util.ExtractNumbers(input);
             foreach (var pair in GeneratorDual(values[0], values[1], picky).Take(pairs))
             {
-                //Console.WriteLine($"{pair.Item1} {pair.Item2}");
+                var seq1 = pair.Item1.BinarySequence().Take(16);
+                var seq2 = pair.Item2.BinarySequence().Take(16);
 
-                var str1 = Convert.ToString(pair.Item1, 2);
-                var str2 = Convert.ToString(pair.Item2, 2);
-
-                if (str2.EndsWith(str1.TakeLast(16).AsString()))
+                if (seq1.SequenceEqual(seq2))
                 {
                     matches++;
-                    Console.Write(".");
                 }
             }
 
