@@ -28,7 +28,7 @@ namespace AoC.Advent2017.Test
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void KnotHash_Part2_Regression()
+        public void HexEd_Part2_Regression()
         {
             Assert.AreEqual(1544, Advent2017.Day11.Part2(input));
         }

@@ -142,6 +142,18 @@ namespace AoC.Utils
             return new string(str.Reverse().ToArray());
         }
 
+        public static IEnumerable<bool> BitSequenceFromHex(this string str)
+        {
+            foreach (var ch in str)
+            {
+                var b = Convert.ToString(Convert.ToInt32(ch.ToString(), 16), 2).PadLeft(4, '0');
+                foreach (var bch in b)
+                {
+                    yield return bch == '1';
+                }
+            }
+        }
+
 
     }
 

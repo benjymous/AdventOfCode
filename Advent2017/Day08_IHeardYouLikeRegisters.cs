@@ -129,7 +129,7 @@ namespace AoC.Advent2017
             {
                 instr.Act(values);
 
-                runningMax = Math.Max(runningMax, values.Any() ? values.Max() : 0);
+                runningMax = Math.Max(runningMax, values.Max());
             }
 
             return (values.Max(), runningMax);

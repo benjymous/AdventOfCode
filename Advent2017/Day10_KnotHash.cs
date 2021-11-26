@@ -74,6 +74,14 @@ namespace AoC.Advent2017
             return cycle;
         }
 
+        public static string KnotHash(string input)
+        {
+            var instructions = input.Trim().ToList().Select(x => (int)x).ToList();
+            instructions.AddRange(new int[] { 17, 31, 73, 47, 23 });
+
+            return RunHash(256, instructions, 64).KnotHash();
+        }
+
         
 
 
@@ -86,10 +94,7 @@ namespace AoC.Advent2017
 
         public static string Part2(string input)
         {
-            var instructions = input.Trim().ToList().Select(x => (int)x).ToList();
-            instructions.AddRange(new int[] { 17, 31, 73, 47, 23 });
-
-            return RunHash(256, instructions, 64).KnotHash();
+            return KnotHash(input);
         }
 
         public void Run(string input, ILogger logger)
