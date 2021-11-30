@@ -15,7 +15,7 @@ namespace AoC.Utils.Vectors
     {
         public ManhattanVectorN(int[] components)
         {
-            Component = components;
+            Component = components.ToArray();
         }
 
         public ManhattanVectorN(string val)
@@ -107,6 +107,18 @@ namespace AoC.Utils.Vectors
             return distance;
         }
 
+        public int Length
+        {
+            get
+            {
+                int distance = 0;
+                for (var i = 0; i < ComponentCount; ++i)
+                {
+                    distance += Math.Abs(Component[i]);
+                }
+                return distance;
+            }
+        }
 
         public static bool operator ==(ManhattanVectorN v1, ManhattanVectorN v2)
         {
@@ -218,6 +230,13 @@ namespace AoC.Utils.Vectors
 
         public static ManhattanVector2 operator +(ManhattanVector2 a, ManhattanVector2 b) => new ManhattanVector2((ManhattanVectorN)a + (ManhattanVectorN)b);
 
+        public static ManhattanVector2 operator +(ManhattanVector2 a, Direction2 b) 
+        {
+            var res = new ManhattanVector2(a);
+            res.Offset(b);
+            return res;
+        }
+
         public static ManhattanVector2 operator -(ManhattanVector2 a, ManhattanVector2 b) => new ManhattanVector2((ManhattanVectorN)a - (ManhattanVectorN)b);
 
         public static ManhattanVector2 Zero = new ManhattanVector2(0, 0);
@@ -288,6 +307,12 @@ namespace AoC.Utils.Vectors
     {
         public int DX { get; set; } = 0;
         public int DY { get; set; } = 0;
+
+        public Direction2(Direction2 dir)
+        {
+            DX = dir.DX;
+            DY = dir.DY;
+        }
 
         public Direction2(int dx, int dy)
         {

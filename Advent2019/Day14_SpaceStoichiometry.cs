@@ -44,7 +44,7 @@ namespace AoC.Advent2019
             {
                 var halves = input.Split("=>");
 
-                inputs = Util.Parse<Component>(halves[0], ',');
+                inputs = Util.Parse<Component>(halves[0], ",");
                 output = new Component(halves[1]);
             }
 

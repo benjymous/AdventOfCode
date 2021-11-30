@@ -56,12 +56,19 @@ namespace AoC
                         .ToList();
         }
 
-        public static List<T> Parse<T>(string input, char splitChar ='\n')
+        public static List<T> Parse<T,C>(string input, C cache, string splitter = "\n")
         {
-            return Parse<T>(input, splitChar.ToString());
+            return Parse<T,C>(input.Split(splitter)
+                                 .Where(x => !string.IsNullOrWhiteSpace(x)), cache);
         }
 
-        public static List<T> Parse<T>(string input, string splitter)
+        public static List<T> Parse<T,C>(IEnumerable<string> input, C cache)
+        {
+            return input.Select(line => (T)Activator.CreateInstance(typeof(T), new object[] { line, cache }))
+                        .ToList();
+        }
+
+        public static List<T> Parse<T>(string input, string splitter = "\n")
         {
             return Parse<T>(input.Split(splitter)
                                  .Where(x => !string.IsNullOrWhiteSpace(x)));
@@ -241,7 +248,7 @@ namespace AoC
         {
             while (true)
             {
-                var hashes = Enumerable.Range(start, blockSize).AsParallel().Where(n => IsHash(n, baseStr, numZeroes));
+                var hashes = Enumerable.Range(start, blockSize).Where(n => IsHash(n, baseStr, numZeroes));
                 if (hashes.Any())
                 {
                     return hashes.First();

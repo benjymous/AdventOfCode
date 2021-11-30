@@ -1,14 +1,15 @@
-﻿// using System;
+﻿// using AoC.Utils;
+// using System;
 // using System.Collections.Generic;
 // using System.Linq;
 // using System.Text;
 
-// namespace Advent.MMXX
+// namespace AoC.Advent2021
 // {
 //     public class Day16 : IPuzzle
 //     {
 //         public string Name { get { return "2021-16";} }
- 
+
 //         public static int Part1(string input)
 //         {
 //             return 0;
