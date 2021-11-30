@@ -68,8 +68,8 @@ namespace AoC.Advent2016
 
             //Console.WriteLine(CrackPassword2("abc"));
 
-            //logger.WriteLine("- Pt1 - " + Part1(input, logger));
-            //logger.WriteLine("- Pt2 - " + Part2(input, logger));
+            logger.WriteLine("- Pt1 - " + Part1(input, logger));
+            logger.WriteLine("- Pt2 - " + Part2(input, logger));
         }
     }
 }

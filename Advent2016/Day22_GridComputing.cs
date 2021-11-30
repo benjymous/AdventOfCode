@@ -1,4 +1,6 @@
 ﻿using AoC.Utils;
+using AoC.Utils.Pathfinding;
+using AoC.Utils.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +13,7 @@ namespace AoC.Advent2016
 
         class Node
         {
-            public int x;
-            public int y;
+            public ManhattanVector2 position;
             public int size;
             public int used;
             public int free;
@@ -20,14 +21,13 @@ namespace AoC.Advent2016
             public Node(string line)
             {
                 var bits = Util.ExtractNumbers(line.Select(c => (c >= '0' && c <= '9') ? c : ' '));
-                x = bits[0];
-                y = bits[1];
+                position = new ManhattanVector2(bits[0], bits[1]);
                 size = bits[2];
                 used = bits[3];
                 free = bits[4];
             }
 
-            public override string ToString() => $"{x},{y} : U{used}:F{free} [{size}]";
+            public override string ToString() => $"{position} : U{used}:F{free} [{size}]";
         }
 
         static IEnumerable<Node> Parse(string input) => Util.Parse<Node>(Util.Split(input).Where(line => line.StartsWith("/dev/")));
@@ -41,19 +41,34 @@ namespace AoC.Advent2016
             return pairs.Count();
         }
 
+        class Walkable : IIsWalkable<Node>
+        {
+            public Walkable(int max)
+            {
+                maxMovable = max;
+            }
+            int maxMovable = 0;
+            public bool IsWalkable(Node cell)
+            {
+                return cell.used < maxMovable;
+            }
+        }
+
         public static int Part2(string input)
         {
             var nodes = Parse(input);
 
-            var grid = nodes.ToDictionary(el => $"{el.x},{el.y}", el => el);
-
-            var sourceX = nodes.Where(n => n.y == 0).Select(n => n.x).Max();
+            var grid = nodes.ToDictionary(el => el.position.ToString(), el => el);
+            var sourceX = nodes.Where(n => n.position.Y == 0).Select(n => n.position.X).Max();
 
             var empty = nodes.Where(n => n.used == 0).First();
 
-            var steps = 0;
-            steps += Math.Abs((sourceX - 1) - empty.x); // move empty cell to N-1th column
-            steps += empty.y; // Move empty to 0th row
+            GridMap<Node> map = new GridMap<Node>(new Walkable(empty.free));
+            map.data = grid;
+
+            // move empty square to the left of the payload (avoiding the unmovable squares)
+            var steps = AStar<ManhattanVector2>.FindPath(map, empty.position, new ManhattanVector2(sourceX, 0)).Count()-1;
+
             steps++; // move payload left
             steps += 5 * (sourceX - 1); // repeated cycles of moving empty cell to left of payload, and moving payload left again
 
@@ -68,7 +83,7 @@ namespace AoC.Advent2016
             //Util.Test(Part2(test), 7);
 
             logger.WriteLine("- Pt1 - " + Part1(input));
-            //logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

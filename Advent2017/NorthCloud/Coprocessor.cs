@@ -300,7 +300,7 @@ namespace AoC.Advent2017.NorthCloud
                 if (reverseMap.TryGetValue(bits[0], out int icode))
                 {
                     // text mnemonic;
-                    var rest = Util.Parse<Variant>(line.Substring(4), ' ').ToArray();
+                    var rest = Util.Parse<Variant>(line.Substring(4), " ").ToArray();
 
                     instrs.Add(new InstructionLine(InstrMap[icode], rest));
                 }

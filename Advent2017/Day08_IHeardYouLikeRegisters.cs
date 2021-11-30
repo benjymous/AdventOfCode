@@ -52,10 +52,11 @@ namespace AoC.Advent2017
 
         class Instruction
         {
-            static Dictionary<string, int> RegLookup = new Dictionary<string, int>();
+            Dictionary<string, int> RegLookup;
 
-            public Instruction(string line)
-            {           
+            public Instruction(string line, Dictionary<string, int> lookup)
+            {
+                RegLookup = lookup;
                 Instr = Decode(line);
             }
 
@@ -68,7 +69,7 @@ namespace AoC.Advent2017
                 return RegLookup[name];
             }
 
-            static int MaxRegs => RegLookup.Count();
+            int MaxRegs => RegLookup.Count();
 
             // b inc 5 if a > 1
             private (int RegToChange, int Amount, int RegToCheck, Operator Operator, int CheckValue) Decode(string line)
@@ -120,7 +121,8 @@ namespace AoC.Advent2017
 
         public static (int largestEnd, int largestRecord) Run(string input)
         {
-            var instructions = Util.Parse<Instruction>(input);
+            Dictionary<string, int> regLookup = new Dictionary<string, int>();
+            var instructions = Util.Parse<Instruction, Dictionary<string, int>>(input, regLookup);
             var values = new int[1000];
 
             int runningMax = 0;
