@@ -1,12 +1,4 @@
-﻿using AoC.Utils;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace AoC.Advent2021
+﻿namespace AoC.Advent2021
 {
     public class Day02 : IPuzzle
     {
