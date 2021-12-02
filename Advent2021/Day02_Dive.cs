@@ -1,8 +1,10 @@
 ﻿using AoC.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AoC.Advent2021
 {
@@ -10,32 +12,32 @@ namespace AoC.Advent2021
     {
         public string Name { get { return "2021-02"; } }
 
-        static IEnumerable<(char cmd,int dist)> Parse(string input)
+        struct Instruction
         {
-            var lines = input.Trim().Split("\n");
-            foreach (var line in lines)
+            public Instruction(char command, int distance)
             {
-                var bits = line.Split(" ");
-                int dist = int.Parse(bits[1]);
-                yield return (bits[0][0], dist);
+                Command = command;
+                Distance = distance;
             }
+
+            public char Command;
+            public int Distance;
         }
 
         public static int Part1(string input)
         {
-            var data = Parse(input);
+            var data = Util.RegexParse<Instruction>(input, @"(.).+ (\d+)");
 
             int x = 0;
             int y = 0;
 
             foreach (var line in data)
             {
-                switch (line.cmd)
+                switch (line.Command)
                 {
-                    case 'f': x+= line.dist; break;
-                    case 'u': y-= line.dist; break;
-                    case 'd': y+= line.dist; break;
-
+                    case 'f': x+= line.Distance; break;
+                    case 'u': y-= line.Distance; break;
+                    case 'd': y+= line.Distance; break;
                 }
             }
 
@@ -44,7 +46,7 @@ namespace AoC.Advent2021
 
         public static int Part2(string input)
         {
-            var data = Parse(input);
+            var data = Util.RegexParse<Instruction>(input, @"(.).+ (\d+)");
 
             int x = 0;
             int y = 0;
@@ -52,11 +54,11 @@ namespace AoC.Advent2021
 
             foreach (var line in data)
             {
-                switch (line.cmd)
+                switch (line.Command)
                 {
-                    case 'f': x += line.dist; y += (aim * line.dist); break;
-                    case 'u': aim -= line.dist; break;
-                    case 'd': aim += line.dist; break;
+                    case 'f': x += line.Distance; y += (aim * line.Distance); break;
+                    case 'u': aim -= line.Distance; break;
+                    case 'd': aim += line.Distance; break;
                 }
             }
 

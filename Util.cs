@@ -2,8 +2,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AoC
 {
@@ -72,6 +74,42 @@ namespace AoC
         {
             return Parse<T>(input.Split(splitter)
                                  .Where(x => !string.IsNullOrWhiteSpace(x)));
+        }
+
+        static T RegexCreate<T>(string line, string regexPattern)
+        {
+            var constructor = typeof(T).GetConstructors().First();
+
+            var consParams = constructor.GetParameters();
+
+            var matches = Regex.Matches(line, regexPattern);
+
+            var vals = matches[0].Groups.Values.Skip(1).Select(g => g.Value).ToArray();
+
+            List<object> paramVals = new List<object>();
+
+            for (int i = 0; i < consParams.Count(); ++i)
+            {
+                TypeConverter typeConverter = TypeDescriptor.GetConverter(consParams[i].ParameterType);
+                object propValue = typeConverter.ConvertFromString(vals[i]);
+                paramVals.Add(propValue);
+
+            }
+
+            return (T)Activator.CreateInstance(typeof(T), paramVals.ToArray());
+        }
+
+        public static IEnumerable<T> RegexParse<T>(IEnumerable<string> input, string regexPattern)
+        {
+
+            return input.Select(line => RegexCreate<T>(line, regexPattern))
+            .ToList();
+        }
+
+        public static IEnumerable<T> RegexParse<T>(string input, string regexPattern, string splitter = "\n")
+        {
+            return RegexParse<T>(input.Split(splitter)
+                     .Where(x => !string.IsNullOrWhiteSpace(x)), regexPattern);
         }
 
         public static int[] Parse32(string input, char splitChar = '\0') => Parse32(Split(input, splitChar));
