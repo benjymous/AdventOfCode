@@ -8,15 +8,21 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AoC
-{
+{ 
+    public enum QuestionPart
+    {
+        Part1 = 1,
+        Part2 = 2
+    }
+
+    public static class QuestionPartExtensions
+    {
+        public static bool One(this QuestionPart part) => part == QuestionPart.Part1;
+        public static bool Two(this QuestionPart part) => part == QuestionPart.Part2;
+    }
+
     public class Util
     {
-        public enum QuestionPart
-        {
-            Part1 = 1,
-            Part2 = 2
-        }
-
         public static IEnumerable<IPuzzle> GetPuzzles()
         {
             return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
