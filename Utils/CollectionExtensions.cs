@@ -127,6 +127,17 @@ namespace AoC.Utils
             }
         }
 
+        public static IEnumerable<IEnumerable<int>> Windows(this IEnumerable<int> input, int count)
+        {
+            int i = 0;
+            while (true)
+            {
+                var vals = input.Skip(i++).Take(count);
+                if (vals.Count() < count) break;
+                yield return vals;
+            }
+        }
+
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items)
         {
             var rnd = new Random();
@@ -149,6 +160,22 @@ namespace AoC.Utils
                 {
                     yield return array2d[row, col];
                 }
+            }
+        }
+
+        public static IEnumerable<T> Row<T>(this T[,] array2d, int row)
+        {
+            for (int col = 0; col < array2d.GetLength(1); col++)
+            {
+                yield return array2d[row, col];
+            }
+        }
+
+        public static IEnumerable<T> Column<T>(this T[,] array2d, int col)
+        {
+            for (int row = 0; row < array2d.GetLength(0); row++)
+            {
+                yield return array2d[row, col];
             }
         }
 
@@ -196,6 +223,13 @@ namespace AoC.Utils
                 hc.Add(v);
             }
             return hc.ToHashCode();
+        }
+
+        public static IEnumerable<(int Index, T Value)> WithIndex<T>(this IEnumerable<T> sequence)
+        {
+            int i = 0;
+            return from v in sequence
+                   select (i++, v);
         }
 
         public static Queue<T> ToQueue<T>(this IEnumerable<T> sequence) => new Queue<T>(sequence);

@@ -6,6 +6,7 @@
 
         struct Instruction
         {
+            [Regex(@"(.).+ (\d+)")]
             public Instruction(char command, int distance)
             {
                 Command = command;
@@ -18,7 +19,7 @@
 
         public static int Part1(string input)
         {
-            var data = Util.RegexParse<Instruction>(input, @"(.).+ (\d+)");
+            var data = Util.RegexParse<Instruction>(input);
 
             int x = 0;
             int y = 0;
@@ -38,7 +39,7 @@
 
         public static int Part2(string input)
         {
-            var data = Util.RegexParse<Instruction>(input, @"(.).+ (\d+)");
+            var data = Util.RegexParse<Instruction>(input);
 
             int x = 0;
             int y = 0;

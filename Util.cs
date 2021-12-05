@@ -76,22 +76,33 @@ namespace AoC
                                  .Where(x => !string.IsNullOrWhiteSpace(x)));
         }
 
-        static T RegexCreate<T>(string line, string regexPattern) =>
-            (T)Activator.CreateInstance
-            (
-                typeof(T), Enumerable.Zip(
-                    typeof(T).GetConstructors().First().GetParameters(),
-                    Regex.Matches(line, regexPattern)[0].Groups.Values.Where(v => !string.IsNullOrWhiteSpace(v.Value)).Skip(1).Select(g => g.Value)
-                )
-                .Select(kvp => TypeDescriptor.GetConverter(kvp.First.ParameterType).ConvertFromString(kvp.Second)).ToArray()
-            );
+        static T RegexCreate<T>(string line)
+        {
+            foreach (var typeConstructor in typeof(T).GetConstructors())
+            {
+                if (!(typeConstructor?.GetCustomAttributes(typeof(RegexAttribute), true)
+                    .FirstOrDefault() is RegexAttribute attribute)) continue;
 
-        static IEnumerable<T> RegexParse<T>(IEnumerable<string> input, string regexPattern) =>
-            input.Select(line => RegexCreate<T>(line, regexPattern));
+                return (T)Activator.CreateInstance
+                (
+                    typeof(T), Enumerable.Zip(
+                        typeConstructor.GetParameters(),
+                        Regex.Matches(line, attribute.Pattern)[0]
+                            .Groups.Values.Where(v => !string.IsNullOrWhiteSpace(v.Value))
+                            .Skip(1).Select(g => g.Value)
+                    )
+                    .Select(kvp => TypeDescriptor.GetConverter(kvp.First.ParameterType).ConvertFromString(kvp.Second)).ToArray()
+                );
+            }
+            return default(T);
+        }
 
-        public static IEnumerable<T> RegexParse<T>(string input, string regexPattern, string splitter = "\n") =>
+        static IEnumerable<T> RegexParse<T>(IEnumerable<string> input) =>
+            input.Select(line => RegexCreate<T>(line));
+
+        public static IEnumerable<T> RegexParse<T>(string input, string splitter = "\n") =>
             RegexParse<T>(input.Split(splitter)
-                .Where(x => !string.IsNullOrWhiteSpace(x)), regexPattern);
+                .Where(x => !string.IsNullOrWhiteSpace(x)));
 
 
         public static int[] Parse32(string input, char splitChar = '\0') => Parse32(Split(input, splitChar));
@@ -360,6 +371,16 @@ namespace AoC
         public Int64 Min { get; private set; }
         public Int64 Max { get; private set; }
         public Int64 Sum { get; private set; }
+    }
+
+    public class RegexAttribute : Attribute
+    {
+        public RegexAttribute(string pattern)
+        {
+            Pattern = pattern;
+        }
+
+        public string Pattern { get; private set; }
     }
 
 }

@@ -13,7 +13,7 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void Depths01Test(string input, int expected)
         {
-            Assert.IsTrue(Advent2021.Day01.Part1(input) == expected);
+            Assert.AreEqual(expected, Advent2021.Day01.Part1(input));
         }
 
         [TestCategory("Test")]
@@ -21,7 +21,7 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void Depths02Test(string input, int expected)
         {
-            Assert.IsTrue(Advent2021.Day01.Part2(input) == expected);
+            Assert.AreEqual(expected, Advent2021.Day01.Part2(input));
         }
 
         [TestCategory("Regression")]
