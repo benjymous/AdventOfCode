@@ -55,7 +55,7 @@ namespace AoC.Advent2021
             public bool Complete { get; private set; } = false;
         }
 
-        static int RunGame(string input, Util.QuestionPart part)
+        static int RunGame(string input, QuestionPart part)
         {
             var chunks = input.Split("\n\n");
             var rnd = Util.Parse32(chunks[0]);
@@ -68,7 +68,7 @@ namespace AoC.Advent2021
                 {
                     if (board.PlayNumber(num))
                     {
-                        if (part == Util.QuestionPart.Part1 || 
+                        if (part.One() || 
                             boards.Count(board => board.Complete) == boards.Count())
                             return board.CalcScore(num);
                     }
@@ -79,12 +79,12 @@ namespace AoC.Advent2021
 
         public static int Part1(string input)
         {
-            return RunGame(input, Util.QuestionPart.Part1);
+            return RunGame(input, QuestionPart.Part1);
         }
 
         public static int Part2(string input)
         {
-            return RunGame(input, Util.QuestionPart.Part2);
+            return RunGame(input, QuestionPart.Part2);
         }
 
         public void Run(string input, ILogger logger)

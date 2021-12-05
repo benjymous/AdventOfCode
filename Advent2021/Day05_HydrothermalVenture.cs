@@ -14,11 +14,7 @@ namespace AoC.Advent2021
         struct Line
         {
             [Regex(@"(\d+),(\d+) -> (\d+),(\d+)")]
-            public Line (int x1, int y1, int x2, int y2)
-            {
-                p1 = (x1, y1);
-                p2 = (x2, y2);
-            }
+            public Line(int x1, int y1, int x2, int y2) => (p1, p2) = ((x1, y1), (x2, y2));
 
             public IEnumerable<(int,int)> Points
             {
@@ -31,14 +27,12 @@ namespace AoC.Advent2021
                     int dy = -Math.Abs(p2.Y - p1.Y);
                     int sy = Math.Sign(p2.Y - p1.Y);
 
-                    int err = dx + dy; 
+                    int err = dx + dy;
 
-                    while (true)
+                    yield return pos;
+
+                    do
                     {
-                        yield return pos;
-
-                        if (pos == p2) break;
-
                         int e2 = 2 * err;
                         if (e2 >= dy)
                         {
@@ -50,35 +44,37 @@ namespace AoC.Advent2021
                             err += dx;
                             pos.Y += sy;
                         }
-                    }
+
+                        yield return pos;
+
+                    } while (pos != p2); 
                 }
             }
 
             public bool IsAxial => p1.X == p2.X || p1.Y == p2.Y;
 
-            (int X, int Y) p1;
-            (int X, int Y) p2;
+            (int X, int Y) p1, p2;
         }
 
-        private static int Solve(string input, Util.QuestionPart part)
+        private static int Solve(string input, QuestionPart part)
         {
             var lines = Util.RegexParse<Line>(input);
-            if (part == Util.QuestionPart.Part1) lines = lines.Where(l => l.IsAxial);
+            if (part.One()) lines = lines.Where(l => l.IsAxial);
 
             return lines.Select(line => line.Points)
-                .SelectMany(p => p)
-                .GroupBy(p => p)
-                .Count(g => g.Count() >= 2);
+                        .SelectMany(p => p)
+                        .GroupBy(p => p)
+                        .Count(g => g.Count() >= 2);
         }
 
         public static int Part1(string input)
         {
-            return Solve(input, Util.QuestionPart.Part1);
+            return Solve(input, QuestionPart.Part1);
         }
 
         public static int Part2(string input)
         {
-            return Solve(input, Util.QuestionPart.Part2);
+            return Solve(input, QuestionPart.Part2);
         }
 
         public void Run(string input, ILogger logger)

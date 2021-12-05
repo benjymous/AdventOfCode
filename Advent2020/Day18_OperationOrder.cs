@@ -47,7 +47,7 @@ namespace AoC.Advent2020
                 }
                 else if (ch=='*')
                 {
-                    if (part == QuestionPart.Part1)
+                    if (part.One())
                     {
                         op = Operation.multiply;
                     }

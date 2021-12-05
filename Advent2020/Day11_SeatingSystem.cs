@@ -11,7 +11,7 @@ namespace AoC.Advent2020
 
         public class State
         {
-            public State(int w, int h, Util.QuestionPart p)
+            public State(int w, int h, QuestionPart p)
             {
                 Width = w;
                 Height = h;
@@ -21,9 +21,9 @@ namespace AoC.Advent2020
 
             public int Height { get; private set; }
             public int Width { get; private set; }
-            Util.QuestionPart part;
+            QuestionPart part;
 
-            public State(string input, Util.QuestionPart p)
+            public State(string input, QuestionPart p)
             {
                 part = p;
                 var lines = Util.Split(input);
@@ -44,7 +44,7 @@ namespace AoC.Advent2020
 
             public char[,] Cells { get; private set; }
 
-            int MaxOccupancy { get => part == Util.QuestionPart.Part1 ? 4 : 5; }
+            int MaxOccupancy { get => part.One() ? 4 : 5; }
 
             public void Set(int x, int y, char c) => Cells[x, y] = c;
 
@@ -53,7 +53,7 @@ namespace AoC.Advent2020
 
             public char CheckDirection(int x, int y, int dx, int dy)
             {
-                if (part == Util.QuestionPart.Part1)
+                if (part.One())
                 {
                     return Get(x + dx, y + dy);     
                 }
@@ -138,7 +138,7 @@ namespace AoC.Advent2020
             return changed;
         }
 
-        public static int Run(string input, Util.QuestionPart part)
+        public static int Run(string input, QuestionPart part)
         {
             State[] states = new State[2];
             states[0] = new State(input, part);
@@ -163,19 +163,19 @@ namespace AoC.Advent2020
 
         public static int TestNeighbours(string input, int tx, int ty)
         {
-            var state = new State(input, Util.QuestionPart.Part2);
+            var state = new State(input, QuestionPart.Part2);
             if (state.Get(tx, ty) != 'L') return -1;
             return state.Neighbours(tx, ty);
         }
 
         public static int Part1(string input)
         {
-            return Run(input, Util.QuestionPart.Part1);
+            return Run(input, QuestionPart.Part1);
         }
 
         public static int Part2(string input)
         {
-            return Run(input, Util.QuestionPart.Part2);
+            return Run(input, QuestionPart.Part2);
         }
 
         public void Run(string input, ILogger logger)
