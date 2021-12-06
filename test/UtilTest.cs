@@ -141,6 +141,5 @@ namespace AoC.Test
         {
             Assert.AreEqual(expected, val.ToHex());
         }
-
     }
 }
