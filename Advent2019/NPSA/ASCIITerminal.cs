@@ -80,6 +80,22 @@ namespace AoC.Advent2019.NPSA
         }
     }
 
+    class InteractiveTerminal : Advent2019.NPSA.ASCIITerminal
+    {
+        public InteractiveTerminal(string program) : base(program)
+        {
+            Interactive = true;
+            SetDisplay(true);
+        }
+
+        public void Run() => cpu.Run();
+
+        public override IEnumerable<string> AutomaticInput()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class ASCIIBuffer
     {
         Dictionary<string, char> screenBuffer = new Dictionary<string, char>();

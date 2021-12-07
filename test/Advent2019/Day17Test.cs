@@ -5,6 +5,8 @@ namespace AoC.Advent2019.Test
     [TestCategory("2019")]
     [TestCategory("IntCPU")]
     [TestCategory("ASCIITerminal")]
+    [TestCategory("ManhattanVector")]
+    [TestCategory("Direction")]
     [TestClass]
     public class Day17Test
     {

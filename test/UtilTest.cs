@@ -26,6 +26,7 @@ namespace AoC.Test
         }
 
         [TestMethod]
+        [TestCategory("ManhattanVector")]
         public void TestManhattanEquality()
         {
             ManhattanVector2 a = new ManhattanVector2(0, 0);
@@ -44,6 +45,8 @@ namespace AoC.Test
         [DataRow(0, 0, 0, 10, 10)]
         [DataRow(-100, -100, 100, 100, 400)]
         [DataTestMethod]
+        [TestCategory("ManhattanVector")]
+        [TestCategory("ManhattanVector2")]
         public void TestManhattan2Distance(int x1, int y1, int x2, int y2, int expected)
         {
             ManhattanVector2 a = new ManhattanVector2(x1, y1);
@@ -59,6 +62,8 @@ namespace AoC.Test
         [DataRow(0, 0, 0, 0, 0, 10, 10)]
         [DataRow(-100, -100, -100, 100, 100, 100, 600)]
         [DataTestMethod]
+        [TestCategory("ManhattanVector")]
+        [TestCategory("ManhattanVector3")]
         public void TestManhattan3Distance(int x1, int y1, int z1, int x2, int y2, int z2, int expected)
         {
             ManhattanVector3 a = new ManhattanVector3(x1, y1, z1);
@@ -75,6 +80,8 @@ namespace AoC.Test
         [DataRow(0, 0, 0, 0, 0, 0, 0, 10, 10)]
         [DataRow(-100, -100, -100, -100, 100, 100, 100, 100, 800)]
         [DataTestMethod]
+        [TestCategory("ManhattanVector")]
+        [TestCategory("ManhattanVector4")]
         public void TestManhattan4Distance(int x1, int y1, int z1, int w1, int x2, int y2, int z2, int w2, int expected)
         {
             ManhattanVector4 a = new ManhattanVector4(x1, y1, z1, w1);
@@ -85,6 +92,7 @@ namespace AoC.Test
         }
 
         [DataTestMethod]
+        [TestCategory("Circle")]
         public void CircleCreateTest()
         {
             var circle = Circle<int>.Create(Enumerable.Range(0, 10));
@@ -93,6 +101,7 @@ namespace AoC.Test
         }
 
         [DataTestMethod]
+        [TestCategory("Circle")]
         public void CircleRemoveTest()
         {
             var circle = Circle<int>.Create(Enumerable.Range(0, 10));
@@ -103,6 +112,7 @@ namespace AoC.Test
         }
 
         [DataTestMethod]
+        [TestCategory("Circle")]
         public void CircleReverseTest()
         {
             var circle = Circle<int>.Create(Enumerable.Range(0, 10));
@@ -113,6 +123,7 @@ namespace AoC.Test
         }
 
         [DataTestMethod]
+        [TestCategory("Circle")]
         public void CircleReverseTest2()
         {
             var circle = Circle<int>.Create(Enumerable.Range(0, 10));

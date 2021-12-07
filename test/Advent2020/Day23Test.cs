@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AoC.Advent2020.Test
 {
     [TestCategory("2020")]
+    [TestCategory("Circle")]
     [TestClass]
     public class Day23Test
     {
