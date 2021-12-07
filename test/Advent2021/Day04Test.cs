@@ -33,14 +33,14 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void Squid01Test()
         {
-            Assert.AreEqual(4512, Advent2021.Day04.Part1(test));
+            Assert.AreEqual(4512, Advent2021.Day04.Part1(test.Replace("\r","")));
         }
 
         [TestCategory("Test")]
         [DataTestMethod]
         public void Squid02Test()
         {
-            Assert.AreEqual(1924, Advent2021.Day04.Part2(test));
+            Assert.AreEqual(1924, Advent2021.Day04.Part2(test.Replace("\r", "")));
         }
 
         [TestCategory("Regression")]

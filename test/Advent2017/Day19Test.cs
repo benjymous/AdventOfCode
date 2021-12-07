@@ -3,6 +3,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AoC.Advent2017.Test
 {
     [TestCategory("2017")]
+    [TestCategory("ManhattanVector")]
+    [TestCategory("Direction")]
     [TestClass]
     public class Day19Test
     {

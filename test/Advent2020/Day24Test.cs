@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AoC.Advent2020.Test
 {
     [TestCategory("2020")]
+    [TestCategory("HexVector")]
     [TestClass]
     public class Day24Test
     {

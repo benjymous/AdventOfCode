@@ -26,14 +26,14 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void Diagnostic01Test()
         {
-            Assert.IsTrue(Advent2021.Day03.Part1(test) == 198);
+            Assert.IsTrue(Advent2021.Day03.Part1(test.Replace("\r", "")) == 198);
         }
 
         [TestCategory("Test")]
         [DataTestMethod]
         public void Diagnostic02Test()
         {
-            Assert.IsTrue(Advent2021.Day03.Part2(test) == 230);
+            Assert.IsTrue(Advent2021.Day03.Part2(test.Replace("\r", "")) == 230);
         }
 
         [TestCategory("Regression")]
