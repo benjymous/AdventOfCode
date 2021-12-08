@@ -170,6 +170,11 @@ namespace AoC
             }
         }
 
+        public static IEnumerable<T> Values<T>(params T[] input)
+        {
+            return input;
+        }
+
         public static void Test<T>(T actual, T expected)
         {
             if (!EqualityComparer<T>.Default.Equals(actual, expected))
