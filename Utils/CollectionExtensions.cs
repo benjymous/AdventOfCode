@@ -184,6 +184,11 @@ namespace AoC.Utils
             return vals.Aggregate((Int64)1, (total, val) => total * val);
         }
 
+        public static Int64 Product(this IEnumerable<Int64> vals)
+        {
+            return vals.Aggregate((Int64)1, (total, val) => total * val);
+        }
+
         public static int Xor(this IEnumerable<int> vals)
         {
             return vals.Aggregate(0, (total, val) => total ^ val);
