@@ -122,7 +122,6 @@ namespace AoC.Advent2021
             var data = Util.Parse<DataRow>(input);
 
             return data.Select(line => Util.Values(2, 3, 4, 7).Select(segCount => line.CountOutputMatches(segCount)).Sum()).Sum();
-
         }
 
         public static int Part2(string input)
