@@ -5,7 +5,7 @@ namespace AoC.Advent2019
 {
     public class Day04 : IPuzzle
     {
-        public string Name { get { return "2019-04"; } }
+        public string Name => "2019-04";
 
         public static bool CheckCriteria(string num, bool strict)
         {

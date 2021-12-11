@@ -5,7 +5,7 @@ namespace AoC.Advent2017
 {
     public class Day23 : IPuzzle
     {
-        public string Name { get { return "2017-23"; } }
+        public string Name => "2017-23";
 
         class Debug : NorthCloud.IDebugger
         {

@@ -5,7 +5,7 @@ namespace AoC.Advent2017
 {
     public class Day04 : IPuzzle
     {
-        public string Name { get { return "2017-04"; } }
+        public string Name => "2017-04";
 
         public static bool ValidationRule1(string passphrase)
         {

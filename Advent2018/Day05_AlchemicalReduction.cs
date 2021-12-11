@@ -4,7 +4,7 @@ namespace AoC.Advent2018
 {
     public class Day05 : IPuzzle
     {
-        public string Name { get { return "2018-05"; } }
+        public string Name => "2018-05";
 
         static int Reduce(string inp)
         {

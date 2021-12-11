@@ -5,7 +5,7 @@ namespace AoC.Advent2015
 {
     public class Day02 : IPuzzle
     {
-        public string Name { get { return "2015-02"; } }
+        public string Name => "2015-02";
 
         public static int Wrap(string line)
         {

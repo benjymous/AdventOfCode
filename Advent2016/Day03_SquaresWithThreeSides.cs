@@ -5,7 +5,7 @@ namespace AoC.Advent2016
 {
     public class Day03 : IPuzzle
     {
-        public string Name { get { return "2016-03"; } }
+        public string Name => "2016-03";
 
         public static bool TriangleValid(params int[] row)
         {

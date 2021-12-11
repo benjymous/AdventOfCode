@@ -6,7 +6,7 @@ namespace AoC.Advent2021
 {
     public class Day09 : IPuzzle
     {
-        public string Name { get { return "2021-09"; } }
+        public string Name => "2021-09";
 
         class Map
         {
@@ -37,10 +37,7 @@ namespace AoC.Advent2021
             public Dictionary<(int x, int y), int> Data { get; private set; }
         }
 
-        static readonly List<(int x, int y)> directions = new List<(int x, int y)>
-        {
-            (-1,0), (1,0), (0,-1), (0,1)
-        };
+        static readonly (int x, int y)[] directions = new (int x, int y)[] { (-1,0), (1,0), (0,-1), (0,1) };
 
         public static int Part1(string input)
         {

@@ -6,7 +6,7 @@ namespace AoC.Advent2015
 {
     public class Day05 : IPuzzle
     {
-        public string Name { get { return "2015-05"; } }
+        public string Name => "2015-05";
 
         public static bool HasVowels(string line, int count)
         {

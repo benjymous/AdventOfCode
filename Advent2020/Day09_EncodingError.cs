@@ -6,7 +6,7 @@ namespace AoC.Advent2020
 {
     public class Day09 : IPuzzle
     {
-        public string Name { get { return "2020-09"; } }
+        public string Name => "2020-09";
 
         static bool ValidateNumber(int index, int preamble, Int64[] numbers) =>
             numbers.Skip(index - preamble).Take(preamble)

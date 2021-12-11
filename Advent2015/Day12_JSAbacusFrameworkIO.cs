@@ -8,7 +8,7 @@ namespace AoC.Advent2015
 {
     public class Day12 : IPuzzle
     {
-        public string Name { get { return "2015-12"; } }
+        public string Name => "2015-12";
 
         public static IEnumerable<int> FindNumbers(string input)
         {

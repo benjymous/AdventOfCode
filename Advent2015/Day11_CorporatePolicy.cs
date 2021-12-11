@@ -5,7 +5,7 @@ namespace AoC.Advent2015
 {
     public class Day11 : IPuzzle
     {
-        public string Name { get { return "2015-11"; } }
+        public string Name => "2015-11";
 
         static char[] bads = new char[]
         {

@@ -6,7 +6,7 @@ namespace AoC.Advent2021
 {
     public class Day01 : IPuzzle
     {
-        public string Name { get { return "2021-01"; } }
+        public string Name => "2021-01";
 
         static IEnumerable<int> Sliding3s(IEnumerable<int> input) =>
             input.Windows(3).Select(set => set.Sum());

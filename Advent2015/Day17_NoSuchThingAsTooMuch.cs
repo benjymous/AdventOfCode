@@ -6,7 +6,7 @@ namespace AoC.Advent2015
 {
     public class Day17 : IPuzzle
     {
-        public string Name { get { return "2015-17"; } }
+        public string Name => "2015-17";
 
 
         private static Dictionary<string, int> Noggify(string input)

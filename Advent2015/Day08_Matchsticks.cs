@@ -5,7 +5,7 @@ namespace AoC.Advent2015
 {
     public class Day08 : IPuzzle
     {
-        public string Name { get { return "2015-08"; } }
+        public string Name => "2015-08";
 
         public static string ReplaceHexChars(string input)
         {

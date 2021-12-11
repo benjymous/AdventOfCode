@@ -7,7 +7,7 @@ namespace AoC.Advent2018
 {
     public class Day22 : IPuzzle
     {
-        public string Name { get { return "2018-22"; } }
+        public string Name => "2018-22";
 
         public const char ROCKY = '.';
         public const char WET = '=';

@@ -6,7 +6,7 @@ namespace AoC.Advent2017
 {
     public class Day14 : IPuzzle
     {
-        public string Name { get { return "2017-14"; } }
+        public string Name => "2017-14";
 
         public static IEnumerable<IEnumerable<bool>> BitMatrix(string input)
         {

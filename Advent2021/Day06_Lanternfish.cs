@@ -4,7 +4,7 @@ namespace AoC.Advent2021
 {
     public class Day06 : IPuzzle
     {
-        public string Name { get { return "2021-06"; } }
+        public string Name => "2021-06";
 
         private static long Simulate(string input, int days)
         {

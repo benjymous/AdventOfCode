@@ -7,7 +7,7 @@ namespace AoC.Advent2016
 {
     public class Day16 : IPuzzle
     {
-        public string Name { get { return "2016-16"; } }
+        public string Name => "2016-16";
 
         public static bool[] pad = new bool[] { false };
 

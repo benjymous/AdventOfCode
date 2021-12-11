@@ -8,7 +8,7 @@ namespace AoC.Advent2020
 {
     public class Day23 : IPuzzle
     {
-        public string Name { get { return "2020-23"; } }
+        public string Name => "2020-23";
 
         static Circle<int> CreateCircle(IEnumerable<int> vals, bool part2)
         {

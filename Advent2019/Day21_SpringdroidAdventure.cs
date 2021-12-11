@@ -27,7 +27,7 @@ namespace AoC.Advent2019
     }
     public class Day21 : IPuzzle
     {
-        public string Name { get { return "2019-21"; } }
+        public string Name => "2019-21";
 
         public static Int64 SurveyHull(string input, IEnumerable<string> commandBuffer)
         {

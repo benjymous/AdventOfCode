@@ -5,7 +5,7 @@ namespace AoC.Advent2018
 {
     public class Day14 : IPuzzle
     {
-        public string Name { get { return "2018-14"; } }
+        public string Name => "2018-14";
 
         static List<int> Parse32(string input)
         {

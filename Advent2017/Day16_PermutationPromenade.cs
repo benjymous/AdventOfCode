@@ -7,7 +7,7 @@ namespace AoC.Advent2017
 {
     public class Day16 : IPuzzle
     {
-        public string Name { get { return "2017-16"; } }
+        public string Name => "2017-16";
 
         private static IEnumerable<string> ParseInput(string input)
         {

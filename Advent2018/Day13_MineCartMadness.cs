@@ -7,7 +7,7 @@ namespace AoC.Advent2018
 {
     public class Day13 : IPuzzle
     {
-        public string Name { get { return "2018-13"; } }
+        public string Name => "2018-13";
 
         public class Train
         {

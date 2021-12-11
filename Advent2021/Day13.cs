@@ -8,7 +8,7 @@
 // {
 //     public class Day13 : IPuzzle
 //     {
-//         public string Name { get { return "2021-13";} }
+//         public string Name => "2021-13";
 
 //         public static int Part1(string input)
 //         {

@@ -6,7 +6,7 @@ namespace AoC.Advent2019
 {
     public class Day25 : IPuzzle
     {
-        public string Name { get { return "2019-25"; } }
+        public string Name => "2019-25";
 
         static HashSet<string> traps = new HashSet<string>()
         {

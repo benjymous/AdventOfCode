@@ -7,7 +7,7 @@ namespace AoC.Advent2018
 {
     public class Day06 : IPuzzle
     {
-        public string Name { get { return "2018-06"; } }
+        public string Name => "2018-06";
 
         static List<ManhattanVector2> ParseData(string input)
         {

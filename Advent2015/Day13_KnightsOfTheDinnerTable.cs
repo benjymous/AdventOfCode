@@ -6,7 +6,7 @@ namespace AoC.Advent2015
 {
     public class Day13 : IPuzzle
     {
-        public string Name { get { return "2015-13"; } }
+        public string Name => "2015-13";
 
         static int GetScore(char[] perm, Dictionary<int, int> scores)
         {

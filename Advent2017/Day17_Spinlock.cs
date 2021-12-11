@@ -5,7 +5,7 @@ namespace AoC.Advent2017
 {
     public class Day17 : IPuzzle
     {
-        public string Name { get { return "2017-17"; } }
+        public string Name => "2017-17";
 
         public static Circle<int> Spinlock(int step, int totalSize, bool returnZero = false)
         {

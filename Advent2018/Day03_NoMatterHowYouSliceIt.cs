@@ -6,7 +6,7 @@ namespace AoC.Advent2018
 {
     public class Day03 : IPuzzle
     {
-        public string Name { get { return "2018-03"; } }
+        public string Name => "2018-03";
 
         const int FabricSize = 1000;
 

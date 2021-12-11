@@ -6,7 +6,7 @@ namespace AoC.Advent2017
 {
     public class Day18 : IPuzzle
     {
-        public string Name { get { return "2017-18"; } }
+        public string Name => "2017-18";
 
         class Part1Port : NorthCloud.IOutputPort
         {

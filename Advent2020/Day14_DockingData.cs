@@ -7,7 +7,7 @@ namespace AoC.Advent2020
 {
     public class Day14 : IPuzzle
     {
-        public string Name { get { return "2020-14"; } }
+        public string Name => "2020-14";
 
         enum StatementType
         {
