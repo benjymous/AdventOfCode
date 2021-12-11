@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace AoC.Advent2020
 {
@@ -60,7 +57,7 @@ namespace AoC.Advent2020
 
             public int Count { get; private set; } = 0;
             public int LastNum { get; private set; } = 0;
- 
+
             Dictionary<int, Entry> values = new Dictionary<int, Entry>();
             Entry LastEntry = null;
         }

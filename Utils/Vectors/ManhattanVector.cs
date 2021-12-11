@@ -189,16 +189,16 @@ namespace AoC.Utils.Vectors
             // left: -1,0 -> 0,1
             // down: 0,1 -> 1,0
             // right: 1,0 -> 0,-1
-            Set(new int[]{Y, -X});
+            Set(new int[] { Y, -X });
         }
 
         public void TurnLeftBy(int degrees)
         {
-            if (degrees % 90 != 0) throw new Exception("expected multiple of 90 degrees: "+ degrees);
+            if (degrees % 90 != 0) throw new Exception("expected multiple of 90 degrees: " + degrees);
 
             var steps = degrees / 90;
 
-            for (var i=0; i<steps; ++i)
+            for (var i = 0; i < steps; ++i)
             {
                 TurnLeft();
             }
@@ -211,17 +211,17 @@ namespace AoC.Utils.Vectors
             // down: 0,1 -> -1,0
             // left: -1,0 -> 0,-1
 
-            Set(new int[]{-Y, X});
-         }
+            Set(new int[] { -Y, X });
+        }
 
 
         public void TurnRightBy(int degrees)
         {
-            if (degrees % 90 != 0) throw new Exception("expected multiple of 90 degrees: "+ degrees);
+            if (degrees % 90 != 0) throw new Exception("expected multiple of 90 degrees: " + degrees);
 
             var steps = degrees / 90;
 
-            for (var i=0; i<steps; ++i)
+            for (var i = 0; i < steps; ++i)
             {
                 TurnRight();
             }
@@ -230,7 +230,7 @@ namespace AoC.Utils.Vectors
 
         public static ManhattanVector2 operator +(ManhattanVector2 a, ManhattanVector2 b) => new ManhattanVector2((ManhattanVectorN)a + (ManhattanVectorN)b);
 
-        public static ManhattanVector2 operator +(ManhattanVector2 a, Direction2 b) 
+        public static ManhattanVector2 operator +(ManhattanVector2 a, Direction2 b)
         {
             var res = new ManhattanVector2(a);
             res.Offset(b);
@@ -326,10 +326,10 @@ namespace AoC.Utils.Vectors
             DY = diry;
         }
 
-        public void FaceNorth() => SetDirection(0,-1);
-        public void FaceSouth() => SetDirection(0,1);
-        public void FaceEast() => SetDirection(1,0);
-        public void FaceWest() => SetDirection(-1,0);
+        public void FaceNorth() => SetDirection(0, -1);
+        public void FaceSouth() => SetDirection(0, 1);
+        public void FaceEast() => SetDirection(1, 0);
+        public void FaceWest() => SetDirection(-1, 0);
 
         public void TurnLeft()
         {
@@ -348,11 +348,11 @@ namespace AoC.Utils.Vectors
 
         public void TurnLeftBy(int degrees)
         {
-            if (degrees % 90 != 0) throw new Exception("expected multiple of 90 degrees: "+ degrees);
+            if (degrees % 90 != 0) throw new Exception("expected multiple of 90 degrees: " + degrees);
 
             var steps = degrees / 90;
 
-            for (var i=0; i<steps; ++i)
+            for (var i = 0; i < steps; ++i)
             {
                 TurnLeft();
             }
@@ -376,11 +376,11 @@ namespace AoC.Utils.Vectors
 
         public void TurnRightBy(int degrees)
         {
-            if (degrees % 90 != 0) throw new Exception("expected multiple of 90 degrees: "+ degrees);
+            if (degrees % 90 != 0) throw new Exception("expected multiple of 90 degrees: " + degrees);
 
             var steps = degrees / 90;
 
-            for (var i=0; i<steps; ++i)
+            for (var i = 0; i < steps; ++i)
             {
                 TurnRight();
             }
@@ -396,9 +396,9 @@ namespace AoC.Utils.Vectors
             throw new Exception("Unknown direction state");
         }
 
-        public static Direction2 North = new Direction2(0,-1);
-        public static Direction2 South = new Direction2(0,1);
-        public static Direction2 East = new Direction2(1,0);
-        public static Direction2 West = new Direction2(-1,0);
+        public static Direction2 North = new Direction2(0, -1);
+        public static Direction2 South = new Direction2(0, 1);
+        public static Direction2 East = new Direction2(1, 0);
+        public static Direction2 West = new Direction2(-1, 0);
     }
 }

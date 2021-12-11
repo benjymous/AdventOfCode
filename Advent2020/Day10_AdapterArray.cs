@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2020
 {
     public class Day10 : IPuzzle
     {
-        public string Name { get { return "2020-10";} }
- 
+        public string Name { get { return "2020-10"; } }
+
         static List<int> GetValues(string input)
         {
             var values = Util.Parse32(input).ToList();
             values.Add(0);
             values = values.OrderBy(x => x).ToList();
-            values.Add(values.Last()+3);
+            values.Add(values.Last() + 3);
             return values;
         }
 
@@ -24,15 +23,15 @@ namespace AoC.Advent2020
 
             int diff1 = 0;
             int diff3 = 0;
-            for (var i=0; i<values.Count-1; ++i)
+            for (var i = 0; i < values.Count - 1; ++i)
             {
                 var v1 = values[i];
-                var v2 = values[i+1];
+                var v2 = values[i + 1];
 
-                int diff = v2-v1;
+                int diff = v2 - v1;
 
-                if (diff==1) diff1++;
-                if (diff==3) diff3++;
+                if (diff == 1) diff1++;
+                if (diff == 3) diff3++;
             }
 
             return diff1 * diff3;
@@ -74,8 +73,8 @@ namespace AoC.Advent2020
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

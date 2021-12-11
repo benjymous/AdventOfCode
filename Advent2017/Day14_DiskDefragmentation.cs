@@ -1,8 +1,6 @@
-﻿using System;
+﻿using AoC.Utils;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using AoC.Utils;
 
 namespace AoC.Advent2017
 {
@@ -12,7 +10,7 @@ namespace AoC.Advent2017
 
         public static IEnumerable<IEnumerable<bool>> BitMatrix(string input)
         {
-            for(int i=0; i<128; ++i)
+            for (int i = 0; i < 128; ++i)
             {
                 var hash = Day10.KnotHash($"{input}-{i}");
                 yield return hash.BitSequenceFromHex();
@@ -26,7 +24,7 @@ namespace AoC.Advent2017
 
         static void FloodFill(int x, int y, bool[][] matrix)
         {
-            if ((x<0) || (y<0) || x>127 || y>127) return;
+            if ((x < 0) || (y < 0) || x > 127 || y > 127) return;
             if (matrix[y][x] == false) return;
             matrix[y][x] = false;
             FloodFill(x, y + 1, matrix);
@@ -41,9 +39,9 @@ namespace AoC.Advent2017
 
             int groups = 0;
 
-            for (int y=0; y<128; ++y)
+            for (int y = 0; y < 128; ++y)
             {
-                for (int x=0; x<128; ++x)
+                for (int x = 0; x < 128; ++x)
                 {
                     if (matrix[y][x])
                     {

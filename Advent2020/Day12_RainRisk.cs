@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AoC.Utils.Vectors;
+﻿using AoC.Utils.Vectors;
+using System;
 
 namespace AoC.Advent2020
 {
     public class Day12 : IPuzzle
     {
-        public string Name { get { return "2020-12";} }
- 
+        public string Name { get { return "2020-12"; } }
+
         class Instruction
         {
             public Instruction(string line)
@@ -35,7 +32,7 @@ namespace AoC.Advent2020
                 // Action L means to turn left the given number of degrees.
                 // Action R means to turn right the given number of degrees.
                 // Action F means to move forward by the given value in the direction the ship is currently facing.
-                switch(cmd)
+                switch (cmd)
                 {
                     case 'N':
                         v.Offset(Direction2.North, val);
@@ -61,13 +58,13 @@ namespace AoC.Advent2020
                     case 'F':
                         v.Offset(d, val);
                         break;
-                    
+
                 }
             }
-        
+
             public void Apply2(ManhattanVector2 ship, ManhattanVector2 wp)
             {
-                switch(cmd)
+                switch (cmd)
                 {
                     case 'N':
                         wp.Offset(Direction2.North, val);
@@ -101,15 +98,15 @@ namespace AoC.Advent2020
         {
             var instructions = Util.Parse<Instruction>(input);
 
-            var position = new ManhattanVector2(0,0);
+            var position = new ManhattanVector2(0, 0);
             var direction = new Direction2(1, 0);
 
-            foreach(var i in instructions)
+            foreach (var i in instructions)
             {
                 //Console.WriteLine(i);
                 i.Apply(position, direction);
                 //Console.WriteLine($"{position} {direction.AsChar()}");
-                
+
             }
 
             return position.Distance(ManhattanVector2.Zero);
@@ -119,24 +116,24 @@ namespace AoC.Advent2020
         {
             var instructions = Util.Parse<Instruction>(input);
 
-            var position = new ManhattanVector2(0,0);
+            var position = new ManhattanVector2(0, 0);
             var waypoint = new ManhattanVector2(10, -1);
 
-            foreach(var i in instructions)
+            foreach (var i in instructions)
             {
                 //Console.WriteLine(i);
                 i.Apply2(position, waypoint);
                 //Console.WriteLine($"{position} {waypoint}");
-                
+
             }
 
             return position.Distance(ManhattanVector2.Zero);
         }
 
         public void Run(string input, ILogger logger)
-        {  
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+        {
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

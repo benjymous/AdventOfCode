@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2020
 {
     public class Day06 : IPuzzle
     {
-        public string Name { get { return "2020-06";} }
- 
+        public string Name { get { return "2020-06"; } }
+
         public static int Part1(string input)
         {
             var groups = input.Split("\n\n");
@@ -41,8 +39,8 @@ namespace AoC.Advent2020
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

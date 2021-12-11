@@ -1,8 +1,4 @@
-﻿using AoC.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 
 namespace AoC.Advent2021
 {
@@ -14,10 +10,10 @@ namespace AoC.Advent2021
         {
             var data = Util.Parse32(input);
             var v = Enumerable.Range(0, 9).Select(i => (long)data.Count(v => v == i)).ToArray();
-            
+
             while ((days--) > 0)
-                (v[0], v[1], v[2], v[3], v[4], v[5], v[6],      v[7], v[8]) =
-                (v[1], v[2], v[3], v[4], v[5], v[6], v[7]+v[0], v[8], v[0]);
+                (v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8]) =
+                (v[1], v[2], v[3], v[4], v[5], v[6], v[7] + v[0], v[8], v[0]);
 
             return v.Sum();
         }

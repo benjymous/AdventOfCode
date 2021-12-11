@@ -1,8 +1,6 @@
 ﻿using AoC.Utils.Vectors;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AoC.Advent2017
@@ -70,7 +68,7 @@ namespace AoC.Advent2017
                     p.Step();
                 }
 
-                var grouped = particles.GroupBy(p => p.pos).Where(grp => grp.Count()==1).Select(grp => grp.First());
+                var grouped = particles.GroupBy(p => p.pos).Where(grp => grp.Count() == 1).Select(grp => grp.First());
                 if (grouped.Count() < particles.Count())
                 {
                     particles = grouped;

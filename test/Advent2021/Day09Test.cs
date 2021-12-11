@@ -15,7 +15,7 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void Basins01Test()
         {
-            Assert.AreEqual(15, Day09.Part1(test.Replace("\r","")));
+            Assert.AreEqual(15, Day09.Part1(test.Replace("\r", "")));
         }
 
         [TestCategory("Test")]

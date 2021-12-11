@@ -1,8 +1,5 @@
-﻿using AoC.Utils;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2021
 {
@@ -27,7 +24,7 @@ namespace AoC.Advent2021
 
         public static int Part2(string input)
         {
-            return Solve(input, x => x*(x+1)/2);
+            return Solve(input, x => x * (x + 1) / 2);
         }
 
         public void Run(string input, ILogger logger)

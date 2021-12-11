@@ -56,7 +56,7 @@ namespace AoC.Advent2020
             var toChange = new HashSet<int>();
 
             CheckHalt(firstRun, ref toChange, ref cyclesTested);
-  
+
             foreach (var i in toChange)
             {
                 var clone = new Elf80(cpu);

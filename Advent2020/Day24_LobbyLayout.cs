@@ -1,21 +1,19 @@
-﻿using System;
+﻿using Advent.Utils.Vectors;
+using AoC.Utils;
 using System.Collections.Generic;
 using System.Linq;
-using AoC.Utils;
-using System.Text;
-using Advent.Utils.Vectors;
 
 namespace AoC.Advent2020
 {
     public class Day24 : IPuzzle
     {
-        public string Name { get { return "2020-24";} }
+        public string Name { get { return "2020-24"; } }
 
         static IEnumerable<string> SplitCommands(string line)
         {
-            for (int i=0; i<line.Length; ++i)
+            for (int i = 0; i < line.Length; ++i)
             {
-                if (line[i] == 'w' || line[i]=='e')
+                if (line[i] == 'w' || line[i] == 'e')
                 {
                     yield return line.Substring(i, 1);
                 }
@@ -29,7 +27,7 @@ namespace AoC.Advent2020
 
         static HexVector FollowPath(string path)
         {
-            HexVector pos = new HexVector(0,0,0);
+            HexVector pos = new HexVector(0, 0, 0);
 
             var steps = SplitCommands(path);
             foreach (var step in steps)
@@ -68,7 +66,7 @@ namespace AoC.Advent2020
                 {
                     foreach (var x in XRange.RangeBuffered(1))
                     {
-                        yield return new HexVector((int)x, (int)y, (int)(-x-y));
+                        yield return new HexVector((int)x, (int)y, (int)(-x - y));
                     }
                 }
             }
@@ -96,7 +94,7 @@ namespace AoC.Advent2020
             {
                 int neighbours = oldState.Neighbours(pos);
                 var cellstate = oldState.Get(pos);
-    
+
                 if (cellstate)
                 {
                     // Any black tile with zero or more than 2 black tiles immediately adjacent to it is flipped to white.
@@ -170,8 +168,8 @@ namespace AoC.Advent2020
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

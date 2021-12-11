@@ -47,7 +47,7 @@ namespace AoC
                          TextBuffer buffer = new TextBuffer();
                          timings[puzzle.Name] = puzzle.TimeRun(new TimeLogger(buffer));
 
-                         
+
                          bool ignore;
                          running.TryRemove(puzzle.Name, out ignore);
 

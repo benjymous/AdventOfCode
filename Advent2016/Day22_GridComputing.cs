@@ -1,7 +1,6 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Pathfinding;
 using AoC.Utils.Vectors;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -67,7 +66,7 @@ namespace AoC.Advent2016
             map.data = grid;
 
             // move empty square to the left of the payload (avoiding the unmovable squares)
-            var steps = AStar<ManhattanVector2>.FindPath(map, empty.position, new ManhattanVector2(sourceX, 0)).Count()-1;
+            var steps = AStar<ManhattanVector2>.FindPath(map, empty.position, new ManhattanVector2(sourceX, 0)).Count() - 1;
 
             steps++; // move payload left
             steps += 5 * (sourceX - 1); // repeated cycles of moving empty cell to left of payload, and moving payload left again
@@ -83,7 +82,7 @@ namespace AoC.Advent2016
             //Util.Test(Part2(test), 7);
 
             logger.WriteLine("- Pt1 - " + Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

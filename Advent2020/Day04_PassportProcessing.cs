@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2020
 {
@@ -14,7 +12,7 @@ namespace AoC.Advent2020
             return input.Split("\n\n")
                 .Select(line => (line.Replace("\n", " ").Trim()).Split(" "))
                 .Select(entries => entries.Select(v => v.Split(":"))
-                .Where(pair => validate == false || ValidateEntry(pair[0],pair[1]))
+                .Where(pair => validate == false || ValidateEntry(pair[0], pair[1]))
                 .ToDictionary(pair => pair[0], pair => pair[1]));
         }
 
@@ -88,13 +86,13 @@ namespace AoC.Advent2020
                     case "pid":
                         // Passport ID - a nine-digit number, including leading zeroes
                         {
-                            if (val.Length != 9) 
+                            if (val.Length != 9)
                                 return false;
                             foreach (var c in val)
                             {
-                                if (c < '0') 
+                                if (c < '0')
                                     return false;
-                                if (c > '9') 
+                                if (c > '9')
                                     return false;
                             }
                             return true;
@@ -112,7 +110,7 @@ namespace AoC.Advent2020
         static readonly string[] expectedFields = new string[] { "byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid" /*, "cid"*/ };
 
         private static int CountValid(IEnumerable<Dictionary<string, string>> records)
-        {            
+        {
             return records.Where(r => r.Keys.Intersect(expectedFields).Count() == expectedFields.Count()).Count();
         }
 

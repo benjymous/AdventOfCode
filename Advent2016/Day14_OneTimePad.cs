@@ -1,8 +1,6 @@
 ﻿using AoC.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace AoC.MMXVI
 {
@@ -38,10 +36,10 @@ namespace AoC.MMXVI
             }
             for (int i = 0; i < input.Length - 4; ++i)
             {
-                if (input[i] == input[i + 1] && 
+                if (input[i] == input[i + 1] &&
                     input[i] == input[i + 2] &&
                     input[i] == input[i + 3] &&
-                    input[i] == input[i + 4] )
+                    input[i] == input[i + 4])
                 {
                     cache[input] = input[i];
                     return input[i];
@@ -54,13 +52,13 @@ namespace AoC.MMXVI
 
 
 
-        public static string GetHash(string input, int number, Dictionary<int,string> cache, bool stretch)
+        public static string GetHash(string input, int number, Dictionary<int, string> cache, bool stretch)
         {
             if (cache.TryGetValue(number, out var hash))
             {
                 return hash;
             }
-            
+
             return cache[number] = GenHash(input, number, stretch);
         }
 

@@ -1,8 +1,5 @@
 ﻿using Advent.Utils.Vectors;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2017
 {
@@ -21,7 +18,7 @@ namespace AoC.Advent2017
                 pos.TranslateHex(step);
             }
 
-            return pos.Distance(new HexVector(0,0,0,false));
+            return pos.Distance(new HexVector(0, 0, 0, false));
         }
 
         public static int Part2(string input)

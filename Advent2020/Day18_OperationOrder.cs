@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using static AoC.Util;
 
 namespace AoC.Advent2020
 {
@@ -45,7 +43,7 @@ namespace AoC.Advent2020
                 {
                     op = Operation.add;
                 }
-                else if (ch=='*')
+                else if (ch == '*')
                 {
                     if (part.One())
                     {
@@ -61,7 +59,7 @@ namespace AoC.Advent2020
 
                 if (val != -1)
                 {
-                    switch(op)
+                    switch (op)
                     {
                         case Operation.blank:
                             result = val;
@@ -86,21 +84,21 @@ namespace AoC.Advent2020
             return result;
         }
 
-        static Queue<char> ToQueue(string input) 
+        static Queue<char> ToQueue(string input)
             => new Queue<char>(input.Replace(" ", ""));
 
-        public static Int64 Solve1(string input) 
+        public static Int64 Solve1(string input)
             => Solve(ToQueue(input), QuestionPart.Part1);
 
         public static Int64 Solve2(string input)
             => Solve(ToQueue(input), QuestionPart.Part2);
-        
+
 
         public static Int64 Part1(string input)
             => input.Split("\n").Select(line => Solve1(line)).Sum();
 
         public static Int64 Part2(string input)
-            => input.Split("\n").Select(line => Solve2(line)).Sum();        
+            => input.Split("\n").Select(line => Solve2(line)).Sum();
 
 
         public void Run(string input, ILogger logger)

@@ -1,46 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2020
 {
     public class Day13 : IPuzzle
     {
-        public string Name { get { return "2020-13";} }
- 
+        public string Name { get { return "2020-13"; } }
+
         static UInt64 NextMultiple(UInt64 n, UInt64 mult)
         {
-            return ((n+(mult-1))/mult) * mult;
+            return ((n + (mult - 1)) / mult) * mult;
         }
 
         public static UInt64 Part1(string input)
         {
-            var lines = Util.Split(input,'\n');
+            var lines = Util.Split(input, '\n');
             var timestamp = UInt64.Parse(lines[0]);
             var times = Util.Split(lines[1]);
             var smallest = UInt64.MaxValue;
             UInt64 bestbus = 0;
-            foreach(var t in times)
+            foreach (var t in times)
             {
-                if (t=="x") continue;
+                if (t == "x") continue;
                 var bus = UInt64.Parse(t);
-                var nexttime = NextMultiple(timestamp, bus); 
+                var nexttime = NextMultiple(timestamp, bus);
                 Console.WriteLine($"{bus} - {nexttime}");
-                if (nexttime<smallest)
+                if (nexttime < smallest)
                 {
-                    smallest=nexttime;
-                    bestbus=bus;
+                    smallest = nexttime;
+                    bestbus = bus;
                 }
             }
-            return (smallest-timestamp)*bestbus;
+            return (smallest - timestamp) * bestbus;
         }
 
-        static bool Check(UInt64 i, List<Tuple<int,int>> vals)
+        static bool Check(UInt64 i, List<Tuple<int, int>> vals)
         {
-            foreach(var t in vals)
+            foreach (var t in vals)
             {
-                if ((i+(UInt64)t.Item2) % (UInt64)t.Item1 != 0)
+                if ((i + (UInt64)t.Item2) % (UInt64)t.Item1 != 0)
                 {
                     return false;
                 }
@@ -49,13 +48,13 @@ namespace AoC.Advent2020
         }
         public static UInt64 Part2x(string input, UInt64 start)
         {
-            var lines = Util.Split(input,'\n');
+            var lines = Util.Split(input, '\n');
             var times = Util.Split(lines[1]);
             int i = 0;
-            var nums = new List<Tuple<int,int>>();
-            foreach(var t in times)
+            var nums = new List<Tuple<int, int>>();
+            foreach (var t in times)
             {
-                if (t!="x")
+                if (t != "x")
                 {
                     nums.Add(Tuple.Create(Int32.Parse(t), i));
                 }
@@ -63,32 +62,32 @@ namespace AoC.Advent2020
             }
 
             var m = (UInt64)nums.First().Item1;
-            
+
             var n = NextMultiple(start, m);
 
-            while(true) 
+            while (true)
             {
-                if (Check(n, nums)) 
+                if (Check(n, nums))
                 {
                     return n;
                 }
-                n+= m;
-                if (n%100000000 ==0) Console.WriteLine(n);
+                n += m;
+                if (n % 100000000 == 0) Console.WriteLine(n);
             }
 
-            
+
         }
 
         public static UInt64 Part2(string input)
         {
-            var lines = Util.Split(input,'\n');
+            var lines = Util.Split(input, '\n');
             var times = Util.Split(lines[1]);
-            
-            var nums = new List<Tuple<UInt64,UInt64>>();
+
+            var nums = new List<Tuple<UInt64, UInt64>>();
             UInt64 i = 0;
-            foreach(var t in times)
+            foreach (var t in times)
             {
-                if (t!="x")
+                if (t != "x")
                 {
                     nums.Add(Tuple.Create(UInt64.Parse(t), i));
                 }
@@ -96,7 +95,7 @@ namespace AoC.Advent2020
             }
             UInt64 res = nums[0].Item1;
             var inc = res;
-   
+
             foreach (var n in nums.Skip(1))
             {
                 var mod = n.Item1 - (n.Item2 % n.Item1);
@@ -136,7 +135,7 @@ namespace AoC.Advent2020
         {
             Console.WriteLine(Part2("939\n7,13,x,x,59,x,31,19"));
             //logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
             //104374000000000
         }
     }

@@ -1,6 +1,5 @@
 ﻿using AoC.Utils;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2020
@@ -55,7 +54,7 @@ namespace AoC.Advent2020
             {
                 if (part.One())
                 {
-                    return Get(x + dx, y + dy);     
+                    return Get(x + dx, y + dy);
                 }
                 else
                 {

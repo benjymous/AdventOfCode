@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Advent.Utils.Vectors
 {
@@ -13,7 +12,7 @@ namespace Advent.Utils.Vectors
 
         public bool Pointy { get; set; } = true;
 
-        public HexVector(int x, int y, int z, bool pointy=true)
+        public HexVector(int x, int y, int z, bool pointy = true)
         {
             X = x;
             Y = y;

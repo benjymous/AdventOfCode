@@ -1,8 +1,6 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2020
 {
@@ -46,7 +44,7 @@ namespace AoC.Advent2020
 
                 var k = Counts.Keys.ToArray();
                 while (Allergens.Count < k.Length)
-                {                   
+                {
                     foreach (var allergen in k)
                     {
                         if (Allergens.ContainsKey(allergen)) continue;
@@ -92,8 +90,8 @@ namespace AoC.Advent2020
             var foods = new Foods(input);
 
             var ingredients = foods.Ingredients;
-           
-            foreach(var kvp in foods.Allergens)
+
+            foreach (var kvp in foods.Allergens)
             {
                 ingredients.Remove(kvp.Value);
             }

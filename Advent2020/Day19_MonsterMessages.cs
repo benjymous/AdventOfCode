@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -7,8 +6,8 @@ namespace AoC.Advent2020
 {
     public class Day19 : IPuzzle
     {
-        public string Name { get { return "2020-19";} }
- 
+        public string Name { get { return "2020-19"; } }
+
         class Rule
         {
             public Rule(string input)
@@ -27,14 +26,14 @@ namespace AoC.Advent2020
             if (!rules.ContainsKey(key)) return key;
             //Console.WriteLine("?+'"+key+"'");
             var current = rules[key];
-            string result="";
+            string result = "";
 
             foreach (var child in current.Values)
-            {            
+            {
                 result += Resolve(child, rules);
             }
 
-            if (result.Contains('|')) return "("+result+")";
+            if (result.Contains('|')) return "(" + result + ")";
 
             return result;
         }
@@ -51,7 +50,7 @@ namespace AoC.Advent2020
                 rules["11"] = new Rule("11: 42 ( 42 ( 42 ( 42 ( 42 ( 42 31 )* 31 )* 31 )* 31 )* 31 )* 31");
             }
 
-            var r = new Regex("^"+Resolve("0", rules)+"$");
+            var r = new Regex("^" + Resolve("0", rules) + "$");
 
             return messages.Where(m => r.Match(m).Success).Count();
         }
@@ -68,8 +67,8 @@ namespace AoC.Advent2020
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input)); // 134
-            logger.WriteLine("- Pt2 - "+Part2(input)); // 377
+            logger.WriteLine("- Pt1 - " + Part1(input)); // 134
+            logger.WriteLine("- Pt2 - " + Part2(input)); // 377
         }
     }
 }

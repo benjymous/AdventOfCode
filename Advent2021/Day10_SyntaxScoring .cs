@@ -1,8 +1,5 @@
-﻿using AoC.Utils;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2021
 {
@@ -11,10 +8,10 @@ namespace AoC.Advent2021
         public string Name { get { return "2021-10"; } }
 
         static char ExpectedClose(char opener) => opener switch
-        { '(' => ')',  '[' => ']',  '{' => '}',  '<' => '>', _ => '!' };
+        { '(' => ')', '[' => ']', '{' => '}', '<' => '>', _ => '!' };
 
         static (int part1, int part2) Score(char ch) => ch switch
-        { ')' => (3, 1),  ']' => (57, 2),  '}' => (1197, 3),  '>' => (25137, 4),  _ => (0, 0) };
+        { ')' => (3, 1), ']' => (57, 2), '}' => (1197, 3), '>' => (25137, 4), _ => (0, 0) };
 
         static (char found, Stack<char> stack) CheckLine(string line)
         {
@@ -35,7 +32,7 @@ namespace AoC.Advent2021
                     case '}':
                     case '>':
                         var expected = ExpectedClose(stack.Pop());
-                        if (c != expected) return (c, stack);                 
+                        if (c != expected) return (c, stack);
                         break;
                 }
             }

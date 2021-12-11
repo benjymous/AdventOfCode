@@ -242,7 +242,7 @@ namespace AoC.Advent2019.NPSA
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            while (Step());
+            while (Step()) ;
 
             sw.Stop();
             runTimeSecs = sw.Elapsed.TotalSeconds;

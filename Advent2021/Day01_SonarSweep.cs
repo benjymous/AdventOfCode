@@ -14,7 +14,7 @@ namespace AoC.Advent2021
         private static int AscendingDepths(IEnumerable<int> depths) =>
             depths.Skip(1)
              .Zip(depths, (curr, prev) => curr > prev ? 1 : 0)
-             .Sum(); 
+             .Sum();
 
         public static int Part1(string input)
         {

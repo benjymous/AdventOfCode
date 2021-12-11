@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using AoC.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AoC.Utils;
 
 namespace AoC.Advent2020
 {
     public class Day14 : IPuzzle
     {
-        public string Name { get { return "2020-14";} }
- 
+        public string Name { get { return "2020-14"; } }
+
         enum StatementType
         {
             mask,
@@ -31,7 +28,7 @@ namespace AoC.Advent2020
                 else
                 {
                     type = StatementType.mem;
-                    Address = Int64.Parse(bits[0].Replace("mem","").Replace("[","").Replace("]",""));
+                    Address = Int64.Parse(bits[0].Replace("mem", "").Replace("[", "").Replace("]", ""));
                     Value = Int64.Parse(bits[1]);
                 }
             }
@@ -103,7 +100,7 @@ namespace AoC.Advent2020
                 {
                     Util.SetBit(ref resqua, i);
                 }
-      
+
             }
 
             return (resval, resqua);
@@ -135,12 +132,12 @@ namespace AoC.Advent2020
             {
                 var next = inputs.Take();
 
-                if (next.QuantumBits == 0) 
+                if (next.QuantumBits == 0)
                 {
                     yield return next.Value;
                 }
                 else
-                {                    
+                {
                     foreach (var b in next.QuantumBits.BitSequence())
                     {
                         Int64 newq = next.QuantumBits & ~b;
@@ -155,7 +152,7 @@ namespace AoC.Advent2020
         {
             var statements = Util.Parse<Statement>(input);
 
-            (Int64 Value, Int64 QuantumBits) mask = (0,0);
+            (Int64 Value, Int64 QuantumBits) mask = (0, 0);
             var memory = new Dictionary<Int64, Int64>();
             foreach (var statement in statements)
             {
@@ -176,7 +173,7 @@ namespace AoC.Advent2020
         {
             var statements = Util.Parse<Statement>(input);
 
-            (Int64 Value, Int64 QuantumBits) mask = (0,0);
+            (Int64 Value, Int64 QuantumBits) mask = (0, 0);
             var memory = new Dictionary<Int64, Int64>();
             foreach (var statement in statements)
             {
@@ -186,7 +183,7 @@ namespace AoC.Advent2020
                 }
                 else
                 {
-                    var addressMask = ApplyMaskV2(statement.Address, mask);           
+                    var addressMask = ApplyMaskV2(statement.Address, mask);
                     var addresses = Combinations(addressMask);
                     foreach (var addr in addresses)
                     {
@@ -201,8 +198,8 @@ namespace AoC.Advent2020
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

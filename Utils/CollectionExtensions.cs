@@ -163,6 +163,13 @@ namespace AoC.Utils
             }
         }
 
+        public static IEnumerable<(int x, int y)> Keys<T>(this T[,] array2d)
+        {
+            for (int y = 0; y < array2d.Height(); ++y)
+                for (int x = 0; x < array2d.Width(); ++x)
+                    yield return (x, y);
+        }
+
         public static IEnumerable<T> Row<T>(this T[,] array2d, int row)
         {
             for (int col = 0; col < array2d.GetLength(1); col++)
@@ -178,6 +185,48 @@ namespace AoC.Utils
                 yield return array2d[row, col];
             }
         }
+
+        public static bool TrySet<T>(this T[,] array2d, (int col, int row) pos, T val) => TrySet(array2d, pos.col, pos.row, val);
+
+        public static bool TrySet<T>(this T[,] array2d, int col, int row, T val)
+        {
+            if (row >= array2d.Height() || col >= array2d.Width() || row < 0 || col < 0)
+            {
+                return false;
+            }
+
+            array2d[col, row] = val;
+            return true;
+        }
+
+        public static bool TryIncrement(this int[,] array2d, (int col, int row) pos, int val = 1) => TryIncrement(array2d, pos.col, pos.row, val);
+
+        public static bool TryIncrement(this int[,] array2d, int col, int row, int val)
+        {
+            if (row >= array2d.Height() || col >= array2d.Width() || row < 0 || col < 0)
+            {
+                return false;
+            }
+
+            array2d[col, row] += val;
+
+            return true;
+        }
+
+        public static T GetOrDefault<T>(this T[,] array2d, (int col, int row) pos) => GetOrDefault(array2d, pos.col, pos.row);
+
+        public static T GetOrDefault<T>(this T[,] array2d, int col, int row)
+        {
+            if (row >= array2d.Height() || col >= array2d.Width() || row < 0 || col < 0)
+            {
+                return default(T);
+            }
+
+            return array2d[col, row];
+        }
+
+        public static int Height<T>(this T[,] array2d) => array2d.GetLength(0);
+        public static int Width<T>(this T[,] array2d) => array2d.GetLength(1);
 
         public static Int64 Product(this IEnumerable<int> vals)
         {
