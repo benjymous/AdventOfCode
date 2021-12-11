@@ -9,7 +9,7 @@ namespace AoC.Advent2016
 {
     public class Day24 : IPuzzle
     {
-        public string Name { get { return "2016-24"; } }
+        public string Name => "2016-24";
 
         static int LocationCode(char c) => (1 << char.ToLower(c) - '0');
         static Int64 GetKey(int location, int visited) => (Int64)location << 32 | (Int64)(uint)visited;

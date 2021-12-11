@@ -6,7 +6,7 @@ namespace AoC.Advent2017
 {
     public class Day07 : IPuzzle
     {
-        public string Name { get { return "2017-07"; } }
+        public string Name => "2017-07";
 
         static (string, int) ExtractParent(string data)
         {

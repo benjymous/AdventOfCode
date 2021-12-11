@@ -8,7 +8,7 @@ namespace AoC.Advent2020
 {
     public class Day22 : IPuzzle
     {
-        public string Name { get { return "2020-22"; } }
+        public string Name => "2020-22";
 
         static Queue<byte>[] ParseData(string input)
         {

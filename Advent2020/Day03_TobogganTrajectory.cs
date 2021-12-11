@@ -13,7 +13,7 @@ namespace AoC.Advent2020
 
     public class Day03 : IPuzzle
     {
-        public string Name { get { return "2020-03"; } }
+        public string Name => "2020-03";
 
         private static int CountTrees(string[] map, int dx, int dy)
         {

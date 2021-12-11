@@ -2,7 +2,7 @@
 {
     public class Day01 : IPuzzle
     {
-        public string Name { get { return "2017-01"; } }
+        public string Name => "2017-01";
 
         public static int Captcha(string input, int offset)
         {

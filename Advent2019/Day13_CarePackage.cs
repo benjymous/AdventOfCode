@@ -8,7 +8,7 @@ namespace AoC.Advent2019
 {
     public class Day13 : IPuzzle
     {
-        public string Name { get { return "2019-13"; } }
+        public string Name => "2019-13";
 
         public class NPVGS : NPSA.ICPUInterrupt
         {

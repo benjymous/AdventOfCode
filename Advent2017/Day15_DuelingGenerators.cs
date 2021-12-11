@@ -7,7 +7,7 @@ namespace AoC.Advent2017
 {
     public class Day15 : IPuzzle
     {
-        public string Name { get { return "2017-15"; } }
+        public string Name => "2017-15";
 
         public static IEnumerable<int> Generator(int value, int factor, int multiple)
         {

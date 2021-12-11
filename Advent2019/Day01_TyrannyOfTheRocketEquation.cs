@@ -5,7 +5,7 @@ namespace AoC.Advent2019
 {
     public class Day01 : IPuzzle
     {
-        public string Name { get { return "2019-01"; } }
+        public string Name => "2019-01";
 
         public static int GetFuelRequirement(int moduleWeight) => Math.Max(0, (moduleWeight / 3) - 2);
 

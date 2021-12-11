@@ -5,7 +5,7 @@ namespace AoC.Advent2018
 {
     public class Day08 : IPuzzle
     {
-        public string Name { get { return "2018-08"; } }
+        public string Name => "2018-08";
 
         static Node BuildTree(string input)
         {

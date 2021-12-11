@@ -6,7 +6,7 @@ namespace AoC.Advent2015
 {
     public class Day06 : IPuzzle
     {
-        public string Name { get { return "2015-06"; } }
+        public string Name => "2015-06";
 
         public enum Mode
         {

@@ -5,7 +5,7 @@ namespace AoC.Advent2017
 {
     public class Day02 : IPuzzle
     {
-        public string Name { get { return "2017-02"; } }
+        public string Name => "2017-02";
 
         public static int RowDifference(string line)
         {

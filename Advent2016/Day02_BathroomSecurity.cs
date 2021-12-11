@@ -6,7 +6,7 @@ namespace AoC.Advent2016
 {
     public class Day02 : IPuzzle
     {
-        public string Name { get { return "2016-02"; } }
+        public string Name => "2016-02";
 
         static string keypad1 = "123  \n" +
                                 "456  \n" +

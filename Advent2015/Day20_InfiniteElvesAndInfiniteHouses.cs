@@ -5,7 +5,7 @@ namespace AoC.Advent2015
 {
     public class Day20 : IPuzzle
     {
-        public string Name { get { return "2015-20"; } }
+        public string Name => "2015-20";
 
         public static IEnumerable<int> getFactors(int x)
         {

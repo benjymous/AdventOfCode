@@ -7,7 +7,7 @@ namespace AoC.Advent2020
 {
     public class Day24 : IPuzzle
     {
-        public string Name { get { return "2020-24"; } }
+        public string Name => "2020-24";
 
         static IEnumerable<string> SplitCommands(string line)
         {

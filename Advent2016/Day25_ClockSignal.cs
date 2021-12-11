@@ -5,7 +5,7 @@ namespace AoC.Advent2016
 {
     public class Day25 : IPuzzle
     {
-        public string Name { get { return "2016-25"; } }
+        public string Name => "2016-25";
 
         const int SAMPLE_SIZE = 10;
 

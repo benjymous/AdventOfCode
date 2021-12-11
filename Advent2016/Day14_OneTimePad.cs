@@ -6,7 +6,7 @@ namespace AoC.MMXVI
 {
     public class Day14 : IPuzzle
     {
-        public string Name { get { return "2016-14"; } }
+        public string Name => "2016-14";
 
         static char FindTriplet(string input, Dictionary<string, char> cache)
         {

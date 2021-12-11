@@ -5,7 +5,7 @@ namespace AoC.Advent2018
 {
     public class Day07 : IPuzzle
     {
-        public string Name { get { return "2018-07"; } }
+        public string Name => "2018-07";
 
 
         private static void ParseInput(string input, out HashSet<string> steps, out Dictionary<string, HashSet<string>> dependencies)

@@ -6,7 +6,7 @@ namespace AoC.Advent2018
 {
     public class Day12 : IPuzzle
     {
-        public string Name { get { return "2018-12"; } }
+        public string Name => "2018-12";
 
         private static string Step(Dictionary<string, string> rules, string current)
         {

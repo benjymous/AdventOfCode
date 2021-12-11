@@ -6,7 +6,7 @@ namespace AoC.Advent2021
 {
     public class Day11 : IPuzzle
     {
-        public string Name { get { return "2021-11"; } }
+        public string Name => "2021-11";
 
         class State
         {
@@ -17,6 +17,7 @@ namespace AoC.Advent2021
             static (int dx, int dy)[] directions = new (int, int)[] { (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1) };
 
             static IEnumerable<(int x, int y)> Neighbours((int x, int y) pos) => from dir in directions select (pos.x + dir.dx, pos.y + dir.dy);
+            
             public int Step()
             {
                 // inc all cells
@@ -52,31 +53,15 @@ namespace AoC.Advent2021
         {
             var state = new State(input);
 
-            int count = 0;
-            for (int i = 0; i < 100; i++)
-            {
-                count += state.Step();
-            }
-
-            return count;
+            return Enumerable.Range(1, 100).Select(_ => state.Step()).Sum();
         }
 
         public static int Part2(string input)
         {
             var state = new State(input);
-
-            int step = 0;
-            int count;
-
             int cellCount = state.Cells.Width() * state.Cells.Height();
 
-            do
-            {
-                count = state.Step();
-                step++;
-            } while (count < cellCount);
-
-            return step;
+            return Util.Forever(1).Where(_ => state.Step() == cellCount).First();
         }
 
         public void Run(string input, ILogger logger)

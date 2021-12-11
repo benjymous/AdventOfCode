@@ -7,7 +7,7 @@ namespace AoC.Advent2015
 {
     public class Day24 : IPuzzle
     {
-        public string Name { get { return "2015-24"; } }
+        public string Name => "2015-24";
 
         public static IEnumerable<IEnumerable<int>> Groupings(IEnumerable<int> available, int target)
         {

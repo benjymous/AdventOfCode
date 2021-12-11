@@ -5,7 +5,7 @@ namespace AoC.Advent2017
 {
     public class Day12 : IPuzzle
     {
-        public string Name { get { return "2017-12"; } }
+        public string Name => "2017-12";
 
         class Pools
         {

@@ -2,7 +2,7 @@
 {
     public class Day02 : IPuzzle
     {
-        public string Name { get { return "2021-02"; } }
+        public string Name => "2021-02";
 
         struct Instruction
         {

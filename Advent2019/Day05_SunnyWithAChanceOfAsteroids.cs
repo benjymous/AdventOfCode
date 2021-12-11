@@ -2,7 +2,7 @@
 {
     public class Day05 : IPuzzle
     {
-        public string Name { get { return "2019-05"; } }
+        public string Name => "2019-05";
 
         public static string RunProgram(string program, int input)
         {

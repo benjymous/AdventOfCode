@@ -5,7 +5,7 @@ namespace AoC.Advent2020
 {
     public class Day05 : IPuzzle
     {
-        public string Name { get { return "2020-05"; } }
+        public string Name => "2020-05";
 
         public class BinSearch
         {

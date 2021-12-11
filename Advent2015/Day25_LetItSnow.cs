@@ -6,7 +6,7 @@ namespace AoC.Advent2015
 {
     public class Day25 : IPuzzle
     {
-        public string Name { get { return "2015-25"; } }
+        public string Name => "2015-25";
 
         static IEnumerable<(int x, int y, UInt64 code)> NumberSequence()
         {

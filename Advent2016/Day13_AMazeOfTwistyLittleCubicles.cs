@@ -8,7 +8,7 @@ namespace AoC.Advent2016
 {
     public class Day13 : IPuzzle
     {
-        public string Name { get { return "2016-13"; } }
+        public string Name => "2016-13";
 
         static bool IsOpen(int x, int y, int seed)
         {

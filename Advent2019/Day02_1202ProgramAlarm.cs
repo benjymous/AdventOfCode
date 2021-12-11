@@ -5,7 +5,7 @@ namespace AoC.Advent2019
 {
     public class Day02 : IPuzzle
     {
-        public string Name { get { return "2019-02"; } }
+        public string Name => "2019-02";
 
         public static Int64 RunProgram(string input, int noun, int verb)
         {

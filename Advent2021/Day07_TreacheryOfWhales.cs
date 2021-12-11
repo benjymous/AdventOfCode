@@ -5,7 +5,7 @@ namespace AoC.Advent2021
 {
     public class Day07 : IPuzzle
     {
-        public string Name { get { return "2021-07"; } }
+        public string Name => "2021-07";
 
         public static int Solve(string input, Func<int, int> FuelCost)
         {

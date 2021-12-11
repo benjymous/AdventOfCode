@@ -6,7 +6,7 @@ namespace AoC.Advent2021
 {
     public class Day05 : IPuzzle
     {
-        public string Name { get { return "2021-05"; } }
+        public string Name => "2021-05";
 
         struct Line
         {

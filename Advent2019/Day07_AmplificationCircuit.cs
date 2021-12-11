@@ -7,7 +7,7 @@ namespace AoC.Advent2019
 {
     public class Day07 : IPuzzle
     {
-        public string Name { get { return "2019-07"; } }
+        public string Name => "2019-07";
 
         public static Int64 RunAmplifiers01(string program, IEnumerable<int> inputs)
         {

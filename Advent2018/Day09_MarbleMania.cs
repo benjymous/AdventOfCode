@@ -8,7 +8,7 @@ namespace AoC.Advent2018
 {
     public class Day09 : IPuzzle
     {
-        public string Name { get { return "2018-09"; } }
+        public string Name => "2018-09";
 
         public static UInt64 MarbleGame(int players, int marbles)
         {

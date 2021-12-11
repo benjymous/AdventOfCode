@@ -5,7 +5,7 @@ namespace AoC.Advent2021
 {
     public class Day10 : IPuzzle
     {
-        public string Name { get { return "2021-10"; } }
+        public string Name => "2021-10";
 
         static char ExpectedClose(char opener) => opener switch
         { '(' => ')', '[' => ']', '{' => '}', '<' => '>', _ => '!' };

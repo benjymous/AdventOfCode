@@ -7,7 +7,7 @@ namespace AoC.Advent2016
 {
     public class Day05 : IPuzzle
     {
-        public string Name { get { return "2016-05"; } }
+        public string Name => "2016-05";
 
         public static string CrackPassword1(string doorId, ILogger logger)
         {

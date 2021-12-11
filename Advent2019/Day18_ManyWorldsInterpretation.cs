@@ -9,7 +9,7 @@ namespace AoC.Advent2019
 {
     public class Day18 : IPuzzle
     {
-        public string Name { get { return "2019-18"; } }
+        public string Name => "2019-18";
 
         // turn key char into bit
         // a (or A) = 000001
