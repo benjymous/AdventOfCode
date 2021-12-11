@@ -6,7 +6,7 @@ namespace AoC.Advent2020
 {
     public class Day25 : IPuzzle
     {
-        public string Name { get { return "2020-25";} }
+        public string Name { get { return "2020-25"; } }
 
         const int MagicNumber = 20201227;
 
@@ -14,10 +14,10 @@ namespace AoC.Advent2020
         {
             yield return (0, 0); // Keep things zero indexed
 
-            int loop=1;
-            Int64 val=1;
+            int loop = 1;
+            Int64 val = 1;
 
-            while(true) yield return (loop++, val = (val * subject) % MagicNumber);
+            while (true) yield return (loop++, val = (val * subject) % MagicNumber);
         }
 
         private static int CalculatePrivateKey(int publicKey)
@@ -44,7 +44,7 @@ namespace AoC.Advent2020
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
         }
     }
 }

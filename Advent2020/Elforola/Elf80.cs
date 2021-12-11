@@ -1,4 +1,3 @@
-using AoC.Utils;
 using System;
 
 namespace AoC.Advent2020.Elforola
@@ -16,7 +15,7 @@ namespace AoC.Advent2020.Elforola
         acc = 1,
     };
 
-  
+
     public class Instruction
     {
         public OpCode Opcode;
@@ -57,7 +56,7 @@ namespace AoC.Advent2020.Elforola
         {
             Registers = (int[])other.Registers.Clone();
             Instructions = new Instruction[other.Instructions.Length];
-            for (int i=0; i<other.Instructions.Length; ++i)
+            for (int i = 0; i < other.Instructions.Length; ++i)
             {
                 Instructions[i] = new Instruction(other.Instructions[i]);
             }
@@ -91,7 +90,7 @@ namespace AoC.Advent2020.Elforola
                 case OpCode.nop:
                     Mod(RegisterId.pc, 1);
                     break;
-         
+
                 default:
                     throw new Exception("Unknown opcode");
             }

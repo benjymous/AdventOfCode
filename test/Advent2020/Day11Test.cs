@@ -23,7 +23,7 @@ namespace AoC.Advent2020.Test
                  "..L.L.....\n" +
                  "LLLLLLLLLL\n" +
                  "L.LLLLLL.L\n" +
-                 "L.LLLLL.LL\n", 37)]        
+                 "L.LLLLL.LL\n", 37)]
         [DataTestMethod]
         public void Seats01Test(string input, int expected)
         {
@@ -57,7 +57,7 @@ namespace AoC.Advent2020.Test
         {
             Assert.AreEqual(expected, Advent2020.Day11.TestNeighbours(input, x, y));
         }
-        
+
         [TestCategory("Test")]
         [DataRow("L.LL.LL.LL\n" +
             "LLLLLLL.LL\n" +

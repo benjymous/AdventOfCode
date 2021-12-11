@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AoC.Utils
+﻿namespace AoC.Utils
 {
     public static class NumericExtensions
     {
@@ -12,7 +8,7 @@ namespace AoC.Utils
             if (res.Length == 1)
                 return $"0{res}";
 
-            return res;                    
+            return res;
         }
     }
 }

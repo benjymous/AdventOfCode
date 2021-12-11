@@ -28,13 +28,13 @@
             {
                 switch (line.Command)
                 {
-                    case 'f': x+= line.Distance; break;
-                    case 'u': y-= line.Distance; break;
-                    case 'd': y+= line.Distance; break;
+                    case 'f': x += line.Distance; break;
+                    case 'u': y -= line.Distance; break;
+                    case 'd': y += line.Distance; break;
                 }
             }
 
-            return x*y;
+            return x * y;
         }
 
         public static int Part2(string input)

@@ -1,8 +1,6 @@
 ﻿using AoC.Utils.Vectors;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2017
 {
@@ -51,7 +49,7 @@ namespace AoC.Advent2017
                 switch (nextCh)
                 {
                     case ' ':
-                        return (word,count);
+                        return (word, count);
 
                     case '|':
                     case '-':

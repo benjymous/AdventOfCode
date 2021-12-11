@@ -28,7 +28,7 @@ namespace AoC.Utils.Collections
             {
                 index = p.index;
             }
-            
+
             index[v] = this;
 
             Value = v;
@@ -151,7 +151,7 @@ namespace AoC.Utils.Collections
 
         public Circle<T> Find(T v)
         {
-            var val = index[v]; return val.orphaned ? null : val;       
+            var val = index[v]; return val.orphaned ? null : val;
         }
 
         public Circle<T> Reverse(int count)
@@ -159,7 +159,7 @@ namespace AoC.Utils.Collections
             var vals = Values().Take(count).Reverse();
 
             var current = this;
-            foreach(var i in vals)
+            foreach (var i in vals)
             {
                 current.Set(i);
                 current = current.Forward(1);

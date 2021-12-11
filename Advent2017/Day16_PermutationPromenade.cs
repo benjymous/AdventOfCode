@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2017
 {
@@ -21,7 +20,7 @@ namespace AoC.Advent2017
         }
 
         public static string DoDance(IEnumerable<string> instructions, string players)
-        { 
+        {
 
             char[] order = players.ToArray();
             int orderCount = players.Length;
@@ -87,7 +86,7 @@ namespace AoC.Advent2017
             Int64 remainder = expectedRounds % round;
             //Console.WriteLine($"So we want {remainder}th value");
             return seen.Where(kvp => kvp.Value == remainder).First().Key;
-        
+
         }
 
         public void Run(string input, ILogger logger)

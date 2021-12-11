@@ -1,8 +1,4 @@
-﻿using AoC.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 
 namespace AoC.Advent2020
 {
@@ -13,10 +9,10 @@ namespace AoC.Advent2020
         public static int Part1(string input)
         {
             var numbers = Util.Parse32(input).OrderByDescending(x => x).ToArray();
-           
-            for (var i=0; i<numbers.Length; ++i)
+
+            for (var i = 0; i < numbers.Length; ++i)
             {
-                for (var j=numbers.Length-1; j>=0; --j)
+                for (var j = numbers.Length - 1; j >= 0; --j)
                 {
                     if (numbers[i] + numbers[j] == 2020)
                     {

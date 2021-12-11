@@ -1,8 +1,6 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2021
 {
@@ -65,9 +63,9 @@ namespace AoC.Advent2021
                 var four = segments[4].First();
                 var seven = segments[3].First();
                 var eight = segments[7].First();
-                segments[2].Remove(one); 
-                segments[4].Remove(four); 
-                segments[3].Remove(seven); 
+                segments[2].Remove(one);
+                segments[4].Remove(four);
+                segments[3].Remove(seven);
                 segments[7].Remove(eight);
 
                 // three is the only 5 segmenter with both segments from 1
@@ -137,4 +135,4 @@ namespace AoC.Advent2021
             logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
- }
+}

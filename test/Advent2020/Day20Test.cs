@@ -156,7 +156,7 @@ namespace AoC.Advent2020.Test
         public void RotationTest(string input, int orientation, string expected)
         {
             var tile = new Day20.Tile(input);
-            for (var i=0; i<orientation; ++i)
+            for (var i = 0; i < orientation; ++i)
             {
                 tile.Twizzle();
             }

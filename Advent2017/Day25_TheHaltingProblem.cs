@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2017
 {
@@ -44,7 +43,7 @@ namespace AoC.Advent2017
                 switch (nextLine[1])
                 {
                     case "Write":
-                        Conditions[Parsing].Write = int.Parse(nextLine[4].Replace(".",""));
+                        Conditions[Parsing].Write = int.Parse(nextLine[4].Replace(".", ""));
                         return;
                     case "Move":
                         Conditions[Parsing].Move = nextLine[6][0] == 'r' ? 1 : -1;
@@ -64,7 +63,7 @@ namespace AoC.Advent2017
         {
             public Program(string input)
             {
-                input = input.Replace("\r", "")+"\n";
+                input = input.Replace("\r", "") + "\n";
                 State state = null;
                 foreach (var line in input.Split("\n"))
                 {
@@ -101,7 +100,7 @@ namespace AoC.Advent2017
                         case "-":
                             state.Feed(tokens);
                             break;
-                            
+
 
                         default:
                             Console.WriteLine("Tokenization failed");
@@ -114,7 +113,7 @@ namespace AoC.Advent2017
             public void Run()
             {
                 State = States[Start];
-                for (int cycle=0; cycle < Diagnostic; ++cycle)
+                for (int cycle = 0; cycle < Diagnostic; ++cycle)
                 {
                     var condition = State.Conditions[ReadTape()];
 

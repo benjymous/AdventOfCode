@@ -33,7 +33,7 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void Squid01Test()
         {
-            Assert.AreEqual(4512, Advent2021.Day04.Part1(test.Replace("\r","")));
+            Assert.AreEqual(4512, Advent2021.Day04.Part1(test.Replace("\r", "")));
         }
 
         [TestCategory("Test")]

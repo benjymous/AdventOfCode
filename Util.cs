@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AoC
-{ 
+{
     public enum QuestionPart
     {
         Part1 = 1,
@@ -64,13 +64,13 @@ namespace AoC
                         .ToList();
         }
 
-        public static List<T> Parse<T,C>(string input, C cache, string splitter = "\n")
+        public static List<T> Parse<T, C>(string input, C cache, string splitter = "\n")
         {
-            return Parse<T,C>(input.Split(splitter)
+            return Parse<T, C>(input.Split(splitter)
                                  .Where(x => !string.IsNullOrWhiteSpace(x)), cache);
         }
 
-        public static List<T> Parse<T,C>(IEnumerable<string> input, C cache)
+        public static List<T> Parse<T, C>(IEnumerable<string> input, C cache)
         {
             return input.Select(line => (T)Activator.CreateInstance(typeof(T), new object[] { line, cache }))
                         .ToList();
@@ -120,6 +120,43 @@ namespace AoC
         public static uint[] ParseU32(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => UInt32.Parse(s)).ToArray();
         public static Int64[] Parse64(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int64.Parse(s)).ToArray();
         public static UInt64[] ParseU64(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => UInt64.Parse(s)).ToArray();
+
+        public static T[,] ParseMatrix<T>(string input)
+        {
+            return ParseMatrix<T>(Util.Split(input));
+        }
+
+
+
+        interface Convertomatic
+        {
+            public abstract object Convert(char c);
+        }
+
+        class ConvertInt : Convertomatic
+        {
+            public object Convert(char c) => c - '0';
+        }
+
+        static Convertomatic GetConverter<T>()
+        {
+            if (typeof(T) == typeof(int)) return new ConvertInt();
+
+            throw new NotImplementedException(typeof(T).FullName);
+        }
+
+        public static T[,] ParseMatrix<T>(IEnumerable<string> input)
+        {
+            int height = input.Count();
+            int width = input.First().Count();
+            var mtx = new T[width, height];
+
+            var converter = GetConverter<T>();
+
+            input.WithIndex().ForEach(line => line.Value.WithIndex().ForEach(ch => mtx[ch.Index, line.Index] = (T)converter.Convert(ch.Value)));
+
+            return mtx;
+        }
 
         public static IEnumerable<IEnumerable<T>> Slice<T>(IEnumerable<T> source, int sliceSize)
         {
@@ -186,12 +223,12 @@ namespace AoC
 
         public static int[] ExtractNumbers(IEnumerable<char> input) => input.Where(c => (c == ' ' || c == '-' || (c >= '0' && c <= '9'))).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(w => int.Parse(w)).ToArray();
 
-        public static void SetBit(ref Int64 value, int i) 
+        public static void SetBit(ref Int64 value, int i)
         {
             value |= (1L) << i;
         }
 
-        public static void ClearBit(ref Int64 value, int i) 
+        public static void ClearBit(ref Int64 value, int i)
         {
             value &= ~(1L << i);
         }
@@ -375,7 +412,7 @@ namespace AoC
 
         public IEnumerable<Int64> RangeBuffered(Int64 buffer)
         {
-            for (var i = Min-buffer; i <= Max+buffer; ++i) yield return i;
+            for (var i = Min - buffer; i <= Max + buffer; ++i) yield return i;
         }
 
 

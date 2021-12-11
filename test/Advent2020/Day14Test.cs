@@ -20,9 +20,9 @@ namespace AoC.Advent2020.Test
         }
 
         [TestCategory("Test")]
-        [DataRow("mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X\n"+
-            "mem[8] = 11\n"+
-            "mem[7] = 101\n"+
+        [DataRow("mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X\n" +
+            "mem[8] = 11\n" +
+            "mem[7] = 101\n" +
             "mem[8] = 0", 165)]
         [DataTestMethod]
         public void Docking01Test(string input, Int64 expected)
@@ -32,8 +32,8 @@ namespace AoC.Advent2020.Test
 
         [TestCategory("Test")]
         [DataRow("mask = 000000000000000000000000000000X1001X\n" +
-            "mem[42] = 100\n"+
-            "mask = 00000000000000000000000000000000X0XX\n"+
+            "mem[42] = 100\n" +
+            "mask = 00000000000000000000000000000000X0XX\n" +
             "mem[26] = 1", 208)]
         [DataTestMethod]
         public void Docking02Test(string input, Int64 expected)

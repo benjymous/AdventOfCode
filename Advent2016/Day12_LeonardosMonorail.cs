@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AoC.Advent2016
+﻿namespace AoC.Advent2016
 {
     public class Day12 : IPuzzle
     {

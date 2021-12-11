@@ -20,7 +20,7 @@ namespace AoC.Advent2020.Test
             "7, 3, 47\n" +
             "40, 4, 50\n" +
             "55, 2, 20\n" +
-            "38, 6, 12", 
+            "38, 6, 12",
             "class: 1, row: 7, seat: 14")]
         [DataRow("class: 0-1 or 4-19\n" +
             "row: 0 - 5 or 8 - 19\n" +

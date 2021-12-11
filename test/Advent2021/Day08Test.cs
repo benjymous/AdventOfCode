@@ -8,7 +8,7 @@ namespace AoC.Advent2021.Test
     {
         string input = Util.GetInput<Day08>();
 
-        string test = 
+        string test =
 @"be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe
 edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc
 fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef | cg cg fdcagb cbg
@@ -24,7 +24,7 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
         [DataTestMethod]
         public void Segments01Test()
         {
-            Assert.AreEqual(26, Advent2021.Day08.Part1(test.Replace("\r","")));
+            Assert.AreEqual(26, Advent2021.Day08.Part1(test.Replace("\r", "")));
         }
 
         [TestCategory("Test")]

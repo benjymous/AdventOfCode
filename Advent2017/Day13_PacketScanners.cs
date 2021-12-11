@@ -1,8 +1,6 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2017
 {
@@ -16,7 +14,7 @@ namespace AoC.Advent2017
             public int Range { get; private set; }
             public int Position { get; private set; } = 0;
 
-            public int Direction { get; private set; } = 1;            
+            public int Direction { get; private set; } = 1;
 
             public Scanner(string line)
             {
@@ -31,7 +29,7 @@ namespace AoC.Advent2017
                 if (Position == 0) Direction = 1;
                 if (Position == Range - 1) Direction = -1;
             }
-            
+
         }
 
         private static Dictionary<int, Scanner> GetScanners(string input)
@@ -39,7 +37,7 @@ namespace AoC.Advent2017
             return Util.Parse<Scanner>(input).ToDictionary(s => s.Id, s => s);
         }
 
-        private static (int severity, bool hit) RunScanners(string input, int delay=0, bool earlyExit=false)
+        private static (int severity, bool hit) RunScanners(string input, int delay = 0, bool earlyExit = false)
         {
             var scanners = GetScanners(input);
             int maxDepth = scanners.Keys.Max() + 1;

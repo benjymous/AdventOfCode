@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2020
 {
@@ -22,7 +21,7 @@ namespace AoC.Advent2020
             readonly int Min;
             readonly int Max;
 
-            public bool InRange(int v) => (v >= Min && v <= Max);            
+            public bool InRange(int v) => (v >= Min && v <= Max);
         }
 
         class TicketRule
@@ -36,7 +35,7 @@ namespace AoC.Advent2020
             public string Class;
             public List<Range> Ranges;
 
-            public bool Validate(int input) => Ranges.Where(r => r.InRange(input)).Any();            
+            public bool Validate(int input) => Ranges.Where(r => r.InRange(input)).Any();
         }
 
         class Ticket
@@ -49,10 +48,10 @@ namespace AoC.Advent2020
             public bool Valid = true;
             public int[] Values;
 
-            public IEnumerable<(string, int)> Decode(Dictionary<string, int> lookup) => lookup.Select(kvp => (kvp.Key, Values[kvp.Value]));            
+            public IEnumerable<(string, int)> Decode(Dictionary<string, int> lookup) => lookup.Select(kvp => (kvp.Key, Values[kvp.Value]));
         }
 
-        static IEnumerable<Ticket> ParseTickets(string input) => Util.Parse<Ticket>(input.Trim().Split("\n").Skip(1));        
+        static IEnumerable<Ticket> ParseTickets(string input) => Util.Parse<Ticket>(input.Trim().Split("\n").Skip(1));
 
         class TicketScanner
         {
@@ -61,7 +60,7 @@ namespace AoC.Advent2020
                 var sections = input.Split("\n\n");
                 Rules = Util.Parse<TicketRule>(sections[0]);
                 YourTicket = ParseTickets(sections[1]).First();
-                NearbyTickets = ParseTickets(sections[2]).ToList();        
+                NearbyTickets = ParseTickets(sections[2]).ToList();
             }
 
             public int ValidateNearbyTickets()
@@ -86,10 +85,10 @@ namespace AoC.Advent2020
                 var validTickets = ValidNearbyTickets().ToArray();
 
                 Dictionary<string, HashSet<int>> classMatrix = new Dictionary<string, HashSet<int>>();
-                
+
                 foreach (var rule in Rules)
                 {
-                    classMatrix[rule.Class] = new HashSet<int>();  
+                    classMatrix[rule.Class] = new HashSet<int>();
                     for (var i = 0; i < Rules.Count; ++i)
                     {
                         bool anyInvalid = validTickets.Where(t => rule.Validate(t.Values[i]) == false).Any();

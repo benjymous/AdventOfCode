@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2020
 {
@@ -19,7 +18,7 @@ namespace AoC.Advent2020
         private static int CountTrees(string[] map, int dx, int dy)
         {
             int treeCount = 0;
-            for (int x=0, y=0; y<map.Count(); y+=dy, x+=dx)
+            for (int x = 0, y = 0; y < map.Count(); y += dy, x += dx)
             {
                 if (map[y].IsTree(x)) treeCount++;
             }

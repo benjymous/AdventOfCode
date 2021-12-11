@@ -64,13 +64,13 @@ namespace AoC.Advent2017.Test
         }
 
 
-        
+
         [DataRow("<>", 0)]
         [DataRow("<random characters>", 17)]
         [DataRow("<<<<>", 3)]
         [DataRow("<{!>}>", 2)]
         [DataRow("<!!>", 0)]
-        [DataRow("<!!!>>",0)]
+        [DataRow("<!!!>>", 0)]
         [DataRow("<{o'i!a,<{i<a>", 10)]
         [DataTestMethod]
         public void CountTest(string input, int expected)

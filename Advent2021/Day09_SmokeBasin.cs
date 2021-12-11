@@ -1,9 +1,6 @@
 ﻿using AoC.Utils;
-using AoC.Utils.Vectors;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2021
 {

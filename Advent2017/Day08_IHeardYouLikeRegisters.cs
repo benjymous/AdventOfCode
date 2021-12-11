@@ -1,8 +1,6 @@
-﻿using AoC.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2017
 {
@@ -113,7 +111,7 @@ namespace AoC.Advent2017
                 if (Perform(checkVal, Instr.Operator, Instr.CheckValue))
                 {
                     regs[Instr.RegToChange] += Instr.Amount;
-                }             
+                }
             }
 
             private (int RegToChange, int Amount, int RegToCheck, Operator Operator, int CheckValue) Instr;

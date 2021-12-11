@@ -1,7 +1,6 @@
 ﻿using AoC.Utils;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -9,8 +8,8 @@ namespace AoC.Advent2020
 {
     public class Day20 : IPuzzle
     {
-        public string Name { get { return "2020-20";} }
- 
+        public string Name { get { return "2020-20"; } }
+
         enum Edge
         {
             top = 0,
@@ -65,7 +64,7 @@ namespace AoC.Advent2020
               j     f         g     c
               3 ihg 2         2 fed 1
             */
-              
+
             public void Twizzle()
             {
                 Orientation = ((Orientation + 1) % 8);
@@ -111,25 +110,25 @@ namespace AoC.Advent2020
                         return Grid[y][x];
 
                     case 1:
-                        return Grid[w-x][y];
+                        return Grid[w - x][y];
 
                     case 2:
-                        return Grid[h-y][w-x];
+                        return Grid[h - y][w - x];
 
                     case 3:
-                        return Grid[x][h-y];
+                        return Grid[x][h - y];
 
                     case 4:
                         return Grid[x][y];
 
                     case 5:
-                        return Grid[y][w-x];
+                        return Grid[y][w - x];
 
                     case 6:
-                        return Grid[w-x][h-y];
+                        return Grid[w - x][h - y];
 
                     case 7:
-                        return Grid[h-y][x];
+                        return Grid[h - y][x];
                 }
 
                 throw new Exception("Bad orientation");
@@ -138,9 +137,9 @@ namespace AoC.Advent2020
             public string Transformed()
             {
                 StringBuilder sb = new StringBuilder();
-                for (int y=0; y<Grid.Length; ++y)
+                for (int y = 0; y < Grid.Length; ++y)
                 {
-                    for (int x=0; x<Grid[0].Length; ++x)
+                    for (int x = 0; x < Grid[0].Length; ++x)
                     {
                         sb.Append(GetCellTransformed(x, y));
                     }
@@ -158,17 +157,17 @@ namespace AoC.Advent2020
 
                 // Build map of all edges and which tiles they belong to
                 Map = new Dictionary<string, List<Tile>>();
-                foreach(var tile in Tiles)
+                foreach (var tile in Tiles)
                 {
-                    foreach(var edge in tile.Edges)
+                    foreach (var edge in tile.Edges)
                     {
                         AddEdge(edge, tile);
                         AddEdge(edge.Reversed(), tile);
                     }
-                }   
+                }
 
                 // Find the tiles that exist on a border of the picture
-                foreach(var tile in Tiles)
+                foreach (var tile in Tiles)
                 {
                     tile.Borders = tile.Edges.Where(e => Map[e].Count == 1).Count();
                 }
@@ -239,7 +238,7 @@ namespace AoC.Advent2020
         {
             var solver = new JigsawSolver(input);
 
-            return solver.Corners.Select(t => t.ID).Product();   
+            return solver.Corners.Select(t => t.ID).Product();
         }
 
         public static Int64 Part2(string input)
@@ -255,7 +254,7 @@ namespace AoC.Advent2020
                 Tile corner = corners[tryCorner];
 
                 // orient this corner so it'll fit in the top left corner
-                while (!(solver.Map[corner.Edges[(int)Edge.top]].Count == 1 && 
+                while (!(solver.Map[corner.Edges[(int)Edge.top]].Count == 1 &&
                          solver.Map[corner.Edges[(int)Edge.left]].Count == 1))
                 {
                     corner.Twizzle();
@@ -360,7 +359,7 @@ namespace AoC.Advent2020
                     //}
 
                     //var bmp = new Bitmap(maxx * 8, maxy * 8);
-                    
+
                     //for (var y = 0; y < maxy * 8; ++y)
                     //{
                     //    for (var x = 0; x < maxx * 8; ++x)
@@ -385,8 +384,8 @@ namespace AoC.Advent2020
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - "+Part1(input)); 
-            logger.WriteLine("- Pt2 - "+Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

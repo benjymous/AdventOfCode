@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2020
 {
@@ -11,7 +9,7 @@ namespace AoC.Advent2020
 
         public class Record
         {
-            public Record (string row)
+            public Record(string row)
             {
                 var parts = row.Split(' ');
                 Password = parts[2].Trim();
@@ -24,13 +22,13 @@ namespace AoC.Advent2020
             public char TestChar;
             public int[] Values;
 
-            public bool ValidPt1 
-            {  
+            public bool ValidPt1
+            {
                 get
                 {
-                    var test = Password.Count(c => c==TestChar);
+                    var test = Password.Count(c => c == TestChar);
                     return test >= Values[0] && test <= Values[1];
-                } 
+                }
             }
 
             public bool ValidPt2

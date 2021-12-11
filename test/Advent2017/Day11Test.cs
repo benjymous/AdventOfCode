@@ -11,7 +11,7 @@ namespace AoC.Advent2017.Test
 
         [TestCategory("Test")]
         [DataRow("ne,ne,ne", 3)]
-        [DataRow("ne,ne,sw,sw" , 0)]
+        [DataRow("ne,ne,sw,sw", 0)]
         [DataRow("ne,ne,s,s", 2)]
         [DataRow("se,sw,se,sw,sw", 3)]
         [DataTestMethod]

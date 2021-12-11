@@ -3,7 +3,6 @@ using AoC.Utils.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2020
 {
@@ -18,17 +17,17 @@ namespace AoC.Advent2020
 
             if (part2)
             {
-                node.InsertRange(Enumerable.Range(10, 1000000-start.Count()));
+                node.InsertRange(Enumerable.Range(10, 1000000 - start.Count()));
             }
 
             return start;
         }
 
-        static IEnumerable<Circle<int>> Take(Circle<int> circle) 
+        static IEnumerable<Circle<int>> Take(Circle<int> circle)
             => new Circle<int>[] { circle.PopNext(), circle.PopNext(), circle.PopNext() };
-   
 
-        static Circle<int> FindDestination(Circle<int> current,IEnumerable<Circle<int>> vals, bool part2)
+
+        static Circle<int> FindDestination(Circle<int> current, IEnumerable<Circle<int>> vals, bool part2)
         {
             var valvals = vals.Select(v => v.Value);
             int max = part2 ? 1000000 : 9;
@@ -37,20 +36,20 @@ namespace AoC.Advent2020
             do
             {
                 destinationVal = destinationVal == 1 ? max : destinationVal - 1;
-            } 
+            }
             while (valvals.Contains(destinationVal));
 
             return current.Find(destinationVal);
         }
 
-        public static IEnumerable<int> Play(string input, int rounds, bool part2=false)
+        public static IEnumerable<int> Play(string input, int rounds, bool part2 = false)
         {
             var current = CreateCircle(input.Trim().ToArray().Select(ch => ch - '0'), part2);
-            
+
             while (rounds-- > 0)
             {
                 var taken = Take(current);
-                
+
                 FindDestination(current, taken, part2).InsertRange(taken);
 
                 current = current.Next();

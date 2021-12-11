@@ -1,9 +1,7 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Collections;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2017
 {
@@ -69,7 +67,7 @@ namespace AoC.Advent2017
             var cycle = new Loop(Circle<int>.Create(Enumerable.Range(0, listSize)));
             for (int i = 0; i < cycles; ++i)
             {
-                cycle = PerformCycle(cycle, instructions);                
+                cycle = PerformCycle(cycle, instructions);
             }
             return cycle;
         }
@@ -82,13 +80,13 @@ namespace AoC.Advent2017
             return RunHash(256, instructions, 64).KnotHash();
         }
 
-        
+
 
 
         public static int Part1(string input)
         {
             var instructions = Util.Parse32(input);
-            
+
             return RunHash(256, instructions, 1).CheckSum();
         }
 

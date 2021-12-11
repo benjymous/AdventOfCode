@@ -1,8 +1,6 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2021
 {
@@ -16,10 +14,10 @@ namespace AoC.Advent2021
             {
                 Util.Split(input)
                     .WithIndex()
-                    .ForEach(line => 
+                    .ForEach(line =>
                         Util.Parse32(line.Value, ' ')
                              .WithIndex()
-                             .ForEach(row => 
+                             .ForEach(row =>
                                 Put(row.Index, line.Index, row.Value)
                               )
                      );
@@ -43,7 +41,7 @@ namespace AoC.Advent2021
                     Complete = CheckRow(pos.y) || CheckCol(pos.x);
                 }
 
-                return Complete;         
+                return Complete;
             }
 
             bool CheckRow(int y) => numbers.Row(y).All(i => i == -1);
@@ -68,7 +66,7 @@ namespace AoC.Advent2021
                 {
                     if (board.PlayNumber(num))
                     {
-                        if (part.One() || 
+                        if (part.One() ||
                             boards.Count(board => board.Complete) == boards.Count())
                             return board.CalcScore(num);
                     }

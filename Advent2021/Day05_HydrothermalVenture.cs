@@ -1,9 +1,6 @@
-﻿using AoC.Utils;
-using AoC.Utils.Vectors;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2021
 {
@@ -16,12 +13,12 @@ namespace AoC.Advent2021
             [Regex(@"(\d+),(\d+) -> (\d+),(\d+)")]
             public Line(int x1, int y1, int x2, int y2) => (p1, p2) = ((x1, y1), (x2, y2));
 
-            public IEnumerable<(int,int)> Points
+            public IEnumerable<(int, int)> Points
             {
                 get
                 {
                     var pos = (p1.X, p1.Y);
-  
+
                     int dx = Math.Abs(p2.X - p1.X);
                     int sx = Math.Sign(p2.X - p1.X);
                     int dy = -Math.Abs(p2.Y - p1.Y);
@@ -47,7 +44,7 @@ namespace AoC.Advent2021
 
                         yield return pos;
 
-                    } while (pos != p2); 
+                    } while (pos != p2);
                 }
             }
 

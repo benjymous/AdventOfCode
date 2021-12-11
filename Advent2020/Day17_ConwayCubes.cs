@@ -1,8 +1,6 @@
-﻿using AoC.Utils.Vectors;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2020
 {
@@ -29,7 +27,7 @@ namespace AoC.Advent2020
                 {
                     for (var x = 0; x < lines[y].Length; ++x)
                     {
-                        Set((x,y,0,0), lines[y][x] == '#');
+                        Set((x, y, 0, 0), lines[y][x] == '#');
                     }
                 }
             }
@@ -71,7 +69,7 @@ namespace AoC.Advent2020
             }
 
             public void Set((Int64 x, Int64 y, Int64 z, Int64 w) pos, bool v)
-            {                
+            {
                 if (v)
                 {
                     XRange.Add(pos.x);
@@ -82,8 +80,8 @@ namespace AoC.Advent2020
                 }
             }
 
-            public bool Get((Int64 x, Int64 y, Int64 z, Int64 w) pos) 
-                => Cells.Contains(pos);            
+            public bool Get((Int64 x, Int64 y, Int64 z, Int64 w) pos)
+                => Cells.Contains(pos);
 
             IEnumerable<(Int64 x, Int64 y, Int64 z, Int64 w)> directions;
 
@@ -108,7 +106,7 @@ namespace AoC.Advent2020
             }
 
             public bool CheckDirection((Int64 x, Int64 y, Int64 z, Int64 w) pos, (Int64 x, Int64 y, Int64 z, Int64 w) dir) =>
-                Get((pos.x+dir.x, pos.y+dir.y, pos.z+dir.z, pos.w+dir.w)); 
+                Get((pos.x + dir.x, pos.y + dir.y, pos.z + dir.z, pos.w + dir.w));
 
             public int Neighbours((Int64 x, Int64 y, Int64 z, Int64 w) pos) =>
                 directions.Where(d => CheckDirection(pos, d)).Count();
@@ -133,7 +131,7 @@ namespace AoC.Advent2020
                             Console.Write(v ? '#' : '.');
                         }
                         Console.WriteLine();
-                    }                    
+                    }
                 }
                 Console.WriteLine();
             }
@@ -159,7 +157,7 @@ namespace AoC.Advent2020
 
             int current = 0;
             while (cycles-- > 0)
-            {         
+            {
                 var oldState = states[current];
                 var newState = states[(current + 1) % 2];
 

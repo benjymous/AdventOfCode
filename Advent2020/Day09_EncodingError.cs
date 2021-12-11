@@ -1,8 +1,6 @@
 ﻿using AoC.Utils;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2020
 {
@@ -27,16 +25,16 @@ namespace AoC.Advent2020
             return FindInvalid(numbers, preamble);
         }
 
-        public static Int64 Part2(string input, int preamble=25)
+        public static Int64 Part2(string input, int preamble = 25)
         {
             var numbers = Util.Parse64(input);
 
             Int64 invalid = FindInvalid(numbers, preamble);
 
-            for (var i=0; i<numbers.Length; ++i)
+            for (var i = 0; i < numbers.Length; ++i)
             {
-                var accumulator = new Accumulator( numbers[i] );
-                foreach (var n in numbers.Skip(i+1))
+                var accumulator = new Accumulator(numbers[i]);
+                foreach (var n in numbers.Skip(i + 1))
                 {
                     accumulator.Add(n);
                     if (accumulator.Sum == invalid)

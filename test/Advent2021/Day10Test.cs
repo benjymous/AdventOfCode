@@ -24,7 +24,7 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void Syntax01Test()
         {
-            Assert.AreEqual(26397, Day10.Part1(test.Replace("\r","")));
+            Assert.AreEqual(26397, Day10.Part1(test.Replace("\r", "")));
         }
 
         [TestCategory("Test")]
