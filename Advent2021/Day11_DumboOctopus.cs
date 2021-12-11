@@ -24,28 +24,21 @@ namespace AoC.Advent2021
                 foreach (var pos in Cells.Keys()) Cells[pos.x, pos.y]++;
 
                 // flash reaction
-                int flashes = 0;
-                bool flashed;
-                do
+                var toFlash = Cells.Entries().Where(entry => entry.value > 9);
+                while (toFlash.Any())
                 {
-                    flashed = false;
-                    foreach (var pos in Cells.Keys())
+                    foreach (var cell in toFlash)
                     {
-                        if (Cells[pos.x, pos.y] > 9)
-                        {
-                            Cells[pos.x, pos.y] = -100; // enough that it can't flash again this step
-                            flashed = true;
-                            flashes++;
-
-                            foreach (var pos2 in Neighbours(pos)) Cells.TryIncrement(pos2);
-                        }
+                        Cells[cell.key.x, cell.key.y] = -100; // enough that it can't flash again this step
+                        foreach (var neighbour in Neighbours(cell.key)) Cells.TryIncrement(neighbour);
                     }
-                } while (flashed);
+                }
 
                 // reset flashed
-                foreach (var pos in Cells.Keys()) if (Cells[pos.x, pos.y] < 0) Cells[pos.x, pos.y] = 0;
+                var flashed = Cells.Entries().Where(entry => entry.value < 0).ToList();
+                flashed.ForEach(entry => Cells[entry.key.x, entry.key.y] = 0);
 
-                return flashes;
+                return flashed.Count(); 
             }
         }
 

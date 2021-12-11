@@ -170,6 +170,13 @@ namespace AoC.Utils
                     yield return (x, y);
         }
 
+        public static IEnumerable<((int x, int y) key, T value)> Entries<T>(this T[,] array2d)
+        {
+            for (int y = 0; y < array2d.Height(); ++y)
+                for (int x = 0; x < array2d.Width(); ++x)
+                    yield return ((x, y), array2d[x,y]);
+        }
+
         public static IEnumerable<T> Row<T>(this T[,] array2d, int row)
         {
             for (int col = 0; col < array2d.GetLength(1); col++)
