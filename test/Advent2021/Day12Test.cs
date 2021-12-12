@@ -28,6 +28,37 @@ namespace AoC.Advent2021.Test
             Assert.AreEqual(expected, Day12.Part2(input.Replace("\r", "")));
         }
 
+        [DataTestMethod]
+        public void BitHashTest()
+        {
+            uint hash = 0;
+
+            for (int j = 0; j < 30; ++j)
+            {
+                Assert.IsFalse(Day12.Contains(hash, j));
+            }
+
+            for (int i = 0; i < 30; ++i)
+            {
+                hash = Day12.SetSeen(hash, i);
+            }
+
+            for (int j=0; j<30; ++j)
+            {
+                Assert.IsTrue(Day12.Contains(hash, j));
+            }
+
+            for (int k=0; k<30; ++k)
+            {
+                hash = Day12.SetSeen(0, k);
+
+                for (int l=0; l<30; ++l)
+                {
+                    Assert.AreEqual((k == l), Day12.Contains(hash, l));
+                }    
+            }
+        }
+
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Passages_Part1_Regression()

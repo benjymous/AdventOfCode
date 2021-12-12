@@ -58,6 +58,14 @@ namespace AoC.Utils.Collections
             c.Parent = p;
         }
 
+        public void AddBidirectional(TKeyType node1, TKeyType node2)
+        {
+            var n1 = GetNode(node1);
+            var n2 = GetNode(node2);
+            n1.Children.Add(n2);
+            n2.Children.Add(n1);
+        }
+
         public List<TreeNode<TKeyType, TDataType>> TraverseToRoot(TKeyType key)
         {
             var output = new List<TreeNode<TKeyType, TDataType>>();

@@ -1,9 +1,7 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Collections;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2021
 {
@@ -19,39 +17,44 @@ namespace AoC.Advent2021
             {
                 if (string.IsNullOrEmpty(line)) continue;
                 var bits = line.Split('-');
-                tree.AddPair(bits[0], bits[1]);
-                tree.AddPair(bits[1], bits[0]);
+                tree.AddBidirectional(bits[0], bits[1]);
             }
             return tree;
         }
 
+        public static uint SetSeen(int nodeId) => (1U << nodeId);
+        public static uint SetSeen(uint seen, int nodeId) => seen | (1U << nodeId);
+        public static bool Contains(uint seen, int nodeId) => (seen & (1U << nodeId)) != 0;
+
         public static int Solve(Tree<string> map, bool revisit = false)
         {
-            var queue = new Queue<(TreeNode<string,object> location, List<int> visited, bool canRevisit)>();
-
             var startNode = map.GetNode("start");
             var endNode = map.GetNode("end");
 
-            queue.Enqueue((startNode, new List<int> { startNode.Id }, revisit));
-            var cache = new HashSet<string>();
-            cache.Add(string.Join(',', new int[]{ startNode.Id }));
+            var queue = new Queue<(TreeNode<string, object> location, ulong key, uint seen, bool canRevisit)> 
+                { (startNode, (ulong)startNode.Id, SetSeen(startNode.Id), revisit) };
 
-            var routes = new List<List<int>>();
+            var cache = new HashSet<ulong>() 
+                { (ulong)startNode.Id };
+
+            int routes = 0;
 
             while (queue.Any())
             {
-                // take an item from the job queue
                 var item = queue.Dequeue();
-
-                var node = item.location;
-
-                foreach (var neighbour in node.Children)
+                foreach (var neighbour in item.location.Children)
                 {
+                    if (neighbour == endNode)
+                    {
+                        routes++;
+                        continue;
+                    }
+
                     bool canRevisit = item.canRevisit;
 
-                    if (char.IsLower(neighbour.Key[0]) && item.visited.Contains(neighbour.Id))
+                    if (char.IsLower(neighbour.Key[0]) && Contains(item.seen, neighbour.Id))
                     {
-                        if (!canRevisit || neighbour == startNode || neighbour == endNode)
+                        if (!canRevisit || neighbour == startNode)
                         {
                             continue;
                         }
@@ -61,23 +64,16 @@ namespace AoC.Advent2021
                         }
                     }
 
-                    var key = string.Join(',', item.visited) + "," + neighbour.Key;
+                    var key = (item.key << 4) + (ulong)neighbour.Id;
                     if (cache.Contains(key)) continue;
-
-                    if (neighbour.Key == "end")
-                    {
-                        routes.Add(item.visited);
-                        continue;
-                    }
-
+       
                     cache.Add(key);
-                    var newVisit = new List<int>(item.visited);
-                    newVisit.Add(neighbour.Id);
-                    queue.Enqueue((neighbour, newVisit, canRevisit));
+
+                    queue.Enqueue((neighbour, key, SetSeen(item.seen, neighbour.Id), canRevisit));
                 }
             }
 
-            return routes.Count;
+            return routes;
         }
 
         public static int Part1(string input)
@@ -91,7 +87,6 @@ namespace AoC.Advent2021
             var tree = ParseTree(input);
             return Solve(tree, true);
         }
-
         public void Run(string input, ILogger logger)
         {
             logger.WriteLine("- Pt1 - " + Part1(input));
