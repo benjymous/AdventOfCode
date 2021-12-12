@@ -293,6 +293,8 @@ namespace AoC.Utils
                    select (i++, v);
         }
 
+        public static void Add<T>(this Queue<T> queue, T item) => queue.Enqueue(item);
+
         public static Queue<T> ToQueue<T>(this IEnumerable<T> sequence) => new Queue<T>(sequence);
 
         public static void EnqueueRange<T>(this Queue<T> queue, IEnumerable<T> sequence)
