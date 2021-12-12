@@ -27,28 +27,31 @@ namespace AoC.Advent2021
 
         public static int Solve(Tree<string> map, bool revisit = false)
         {
-            var queue = new Queue<(string location, List<string> visited, bool canRevisit)>();
+            var queue = new Queue<(TreeNode<string,object> location, List<int> visited, bool canRevisit)>();
 
-            queue.Enqueue(("start", new List<string> { "start" }, revisit));
+            var startNode = map.GetNode("start");
+            var endNode = map.GetNode("end");
+
+            queue.Enqueue((startNode, new List<int> { startNode.Id }, revisit));
             var cache = new HashSet<string>();
-            cache.Add("start");
+            cache.Add(string.Join(',', new int[]{ startNode.Id }));
 
-            List<string> routes = new List<string>();
+            var routes = new List<List<int>>();
 
             while (queue.Any())
             {
                 // take an item from the job queue
                 var item = queue.Dequeue();
 
-                var node = map.GetNode(item.location);
+                var node = item.location;
 
                 foreach (var neighbour in node.Children)
                 {
                     bool canRevisit = item.canRevisit;
 
-                    if (char.IsLower(neighbour.Key[0]) && item.visited.Contains(neighbour.Key))
+                    if (char.IsLower(neighbour.Key[0]) && item.visited.Contains(neighbour.Id))
                     {
-                        if (!canRevisit || neighbour.Key=="start" || neighbour.Key=="end")
+                        if (!canRevisit || neighbour == startNode || neighbour == endNode)
                         {
                             continue;
                         }
@@ -58,19 +61,19 @@ namespace AoC.Advent2021
                         }
                     }
 
-                    var key = String.Join(',', item.visited) + "," + neighbour.Key;
+                    var key = string.Join(',', item.visited) + "," + neighbour.Key;
                     if (cache.Contains(key)) continue;
 
                     if (neighbour.Key == "end")
                     {
-                        routes.Add(key);
+                        routes.Add(item.visited);
                         continue;
                     }
 
                     cache.Add(key);
-                    var newVisit = new List<string>(item.visited);
-                    newVisit.Add(neighbour.Key);
-                    queue.Enqueue((neighbour.Key, newVisit, canRevisit));
+                    var newVisit = new List<int>(item.visited);
+                    newVisit.Add(neighbour.Id);
+                    queue.Enqueue((neighbour, newVisit, canRevisit));
                 }
             }
 
@@ -91,18 +94,6 @@ namespace AoC.Advent2021
 
         public void Run(string input, ILogger logger)
         {
-
-//            string test1 = @"start-A
-//start-b
-//A-c
-//A-b
-//b-d
-//A-end
-//b-end";
-
-            //Console.WriteLine(Part1(test1.Replace("\r","")));
-            //Console.WriteLine(Part2(test1.Replace("\r", "")));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

@@ -8,6 +8,8 @@ namespace AoC.Utils.Collections
         public TKeyType Key { get; set; }
         public TDataType Value { get; set; }
 
+        public int Id { get; set; }
+
         public TreeNode<TKeyType, TDataType> Parent = null;
 
         public List<TreeNode<TKeyType, TDataType>> Children { get; set; } = new List<TreeNode<TKeyType, TDataType>>();
@@ -43,7 +45,7 @@ namespace AoC.Utils.Collections
         {
             if (!index.ContainsKey(key))
             {
-                index[key] = new TreeNode<TKeyType, TDataType> { Key = key };
+                index[key] = new TreeNode<TKeyType, TDataType> { Key = key, Id = index.Count };
             }
             return index[key];
         }
