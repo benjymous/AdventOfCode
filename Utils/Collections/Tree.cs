@@ -13,7 +13,14 @@ namespace AoC.Utils.Collections
         public List<TreeNode<TKeyType, TDataType>> Children { get; set; } = new List<TreeNode<TKeyType, TDataType>>();
 
         public int GetDescendantCount() => Children.Count + Children.Select(c => c.GetDescendantCount()).Sum();
+
+        public override string ToString()
+        {
+            return Key.ToString();
+        }
     }
+
+    public class Tree<TKeyType> : Tree<TKeyType, object> { }
 
     public class Tree<TKeyType, TDataType>
     {
