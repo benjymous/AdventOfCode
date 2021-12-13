@@ -173,6 +173,10 @@ namespace AoC.Utils.Vectors
         public int X { get { return Component[0]; } set { Component[0] = value; } }
         public int Y { get { return Component[1]; } set { Component[1] = value; } }
 
+        public (int x, int y) AsSimple() => ( X, Y );
+
+        public static explicit operator ValueTuple<int,int>(ManhattanVector2 v) => v.AsSimple();
+
         public void Offset(Direction2 dir, int multiple = 1)
         {
             Offset(dir.DX * multiple, dir.DY * multiple);
