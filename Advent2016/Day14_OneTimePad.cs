@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace AoC.MMXVI
+namespace AoC.Advent2016
 {
     public class Day14 : IPuzzle
     {
