@@ -132,10 +132,11 @@ namespace AoC.Advent2016
             return display.NumPixelsOn();
         }
 
-        public static string Part2(string input)
+        public static string Part2(string input, ILogger logger = null)
         {
-            var display = new Display(input, 50, 6);
-            return display.ToString();
+            var display = new Display(input, 50, 6).ToString();
+            if (logger != null) logger.WriteLine(display);
+            return display.GetMD5String();
         }
 
         public void Run(string input, ILogger logger)

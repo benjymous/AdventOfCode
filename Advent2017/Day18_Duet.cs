@@ -47,7 +47,7 @@ namespace AoC.Advent2017
 
         public static Int64 Part1(string input)
         {
-            var cpu = new NorthCloud.Coprocessor(input, "Common,Day18Part1");
+            var cpu = new NorthCloud.Coprocessor(input, "Common,Day18,Day18Part1");
             var reciever = new Part1Port();
             cpu.Bus.Output = reciever;
             cpu.Run();
@@ -59,7 +59,7 @@ namespace AoC.Advent2017
             var port01 = new Part2Port();
             var port10 = new Part2Port();
 
-            var cpu0 = new NorthCloud.Coprocessor(input, "Common,Day18Part2");
+            var cpu0 = new NorthCloud.Coprocessor(input, "Common,Day18,Day18Part2");
             var cpu1 = new NorthCloud.Coprocessor(input, "Common,Day18Part2");
 
             cpu0.Set('p', 0);
