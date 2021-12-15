@@ -121,13 +121,6 @@ namespace AoC
         public static Int64[] Parse64(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int64.Parse(s)).ToArray();
         public static UInt64[] ParseU64(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => UInt64.Parse(s)).ToArray();
 
-        public static T[,] ParseMatrix<T>(string input)
-        {
-            return ParseMatrix<T>(Util.Split(input));
-        }
-
-
-
         interface Convertomatic
         {
             public abstract object Convert(char c);
@@ -137,13 +130,20 @@ namespace AoC
         {
             public object Convert(char c) => c - '0';
         }
+        class ConvertByte : Convertomatic
+        {
+            public object Convert(char c) => (byte)(c - '0');
+        }
 
         static Convertomatic GetConverter<T>()
         {
             if (typeof(T) == typeof(int)) return new ConvertInt();
+            if (typeof(T) == typeof(byte)) return new ConvertByte();
 
             throw new NotImplementedException(typeof(T).FullName);
         }
+
+        public static T[,] ParseMatrix<T>(string input) => ParseMatrix<T>(Util.Split(input));
 
         public static T[,] ParseMatrix<T>(IEnumerable<string> input)
         {
@@ -156,6 +156,21 @@ namespace AoC
             input.WithIndex().ForEach(line => line.Value.WithIndex().ForEach(ch => mtx[ch.Index, line.Index] = (T)converter.Convert(ch.Value)));
 
             return mtx;
+        }
+
+        public static Dictionary<(int x, int y), T> ParseSparseMatrix<T>(string input) => ParseSparseMatrix<T>(Util.Split(input));
+
+        public static Dictionary<(int x, int y),T> ParseSparseMatrix<T>(IEnumerable<string> input)
+        {
+            int height = input.Count();
+            int width = input.First().Count();
+            var dic = new Dictionary<(int x, int y), T>();
+
+            var converter = GetConverter<T>();
+
+            input.WithIndex().ForEach(line => line.Value.WithIndex().ForEach(ch => dic[(ch.Index, line.Index)] = (T)converter.Convert(ch.Value)));
+
+            return dic;
         }
 
         public static IEnumerable<IEnumerable<T>> Slice<T>(IEnumerable<T> source, int sliceSize)
