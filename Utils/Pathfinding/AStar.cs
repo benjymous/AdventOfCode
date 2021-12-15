@@ -8,9 +8,10 @@ namespace AoC.Utils.Pathfinding
     public interface IMap<TCoordinateType>
     {
         IEnumerable<TCoordinateType> GetNeighbours(TCoordinateType location);
-        int Heuristic(TCoordinateType location1, TCoordinateType location2);
+        int Heuristic(TCoordinateType location, TCoordinateType goal) => 1;
+        int GScore(TCoordinateType location) => 1;
     }
-
+    
     public interface IIsWalkable<TCellDataType>
     {
         bool IsWalkable(TCellDataType cell);
@@ -76,21 +77,26 @@ namespace AoC.Utils.Pathfinding
         {
             return location1.Distance(location2);
         }
+
+        public int GScore(ManhattanVector2 location)
+        {
+            return 1;
+        }
     }
 
-    public static class AStar<TCoordinateType> where TCoordinateType : class
+    public static class AStar<TCoordinateType>
     {
         public static IEnumerable<TCoordinateType> FindPath(IMap<TCoordinateType> map, TCoordinateType start, TCoordinateType goal)
         {
             var state = new State();
 
-            state.openSet.Add(start);
             state.gScore[start] = 0;
-            state.fScore[start] = map.Heuristic(start, goal);
+            state.openSet.Add(start);
+            state.taskQueue.Enqueue(start, map.Heuristic(start, goal));
 
             while (state.openSet.Count > 0)
             {
-                var current = state.nextBest();
+                var current = state.taskQueue.Dequeue();
                 if (current.Equals(goal))
                 {
                     return state.Reconstruct(current);
@@ -104,11 +110,9 @@ namespace AoC.Utils.Pathfinding
                     if (state.closedSet.Contains(neighbour))
                         continue;
 
-                    var projectedG = state.getGScore(current) + 1;
+                    var projectedG = state.getGScore(current) + map.GScore(neighbour);
 
-                    if (!state.openSet.Contains(neighbour))
-                        state.openSet.Add(neighbour);
-                    else if (projectedG >= state.getGScore(neighbour))
+                    if (state.openSet.Contains(neighbour) && (projectedG >= state.getGScore(neighbour)))
                         continue;
 
                     //record it
@@ -116,8 +120,8 @@ namespace AoC.Utils.Pathfinding
                     state.gScore[neighbour] = projectedG;
 
                     var newScore = projectedG + map.Heuristic(neighbour, goal);
-                    state.fScore[neighbour] = newScore;
-
+                    state.openSet.Add(neighbour);
+                    state.taskQueue.Enqueue(neighbour, newScore);
                 }
             }
 
@@ -127,26 +131,19 @@ namespace AoC.Utils.Pathfinding
         class State
         {
             public HashSet<TCoordinateType> closedSet = new HashSet<TCoordinateType>();
+
+            //cost of start to goal, passing through key node
             public HashSet<TCoordinateType> openSet = new HashSet<TCoordinateType>();
+            public PriorityQueue<TCoordinateType, int> taskQueue = new PriorityQueue<TCoordinateType, int>();
 
             //cost of start to this key node
             public Dictionary<TCoordinateType, int> gScore = new Dictionary<TCoordinateType, int>();
-            //cost of start to goal, passing through key node
-            public Dictionary<TCoordinateType, int> fScore = new Dictionary<TCoordinateType, int>();
-
+ 
             public Dictionary<TCoordinateType, TCoordinateType> nodeLinks = new Dictionary<TCoordinateType, TCoordinateType>();
 
             internal int getGScore(TCoordinateType pt)
             {
-                int score = int.MaxValue;
-                gScore.TryGetValue(pt, out score);
-                return score;
-            }
-
-            internal int getFScore(TCoordinateType pt)
-            {
-                int score = int.MaxValue;
-                fScore.TryGetValue(pt, out score);
+                gScore.TryGetValue(pt, out int score);
                 return score;
             }
 
@@ -161,8 +158,6 @@ namespace AoC.Utils.Pathfinding
 
                 return (path as IEnumerable<TCoordinateType>).Reverse();
             }
-
-            internal TCoordinateType nextBest() => openSet.Select(node => (node, getFScore(node))).OrderBy(v => v.Item2).First().Item1;
         }
 
     }

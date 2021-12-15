@@ -7,6 +7,8 @@ namespace AoC.Utils
     public static class CollectionExtensions
     {
         public static void IncrementAtIndex<T>(this Dictionary<T, int> dict, T key, int val = 1) => IncrementAtIndex<T, int>(dict, key, val);
+        public static void IncrementAtIndex<T>(this Dictionary<T, long> dict, T key, long val = 1) => IncrementAtIndex<T, long>(dict, key, val);
+
 
         static T Add<T>(T x, T y) => Add((dynamic)x, (dynamic)y);
         static int Add(int a, int b) => a + b;
@@ -45,6 +47,15 @@ namespace AoC.Utils
         {
             var k = key.ToString();
             return GetStrKey(dict, k);
+        }
+
+        public static T GetOrCalculate<K,T>(this Dictionary<K, T> dict, K key, Func<K,T> predicate)
+        {
+            if (!dict.TryGetValue(key, out T val))
+            {
+                val = predicate(key);
+            }
+            return val;
         }
 
         public static string AsString(this IEnumerable<char> input)
@@ -127,7 +138,7 @@ namespace AoC.Utils
             }
         }
 
-        public static IEnumerable<IEnumerable<int>> Windows(this IEnumerable<int> input, int count)
+        public static IEnumerable<IEnumerable<T>> Windows<T>(this IEnumerable<T> input, int count)
         {
             int i = 0;
             while (true)
@@ -301,8 +312,5 @@ namespace AoC.Utils
         {
             foreach (var t in sequence) queue.Enqueue(t);
         }
-
     }
-
-
 }
