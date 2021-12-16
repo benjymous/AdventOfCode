@@ -42,6 +42,11 @@ namespace AoC.Utils
             }
         }
 
+        public static IEnumerable<int> BinarySequenceBigEndian(this int v, int start=8)
+        {
+            for (int i = start; i > 0; i >>= 1) yield return (v & i) > 0 ? 1 : 0;
+        }
+
 
         public static string ToEngineeringNotation(this double d)
         {
@@ -126,6 +131,13 @@ namespace AoC.Utils
             {
                 return $"{value} {str}s";
             }
+        }
+        public static int ParseHex(this char c)
+        {
+            if (c >= '0' && c <= '9') return c - '0';
+            if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+            if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+            throw new Exception("Bad hex");
         }
     }
 

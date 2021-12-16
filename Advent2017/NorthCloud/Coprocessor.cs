@@ -261,7 +261,7 @@ namespace AoC.Advent2017.NorthCloud
             var isets = instructionSet.Split(",");
             return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
                 .Where(x => typeof(IInstr).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
-                .Where(x => isets.Where(n => x.Namespace.Contains(n)).Any())
+                .Where(x => isets.Where(n => x.Namespace.EndsWith(n)).Any())
                 .Select(x => (IInstr)Activator.CreateInstance(x));
         }
 
@@ -278,7 +278,8 @@ namespace AoC.Advent2017.NorthCloud
 
         public Coprocessor(string input, string instructionSet = "Common")
         {
-            var opcodes = GetInstructions(instructionSet).ToDictionary(i => i.Name(), i => i);
+            var v1 = GetInstructions(instructionSet);
+            var opcodes = v1.ToDictionary(i => i.Name(), i => i);
 
             Dictionary<string, int> reverseMap;
             reverseMap = new Dictionary<string, int>();

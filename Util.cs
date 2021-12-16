@@ -211,6 +211,22 @@ namespace AoC
             }
         }
 
+        public static IEnumerable<T> Repeat<T>(Func<T> generator, int count)
+        {
+            for(int i=0; i<count; ++i) yield return generator();
+        }
+
+        public static IEnumerable<T> RepeatWhile<T>(Func<T> generator, Func<T,bool> shouldContinue)
+        {
+            bool cont = true;
+            do
+            {
+                T v = generator();
+                yield return v;
+                cont = shouldContinue(v);
+            } while (cont);
+        }
+
         public static IEnumerable<int> DuplicateDigits(IEnumerable<int> input, int repeats)
         {
             foreach (var i in input)

@@ -18,10 +18,10 @@ namespace AoC.Utils
 
         public static long TimeRun(this IPuzzle puzzle, ILogger logger)
         {
+            var input = Util.GetInput(puzzle);
+            logger.WriteLine(puzzle.Name);
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
-            logger.WriteLine(puzzle.Name);
-            var input = Util.GetInput(puzzle);
             puzzle.Run(input, logger);
             return watch.ElapsedMilliseconds;
         }

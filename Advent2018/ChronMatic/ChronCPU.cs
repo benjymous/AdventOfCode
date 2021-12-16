@@ -138,7 +138,7 @@ namespace AoC.Advent2018.ChronMatic
         int[] Registers = new int[] { 0, 0, 0, 0, 0, 0 };
 
         System.Diagnostics.Stopwatch sw;
-        Int64 CycleCount = 0;
+        public Int64 CycleCount { get; private set; } = 0;
 
 
         public ChronCPU(string program, Dictionary<int, IInstr> instrMap = null) : this(Util.Split(program, '\n'), instrMap)
@@ -230,12 +230,18 @@ namespace AoC.Advent2018.ChronMatic
             return true;
         }
 
-        public void Run()
+        public bool Run(int cycleLimit = int.MaxValue)
         {
             sw = new System.Diagnostics.Stopwatch();
             sw.Start();
-            while (Step()) ;
+            while (CycleCount < cycleLimit)
+            {
+                Step();
+            }
+
             sw.Stop();
+
+            return CycleCount < cycleLimit;
         }
 
         public IEnumerable<string> Dump()
