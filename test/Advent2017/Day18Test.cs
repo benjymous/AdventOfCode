@@ -19,7 +19,7 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void Part2_Regression()
         {
-            Assert.AreEqual(0, Day18.Part2(input));
+            Assert.AreEqual(7112, Day18.Part2(input));
         }
     }
 }

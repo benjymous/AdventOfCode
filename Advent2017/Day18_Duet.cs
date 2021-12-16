@@ -60,7 +60,7 @@ namespace AoC.Advent2017
             var port10 = new Part2Port();
 
             var cpu0 = new NorthCloud.Coprocessor(input, "Common,Day18,Day18Part2");
-            var cpu1 = new NorthCloud.Coprocessor(input, "Common,Day18Part2");
+            var cpu1 = new NorthCloud.Coprocessor(input, "Common,Day18,Day18Part2");
 
             cpu0.Set('p', 0);
             cpu0.Bus.Output = port01;
@@ -76,7 +76,7 @@ namespace AoC.Advent2017
                 if (!cpu1.Step()) break;
             }
 
-            return port10.SendCount;
+            return port01.SendCount;
         }
 
         public void Run(string input, ILogger logger)

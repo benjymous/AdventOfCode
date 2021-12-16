@@ -312,5 +312,12 @@ namespace AoC.Utils
         {
             foreach (var t in sequence) queue.Enqueue(t);
         }
+
+        public static T Pop<T>(this IEnumerator<T> enumerator)
+        {
+            T val = enumerator.Current;
+            enumerator.MoveNext();
+            return val;
+        }
     }
 }
