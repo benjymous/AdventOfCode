@@ -82,7 +82,7 @@ namespace AoC
                                  .Where(x => !string.IsNullOrWhiteSpace(x)));
         }
 
-        static T RegexCreate<T>(string line)
+        public static T RegexCreate<T>(string line)
         {
             foreach (var typeConstructor in typeof(T).GetConstructors())
             {
@@ -190,6 +190,11 @@ namespace AoC
                     yield return (x, y);
                 }
             }
+        }
+
+        public static IEnumerable<int> RangeBetween(int start, int end)
+        {
+            for (int i = start; i < end; i++) yield return i;
         }
 
         public static IEnumerable<(int x, int y)> Matrix(int maxX, int maxY) => Matrix<int, int>(Enumerable.Range(0, maxX), Enumerable.Range(0, maxY));
