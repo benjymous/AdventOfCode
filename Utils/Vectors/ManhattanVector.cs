@@ -243,6 +243,8 @@ namespace AoC.Utils.Vectors
 
         public static ManhattanVector2 operator -(ManhattanVector2 a, ManhattanVector2 b) => new ManhattanVector2((ManhattanVectorN)a - (ManhattanVectorN)b);
 
+
+
         public static ManhattanVector2 Zero = new ManhattanVector2(0, 0);
     }
 
@@ -404,5 +406,10 @@ namespace AoC.Utils.Vectors
         public static Direction2 South = new Direction2(0, 1);
         public static Direction2 East = new Direction2(1, 0);
         public static Direction2 West = new Direction2(-1, 0);
+
+        public override string ToString()
+        {
+            return $"{DX},{DY}";
+        }
     }
 }
