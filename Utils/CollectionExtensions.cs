@@ -149,6 +149,17 @@ namespace AoC.Utils
             }
         }
 
+        public static IEnumerable<(T first, T second)> OverlappingPairs<T>(this IEnumerable<T> input)
+        {
+            int i = 0;
+            while (true)
+            {
+                var vals = input.Skip(i++).Take(2).ToArray();
+                if (vals.Count() < 2) break;
+                yield return (vals[0], vals[1]);
+            }
+        }
+
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items)
         {
             var rnd = new Random();
