@@ -1,3 +1,4 @@
+using AoC.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
@@ -11,6 +12,9 @@ namespace AoC.Advent2021.Test
     {
         string input = Util.GetInput<Day18>();
 
+        string AsString(Val v) => v.IsPair ? $"[{AsString(v.first)},{AsString(v.second)}]" : v.Value.ToString();
+        public static Val Parse(string data) => Day18.Parse(data.ToQueue());
+
         [TestCategory("Test")]
 
 
@@ -23,9 +27,9 @@ namespace AoC.Advent2021.Test
         public void TestSingleExplode(string data, string expected)
         {
             var number = Parse(data);
-            Assert.AreEqual(data, number.ToString());
+            Assert.AreEqual(data, AsString(number));
             number.TryExplode();
-            var result = number.ToString();
+            var result = AsString(number);
             Assert.AreEqual(expected, result);
         }
         [DataRow(9, "9")]
@@ -37,7 +41,7 @@ namespace AoC.Advent2021.Test
         {
             var number = new Val { Value = val };
             number.TrySplit();
-            var result = number.ToString();
+            var result = AsString(number);
             Assert.AreEqual(expected, result);
         }
 
@@ -46,9 +50,9 @@ namespace AoC.Advent2021.Test
         public void TestReduce(string data, string expected)
         {
             var number = Parse(data);
-            Assert.AreEqual(data, number.ToString());
+            Assert.AreEqual(data, AsString(number));
             number.Reduce();
-            var result = number.ToString();
+            var result = AsString(number);
             Assert.AreEqual(expected, result);
         }
 
@@ -110,14 +114,14 @@ namespace AoC.Advent2021.Test
         {
             var first = values.First();
             var number = Parse(first);
-            Assert.AreEqual(first, number.ToString());       
+            Assert.AreEqual(first, AsString(number));       
 
             foreach (var next in values.Skip(1))
             {
                 Console.WriteLine($"  {number}");
                 var v = Parse(next);
                 Console.WriteLine($"+ {v}");
-                Assert.AreEqual(next, v.ToString());
+                Assert.AreEqual(next, AsString(v));
 
                 number = Add(number, v);
 
@@ -127,7 +131,7 @@ namespace AoC.Advent2021.Test
 
             Console.WriteLine($"? {expected}");
 
-            var result = number.ToString();
+            var result = AsString(number);
             Assert.AreEqual(expected, result);
         }
 
