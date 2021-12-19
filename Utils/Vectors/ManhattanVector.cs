@@ -253,24 +253,32 @@ namespace AoC.Utils.Vectors
         public ManhattanVector3(params int[] vals)
             : base(vals)
         {
-            if (ComponentCount != 3) throw new Exception("Invalid component count for Vector2");
+            if (ComponentCount != 3) throw new Exception("Invalid component count for Vector3");
+        }
+
+        public ManhattanVector3((int x, int y, int z) val)
+            : base(new int[] { val.x, val.y, val.z })
+        {
+            if (ComponentCount != 3) throw new Exception("Invalid component count for Vector3");
         }
 
         public ManhattanVector3(string val)
             : base(val)
         {
-            if (ComponentCount != 3) throw new Exception("Invalid component count for Vector2");
+            if (ComponentCount != 3) throw new Exception("Invalid component count for Vector3");
         }
 
         public ManhattanVector3(ManhattanVectorN other)
             : base(other.Component)
         {
-            if (ComponentCount != 3) throw new Exception("Invalid component count for Vector2");
+            if (ComponentCount != 3) throw new Exception("Invalid component count for Vector3");
         }
 
         public int X { get { return Component[0]; } set { Component[0] = value; } }
         public int Y { get { return Component[1]; } set { Component[1] = value; } }
         public int Z { get { return Component[2]; } set { Component[2] = value; } }
+
+        public (int x, int y, int z) AsSimple() => (X, Y, Z);
 
         public static ManhattanVector3 operator +(ManhattanVector3 a, ManhattanVector3 b) => new ManhattanVector3(a + (ManhattanVectorN)b);
         public static ManhattanVector3 operator -(ManhattanVector3 a, ManhattanVector3 b) => new ManhattanVector3((ManhattanVectorN)a - (ManhattanVectorN)b);
