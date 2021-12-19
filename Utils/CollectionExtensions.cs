@@ -53,7 +53,7 @@ namespace AoC.Utils
         {
             if (!dict.TryGetValue(key, out T val))
             {
-                val = predicate(key);
+                dict[key] = val = predicate(key);
             }
             return val;
         }
