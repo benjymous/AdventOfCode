@@ -128,21 +128,32 @@ namespace AoC
         interface Convertomatic
         {
             public abstract object Convert(char c);
+            public abstract bool ShouldConvert(char c);
         }
 
         class ConvertInt : Convertomatic
         {
             public object Convert(char c) => c - '0';
+
+            public bool ShouldConvert(char c) => true;
         }
         class ConvertByte : Convertomatic
         {
             public object Convert(char c) => (byte)(c - '0');
+            public bool ShouldConvert(char c) => true;
         }
+        class ConvertBool : Convertomatic
+        {
+            public object Convert(char c) => c == '#';
+            public bool ShouldConvert(char c) => c == '#';
+        }
+
 
         static Convertomatic GetConverter<T>()
         {
             if (typeof(T) == typeof(int)) return new ConvertInt();
             if (typeof(T) == typeof(byte)) return new ConvertByte();
+            if (typeof(T) == typeof(bool)) return new ConvertBool();
 
             throw new NotImplementedException(typeof(T).FullName);
         }
@@ -157,14 +168,14 @@ namespace AoC
 
             var converter = GetConverter<T>();
 
-            input.WithIndex().ForEach(line => line.Value.WithIndex().ForEach(ch => mtx[ch.Index, line.Index] = (T)converter.Convert(ch.Value)));
+            input.WithIndex().ForEach(line => line.Value.WithIndex().Where(ch => converter.ShouldConvert(ch.Value)).ForEach(ch => mtx[ch.Index, line.Index] = (T)converter.Convert(ch.Value)));
 
             return mtx;
         }
 
         public static Dictionary<(int x, int y), T> ParseSparseMatrix<T>(string input) => ParseSparseMatrix<T>(Util.Split(input));
 
-        public static Dictionary<(int x, int y),T> ParseSparseMatrix<T>(IEnumerable<string> input)
+        public static Dictionary<(int x, int y), T> ParseSparseMatrix<T>(IEnumerable<string> input)
         {
             int height = input.Count();
             int width = input.First().Count();
@@ -172,7 +183,7 @@ namespace AoC
 
             var converter = GetConverter<T>();
 
-            input.WithIndex().ForEach(line => line.Value.WithIndex().ForEach(ch => dic[(ch.Index, line.Index)] = (T)converter.Convert(ch.Value)));
+            input.WithIndex().ForEach(line => line.Value.WithIndex().Where(ch => converter.ShouldConvert(ch.Value)).ForEach(ch => dic[(ch.Index, line.Index)] = (T)converter.Convert(ch.Value)));
 
             return dic;
         }
@@ -185,7 +196,7 @@ namespace AoC
                 .Select(x => x.Select(v => v.Value));
         }
 
-        public static IEnumerable<(T1 x, T2 y)> Matrix<T1, T2>(IEnumerable<T1> set1, IEnumerable<T2> set2)
+        public static IEnumerable<(T1 item1, T2 item2)> Matrix<T1, T2>(IEnumerable<T1> set1, IEnumerable<T2> set2)
         {
             foreach (T1 x in set1)
             {
@@ -196,9 +207,25 @@ namespace AoC
             }
         }
 
+        public static IEnumerable<(int x, int y)> Range2DInclusive((int minY, int maxY, int minX, int maxX) range)
+        {
+            for (int y=range.minY; y<=range.maxY; ++y)
+            {
+                for (int x=range.minX; x<=range.maxX; ++x)
+                {
+                    yield return (x, y);
+                }
+            }
+        }
+
         public static IEnumerable<int> RangeBetween(int start, int end)
         {
             for (int i = start; i < end; i++) yield return i;
+        }
+
+        public static IEnumerable<int> RangeInclusive(int start, int end)
+        {
+            for (int i = start; i <= end; i++) yield return i;
         }
 
         public static IEnumerable<(int x, int y)> Matrix(int maxX, int maxY) => Matrix<int, int>(Enumerable.Range(0, maxX), Enumerable.Range(0, maxY));

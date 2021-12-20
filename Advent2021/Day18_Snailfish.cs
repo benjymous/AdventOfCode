@@ -156,7 +156,7 @@ namespace AoC.Advent2021
         {
             var numbers = Util.Split(input, '\n').Select(line => Parse(line));
 
-            return Util.Matrix(numbers, numbers).Max(pair => Add(pair.x.Clone(), pair.y.Clone()).Magnitude);
+            return Util.Matrix(numbers, numbers).Max(pair => Add(pair.item1.Clone(), pair.item2.Clone()).Magnitude);
         }
 
         public void Run(string input, ILogger logger)
