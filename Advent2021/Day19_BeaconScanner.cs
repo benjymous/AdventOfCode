@@ -76,7 +76,7 @@ namespace AoC.Advent2021
         }
 
         private static int Part1(IEnumerable<Group> aligned) => aligned.Select(g => g.points.AsEnumerable()).Aggregate((lhs, rhs) => lhs.Union(rhs)).ToHashSet().Count();
-        public static int Part2(IEnumerable<Group> aligned) => Util.Matrix(aligned, aligned).Max(pair => pair.x.origin.Distance(pair.y.origin));
+        public static int Part2(IEnumerable<Group> aligned) => Util.Matrix(aligned, aligned).Max(pair => pair.item1.origin.Distance(pair.item2.origin));
 
         public static int Part1(string input)
         {
