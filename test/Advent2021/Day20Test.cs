@@ -20,12 +20,14 @@ namespace AoC.Advent2021.Test
 ..#..
 ..###".Replace("\r", "");
 
+        [TestCategory("Test")]
         [DataTestMethod]
         public void Enhancement1Test()
         {
             Assert.AreEqual(35, Day20.Simulate(test, 2));
         }
 
+        [TestCategory("Test")]
         [DataTestMethod]
         public void Enhancement2Test()
         {
