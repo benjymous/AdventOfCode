@@ -11,15 +11,8 @@ namespace AoC.Advent2021
 
         public class DeterministicDice
         {
-            int Current = 1;
             public int Rolls { get; private set; } = 0;
-            int Roll()
-            {
-                var next = Current;
-                Rolls++;
-                Current = ((Current) % 100) + 1;
-                return next;
-            }
+            int Roll() => (Rolls++ % 100) + 1;
 
             public int Roll3() => Roll() + Roll() + Roll();
         }
