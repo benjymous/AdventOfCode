@@ -515,4 +515,12 @@ namespace AoC
         public string Pattern { get; private set; }
     }
 
+    public class Boxed<T>
+    {
+        T value;
+        public Boxed(T v) => value = v;
+        public static implicit operator T(Boxed<T> boxed) => boxed.value;
+        public static implicit operator Boxed<T>(T value) => new Boxed<T>(value);
+    }
+
 }

@@ -149,14 +149,14 @@ namespace AoC.Advent2021.Test
 -652,-548,-490
 30,-46,-14".Replace("\r","");
 
-        [TestCategory("Regression")]
+        [TestCategory("Test")]
         [DataTestMethod]
         public void BeaconAlignmentTest()
         {
             Assert.AreEqual(79, Day19.Part1(test));
         }
 
-        [TestCategory("Regression")]
+        [TestCategory("Test")]
         [DataTestMethod]
         public void ScannerDistanceTest()
         {
