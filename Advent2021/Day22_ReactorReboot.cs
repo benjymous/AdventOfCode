@@ -38,7 +38,7 @@ namespace AoC.Advent2021
                         var newBox = new Box(xpair.first, xpair.second-1, ypair.first, ypair.second-1, zpair.first, zpair.second-1);
 
                         // keep segments in b1 but not b2
-                        if (b1.OtherIsInside(newBox) && !b2.OtherIsInside(newBox))
+                        if (newBox.Overlaps(b1) && !newBox.Overlaps(b2))
                         {
                             res.Add(newBox);
                         }           
@@ -85,84 +85,90 @@ namespace AoC.Advent2021
                 return x && y && z;
             }
 
-            public IEnumerable<Box> Split(Instruction instruction)
-            {
-                var other = instruction.Box;
-                if (instruction.OnOff == OnOff.on)
-                {
-                    if (OtherIsInside(other))
-                    {
-                        return new Box[] { this };
-                    }
-                    else if (other.OtherIsInside(this))
-                    {
-                        return new Box[] { instruction.Box };
-                    }
-                    else if (Overlaps(instruction.Box))
-                    {
-                        Box bigger, smaller;
+            //public IEnumerable<Box> Overlay(Box other)
+            //{
+            //    return Subtract(other, this);
+            //}
 
-                        if (this.Volume > other.Volume)
-                        {
-                            bigger = this; smaller = other;
-                        }
-                        else
-                        {
-                            smaller = this; bigger = other;
-                        }
 
-                        var v1 = bigger.Volume;
+            //public IEnumerable<Box> Split(Instruction instruction)
+            //{
+            //    var other = instruction.Box;
+            //    if (instruction.Action == OnOff.on)
+            //    {
+            //        if (OtherIsInside(other))
+            //        {
+            //            return new Box[] { this };
+            //        }
+            //        else if (other.OtherIsInside(this))
+            //        {
+            //            return new Box[] { instruction.Box };
+            //        }
+            //        else if (Overlaps(instruction.Box))
+            //        {
+            //            Box bigger, smaller;
 
-                        var res = Subtract(smaller, bigger);
+            //            if (this.Volume > other.Volume)
+            //            {
+            //                bigger = this; smaller = other;
+            //            }
+            //            else
+            //            {
+            //                smaller = this; bigger = other;
+            //            }
 
-                        if (!res.Any())
-                        {
-                            Console.WriteLine("Hmm?");
-                        }
+            //            var v1 = bigger.Volume;
 
-                        res.Add(bigger);
-                        var v2 = CellCount(res);
+            //            var res = Subtract(smaller, bigger);
 
-                        if (v2 < v1)
-                        {
-                            Console.WriteLine("Oops");
-                        }
+            //            if (!res.Any())
+            //            {
+            //                Console.WriteLine("Hmm?");
+            //            }
 
-                        return res;
-                    }
-                    else
-                    {
-                        return new Box[] { this, other };
-                    }
-                }
-                else
-                {
-                    if (Overlaps(instruction.Box))
-                    {
-                        var v1 = this.Volume- instruction.Box.Volume;
-                        var res = Subtract(this, instruction.Box);
-                        var v2 = CellCount(res);
-                        return res;
-                    }
-                    else
-                    {
-                        // subtraction has no effect
-                        return new Box[] { this };
-                    }
-                }
-            }
+            //            res.Add(bigger);
+            //            var v2 = CellCount(res);
+
+            //            if (v2 < v1)
+            //            {
+            //                Console.WriteLine("Oops");
+            //            }
+
+            //            return res;
+            //        }
+            //        else
+            //        {
+            //            return new Box[] { this, other };
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (Overlaps(instruction.Box))
+            //        {
+            //            var v1 = this.Volume - instruction.Box.Volume;
+            //            var res = Subtract(this, instruction.Box);
+            //            var v2 = CellCount(res);
+            //            return res;
+            //        }
+            //        else
+            //        {
+            //            // subtraction has no effect
+            //            return new Box[] { this };
+            //        }
+            //    }
+            //}
         }
 
         public class Instruction
         {
             [Regex(@"(.+) x=(-?\d+)..(-?\d+),y=(-?\d+)..(-?\d+),z=(-?\d+)..(-?\d+)")]
-            public Instruction(OnOff onoff, int x1, int x2, int y1, int y2, int z1, int z2)
+            public Instruction(OnOff action, int x1, int x2, int y1, int y2, int z1, int z2)
             {
-                OnOff = onoff;
+                Action = action;
                 Box = new Box(x1, x2, y1, y2, z1, z2);
             }
 
-            public OnOff OnOff;
+            public OnOff Action;
             public Box Box;
         }
 
@@ -175,52 +181,46 @@ namespace AoC.Advent2021
 
         public static ulong RunOperation(IEnumerable<Instruction> instructions)
         {
-            var data = new List<Box>();
+            IEnumerable<Box> data = Enumerable.Empty<Box>();
 
             foreach (var instr in instructions)
             {
                 var startCount = CellCount(data);
-                Console.WriteLine($"{data.Count} boxes - {startCount} volume");
-                Console.WriteLine($" >> turning {instr.OnOff} {instr.Box} {instr.Box.Volume}");
+                Console.WriteLine($"{data.Count()} boxes - {startCount} volume");
+                Console.WriteLine($" >> turning {instr.Action} {instr.Box} {instr.Box.Volume}");
                 IEnumerable<Box> newBoxes = Enumerable.Empty<Box>();
 
                 if (!data.Any())
                 {
-                    newBoxes = new List<Box> { instr.Box };
+                    newBoxes = new List<Box> { instr.Box };               
                 }
                 else
                 {
-
+                    if (instr.Action == OnOff.on)
+                    {
+                        newBoxes = new List<Box> { instr.Box };
+                    }
                     foreach (var box in data)
                     {
-                        var nextBoxes = box.Split(instr);
-                        if (instr.OnOff == OnOff.on)
-                        {
-                            var v1 = CellCount(nextBoxes);
-                            if (v1 < Math.Max(box.Volume, instr.Box.Volume))
-                            {
-                                Console.WriteLine("Aha!");
-                            }
-                        }
-                        newBoxes = newBoxes.Union(nextBoxes);
+                        newBoxes = newBoxes.Union(Subtract(box, instr.Box));
                     }
                 }
 
-                data = newBoxes.ToList();
+                data = newBoxes.ToHashSet();
                 var endCount = CellCount(data);
-                Console.WriteLine($"Ending step with {data.Count} boxes and {endCount} volume");
-                if (instr.OnOff == OnOff.on)
+                Console.WriteLine($"Ending step with {data.Count()} boxes and {endCount} volume");
+                if (instr.Action == OnOff.on)
                 {
                     if (endCount < startCount)
                     {
-                        Console.WriteLine("!!! Which is odd!");
+                        Console.WriteLine("--? Which is odd!");
                     }
                 }
                 else
                 {
                     if (endCount > startCount)
                     {
-                        Console.WriteLine("!!! Which is odd!");
+                        Console.WriteLine("++? Which is odd!");
                     }
                 }
                 Console.WriteLine();
@@ -244,7 +244,9 @@ namespace AoC.Advent2021
 
         public static ulong Part2(string input)
         {
-            return 0;
+            IEnumerable<Instruction> lines = ParseData(input);
+
+            return RunOperation(lines);
         }
 
         public void Run(string input, ILogger logger)
