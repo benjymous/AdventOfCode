@@ -112,11 +112,11 @@ off x=-93533..-4276,y=-16170..68771,z=-104985..-24507";
 
         [TestCategory("Test")]
         [DataTestMethod]
-        [DataRow(test0, 39UL)]
-        [DataRow(test1, 590784UL)]
-        [DataRow(test2, 474140UL)]
-        //[DataRow(test3, 2758514936282235UL)]
-        public void ReactorTest(string input, ulong expected)
+        [DataRow(test0, 39)]
+        [DataRow(test1, 590784)]
+        [DataRow(test2, 474140)]
+        [DataRow(test3, 2758514936282235)]
+        public void ReactorTest(string input, long expected)
         {
             Assert.AreEqual(expected, Day22.RunOperation(Day22.ParseData(input.Replace("\r",""))));
         }
@@ -126,14 +126,14 @@ off x=-93533..-4276,y=-16170..68771,z=-104985..-24507";
         [DataTestMethod]
         public void Reactor_Part1_Regression()
         {
-            Assert.AreEqual(600458UL, Day22.Part1(input));
+            Assert.AreEqual(600458, Day22.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Reactor_Part2_Regression()
         {
-            Assert.AreEqual(0, Day22.Part2(input));
+            Assert.AreEqual(1334275219162622, Day22.Part2(input));
         }
     }
 }
