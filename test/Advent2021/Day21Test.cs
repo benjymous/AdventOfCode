@@ -13,14 +13,14 @@ namespace AoC.Advent2021.Test
         string input = Util.GetInput<Day21>();
         string test = "Player 1 starting position: 4\nPlayer 2 starting position: 8";
 
-        [TestCategory("Regression")]
+        [TestCategory("Test")]
         [DataTestMethod]
         public void Dice1Test()
         {
             Assert.AreEqual(739785, Day21.Part1(test));
         }
 
-        [TestCategory("Regression")]
+        [TestCategory("Test")]
         [DataTestMethod]
         public void Dice2Test()
         {

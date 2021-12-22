@@ -42,7 +42,7 @@ namespace AoC.Advent2021
 
             public Val Reduce() { while (TryExplode() || TrySplit()) ; return this; }
 
-            Val[] Flatten() => IsPair ? first.Flatten().Concat(second.Flatten()).ToArray() : (new[] { this });
+            IEnumerable<Val> Flatten() => IsPair ? first.Flatten().Concat(second.Flatten()) : (new[] { this });
 
             public bool TrySplit() => Split() || (IsPair && (first.TrySplit() || second.TrySplit()));
             bool Split()
@@ -55,7 +55,7 @@ namespace AoC.Advent2021
             public bool TryExplode() => Explode() || (IsPair && (first.TryExplode() || second.TryExplode()));
             bool Explode()
             {
-                if (parent == null) Flatten().OverlappingPairs().ForEach(pair => (pair.second.left, pair.first.right) = pair);
+                if (parent == null) Flatten().ToArray().OverlappingPairs().ForEach(pair => (pair.second.left, pair.first.right) = pair);
                 if (IsPair)
                 {
                     if (first.Explode() || second.Explode()) return true;

@@ -102,7 +102,10 @@ namespace AoC
                         .Select(kvp => TypeDescriptor.GetConverter(kvp.First.ParameterType).ConvertFromString(kvp.Second)).ToArray()
                     );
                 }
-                catch { }
+                catch (System.Exception ex) 
+                { 
+                    Console.WriteLine(ex.Message);
+                }
             }
             return default(T);
         }
@@ -214,6 +217,20 @@ namespace AoC
                 for (int x=range.minX; x<=range.maxX; ++x)
                 {
                     yield return (x, y);
+                }
+            }
+        }
+
+        public static IEnumerable<(int x, int y, int z)> Range3DInclusive((int minZ, int maxZ, int minY, int maxY, int minX, int maxX) range)
+        {
+            for (int z = range.minZ; z <= range.maxZ; ++z)
+            {
+                for (int y = range.minY; y <= range.maxY; ++y)
+                {
+                    for (int x = range.minX; x <= range.maxX; ++x)
+                    {
+                        yield return (x, y, z);
+                    }
                 }
             }
         }
