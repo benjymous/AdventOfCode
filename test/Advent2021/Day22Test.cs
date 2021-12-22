@@ -126,7 +126,7 @@ off x=-93533..-4276,y=-16170..68771,z=-104985..-24507";
         [DataTestMethod]
         public void Reactor_Part1_Regression()
         {
-            Assert.AreEqual(600458, Day22.Part1(input));
+            Assert.AreEqual(600458UL, Day22.Part1(input));
         }
 
         [TestCategory("Regression")]
