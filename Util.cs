@@ -150,6 +150,11 @@ namespace AoC
             public object Convert(char c) => c == '#';
             public bool ShouldConvert(char c) => c == '#';
         }
+        class ConvertChar : Convertomatic
+        {
+            public object Convert(char c) => c;
+            public bool ShouldConvert(char c) => true;
+        }
 
 
         static Convertomatic GetConverter<T>()
@@ -157,6 +162,7 @@ namespace AoC
             if (typeof(T) == typeof(int)) return new ConvertInt();
             if (typeof(T) == typeof(byte)) return new ConvertByte();
             if (typeof(T) == typeof(bool)) return new ConvertBool();
+            if (typeof(T) == typeof(char)) return new ConvertChar();
 
             throw new NotImplementedException(typeof(T).FullName);
         }
