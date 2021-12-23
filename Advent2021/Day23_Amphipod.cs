@@ -21,6 +21,16 @@ namespace AoC.Advent2021
             { (5, 3), 'B' },
             { (7, 3), 'C' },
             { (9, 3), 'D' },
+
+            { (3, 4), 'A' },
+            { (5, 4), 'B' },
+            { (7, 4), 'C' },
+            { (9, 4), 'D' },
+
+            { (3, 5), 'A' },
+            { (5, 5), 'B' },
+            { (7, 5), 'C' },
+            { (9, 5), 'D' },
         };
 
         static Dictionary<char, int> destinationCol = new()
@@ -62,7 +72,7 @@ namespace AoC.Advent2021
             return key; 
         }
 
-        public static int Part1(string input)
+        public static int ShrimpStacker(IEnumerable<string> input)
         {
             var map = Util.ParseSparseMatrix<char>(input);
 
@@ -74,17 +84,25 @@ namespace AoC.Advent2021
             );
 
             PriorityQueue<(HashSet<(int x, int y)> openCells, Dictionary<(int x, int y), char> critters, int score), int> queue = new();
-            HashSet<string> seen = new();
+            Dictionary<string, int> seen = new();
 
 
             queue.Enqueue(initialState, 0);
-            List<int> scores = new();
+            int bestScore = int.MaxValue;
+
+            int steps = 0;
 
             while (queue.Count > 0)
             {            
                 var state = queue.Dequeue();
 
-                if (CloseCompleted(state.critters))
+                if ((steps++ % 100000) == 0)
+                {
+                    Display(state.openCells, state.critters);
+                    Console.WriteLine($"{bestScore}");
+                }
+
+                if (CloseCompleted(state.critters, state.openCells))
                 {
                     queue.Enqueue((state.openCells, state.critters, state.score), state.critters.Count);
                     continue;
@@ -92,18 +110,24 @@ namespace AoC.Advent2021
 
                 if (!state.critters.Any())
                 {
+                    bestScore = Math.Min(bestScore, state.score);
                     Console.WriteLine($"Completed with {state.score} points");
                     //Display(state.openCells, state.critters);
-                    scores.Add(state.score); 
                     continue;
                 }
 
                 var key = Key(state.critters);
-                if (seen.Contains(key)) continue;
-                seen.Add(key);
+                if (seen.TryGetValue(key, out int lastScore))
+                {
+                    if (lastScore <= state.score) continue;
+                }
+
+                seen[key] = state.score;
+
+                if (state.score > bestScore) continue;
 
                 //Console.WriteLine($"[{queue.Count}] - current score: {state.score}");
-                Display(state.openCells, state.critters);
+                //Display(state.openCells, state.critters);
 
 
                 List<(KeyValuePair<(int x, int y), char> critter, (int x, int y) destination, int spaces, bool home)> moves = new();
@@ -115,21 +139,30 @@ namespace AoC.Advent2021
                         // see if this one can go home
                         int destX = destinationCol[critter.Value];
                         
-                        if (state.openCells.Contains((destX, 3)) || state.openCells.Contains((destX, 2)))
+                        if (state.openCells.Contains((destX, 5)) || state.openCells.Contains((destX, 4)) || state.openCells.Contains((destX, 3)) || state.openCells.Contains((destX, 2)) )
                         {
                             int sign = Math.Sign(destX - critter.Key.x);
                             if (isClear(critter.Key.x+sign, destX, state.openCells))
                             {
                                 int destY = 0;
 
-                                if (state.openCells.Contains((destX, 2)) && !state.openCells.Contains((destX, 3)) && !state.critters.ContainsKey((destX, 3)))
+                                for (var testY = 5; testY >=2; --testY)
                                 {
-                                    destY = 2;
+                                    if (state.openCells.Contains((destX, testY)) && !state.openCells.Contains((destX, testY+1)) && !state.critters.ContainsKey((destX, testY+1)))
+                                    {
+                                        destY = testY;
+                                        break;
+                                    }
                                 }
-                                if (state.openCells.Contains((destX, 3)))
-                                {
-                                    destY = 3;
-                                }
+
+                                //if (state.openCells.Contains((destX, 2)) && !state.openCells.Contains((destX, 3)) && !state.critters.ContainsKey((destX, 3)))
+                                //{
+                                //    destY = 2;
+                                //}
+                                //if (state.openCells.Contains((destX, 3)))
+                                //{
+                                //    destY = 3;
+                                //}
                                 if (destY > 0)
                                 {
                                     int distance = Math.Abs(critter.Key.x - destX);
@@ -146,7 +179,7 @@ namespace AoC.Advent2021
                         }
                     }
         
-                    if (critter.Key.y == 2 || critter.Key.y == 3)
+                    if (critter.Key.y >= 2 )
                     {
                         // move out of starting room into corridor
                         if (state.openCells.Contains((critter.Key.x, critter.Key.y - 1)))
@@ -196,6 +229,10 @@ namespace AoC.Advent2021
 
                 foreach (var move in moves)
                 {
+
+                    int newScore = state.score + move.spaces * moveCosts[move.critter.Value];
+                    if (newScore > bestScore) continue;
+
                     var newCells = state.openCells.ToHashSet();
                     var newCritters = state.critters.ToDictionary(kvp=>kvp.Key, kvp => kvp.Value);
 
@@ -204,18 +241,21 @@ namespace AoC.Advent2021
                     newCritters.Remove(move.critter.Key);
                     newCritters[move.destination] = move.critter.Value;
 
-                    if (seen.Contains(Key(newCritters))) continue;
+                    if (seen.TryGetValue(Key(newCritters), out lastScore))
+                    {
+                        if (lastScore < state.score) continue;
+                    }
 
-                    int newScore = state.score + move.spaces * moveCosts[move.critter.Value];
-
-                    queue.Enqueue((newCells, newCritters, newScore), newCritters.Count - (move.home ? 1 : 0));
+                    //int priority = newScore;
+                    int priority = newScore * (newCritters.Count - (move.home ? 1 : 0));
+                    queue.Enqueue((newCells, newCritters, newScore), priority);
                 }
             }
 
-            return scores.Min();
+            return bestScore;
         }
 
-        public static bool CloseCompleted(Dictionary<(int x, int y), char> critters)
+        public static bool CloseCompleted(Dictionary<(int x, int y), char> critters, HashSet<(int x, int y)> opencells)
         {
             bool anyRemoved = false;
             bool removed = true;
@@ -226,10 +266,12 @@ namespace AoC.Advent2021
                 {
                     if (critters.ContainsKey(kvp.Key) && critters[kvp.Key] == kvp.Value)
                     {
-                        if (kvp.Key.y == 3 || !critters.ContainsKey((kvp.Key.x, 3)))
+
+                        if (!critters.ContainsKey((kvp.Key.x, kvp.Key.y+1)) && !opencells.Contains((kvp.Key.x, kvp.Key.y + 1)))
                         {
+                           
                             critters.Remove(kvp.Key);
-                            //Console.WriteLine($"{kvp.Value} has reached home");
+                            //Console.WriteLine($"{kvp} has reached home");
                             removed = true;
                             anyRemoved = true;
                         }
@@ -242,8 +284,11 @@ namespace AoC.Advent2021
         public static void Display(HashSet<(int x, int y)> openCells, Dictionary<(int x, int y), char> critters)
         {
             Console.WriteLine($"{critters.Count} to rehome");
-            for (int y=0; y<5; ++y)
+            Console.WriteLine("   123456789AB");
+            for (int y=0; y<7; ++y)
             {
+                Console.Write(y);
+                Console.Write(" ");
                 for (int x=0; x<13; ++x)
                 {
                     char c = '#';
@@ -259,33 +304,25 @@ namespace AoC.Advent2021
             Console.WriteLine();
         }
 
+        public static int Part1(string input)
+        {
+            return ShrimpStacker(input.Split('\n'));
+        }
+
         public static int Part2(string input)
         {
-            return 0;
+            var lines = input.Split('\n');
+            var insert = new string[] { "  #D#C#B#A#", "  #D#B#A#C#" };
+            var unfolded = lines.Take(3).Union(insert).Union(lines.Skip(3));
+            return ShrimpStacker(unfolded);
         }
 
         public void Run(string input, ILogger logger)
         {
 
-            string test = @"#############
-#...........#
-###B#C#B#D###
-  #A#D#C#A#
-  #########".Replace("\r","");
-
-            const string test6 = @"#############
-#...B.......#
-###B#.#C#D###
-  #A#D#C#A#
-  #########";
-
-
-            Console.WriteLine(Part1(test6));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
 
-            // 14617 - too high
         }
     }
 }
