@@ -1,4 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AoC.Advent2021.Test
 {
@@ -8,6 +10,24 @@ namespace AoC.Advent2021.Test
     {
         string input = Util.GetInput<Day24>();
 
+        public static bool ValidateMonad(long input)
+        {
+            var vals = Sequence(input).Reverse().ToArray();
+            if (vals.Contains(0)) return false;
+
+            return Enumerable.Range(0, 14).Aggregate(0, (z, i) => Day24.CalcPart(vals[i], z, i)) == 0;
+        }
+
+        static IEnumerable<int> Sequence(long input)
+        {
+            for (int i = 0; i < 14; ++i)
+            {
+                yield return (int)(input % 10);
+                input /= 10;
+            }
+        }
+
+
         [TestCategory("Test")]
         [DataTestMethod]
         [DataRow(49917929934999)]
@@ -15,7 +35,7 @@ namespace AoC.Advent2021.Test
 
         public void MonadCalcTest(long input)
         {
-            Assert.IsTrue(Day24.ValidateMonad(input));
+            Assert.IsTrue(ValidateMonad(input));
         }
 
         [TestCategory("Regression")]

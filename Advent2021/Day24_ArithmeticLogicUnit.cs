@@ -8,35 +8,18 @@ namespace AoC.Advent2021
     {
         public string Name => "2021-24";
 
-        public static bool ValidateMonad(long input)
-        {
-            var vals = Sequence(input).Reverse().ToArray();
-            if (vals.Contains(0)) return false;
-
-            return Enumerable.Range(0, 14).Aggregate(0, (z, i) => CalcPart(vals[i], z, i)) == 0;
-        }
-
         static (int i, int j, int k) GetCycleParams(int digit) => digit switch
         {
             0 => (1, 15, 15), 1 => (1, 12, 5), 2 => (1, 13, 6), 3 => (26, -14, 7), 4 => (1, 15, 9), 5 => (26, -7, 6), 6 => (1, 14, 14), 7 => (1, 15, 3), 8 => (1, 15, 1), 9 => (26, -7, 3), 10 => (26, -8, 4), 11 => (26, -7, 6), 12 => (26, -5, 7), 13 => (26, -10, 1), _ => (0, 0, 0),
         };
 
-        static int CalcPart(int w, int z, int digit)
+        public static int CalcPart(int w, int z, int digit)
         {
             var (i, j, k) = GetCycleParams(digit);
 
             int x = (z % 26) + j;            
             z /= i;
             return (w != x) ? (z * 26) + w + k : z;
-        }
-
-        static IEnumerable<int> Sequence(long input)
-        {
-            for (int i = 0; i < 14; ++i)
-            {
-                yield return (int)(input % 10);
-                input /= 10;
-            }
         }
 
         private static long FindModelNumber(bool biggest)
@@ -52,31 +35,25 @@ namespace AoC.Advent2021
             int step = 0;
             long lastBest = 0;
 
-            while (queue.Count>0)
+            while (queue.TryDequeue(out (int prevZ, int digit) state, out var _))
             {
-                var (prevZ, digit) = queue.Dequeue();
-
                 for (int inputW = 10 - 1; inputW >= 1; --inputW)
                 {
-                    int newZ = CalcPart(inputW, prevZ, digit);
-
-                    if (!cache.ContainsKey((digit, newZ)) || (biggest && cache[(digit, newZ)].w < inputW) || (!biggest && (cache[(digit, newZ)].w > inputW)))
+                    int newZ = CalcPart(inputW, state.prevZ, state.digit);
+                    if (!cache.ContainsKey((state.digit, newZ)) || (biggest && cache[(state.digit, newZ)].w < inputW) || (!biggest && (cache[(state.digit, newZ)].w > inputW)))
                     {
-                        cache[(digit, newZ)] = (inputW, prevZ);
+                        cache[(state.digit, newZ)] = (inputW, state.prevZ);
 
-                        if (digit < 13)
+                        if (state.digit < 13)
                         {
-                            var next = (newZ, digit + 1);
+                            var next = (newZ, state.digit + 1);
                             if (!seen.Contains(next))
                             {
                                 queue.Enqueue(next, newZ);
                                 seen.Add(next);
                             }
                         }
-                        else if (newZ == 0)
-                        {
-                            endStates.Add((prevZ, inputW));                           
-                        }
+                        else if (newZ == 0) endStates.Add((state.prevZ, inputW));                           
                     }
                 }
 
