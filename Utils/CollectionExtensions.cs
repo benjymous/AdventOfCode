@@ -9,6 +9,7 @@ namespace AoC.Utils
         public static void IncrementAtIndex<T>(this Dictionary<T, int> dict, T key, int val = 1) => IncrementAtIndex<T, int>(dict, key, val);
         public static void IncrementAtIndex<T>(this Dictionary<T, long> dict, T key, long val = 1) => IncrementAtIndex<T, long>(dict, key, val);
 
+        public static void Add<K, V>(this Dictionary<K, V> dict, KeyValuePair<K, V> kvp) => dict.Add(kvp.Key, kvp.Value);
 
         static T Add<T>(T x, T y) => Add((dynamic)x, (dynamic)y);
         static int Add(int a, int b) => a + b;
