@@ -61,7 +61,7 @@ namespace AoC.Utils
 
         public static string AsString(this IEnumerable<char> input)
         {
-            return String.Join("", input);
+            return string.Concat(input);
         }
 
         public static IEnumerable<byte> AsNybbles(this IEnumerable<byte> bytes)
@@ -271,6 +271,16 @@ namespace AoC.Utils
         public static int Xor(this IEnumerable<int> vals)
         {
             return vals.Aggregate(0, (total, val) => total ^ val);
+        }
+
+        public static ulong Sum(this IEnumerable<ulong> vals)
+        {
+            return vals.Aggregate(0UL, (x, y) => x + y);
+        }
+
+        public static int Sum(this IEnumerable<byte> vals)
+        {
+            return vals.Aggregate(0, (x, y) => x + y);
         }
 
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
