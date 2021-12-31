@@ -31,8 +31,12 @@ namespace AoC.Advent2021
             queue.Enqueue((HashNum(map.Where(kvp => kvp.Value == '.').Select(kvp => kvp.Key)), map.Where(kvp => kvp.Value >= 'A' && kvp.Value <= 'D').ToDictionary(kvp => Convert(kvp.Key.x, kvp.Key.y), kvp => kvp.Value), 0), 0);
             int bestScore = int.MaxValue;
 
+            int states = 0;
+
             while (queue.TryDequeue(out var state, out var _))
-            { 
+            {
+                if (state.score >= bestScore) continue;
+                states++;
                 CloseCompleted(state.critters, state.openCells);
 
                 if (!state.critters.Any())
@@ -88,21 +92,40 @@ namespace AoC.Advent2021
                 foreach (var move in moves)
                 {
                     int newScore = state.score + move.spaces * moveCosts[move.critter.Value-'A'];
-                    if (newScore > bestScore) continue;
+                    if (newScore >= bestScore) continue;
 
                     var newCritters = new Dictionary<byte, char>(state.critters);
                     newCritters.Remove(move.critter.Key);
                     newCritters[move.destination] = move.critter.Value;
 
+                    int estimatedScore = newScore + EstimateRemaining(newCritters);
+                    if (estimatedScore >= bestScore) continue;
+
                     var key = Key(newCritters);
                     if (cache.TryGetValue(key, out var lastScore) && lastScore <= newScore ) continue;
                     cache[key] = newScore;
 
-                    queue.Enqueue((state.openCells - (1UL << move.destination) + (1UL << move.critter.Key), newCritters, newScore), newScore * (newCritters.Count - (move.home ? 1 : 0)));
+                    queue.Enqueue((state.openCells - (1UL << move.destination) + (1UL << move.critter.Key), newCritters, newScore), estimatedScore);
                 }
             }
 
+            Console.WriteLine($"Considered {states} states");
             return bestScore;
+        }
+
+        static int EstimateRemaining(Dictionary<byte, char> critters)
+        {
+            int score = 0;
+            foreach (var c in critters)
+            {
+                var pos = Convert(c.Key);
+                int destX = destinationCol[c.Value - 'A'];
+                if (pos.x != destX)
+                {
+                    score += (pos.y - 1 + Math.Abs(pos.x - destX)) * moveCosts[c.Value - 'A'];
+                }
+            }
+            return score;
         }
 
         static void CloseCompleted(Dictionary<byte, char> critters, ulong opencells)

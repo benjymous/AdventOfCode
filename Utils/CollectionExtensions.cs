@@ -1,3 +1,4 @@
+using Microsoft.Collections.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -253,6 +254,11 @@ namespace AoC.Utils
             }
 
             return array2d[col, row];
+        }
+
+        public static OrderedDictionary<TKey, TElement> ToOrderedDictionary<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector) where TKey : notnull
+        {
+            return new OrderedDictionary<TKey, TElement>(source.ToDictionary(keySelector, elementSelector));
         }
 
         public static int Height<T>(this T[,] array2d) => array2d.GetLength(0);
