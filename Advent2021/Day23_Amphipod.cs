@@ -35,7 +35,6 @@ namespace AoC.Advent2021
 
             while (queue.TryDequeue(out var state, out var _))
             {
-                if (state.score >= bestScore) continue;
                 states++;
                 CloseCompleted(state.critters, state.openCells);
 
@@ -59,9 +58,10 @@ namespace AoC.Advent2021
                         {
                             for (var destY = 5; destY >= 2; --destY)
                             {
-                                if (Contains(state.openCells, Convert(destX, destY)) && !Contains(state.openCells, Convert(destX, destY + 1)) && !state.critters.ContainsKey(Convert(destX, destY + 1)))
+                                var dest = Convert(destX, destY);
+                                if (Contains(state.openCells, dest) && !Contains(state.openCells, (byte)(dest+11)) && !state.critters.ContainsKey((byte)(dest+11)))
                                 {
-                                    moves.Add((critter, Convert(destX, destY), Math.Abs(critterPos.x - destX) + (destY - 1) + ((critterPos.y != 1) ? critterPos.y - 1 : 0), true));
+                                    moves.Add((critter, dest, Math.Abs(critterPos.x - destX) + (destY - 1) + ((critterPos.y != 1) ? critterPos.y - 1 : 0), true));
                                     escaped = true;
                                     break;
                                 }
@@ -91,19 +91,13 @@ namespace AoC.Advent2021
 
                 foreach (var move in moves)
                 {
-                    int newScore = state.score + move.spaces * moveCosts[move.critter.Value-'A'];
-                    if (newScore >= bestScore) continue;
-
-                    var newCritters = new Dictionary<byte, char>(state.critters);
-                    newCritters.Remove(move.critter.Key);
-                    newCritters[move.destination] = move.critter.Value;
-
-                    int estimatedScore = newScore + EstimateRemaining(newCritters);
-                    if (estimatedScore >= bestScore) continue;
-
+                    var newCritters = new Dictionary<byte, char>(state.critters).Minus(move.critter.Key).Plus(move.destination, move.critter.Value);
+                    int newScore = state.score + move.spaces * moveCosts[move.critter.Value - 'A'];
                     var key = Key(newCritters);
-                    if (cache.TryGetValue(key, out var lastScore) && lastScore <= newScore ) continue;
+                    if (cache.TryGetValue(key, out var lastScore) && lastScore <= newScore) continue;
                     cache[key] = newScore;
+                    int estimatedScore = newScore + EstimateRemaining(newCritters);
+                    if ((newScore >= bestScore) || (estimatedScore >= bestScore)) continue;
 
                     queue.Enqueue((state.openCells - (1UL << move.destination) + (1UL << move.critter.Key), newCritters, newScore), estimatedScore);
                 }

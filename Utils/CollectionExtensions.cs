@@ -256,9 +256,16 @@ namespace AoC.Utils
             return array2d[col, row];
         }
 
-        public static OrderedDictionary<TKey, TElement> ToOrderedDictionary<TSource, TKey, TElement>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector) where TKey : notnull
+        public static Dictionary<TKey, TValue> Minus<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key)
         {
-            return new OrderedDictionary<TKey, TElement>(source.ToDictionary(keySelector, elementSelector));
+            dict.Remove(key);
+            return dict;
+        }
+
+        public static Dictionary<TKey, TValue> Plus<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue value)
+        {
+            dict.Add(key, value);
+            return dict;
         }
 
         public static int Height<T>(this T[,] array2d) => array2d.GetLength(0);
