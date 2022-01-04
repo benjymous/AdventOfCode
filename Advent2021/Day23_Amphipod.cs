@@ -14,118 +14,99 @@ namespace AoC.Advent2021
         static readonly HashSet<int> doorCells = new() { 3, 5, 7, 9 };
         static readonly int[] moveCosts = new int[] { 1, 10, 100, 1000 };
 
-        static bool IsClear(int x1, int x2, ulong openCells) => !Util.RangeInclusive(Math.Min(x1, x2), Math.Max(x1, x2)).Where(x => !Contains(openCells, Convert(x, 1))).Any();
-        static (ulong, uint) Key(Dictionary<byte, char> critters) => (critters.Keys.Select(k => 1UL<<k).Sum(), critters.OrderBy(kvp => kvp.Key).Select(kvp => (uint)(kvp.Value-'A')).Aggregate(0U, (p, v) => (p << 2) + v));
+        static bool IsClear(int x1, int x2, State state) => !Util.RangeInclusive(Math.Min(x1, x2), Math.Max(x1, x2)).Where(x => !state.CellOpen(Convert(x, 1))).Any();
         static byte Convert(int x, int y) => (byte)(x - 1 + (y - 1) * 11);
         static (int x, int y) Convert(byte pos) => (pos % 11 + 1, pos / 11 + 1);
-        static ulong HashNum(IEnumerable<(int x, int y)> positions) => positions.Select(p => 1UL << Convert(p.x, p.y)).Sum();
-        static bool Contains(ulong set, byte bit) => ((set >> bit) & 1) == 1;
+
+        static void CloseCompleted(State state)
+        {
+            var completed = destinations.Where(kvp => state.CellOccupied(kvp.Key) && state.Critters[kvp.Key] == kvp.Value && !state.CellOccupied(kvp.Key + 11) && !state.CellOpen(kvp.Key + 11)).Select(kvp => kvp.Key);
+            while (completed.Any()) completed.ForEach(key => state.Critters.Remove(key));
+        }
+
+        struct State
+        {
+            public State(ulong openCells, Dictionary<byte, char> critters, int score)
+            {
+                (OpenCells, Critters, Score) = (openCells, critters, score);
+                Key = (Critters.Keys.Select(k => 1UL << k).Sum(), Critters.OrderBy(kvp => kvp.Key).Select(kvp => (uint)(kvp.Value - 'A')).Aggregate(0U, (p, v) => (p << 2) + v));
+                EstimatedScore = Score + Critters.Sum(c => Convert(c.Key).x != destinationCol[c.Value - 'A'] ? (Convert(c.Key).y - 1 + Math.Abs(Convert(c.Key).x - destinationCol[c.Value - 'A'])) * moveCosts[c.Value - 'A'] : 0);
+            }
+
+            public bool CellOpen(int bit) => ((OpenCells >> bit) & 1) == 1;
+            public bool CellOccupied(int cell) => Critters.ContainsKey((byte)cell);
+
+            public (ulong, uint) Key;
+            public ulong OpenCells;
+            public Dictionary<byte, char> Critters;
+            public int Score, EstimatedScore;
+        }
+
+        static IEnumerable<(KeyValuePair<byte, char> critter, byte destination, int spaces, bool home)> CritterMoves(State state, KeyValuePair<byte, char> critter)
+        {
+            var critterPos = Convert(critter.Key);
+            if (critterPos.y == 1 || state.CellOpen(critter.Key - 11)) // can this critter reach its home room?
+            {
+                int destX = destinationCol[critter.Value - 'A'];
+                if (IsClear(critterPos.x + Math.Sign(destX - critterPos.x), destX, state))
+                {
+                    for (var destY = 5; destY >= 2; --destY)
+                    {
+                        var dest = Convert(destX, destY);
+                        if (state.CellOpen(dest) && !state.CellOpen(dest + 11) && !state.CellOccupied(dest + 11))
+                        {
+                            yield return (critter, dest, Math.Abs(critterPos.x - destX) + (destY - 1) + ((critterPos.y != 1) ? critterPos.y - 1 : 0), true);
+                            yield break;
+                        }
+                    }
+                }
+            }
+
+            if (critterPos.y >= 2 && state.CellOpen(critter.Key - 11)) // critter in room, and cell above is empty
+            {
+                for (int dir = -1; dir <= 1; dir += 2)
+                {
+                    for (int i = 1; i < 9; ++i)
+                    {
+                        int x = critterPos.x + (i * dir);
+                        if (!doorCells.Contains(x))
+                        {
+                            var move = Convert(x, 1);
+                            if (state.CellOpen(move)) yield return(critter, move, critterPos.y - 1 + i, false);
+                            else break;
+                        }
+                    }
+                }
+            }
+        }
 
         public static int ShrimpStacker(IEnumerable<string> input)
         {
             var map = Util.ParseSparseMatrix<char>(input);
 
-            PriorityQueue<(ulong openCells, Dictionary<byte, char> critters, int score), int> queue = new();
+            PriorityQueue<State, int> queue = new();
             Dictionary<(ulong, uint), int> cache = new();
 
-            queue.Enqueue((HashNum(map.Where(kvp => kvp.Value == '.').Select(kvp => kvp.Key)), map.Where(kvp => kvp.Value >= 'A' && kvp.Value <= 'D').ToDictionary(kvp => Convert(kvp.Key.x, kvp.Key.y), kvp => kvp.Value), 0), 0);
+            queue.Enqueue(new State(map.Where(kvp => kvp.Value == '.').Select(kvp => kvp.Key).Select(p => 1UL << Convert(p.x, p.y)).Sum(), map.Where(kvp => kvp.Value >= 'A' && kvp.Value <= 'D').ToDictionary(kvp => Convert(kvp.Key.x, kvp.Key.y), kvp => kvp.Value), 0), 0);
             int bestScore = int.MaxValue;
-
-            int states = 0;
 
             while (queue.TryDequeue(out var state, out var _))
             {
-                states++;
-                CloseCompleted(state.critters, state.openCells);
-
-                if (!state.critters.Any())
+                foreach (var move in state.Critters.SelectMany(critter => CritterMoves(state, critter)))
                 {
-                    bestScore = Math.Min(bestScore, state.score);
-                    continue;
-                }
+                    var newState = new State(state.OpenCells - (1UL << move.destination) + (1UL << move.critter.Key), new Dictionary<byte, char>(state.Critters).Minus(move.critter.Key).Plus(move.destination, move.critter.Value), state.Score + move.spaces * moveCosts[move.critter.Value - 'A']);
+                    if ((cache.TryGetValue(newState.Key, out var lastScore) && lastScore <= newState.Score) || (newState.Score >= bestScore) || (newState.EstimatedScore >= bestScore)) continue; else cache[newState.Key] = newState.Score;
 
-                List<(KeyValuePair<byte, char> critter, byte destination, int spaces, bool home)> moves = new();
+                    CloseCompleted(newState);
 
-                foreach (var critter in state.critters)
-                {
-                    bool escaped = false;
-                    var critterPos = Convert(critter.Key);
-                    if (critterPos.y == 1 || Contains(state.openCells, (byte)(critter.Key - 11)))
-                    {
-                        // see if this one can go home
-                        int destX = destinationCol[critter.Value-'A'];
-                        if (IsClear(critterPos.x + Math.Sign(destX - critterPos.x), destX, state.openCells))
-                        {
-                            for (var destY = 5; destY >= 2; --destY)
-                            {
-                                var dest = Convert(destX, destY);
-                                if (Contains(state.openCells, dest) && !Contains(state.openCells, (byte)(dest+11)) && !state.critters.ContainsKey((byte)(dest+11)))
-                                {
-                                    moves.Add((critter, dest, Math.Abs(critterPos.x - destX) + (destY - 1) + ((critterPos.y != 1) ? critterPos.y - 1 : 0), true));
-                                    escaped = true;
-                                    break;
-                                }
-                            }
-                        }     
-                    }
-                    if (escaped) continue;
-
-                    // move out of starting room into corridor
-                    if (critterPos.y >= 2 && Contains(state.openCells, (byte)(critter.Key-11)))
-                    {
-                        for (int dir = -1; dir <= 1; dir += 2)
-                        {
-                            for (int i = 1; i < 9; ++i)
-                            {
-                                int x = critterPos.x + (i * dir);
-                                if (!doorCells.Contains(x))
-                                {
-                                    var move = Convert(x, 1);
-                                    if (Contains(state.openCells, move)) moves.Add((critter, move, critterPos.y - 1 + i, false));                                  
-                                    else break;                                
-                                }
-                            }
-                        }                             
-                    }
-                }
-
-                foreach (var move in moves)
-                {
-                    var newCritters = new Dictionary<byte, char>(state.critters).Minus(move.critter.Key).Plus(move.destination, move.critter.Value);
-                    int newScore = state.score + move.spaces * moveCosts[move.critter.Value - 'A'];
-                    var key = Key(newCritters);
-                    if (cache.TryGetValue(key, out var lastScore) && lastScore <= newScore) continue;
-                    cache[key] = newScore;
-                    int estimatedScore = newScore + EstimateRemaining(newCritters);
-                    if ((newScore >= bestScore) || (estimatedScore >= bestScore)) continue;
-
-                    queue.Enqueue((state.openCells - (1UL << move.destination) + (1UL << move.critter.Key), newCritters, newScore), estimatedScore);
+                    if (newState.Critters.Any())
+                        queue.Enqueue(newState, newState.EstimatedScore);
+                    else
+                        bestScore = Math.Min(bestScore, newState.Score);
                 }
             }
 
-            Console.WriteLine($"Considered {states} states");
             return bestScore;
-        }
-
-        static int EstimateRemaining(Dictionary<byte, char> critters)
-        {
-            int score = 0;
-            foreach (var c in critters)
-            {
-                var pos = Convert(c.Key);
-                int destX = destinationCol[c.Value - 'A'];
-                if (pos.x != destX)
-                {
-                    score += (pos.y - 1 + Math.Abs(pos.x - destX)) * moveCosts[c.Value - 'A'];
-                }
-            }
-            return score;
-        }
-
-        static void CloseCompleted(Dictionary<byte, char> critters, ulong opencells)
-        {
-            var completed = destinations.Where(kvp => critters.ContainsKey(kvp.Key) && critters[kvp.Key] == kvp.Value && !critters.ContainsKey((byte)(kvp.Key + 11)) && !Contains(opencells, (byte)(kvp.Key+11))).Select(kvp => kvp.Key);
-            while (completed.Any()) completed.ForEach(key => critters.Remove(key));
         }
 
         public static int Part1(string input)
