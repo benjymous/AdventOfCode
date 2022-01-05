@@ -13,7 +13,6 @@ namespace AoC.Advent2016
             int NumPos, Offset;
 
             public bool CheckStep(int step) => (step + Offset) % NumPos == 0;
-
         }
 
         private static int FindDiscGap(string input)
@@ -28,9 +27,8 @@ namespace AoC.Advent2016
 
         private static bool CheckDiscs(Disc[] discs, int i)
         {
-            for (int i1 = 0; i1 < discs.Length; i1++)
+            foreach (var disc in discs)
             {
-                Disc disc = discs[i1];
                 if (!disc.CheckStep(i)) return false;
             }
             return true;
