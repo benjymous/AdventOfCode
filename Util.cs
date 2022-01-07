@@ -112,7 +112,7 @@ namespace AoC
 
         public static IEnumerable<T> RegexParse<T>(IEnumerable<string> input) =>
             input.Where(x => !string.IsNullOrWhiteSpace(x))
-                 .Select(line => RegexCreate<T>(line));
+                 .Select(line => RegexCreate<T>(line)).ToList();
 
         public static IEnumerable<T> RegexParse<T>(string input, string splitter = "\n") =>
             RegexParse<T>(input.Split(splitter));

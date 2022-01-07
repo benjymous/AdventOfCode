@@ -26,21 +26,18 @@ namespace AoC.Advent2021
              
                 for (int phase=0; phase<2; ++phase)
                 {
-                    next = new();
-
                     var (moving, waiting) = phase == 0 ? ('>','v') : ('v','>');
+
+                    next = new(state.Where(kvp => kvp.Value == waiting));
 
                     foreach (var cell in state.Where(kvp => kvp.Value == moving))
                     {
                         var dest = phase == 0 ? ((cell.Key.x + 1) % maxx, cell.Key.y) : (cell.Key.x, (cell.Key.y + 1) % maxy);
-                        if (!state.ContainsKey(dest)) moved = true;
-                        else dest = cell.Key;
+                        if (state.ContainsKey(dest)) dest = cell.Key;
+                        else moved = true;
                         next[dest] = cell.Value;
                     }
-                    foreach (var cell in state.Where(kvp => kvp.Value == waiting))
-                    {
-                        next.Add(cell);
-                    }
+
                     state = next;
                 }
 

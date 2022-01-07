@@ -17,6 +17,15 @@ namespace AoC.Utils
             }
         }
 
+        public static IEnumerable<byte> BitSequence(this byte v)
+        {
+            for (byte k = 1; k <= v; k <<= 1)
+            {
+                if ((v & k) > 0)
+                    yield return k;
+            }
+        }
+
         public static IEnumerable<int> BinarySequence(this int v)
         {
             for (Int64 k = 1; k <= v; k <<= 1)
