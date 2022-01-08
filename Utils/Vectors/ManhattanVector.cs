@@ -387,6 +387,11 @@ namespace AoC.Utils.Vectors
             else throw new Exception("Unrecognised direction :" + DX + "," + DY);
         }
 
+        public void Turn180()
+        {
+            SetDirection(-DX, -DY);
+        }
+
 
         public void TurnRightBy(int degrees)
         {
