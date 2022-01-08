@@ -268,6 +268,11 @@ namespace AoC.Utils
             return dict;
         }
 
+        public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> enumerable)
+        {
+            return enumerable.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        }
+
         public static int Height<T>(this T[,] array2d) => array2d.GetLength(0);
         public static int Width<T>(this T[,] array2d) => array2d.GetLength(1);
 
