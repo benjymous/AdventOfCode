@@ -84,6 +84,7 @@ namespace AoC.Utils.Pathfinding
         }
     }
 
+ 
     public static class AStar<TCoordinateType>
     {
         public static IEnumerable<TCoordinateType> FindPath(IMap<TCoordinateType> map, TCoordinateType start, TCoordinateType goal)
