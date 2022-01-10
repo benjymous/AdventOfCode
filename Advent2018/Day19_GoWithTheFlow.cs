@@ -7,7 +7,7 @@ namespace AoC.Advent2018
     {
         public string Name => "2018-19";
 
-        public static int Part1(string input)
+        public static long Part1(string input)
         {
             ChronMatic.ChronCPU cpu = new ChronMatic.ChronCPU(input);
             //cpu.PeekTime = 10000;

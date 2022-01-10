@@ -12,16 +12,16 @@ namespace AoC.Advent2018
 
         public class Test
         {
-            public int[] before;
-            public int[] after;
-            public int instr;
-            public int[] args;
+            public long[] before;
+            public long[] after;
+            public long instr;
+            public long[] args;
 
             public Test(string b, string i, string a)
             {
-                before = Util.ExtractNumbers(b);
-                after = Util.ExtractNumbers(a);
-                var data = Util.ExtractNumbers(i);
+                before = Util.ExtractLongNumbers(b);
+                after = Util.ExtractLongNumbers(a);
+                var data = Util.ExtractLongNumbers(i);
                 instr = data[0];
                 args = data.Skip(1).ToArray();
             }
@@ -54,7 +54,7 @@ namespace AoC.Advent2018
             return tests;
         }
 
-        private static bool Match(int[] data, int[] after)
+        private static bool Match(long[] data, long[] after)
         {
             for (int i = 0; i < 4; ++i)
             {
@@ -95,7 +95,7 @@ namespace AoC.Advent2018
             return count;
         }
 
-        public static int Part2(string input)
+        public static long Part2(string input)
         {
             var lines = input.Split('\n');
 
