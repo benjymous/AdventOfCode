@@ -7,7 +7,7 @@ namespace AoC.Advent2018.ChronMatic
 {
     public interface IInstr
     {
-        void Do(int a, int b, int c, ref int[] regs);
+        void Do(long a, long b, long c, ref long[] regs);
         string Dump(int a, int b, int c);
     }
 
@@ -15,88 +15,88 @@ namespace AoC.Advent2018.ChronMatic
     {
         class addr : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = regs[a] + regs[b];
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] + regs[b];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} + r{b};";
         }
         class addi : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = regs[a] + b;
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] + b;
             public string Dump(int a, int b, int c) => $"r{c} = r{a} + {b};";
         }
 
         class mulr : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = regs[a] * regs[b];
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] * regs[b];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} * r{b};";
         }
         class muli : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = regs[a] * b;
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] * b;
             public string Dump(int a, int b, int c) => $"r{c} = r{a} * {b};";
         }
 
         class banr : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = regs[a] & regs[b];
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] & regs[b];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} & r{b};";
         }
         class bani : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = regs[a] & b;
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] & b;
             public string Dump(int a, int b, int c) => $"r{c} = r{a} & {b};";
         }
 
         class borr : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = regs[a] | regs[b];
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] | regs[b];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} | r{b};";
         }
         class bori : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = regs[a] | b;
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] | b;
             public string Dump(int a, int b, int c) => $"r{c} = r{a} | {b};";
         }
 
         class setr : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = regs[a];
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a];
             public string Dump(int a, int b, int c) => $"r{c} = r{a};";
         }
         class seti : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = a;
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = a;
             public string Dump(int a, int b, int c) => $"r{c} = {a};";
         }
 
         class gtir : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = (a > regs[b]) ? 1 : 0;
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (a > regs[b]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = ({a} > r{b}) ? 1 : 0;";
         }
         class gtri : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = (regs[a] > b) ? 1 : 0;
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (regs[a] > b) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} > {b}) ? 1 : 0;";
         }
         class gtrr : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = (regs[a] > regs[b]) ? 1 : 0;
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (regs[a] > regs[b]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} > r{b}) ? 1 : 0;";
         }
 
         class eqir : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = (a == regs[b]) ? 1 : 0;
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (a == regs[b]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = ({a} == r{b}) ? 1 : 0;";
         }
         class eqri : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = (regs[a] == b) ? 1 : 0;
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (regs[a] == b) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} == {b}) ? 1 : 0;";
         }
         class eqrr : IInstr
         {
-            public void Do(int a, int b, int c, ref int[] regs) => regs[c] = (regs[a] == regs[b]) ? 1 : 0;
+            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (regs[a] == regs[b]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} == r{b}) ? 1 : 0;";
         }
     }
@@ -135,7 +135,7 @@ namespace AoC.Advent2018.ChronMatic
         Dictionary<int, IInstr> InstrMap;
         InstructionLine[] Instructions;
 
-        int[] Registers = new int[] { 0, 0, 0, 0, 0, 0 };
+        long[] Registers = new long[] { 0, 0, 0, 0, 0, 0 };
 
         System.Diagnostics.Stopwatch sw;
         public Int64 CycleCount { get; private set; } = 0;
@@ -244,21 +244,23 @@ namespace AoC.Advent2018.ChronMatic
             return CycleCount < cycleLimit;
         }
 
-        public IEnumerable<string> Dump()
+        public IEnumerable<string> Dump(bool useGotos)
         {
             for (int i = 0; i < Instructions.Length; ++i)
             {
                 yield return $"// {Instructions[i].instr.Name()} {string.Join(" ", Instructions[i].values)}";
                 var dump = Instructions[i].Dump();
 
-                if (dump.StartsWith("r1 ="))
-                {
-                    dump = dump.Replace(";", " +1; break;\n");
-                }
-                else
-                {
-                    dump += $" r1++; goto case {i + 1};";
-                }
+                dump = dump.Replace(";", ";break;\n");
+
+                //if (useGotos==false || dump.StartsWith("r1 ="))
+                //{
+                //    dump = dump.Replace(";", " +1; break;\n");
+                //}
+                //else
+                //{
+                //    dump += $" r1++; goto case {i + 1};";
+                //}
                 yield return $"case {i}: {dump}";
             }
         }
@@ -269,9 +271,9 @@ namespace AoC.Advent2018.ChronMatic
             return $"{CycleCount} cycles - {speed.ToEngineeringNotation()}hz";
         }
 
-        int pc = 0;
+        long pc = 0;
         bool pcIsRef = false;
-        public int InstructionPointer
+        public long InstructionPointer
         {
             get
             {
@@ -297,7 +299,7 @@ namespace AoC.Advent2018.ChronMatic
             }
         }
 
-        public int Get(int idx) => Registers[idx];
+        public long Get(int idx) => Registers[idx];
         public void Set(int idx, int val) => Registers[idx] = val;
 
         void Preprocess(string line)
