@@ -103,7 +103,7 @@ namespace AoC.Advent2019
 
             public string HashString()
             {
-                return ToString().GetMD5String();
+                return ToString().GetMD5String(false);
             }
 
             public int Energy()

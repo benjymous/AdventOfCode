@@ -102,12 +102,9 @@ namespace AoC
                         .Select(kvp => TypeDescriptor.GetConverter(kvp.First.ParameterType).ConvertFromString(kvp.Second)).ToArray()
                     );
                 }
-                catch (System.Exception ex) 
-                { 
-                    Console.WriteLine(ex.Message);
-                }
+                catch { }
             }
-            return default(T);
+            throw new Exception("RegexParse failed to find suitable constructor");
         }
 
         public static IEnumerable<T> RegexParse<T>(IEnumerable<string> input) =>
@@ -257,7 +254,7 @@ namespace AoC
 
         public static string GetInput<T>() where T : IPuzzle, new() => GetInput(new T());
 
-        public static IEnumerable<int> Forever(int start = 0) => Enumerable.Range(start, int.MaxValue);
+        public static IEnumerable<int> Forever(int start = 0) => Enumerable.Range(start, int.MaxValue-start);
 
         public static IEnumerable<int> RepeatForever(IEnumerable<int> input)
         {
@@ -411,6 +408,31 @@ namespace AoC
             9223372036854775808 => 63,
             _ => throw new ArgumentException(),
         };
+
+        public static string FormatMs(long ms)
+        {
+            var span = TimeSpan.FromMilliseconds(ms);
+            if (ms < 1000)
+            {
+                return $"     .{span.ToString("fff")}";
+            }
+            else
+            {
+                
+                if ((int)span.TotalHours > 0)
+                {
+                    return span.ToString(@"hh\:mm\:ss.fff");
+                }
+                if ((int)span.TotalMinutes > 0)
+                {
+                    return $"{span.ToString(@"mm\:ss\.fff")}";
+                }
+                else
+                {
+                    return $"   {span.ToString(@"ss\.fff")}";
+                }
+            }
+        }
     }
 
 
@@ -485,35 +507,23 @@ namespace AoC
     {
         static public byte[] GetHash(int num, string baseStr)
         {
-            string hashInput = baseStr + num.ToString();
-            return hashInput.GetMD5();
+            return $"{baseStr}{num}".GetMD5();
         }
 
         public static IEnumerable<char> GetHashChars(int num, string baseStr)
         {
-            string hashInput = baseStr + num.ToString();
-            return hashInput.GetMD5Chars();
+            return $"{baseStr}{num}".GetMD5Chars();
         }
 
         static bool IsHash(int num, string baseStr, int numZeroes)
         {
-            var hashed = GetHash(num, baseStr).AsNybbles().Take(numZeroes);
-            return hashed.Where(b => b != 0).Count() == 0;
+            return GetHash(num, baseStr).AsNybbles().Take(numZeroes).All(v => v==0);
         }
 
-        const int blockSize = 100000;
+        const int blockSize = 1000;
         public static int FindHash(string baseStr, int numZeroes, int start = 0)
         {
-            while (true)
-            {
-                var hashes = Enumerable.Range(start, blockSize).Where(n => IsHash(n, baseStr, numZeroes));
-                if (hashes.Any())
-                {
-                    return hashes.First();
-                }
-
-                start += blockSize;
-            }
+            return Util.Forever(start).Where(n => IsHash(n, baseStr, numZeroes)).First();
         }
     }
 
@@ -532,7 +542,7 @@ namespace AoC
         {
             if (log != null)
             {
-                output.Write($"[{sw.ElapsedMilliseconds,6}] ");
+                output.Write($"[{Util.FormatMs(sw.ElapsedMilliseconds)}] ");
                 output.WriteLine(log);
             }
             else

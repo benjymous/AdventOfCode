@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace AoC
-
 {
     class Program
     {
@@ -26,7 +25,7 @@ namespace AoC
             {
                 var timing = puzzles.First().TimeRun(new ConsoleOut());
                 Console.WriteLine();
-                Console.WriteLine($"{timing} ms");
+                Console.WriteLine($"{Util.FormatMs(timing)}");
             }
             else
             {
@@ -36,44 +35,42 @@ namespace AoC
                 ConcurrentDictionary<string, bool> running = new ConcurrentDictionary<string, bool>();
 
                 Parallel.ForEach(puzzles, (puzzle) =>
-                     {
-                         running[puzzle.Name] = true;
+                {
+                    running[puzzle.Name] = true;
 
-                         mut.WaitOne();
-                         Console.WriteLine($"{puzzle.Name} starting");
-                         Console.WriteLine($"Running: [{string.Join(", ", running.Keys)}]");
-                         mut.ReleaseMutex();
+                    mut.WaitOne();
+                    Console.WriteLine($"{puzzle.Name} starting");
+                    Console.WriteLine($"Running: [{string.Join(", ", running.Keys)}]");
+                    mut.ReleaseMutex();
 
-                         TextBuffer buffer = new TextBuffer();
-                         timings[puzzle.Name] = puzzle.TimeRun(new TimeLogger(buffer));
+                    TextBuffer buffer = new TextBuffer();
+                    timings[puzzle.Name] = puzzle.TimeRun(new TimeLogger(buffer));
 
+                    running.TryRemove(puzzle.Name, out var _);
 
-                         bool ignore;
-                         running.TryRemove(puzzle.Name, out ignore);
+                    mut.WaitOne();
+                    Console.WriteLine();
+                    Console.WriteLine(buffer);
+                    ++finished;
+                    Console.WriteLine();
+                    Console.WriteLine($"Running: [{string.Join(", ", running.Keys)}]");
+                    Console.WriteLine($"[{finished}/{total} {((finished) * 100 / total)}%]");
+                    mut.ReleaseMutex();
+                });
 
-                         mut.WaitOne();
-                         Console.WriteLine();
-                         Console.WriteLine(buffer);
-                         ++finished;
-                         Console.WriteLine();
-                         Console.WriteLine($"Running: [{string.Join(", ", running.Keys)}]");
-                         Console.WriteLine($"[{finished}/{total} {((finished) * 100 / total)}%]");
-                         mut.ReleaseMutex();
-                     });
-
-                Console.WriteLine($"All completed in {watch.ElapsedMilliseconds} ms");
+                Console.WriteLine($"All completed in {Util.FormatMs(watch.ElapsedMilliseconds)}");
             }
 
             Console.WriteLine();
             foreach (var kvp in timings.OrderBy(kvp => kvp.Key))
             {
-                Console.WriteLine($"{kvp.Key} - {kvp.Value}ms");
+                Console.WriteLine($"{kvp.Key} - {Util.FormatMs(kvp.Value)}");
             }
 
             Console.WriteLine();
             foreach (var kvp in timings.OrderBy(kvp => kvp.Value))
             {
-                Console.WriteLine($"{kvp.Key} - {kvp.Value}ms");
+                Console.WriteLine($"{kvp.Key} - {Util.FormatMs(kvp.Value)}");
             }
         }
     }

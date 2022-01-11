@@ -33,9 +33,9 @@ namespace AoC.Advent2016
             while (outpass.Contains('_'))
             {
                 hashNumber = HashBreaker.FindHash(doorId, 5, hashNumber + 1);
-                var hashString = HashBreaker.GetHashChars(hashNumber, doorId).Take(7).ToArray();
-                char c = hashString[6];
-                char p = hashString[5];
+                var hashString = HashBreaker.GetHashChars(hashNumber, doorId).Skip(5).Take(2).ToArray();
+                char c = hashString[1];
+                char p = hashString[0];
 
                 int pos = p - '0';
 
