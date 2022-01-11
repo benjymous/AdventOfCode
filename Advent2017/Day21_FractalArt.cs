@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2017
 {
@@ -20,8 +19,7 @@ namespace AoC.Advent2017
 
                 var outLines = $"{out1}\n{out2}\n{out3}";
 
-                Out = Util.ParseSparseMatrix<char>(outLines);
-
+                Out = Util.ParseSparseMatrix<char>(outLines).Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key).ToHashSet();
             }
 
             [Regex(@"(...)\/(...)\/(...) => (....)\/(....)\/(....)\/(....)")]
@@ -33,107 +31,69 @@ namespace AoC.Advent2017
 
                 var outLines = $"{out1}\n{out2}\n{out3}\n{out4}";
 
-                Out = Util.ParseSparseMatrix<char>(outLines);
+                Out = Util.ParseSparseMatrix<char>(outLines).Where(kvp => kvp.Value=='#').Select(kvp=>kvp.Key).ToHashSet();
             }
 
             List<string> In = new();
-            public readonly Dictionary<(int x, int y), char> Out = new();
+            public readonly HashSet<(int x, int y)> Out = new();
 
 
-            public IEnumerable<string> Rotations()
+            public IEnumerable<int> Rotations()
             {
                 var data = string.Join("\n", In);
-                var matrix = Util.ParseSparseMatrix<char>(data);
+                var matrix = Util.ParseSparseMatrix<char>(data).Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key).ToHashSet();
 
-                int maxx = matrix.Max(v => v.Key.x);
-                int maxy = matrix.Max(x => x.Key.y);
+                int size = In.Count;
 
-
-                for (int i = 0; i < 8; ++i)
+                if (matrix.Count == 0)
                 {
-                    //Console.Write(i);
-                    var res = "";
-
-                    for (int y = 0; y <= maxy; y++)
-                    {
-                        for (int x = 0; x <= maxx; ++x)
-                        {
-                            res += matrix[(x, y)];
-                        }
-                        if (y < maxy) res += "|";
-                    }
-                    yield return res;
-
-                    //Console.WriteLine($"rotate");
-                    matrix = Rotate(matrix);
-                    if (i == 3)
-                    {
-                        //Console.WriteLine($"flip");
-                        matrix = Flip(matrix);
-                    }
+                    yield return (size == 3 ? 16 : 0);
                 }
-            }
-        }
-        static Dictionary<(int x, int y), char> Rotate(Dictionary<(int x, int y), char> matrix)
-        {
-            int max = matrix.Max(v => v.Key.x);
-            return matrix.Select(kvp => ((max-kvp.Key.y, kvp.Key.x), kvp.Value)).ToDictionary(v => v.Item1, v => v.Item2);
-        }
-
-        static Dictionary<(int x, int y), char> Flip(Dictionary<(int x, int y), char> matrix)
-        {
-            int max = matrix.Max(v => v.Key.x);
-            return matrix.Select(kvp => ((max - kvp.Key.x, kvp.Key.y), kvp.Value)).ToDictionary(v => v.Item1, v => v.Item2);
-        }
-
-        private static Dictionary<(int x, int y), char> ApplyRules(Dictionary<(int x, int y), char> map, Dictionary<string, Rule> rules)
-        {
-            int size = map.Max(v => v.Key.x)+1;
-            var result = new Dictionary<(int x, int y), char>();
-
-            if (size%3 == 0)
-            {
-                var cells = size / 3;
-
-                for (int celly = 0; celly < cells; celly++)
+                else
                 {
-                    for (int cellx = 0; cellx < cells; cellx++)
+                    for (int i = 0; i < 8; ++i)
                     {
-                        var cell = "";
+                        int res = 0;
 
-                        for (int y = 0; y < 3; ++y)
+                        for (int y = 0; y < size; y++)
                         {
-                            for (int x = 0; x < 3; ++x)
+                            for (int x = 0; x < size; ++x)
                             {
-                                cell += map[(x+(cellx*3), y+(celly*3))];
-                            }
-                            if (y < 2) cell += "|";
-                        }
-
-                        if (rules.TryGetValue(cell, out var rule))
-                        {
-                            var ruleOut = rule.Out;
-
-                            for (int y1 = 0; y1 < 4; ++y1)
-                            {
-                                for (int x1 = 0; x1 < 4; ++x1)
+                                res <<= 1;
+                                if (matrix.Contains((x, y)))
                                 {
-                                    result[(x1 + (cellx*4), y1+(celly*4))] = ruleOut[(x1,y1)];
+                                    res += 1;
                                 }
+
                             }
-
                         }
-                        else
+                        yield return res + (size == 3 ? 16 : 0);
+
+                        matrix = Rotate(matrix, size - 1);
+                        if (i == 3)
                         {
-                            Console.WriteLine("!!!");
+                            matrix = Flip(matrix, size - 1);
                         }
-
                     }
                 }
-
-                Debug.Assert(result.Count == cells * 4 * cells * 4);
             }
-            else
+        }
+        static HashSet<(int x, int y)> Rotate(HashSet<(int x, int y)> matrix, int max)
+        {
+            return matrix.Select(v => (max - v.y, v.x)).ToHashSet();
+        }
+
+        static HashSet<(int x, int y)> Flip(HashSet<(int x, int y)> matrix, int max)
+        {
+            return matrix.Select(v => (max - v.x, v.y)).ToHashSet();
+        }
+
+        private static IEnumerable<(int x, int y)> ApplyRules(HashSet<(int x, int y)> map, Rule[] rules)
+        {
+            int size = map.Max(v => v.x)+1;
+            var result = new HashSet<(int x, int y)>();
+
+            if (size %2 == 0)
             {
                 var cells = size / 2;
 
@@ -141,42 +101,64 @@ namespace AoC.Advent2017
                 {
                     for (int cellx = 0; cellx < cells; cellx++)
                     {
-                        var cell = "";
+                        int cell = 0;
 
                         for (int y = 0; y < 2; ++y)
                         {
                             for (int x = 0; x < 2; ++x)
                             {
-                                cell += map[(x + (cellx * 2), y + (celly * 2))];
+                                cell <<= 1;
+                                if (map.Contains((x + (cellx * 2), y + (celly * 2)))) cell++;
                             }
-                            if (y < 1) cell += "|";
                         }
 
-                        if (rules.TryGetValue(cell, out var rule))
+                        foreach (var p in rules[cell].Out)
                         {
-                            var ruleOut = rule.Out;
-
-                            for (int y1 = 0; y1 < 3; ++y1)
-                            {
-                                for (int x1 = 0; x1 < 3; ++x1)
-                                {
-                                    result[(x1 + (cellx * 3), y1 + (celly * 3))] = ruleOut[(x1, y1)];
-                                }
-                            }
-
+                            yield return(p.x + (cellx * 3), p.y + (celly * 3));
                         }
-                        else
-                        {
-                            Console.WriteLine("!!!");
-                        }
-
                     }
                 }
+            }
+            else
+            {
+                var cells = size / 3;
 
-                Debug.Assert(result.Count == cells * 3 * cells * 3);
+                for (int celly = 0; celly < cells; celly++)
+                {
+                    for (int cellx = 0; cellx < cells; cellx++)
+                    {
+                        int cell = 0;
+
+                        for (int y = 0; y < 3; ++y)
+                        {
+                            for (int x = 0; x < 3; ++x)
+                            {
+                                cell <<= 1;
+                                if (map.Contains((x + (cellx * 3), y + (celly * 3)))) cell++;                     
+                            }
+                        }
+
+                        foreach (var p in rules[cell+16].Out)
+                        {
+                            yield return(p.x + (cellx * 4), p.y + (celly * 4));
+                        }
+                    }
+                }
+            }
+        }
+
+        public static int RunRules(string input, int iterations)
+        {
+            var rules = Util.RegexParse<Rule>(input).Select(rule => rule.Rotations().ToHashSet().Select(key => (key, rule))).SelectMany(x => x).OrderBy(x => x.key).Select(x => x.rule).ToArray();
+
+            var map = Util.ParseSparseMatrix<char>(".#.\n..#\n###").Where(kvp => kvp.Value=='#').Select(kvp => kvp.Key).ToHashSet();
+
+            for (int i = 0; i < iterations; ++i)
+            {
+                map = ApplyRules(map, rules).ToHashSet();
             }
 
-            return result;
+            return map.Count;
         }
 
         public static int Part1(string input)
@@ -184,69 +166,16 @@ namespace AoC.Advent2017
             return RunRules(input, 5);
         }
 
-        public static int RunRules(string input, int iterations)
-        {
-            var rules = Util.RegexParse<Rule>(input);
-
-            var allRules = new Dictionary<string, Rule>();
-            foreach (var rule in rules)
-            {
-                foreach (var key in rule.Rotations().ToArray())
-                {
-                    if (!allRules.ContainsKey(key))
-                    {
-                        allRules[key] = rule;
-                    }
-                }
-            }
-
-            var map = Util.ParseSparseMatrix<char>(".#.\n..#\n###");
- 
-
-            for (int i = 0; i < iterations; ++i)
-            {
-                Display(map);
-                map = ApplyRules(map, allRules);
-            }
-
-            Display(map);
-
-            return map.Values.Count(v => v == '#');
-        }
-
-        private static void Display(Dictionary<(int x, int y), char> map)
-        {
-            var size = map.Max(v => v.Key.x);
-
-            for (int y=0; y<=size; ++y)
-            {
-                for (int x=0; x<=size; ++x)
-                {
-                    Console.Write(map[(x, y)]);
-                }
-                Console.WriteLine();
-            }
-            Console.WriteLine();
-        }
 
         public static int Part2(string input)
         {
-            return 0;
+            return RunRules(input, 18);
         }
 
         public void Run(string input, ILogger logger)
         {
-
-            var test = @"../.# => ##./#../...
-.#./..#/### => #..#/..../..../#..#".Replace("\r", "");
-
-            Console.WriteLine(RunRules(test, 2));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
-
-            // 101 too low
-            // 310 (iter6) too high (so not 1 off iterations)
         }
     }
 }
