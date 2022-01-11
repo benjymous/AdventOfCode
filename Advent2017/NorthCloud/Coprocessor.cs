@@ -91,7 +91,7 @@ namespace AoC.Advent2017.NorthCloud
 
     public interface IDebugger
     {
-        void Next(int IP, IInstr instr, Variant x, Variant y, DataBus bus);
+        bool Next(int IP, IInstr instr, Variant x, Variant y, DataBus bus);
     }
 
 
@@ -330,7 +330,7 @@ namespace AoC.Advent2017.NorthCloud
 
             var line = Instructions[InstructionPointer];
 
-            Debugger?.Next(InstructionPointer, line.instr, line.values[0], line.values[1], Bus);
+            if (Debugger?.Next(InstructionPointer, line.instr, line.values[0], line.values[1], Bus)==false) return false;
             InstructionPointer += line.instr.Do(line.values[0], line.values[1], Bus);
 
             return true;
