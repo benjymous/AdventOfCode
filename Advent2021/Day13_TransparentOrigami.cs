@@ -80,7 +80,7 @@ namespace AoC.Advent2021
             var display = Display(data);
             if (logger != null) logger.WriteLine(display);
 
-            return display.GetMD5String();
+            return display.GetMD5String(false);
         }
 
         public void Run(string input, ILogger logger)

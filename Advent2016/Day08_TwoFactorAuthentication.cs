@@ -136,7 +136,7 @@ namespace AoC.Advent2016
         {
             var display = new Display(input, 50, 6).ToString();
             if (logger != null) logger.WriteLine(display);
-            return display.GetMD5String();
+            return display.GetMD5String(false);
         }
 
         public void Run(string input, ILogger logger)
