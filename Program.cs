@@ -13,6 +13,8 @@ namespace AoC
         {
             IPuzzleExtensions.args = args;
 
+            bool singleThread = args.Contains("-single");
+
             var puzzles = Util.GetPuzzles();
             var timings = new ConcurrentDictionary<string, long>();
 
@@ -32,46 +34,70 @@ namespace AoC
                 var watch = new System.Diagnostics.Stopwatch();
                 watch.Start();
 
-                ConcurrentDictionary<string, bool> running = new ConcurrentDictionary<string, bool>();
-
-                Parallel.ForEach(puzzles, (puzzle) =>
+                if (singleThread)
                 {
-                    running[puzzle.Name] = true;
+                    foreach(var puzzle in puzzles)
+                    {
+                        var timing = puzzle.TimeRun(new ConsoleOut());
+                        timings[puzzle.Name] = timing;
+                        Console.WriteLine();
+                        Console.WriteLine($"{Util.FormatMs(timing)}");
+                        Console.WriteLine($"[{finished++}/{total} {((finished) * 100 / total)}%]");
+                    }
+                }
+                else
+                {
+                    ConcurrentDictionary<string, bool> running = new ConcurrentDictionary<string, bool>();
 
-                    mut.WaitOne();
-                    Console.WriteLine($"{puzzle.Name} starting");
-                    Console.WriteLine($"Running: [{string.Join(", ", running.Keys)}]");
-                    mut.ReleaseMutex();
+                    Parallel.ForEach(puzzles, (puzzle) =>
+                    {
+                        running[puzzle.Name] = true;
 
-                    TextBuffer buffer = new TextBuffer();
-                    timings[puzzle.Name] = puzzle.TimeRun(new TimeLogger(buffer));
+                        mut.WaitOne();
+                        Console.WriteLine($"{puzzle.Name} starting");
+                        Console.WriteLine($"Running: [{string.Join(", ", running.Keys)}]");
+                        mut.ReleaseMutex();
 
-                    running.TryRemove(puzzle.Name, out var _);
+                        TextBuffer buffer = new TextBuffer();
+                        timings[puzzle.Name] = puzzle.TimeRun(new TimeLogger(buffer));
 
-                    mut.WaitOne();
-                    Console.WriteLine();
-                    Console.WriteLine(buffer);
-                    ++finished;
-                    Console.WriteLine();
-                    Console.WriteLine($"Running: [{string.Join(", ", running.Keys)}]");
-                    Console.WriteLine($"[{finished}/{total} {((finished) * 100 / total)}%]");
-                    mut.ReleaseMutex();
-                });
+                        running.TryRemove(puzzle.Name, out var _);
+
+                        mut.WaitOne();
+                        Console.WriteLine();
+                        Console.WriteLine(buffer);
+                        ++finished;
+                        Console.WriteLine();
+                        Console.WriteLine($"Running: [{string.Join(", ", running.Keys)}]");
+                        Console.WriteLine($"[{finished}/{total} {((finished) * 100 / total)}%]");
+                        mut.ReleaseMutex();
+                    });
+                }
 
                 Console.WriteLine($"All completed in {Util.FormatMs(watch.ElapsedMilliseconds)}");
             }
 
-            Console.WriteLine();
-            foreach (var kvp in timings.OrderBy(kvp => kvp.Key))
+            if (timings.Any())
             {
-                Console.WriteLine($"{kvp.Key} - {Util.FormatMs(kvp.Value)}");
+                Console.WriteLine();
+                foreach (var kvp in timings.OrderBy(kvp => kvp.Key))
+                {
+                    Console.WriteLine($"{kvp.Key} - {Util.FormatMs(kvp.Value)}");
+                }
+
+                Console.WriteLine();
+                foreach (var kvp in timings.OrderBy(kvp => kvp.Value))
+                {
+                    Console.WriteLine($"{kvp.Key} - {Util.FormatMs(kvp.Value)}");
+                }
+
+                long totalTime = timings.Sum(kvp => kvp.Value);
+
+                Console.WriteLine();
+
+                Console.WriteLine($"Total time {Util.FormatMs(totalTime)}");
             }
 
-            Console.WriteLine();
-            foreach (var kvp in timings.OrderBy(kvp => kvp.Value))
-            {
-                Console.WriteLine($"{kvp.Key} - {Util.FormatMs(kvp.Value)}");
-            }
         }
     }
 }

@@ -26,7 +26,7 @@ namespace AoC.Utils
             watch.Start();
 
             puzzle.Run(input, logger);
-            thread.Priority = System.Threading.ThreadPriority.Normal;
+            thread.Priority = System.Threading.ThreadPriority.BelowNormal;
             return watch.ElapsedMilliseconds;
         }
 
