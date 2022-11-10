@@ -3,10 +3,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AoC.Advent2017.Test
 {
     [TestCategory("2017")]
+    [TestCategory("RegexParse")]
     [TestClass]
     public class Day21Test
     {
-        string input = Util.GetInput<Day21>();
+        readonly string input = Util.GetInput<Day21>();
 
         [TestCategory("Regression")]
         [DataTestMethod]

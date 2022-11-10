@@ -8,39 +8,28 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-15";
 
+        const int Calories = 4;
+
         class Ingredient
         {
             public string Name { get; private set; }
-            public Dictionary<string, int> Qualities { get; private set; } = new Dictionary<string, int>();
-            public Ingredient(string line)
+
+            public int[] Qualities { get; private set; }
+
+            [Regex(@"(.+): capacity (.+), durability (.+), flavor (.+), texture (.+), calories (.+)")]
+            public Ingredient(string name, int capacity, int durability, int flavor, int texture, int calories)
             {
-                var bits = line.Split(":");
-                Name = bits[0];
+                Name = name;
 
-                var parts = Util.Split(bits[1]);
-                foreach (var part in parts)
-                {
-                    var bits2 = part.Trim().Split(" ");
-                    Qualities[bits2[0]] = int.Parse(bits2[1]);
-                }
+                Qualities = new int[] {capacity, durability, flavor, texture, calories };
             }
-
-            public override string ToString() => $"{Name}: {string.Join(", ", Qualities.Select(kvp => $"{kvp.Key} {kvp.Value}"))}";
-        }
-
-        static IEnumerable<string> Qualities()
-        {
-            yield return "capacity";
-            yield return "durability";
-            yield return "flavor";
-            yield return "texture";
         }
 
         static int CalcScore(int[] weights, List<Ingredient> ingredients)
         {
             int score = 1;
 
-            foreach (var q in Qualities())
+            for (int q=0; q<4; ++q)
             {
                 int qualScore = 0;
                 for (int i = 0; i < weights.Length; ++i)
@@ -60,7 +49,7 @@ namespace AoC.Advent2015
 
             for (int i = 0; i < weights.Length; ++i)
             {
-                calories += ingredients[i].Qualities["calories"] * weights[i];
+                calories += ingredients[i].Qualities[Calories] * weights[i];
             }
 
             return calories;
@@ -82,14 +71,12 @@ namespace AoC.Advent2015
                 yield return new int[] { weights[0], weights[1] - 1, weights[2], weights[3] + 1 };
             }
 
-
             if (weights[2] > 0)
             {
                 yield return new int[] { weights[0] + 1, weights[1], weights[2] - 1, weights[3] };
                 yield return new int[] { weights[0], weights[1] + 1, weights[2] - 1, weights[3] };
                 yield return new int[] { weights[0], weights[1], weights[2] - 1, weights[3] + 1 };
             }
-
 
             if (weights[3] > 0)
             {
@@ -101,14 +88,14 @@ namespace AoC.Advent2015
 
         public static int Solve(string input, bool countCalories)
         {
-            var ingredients = Util.Parse<Ingredient>(input);
+            var ingredients = Util.RegexParse<Ingredient>(input).ToList();
 
-            var jobqueue = new Queue<Tuple<int[], int>>();
+            var jobqueue = new Queue<(int[], int)>();
             var initial = new int[4] { 25, 25, 25, 25 };
             var initialCalories = countCalories ? CalcCalories(initial, ingredients) : 500;
             var initialScore = initialCalories == 500 ? CalcScore(initial, ingredients) : 0;
 
-            jobqueue.Enqueue(Tuple.Create(initial, initialScore));
+            jobqueue.Enqueue((initial, initialScore));
             var cache = new Dictionary<string, int>();
 
             int best = initialScore;
@@ -133,7 +120,7 @@ namespace AoC.Advent2015
                         int newScore = calories == 500 ? CalcScore(neighbour, ingredients) : 0;
 
                         cache[key] = newScore;
-                        jobqueue.Enqueue(Tuple.Create(neighbour, newScore));
+                        jobqueue.Enqueue((neighbour, newScore));
 
                     }
                 }

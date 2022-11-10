@@ -22,8 +22,8 @@ namespace AoC.Advent2018
 
         class Node
         {
-            public List<Node> children = new List<Node>();
-            public List<int> metaData = new List<int>();
+            public List<Node> children = new();
+            public List<int> metaData = new();
         }
 
 
@@ -54,7 +54,7 @@ namespace AoC.Advent2018
         static int GetScore(Node node)
         {
             var count = 0;
-            if (node.children.Count() == 0)
+            if (node.children.Count == 0)
             {
                 count += node.metaData.Sum();
             }
@@ -64,7 +64,7 @@ namespace AoC.Advent2018
                 {
                     var childIdx = m - 1;
 
-                    if (childIdx >= 0 && childIdx < node.children.Count())
+                    if (childIdx >= 0 && childIdx < node.children.Count)
                     {
                         count += GetScore(node.children[childIdx]);
                     }
@@ -77,7 +77,7 @@ namespace AoC.Advent2018
         public static int Part1(string input)
         {
             int metaTotal = 0;
-            var tree = BuildTree(input, ref metaTotal);
+            _ = BuildTree(input, ref metaTotal);
             return metaTotal;
         }
 

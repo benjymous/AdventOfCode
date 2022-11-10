@@ -66,8 +66,8 @@ namespace AoC.Advent2020
                 ID = (Row * 8) + Col;
             }
 
-            int Row;
-            int Col;
+            readonly int Row;
+            readonly int Col;
             public int ID;
         }
 

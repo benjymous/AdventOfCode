@@ -14,14 +14,16 @@ namespace AoC.Advent2018
             public Dictionary<string, int> durations;
         }
 
-        static Data Parse32(string input)
+        static Data Parse(string input)
         {
             string id = null;
             string sleep = null;
 
-            Data d = new Data();
-            d.guards = new Dictionary<string, Dictionary<int, int>>();
-            d.durations = new Dictionary<string, int>();
+            Data d = new()
+            {
+                guards = new Dictionary<string, Dictionary<int, int>>(),
+                durations = new Dictionary<string, int>()
+            };
 
             var lines = Util.Split(input).OrderBy(x => x);
 
@@ -59,7 +61,7 @@ namespace AoC.Advent2018
 
         public static int Part1(string input)
         {
-            var data = Parse32(input);
+            var data = Parse(input);
 
             string sleepiest = null;
             var v = 0;
@@ -90,7 +92,7 @@ namespace AoC.Advent2018
 
         public static int Part2(string input)
         {
-            var data = Parse32(input);
+            var data = Parse(input);
 
             var m = -1;
             var mv = -1;

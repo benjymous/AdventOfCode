@@ -87,34 +87,34 @@ namespace AoC.Advent2018
             return data;
         }
 
-        private static void RenderPng(Dictionary<(int x, int y), char> data)
-        {
-            var minx = data.Min(p => p.Key.x) - 5;
-            var maxx = data.Max(p => p.Key.x) + 5;
-            var maxy = data.Max(p => p.Key.y) + 5;
+        //private static void RenderPng(Dictionary<(int x, int y), char> data)
+        //{
+        //    var minx = data.Min(p => p.Key.x) - 5;
+        //    var maxx = data.Max(p => p.Key.x) + 5;
+        //    var maxy = data.Max(p => p.Key.y) + 5;
 
-            int width = maxx - minx + 1;
-            int height = maxy;
+        //    int width = maxx - minx + 1;
+        //    int height = maxy;
 
-            var bmp = new Bitmap(width, height+1);
+        //    var bmp = new Bitmap(width, height+1);
 
-            for (var y = 0; y < maxy; ++y)
-            {
-                for (var x = minx; x <= maxx ; ++x)
-                {
-                    Color col = Color.MidnightBlue;
-                    if (!data.TryGetValue((x, y), out var c)) c = '.';
+        //    for (var y = 0; y < maxy; ++y)
+        //    {
+        //        for (var x = minx; x <= maxx ; ++x)
+        //        {
+        //            Color col = Color.MidnightBlue;
+        //            if (!data.TryGetValue((x, y), out var c)) c = '.';
                    
-                    if (c == '#') col = Color.Black;
-                    if (c == '~') col = Color.DodgerBlue;
-                    if (c == '|') col = Color.DeepSkyBlue;
+        //            if (c == '#') col = Color.Black;
+        //            if (c == '~') col = Color.DodgerBlue;
+        //            if (c == '|') col = Color.DeepSkyBlue;
 
-                    bmp.SetPixel(x-minx, y, col);
-                }
-            }
+        //            bmp.SetPixel(x-minx, y, col);
+        //        }
+        //    }
 
-            bmp.Save(@"clay.png");
-        }
+        //    bmp.Save(@"clay.png");
+        //}
 
         public static int Part1(string input)
         {

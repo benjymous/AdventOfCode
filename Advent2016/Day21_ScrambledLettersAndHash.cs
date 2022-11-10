@@ -214,7 +214,7 @@ namespace AoC.Advent2016
             return last.Concat(rest);
         }
 
-        static Dictionary<int, int> RotateLetterForward = new Dictionary<int, int>()
+        static readonly Dictionary<int, int> RotateLetterForward = new()
         {
             {0,1},
             {1,2},
@@ -226,17 +226,17 @@ namespace AoC.Advent2016
             {7,9},
         };
 
-        static Dictionary<int, int> RotateLetterBackward = new Dictionary<int, int>()
-        {
-            {0,1},
-            {1,1},
-            {2,6},
-            {3,2},
-            {4,7},
-            {5,3},
-            {6,0},
-            {7,4},
-        };
+        //static readonly Dictionary<int, int> RotateLetterBackward = new()
+        //{
+        //    {0,1},
+        //    {1,1},
+        //    {2,6},
+        //    {3,2},
+        //    {4,7},
+        //    {5,3},
+        //    {6,0},
+        //    {7,4},
+        //};
 
         private static IEnumerable<char> RotateRightBasedOnLetter(IEnumerable<char> password, int length, char letter)
         {
@@ -249,14 +249,14 @@ namespace AoC.Advent2016
 
         // 
 
-        private static IEnumerable<char> RotateLeftBasedOnLetter(IEnumerable<char> password, int length, char letter)
-        {
-            var pos = password.AsString().IndexOf(letter);
-            var dist = (-pos / 2 + (pos % 2 == 1 || pos == 0 ? 1 : 5)) + 8;
-            //var dist1 = RotateLetterBackward[pos];
-            //Util.Test(dist, dist1);
-            return RotateRight(password, length, dist);
-        }
+        //private static IEnumerable<char> RotateLeftBasedOnLetter(IEnumerable<char> password, int length, char letter)
+        //{
+        //    var pos = password.AsString().IndexOf(letter);
+        //    var dist = (-pos / 2 + (pos % 2 == 1 || pos == 0 ? 1 : 5)) + 8;
+        //    //var dist1 = RotateLetterBackward[pos];
+        //    //Util.Test(dist, dist1);
+        //    return RotateRight(password, length, dist);
+        //}
 
         private static IEnumerable<char> Reverse(IEnumerable<char> password, int start, int end)
         {

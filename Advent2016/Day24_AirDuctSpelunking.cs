@@ -16,8 +16,8 @@ namespace AoC.Advent2016
 
         public class MapData : GridMap<char>
         {
-            public Dictionary<int, ManhattanVector2> Locations = new Dictionary<int, ManhattanVector2>();
-            public Dictionary<int, int> paths = new Dictionary<int, int>();
+            public Dictionary<int, ManhattanVector2> Locations = new();
+            public Dictionary<int, int> paths = new();
 
             public int AllLocations = 0;
 
@@ -55,9 +55,8 @@ namespace AoC.Advent2016
                         if (loc1.Key != loc2.Key)
                         {
                             var path = AStar<ManhattanVector2>.FindPath(this, loc1.Value, loc2.Value);
-
-                            var c1 = data.GetObjKey(loc1.Value);
-                            var c2 = data.GetObjKey(loc2.Value);
+                            _ = data.GetObjKey(loc1.Value);
+                            _ = data.GetObjKey(loc2.Value);
 
                             paths[loc1.Key + loc2.Key] = path.Count();
                         }
@@ -65,7 +64,7 @@ namespace AoC.Advent2016
                 }
             }
 
-            Dictionary<int, IEnumerable<int>> BitCache = new Dictionary<int, IEnumerable<int>>();
+            readonly Dictionary<int, IEnumerable<int>> BitCache = new();
             public IEnumerable<int> Bits(int input)
             {
                 if (BitCache.TryGetValue(input, out var output))
@@ -89,12 +88,10 @@ namespace AoC.Advent2016
 
         public static int Solve(MapData map, bool returnHome)
         {
-
             var queue = new Queue<(int location, int visited, int distance)>();
-
             queue.Enqueue((LocationCode('0'), LocationCode('0'), 0));
-            var cache = new Dictionary<Int64, int>();
-            cache[GetKey(LocationCode('0'), LocationCode('0'))] = 0;
+
+            var cache = new Dictionary<Int64, int>() { { GetKey(LocationCode('0'), LocationCode('0')), 0 } };
 
             int currentBest = int.MaxValue;
 

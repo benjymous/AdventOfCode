@@ -8,7 +8,7 @@ namespace AoC.Advent2019.Test
     [TestClass]
     public class Day20Test
     {
-        string input = Util.GetInput<Day20>();
+        readonly string input = Util.GetInput<Day20>();
 
         [TestCategory("Test")]
         [DataRow("         A           \n         A           \n  #######.#########  \n  #######.........#  \n  #######.#######.#  \n  #######.#######.#  \n  #######.#######.#  \n  #####  B    ###.#  \nBC...##  C    ###.#  \n  ##.##       ###.#  \n  ##...DE  F  ###.#  \n  #####    G  ###.#  \n  #########.#####.#  \nDE..#######...###.#  \n  #.#########.###.#  \nFG..#########.....#  \n  ###########.#####  \n             Z       \n             Z       ", 23)]

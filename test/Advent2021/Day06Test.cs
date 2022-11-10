@@ -3,13 +3,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AoC.Advent2021.Test
 {
     [TestCategory("2021")]
-    [TestCategory("Optimise")]
     [TestClass]
     public class Day06Test
     {
-        string input = Util.GetInput<Day06>();
+        readonly string input = Util.GetInput<Day06>();
 
-        string test = "3,4,3,1,2";
+        readonly string test = "3,4,3,1,2";
 
         [TestCategory("Test")]
         [DataTestMethod]

@@ -11,36 +11,28 @@ namespace AoC.Advent2018
 
         struct Entry
         {
-            public Entry(string line)
+            [Regex(@"pos=<(.+,.+,.+)>, r=(.+)")]
+            public Entry(ManhattanVector3 pos, int r)
             {
-                line = line.Replace("<", "").Replace(">", "").Replace(",", " ").Replace("=", " ").Replace("  ", " ");
-                var bits = line.Split(" ");
-
-                position = new ManhattanVector3(Int32.Parse(bits[1]), Int32.Parse(bits[2]), Int32.Parse(bits[3]));
-                radius = Int32.Parse(bits[5]);
+                position = pos;
+                radius = r;
             }
             public ManhattanVector3 position;
             public int radius;
         }
 
-        static List<Entry> Parse32(string input)
-        {
-            return Util.Parse<Entry>(input);
-        }
-
         public static int Part1(string input)
         {
-            var data = Parse32(input);
+            var data = Util.RegexParse<Entry>(input);
 
             var strongest = data.OrderBy(e => e.radius).LastOrDefault();
-
 
             return data.Where(e => e.position.Distance(strongest.position) <= strongest.radius).Count();
         }
 
         public static int Part2(string input)
         {
-            var data = Parse32(input);
+            var data = Util.RegexParse<Entry>(input);
 
             int maxx = int.MinValue;
             int minx = int.MaxValue;
@@ -71,7 +63,7 @@ namespace AoC.Advent2018
             {
                 //Console.WriteLine(step);
 
-                ManhattanVector3 pos = new ManhattanVector3(0, 0, 0);
+                ManhattanVector3 pos = new(0, 0, 0);
                 for (pos.X = minx; pos.X <= maxx; pos.X += step)
                 {
                     for (pos.Y = miny; pos.Y <= maxy; pos.Y += step)

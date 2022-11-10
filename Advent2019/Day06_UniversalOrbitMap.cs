@@ -1,20 +1,15 @@
 ﻿using AoC.Utils.Collections;
 using System.Linq;
 
-//using PlanetTree = Tree<string, Advent.MMXIX.Day06.none>;
-//using Planet = TreeNode<string, Advent.MMXIX.Day06.none>;
-
 namespace AoC.Advent2019
 {
     public class Day06 : IPuzzle
     {
         public string Name => "2019-06";
 
-        public struct none { };
-
-        public static Tree<string, none> ParseTree(string input)
+        public static Tree<string> ParseTree(string input)
         {
-            var tree = new Tree<string, none>();
+            var tree = new Tree<string>();
             var data = input.Split();
             foreach (var line in data)
             {
@@ -34,12 +29,12 @@ namespace AoC.Advent2019
         public static int Part2(string input)
         {
             var tree = ParseTree(input);
-            var youUp = tree.TraverseToRoot("YOU");
-            var santaUp = tree.TraverseToRoot("SAN");
+            var youUp = tree.TraverseToRoot("YOU").ToArray();
+            var santaUp = tree.TraverseToRoot("SAN").ToArray();
 
-            return Util.Matrix(youUp.Count, santaUp.Count)
-                       .Where(val => youUp[val.Item1] == santaUp[val.Item2])
-                       .Select(val => val.Item1 + val.Item2)
+            return Util.Matrix(youUp.Length, santaUp.Length)
+                       .Where(val => youUp[val.x] == santaUp[val.y])
+                       .Select(val => val.x + val.y)
                        .Min();
         }
 

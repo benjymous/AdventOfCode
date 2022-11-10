@@ -43,7 +43,7 @@ namespace AoC.Advent2021
         {
             var map = new Map(input);
 
-            return map.Data.Where(kvp => directions.All(offset => map.Data.TryGetValue((kvp.Key.x + offset.x, kvp.Key.y + offset.y), out var other) ? other > kvp.Value : true))
+            return map.Data.Where(kvp => directions.All(offset => !map.Data.TryGetValue((kvp.Key.x + offset.x, kvp.Key.y + offset.y), out var other) || other > kvp.Value))
                            .Select(kvp => kvp.Value + 1)
                            .Sum();
         }

@@ -84,7 +84,7 @@ namespace AoC.Advent2020
             {
                 var validTickets = ValidNearbyTickets().ToArray();
 
-                Dictionary<string, HashSet<int>> classMatrix = new Dictionary<string, HashSet<int>>();
+                Dictionary<string, HashSet<int>> classMatrix = new();
 
                 foreach (var rule in Rules)
                 {

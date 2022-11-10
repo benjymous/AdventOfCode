@@ -13,29 +13,29 @@ namespace AoC.Advent2016
         class Node
         {
             public ManhattanVector2 position;
-            public int size;
-            public int used;
-            public int free;
+            public int Size;
+            public int Used;
+            public int Free;
 
-            public Node(string line)
+            [Regex(@"\/dev\/grid\/node-x(\S+)-y(\S+)\s+(\S+)T\s+(\S+)T\s+(\S+)T\s+\S+%")]
+            public Node(int x, int y, int size, int used, int free)
             {
-                var bits = Util.ExtractNumbers(line.Select(c => (c >= '0' && c <= '9') ? c : ' '));
-                position = new ManhattanVector2(bits[0], bits[1]);
-                size = bits[2];
-                used = bits[3];
-                free = bits[4];
+                position = new ManhattanVector2(x, y);
+                Size = size;
+                Used = used;
+                Free = free;
             }
 
-            public override string ToString() => $"{position} : U{used}:F{free} [{size}]";
+            public override string ToString() => $"{position} : U{Used}:F{Free} [{Size}]";
         }
 
-        static IEnumerable<Node> Parse(string input) => Util.Parse<Node>(Util.Split(input).Where(line => line.StartsWith("/dev/")));
+        static IEnumerable<Node> Parse(string input) => Util.RegexParse<Node>(Util.Split(input).Where(line => line.StartsWith("/dev/")));
 
         public static int Part1(string input)
         {
             var nodes = Parse(input);
 
-            var pairs = nodes.Pairs().Where(pair => pair.Item1.used > 0 && pair.Item1.used <= pair.Item2.free);
+            var pairs = nodes.Pairs().Where(pair => pair.Item1.Used > 0 && pair.Item1.Used <= pair.Item2.Free);
 
             return pairs.Count();
         }
@@ -46,10 +46,11 @@ namespace AoC.Advent2016
             {
                 maxMovable = max;
             }
-            int maxMovable = 0;
+
+            readonly int maxMovable = 0;
             public bool IsWalkable(Node cell)
             {
-                return cell.used < maxMovable;
+                return cell.Used < maxMovable;
             }
         }
 
@@ -60,9 +61,9 @@ namespace AoC.Advent2016
             var grid = nodes.ToDictionary(el => el.position.ToString(), el => el);
             var sourceX = nodes.Where(n => n.position.Y == 0).Select(n => n.position.X).Max();
 
-            var empty = nodes.Where(n => n.used == 0).First();
+            var empty = nodes.Where(n => n.Used == 0).First();
 
-            GridMap<Node> map = new GridMap<Node>(new Walkable(empty.free));
+            GridMap<Node> map = new(new Walkable(empty.Free));
             map.data = grid;
 
             // move empty square to the left of the payload (avoiding the unmovable squares)

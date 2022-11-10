@@ -27,7 +27,7 @@ namespace AoC.Advent2020
 
         static HexVector FollowPath(string path)
         {
-            HexVector pos = new HexVector(0, 0, 0);
+            HexVector pos = new(0, 0, 0);
 
             var steps = SplitCommands(path);
             foreach (var step in steps)
@@ -56,8 +56,8 @@ namespace AoC.Advent2020
                 YRange.Reset();
             }
 
-            Accumulator XRange = new Accumulator();
-            Accumulator YRange = new Accumulator();
+            readonly Accumulator XRange = new();
+            readonly Accumulator YRange = new();
             public HashSet<HexVector> Cells { get; private set; } = new HashSet<HexVector>();
 
             public IEnumerable<HexVector> Range()
@@ -137,7 +137,7 @@ namespace AoC.Advent2020
                 current = 1 - current;
             }
 
-            return states[current].Cells.Count();
+            return states[current].Cells.Count;
         }
 
         static HashSet<HexVector> GetInitialState(string input)
@@ -157,7 +157,7 @@ namespace AoC.Advent2020
         public static int Part1(string input)
         {
             var state = GetInitialState(input);
-            return state.Count();
+            return state.Count;
         }
 
         public static int Part2(string input)

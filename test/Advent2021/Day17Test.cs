@@ -11,7 +11,7 @@ namespace AoC.Advent2021.Test
     [TestClass]
     public class Day17Test
     {
-        string input = Util.GetInput<Day17>();
+        readonly string input = Util.GetInput<Day17>();
 
         [TestCategory("Test")]
         [DataRow("target area: x=20..30, y=-10..-5", 20,-10, true)]

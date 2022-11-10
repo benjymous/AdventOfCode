@@ -29,7 +29,7 @@ namespace AoC.Advent2015
             public override string ToString() => Name;
         }
 
-        static string shopStr =
+        static readonly string shopStr =
             //Weapons:    Cost  Damage  Armor
             "W Dagger        8     4       0\n" +
             "W Shortsword   10     5       0\n" +
@@ -55,7 +55,7 @@ namespace AoC.Advent2015
             "R Defense+2    40     0       2\n" +
             "R Defense+3    80     0       3\n";
 
-        static List<Item> shopItems = Util.Parse<Item>(shopStr);
+        static readonly List<Item> shopItems = Util.Parse<Item>(shopStr);
         static IEnumerable<Item> Weapons() => shopItems.Where(i => i.Type == "W");
         static IEnumerable<Item> Armour() => shopItems.Where(i => i.Type == "A");
         static IEnumerable<Item> Rings() => shopItems.Where(i => i.Type == "R");
@@ -64,13 +64,13 @@ namespace AoC.Advent2015
         {
             public string Name;
             int HP;
-            int BaseDamage;
-            int BaseArmour;
+            readonly int BaseDamage;
+            readonly int BaseArmour;
 
             int damage = 0;
             int armour = 0;
 
-            List<Item> items = new List<Item>();
+            List<Item> items = new();
 
             public Entity(string name, int hp, int dam, int armour)
             {
@@ -119,7 +119,7 @@ namespace AoC.Advent2015
             {
                 if (weapon.Cost > gold) continue;
 
-                List<Item> justWeapon = new List<Item> { weapon };
+                List<Item> justWeapon = new() { weapon };
 
                 yield return justWeapon;
 
@@ -129,7 +129,7 @@ namespace AoC.Advent2015
                     {
 
                         if (weapon.Cost + armour.Cost > gold) continue;
-                        List<Item> weaponAndArmour = new List<Item> { weapon, armour };
+                        List<Item> weaponAndArmour = new() { weapon, armour };
                         yield return weaponAndArmour;
 
                         foreach (var ring1 in Rings())
@@ -138,7 +138,7 @@ namespace AoC.Advent2015
                             {
                                 if (weapon.Cost + armour.Cost + ring1.Cost + ring2.Cost > gold) continue;
 
-                                List<Item> weaponAndArmourAndRings = new List<Item> { weapon, armour, ring1, ring2 };
+                                List<Item> weaponAndArmourAndRings = new() { weapon, armour, ring1, ring2 };
                                 yield return weaponAndArmourAndRings;
                             }
                         }
@@ -151,7 +151,7 @@ namespace AoC.Advent2015
 
         static Entity Fight(Entity e1, Entity e2)
         {
-            Queue<Entity> pattern = new Queue<Entity>();
+            Queue<Entity> pattern = new();
             pattern.Enqueue(e1);
             pattern.Enqueue(e2);
 
@@ -178,7 +178,7 @@ namespace AoC.Advent2015
 
             int gold = Weapons().Select(w => w.Cost).Min();
 
-            HashSet<string> triedCombos = new HashSet<string>();
+            HashSet<string> triedCombos = new();
 
             while (true)
             {
@@ -211,14 +211,14 @@ namespace AoC.Advent2015
 
             int maxgold = Weapons().Select(w => w.Cost).Max() + Armour().Select(a => a.Cost).Max() + (2 * Rings().Select(r => r.Cost).Max());
 
-            HashSet<string> triedCombos = new HashSet<string>();
+            HashSet<string> triedCombos = new();
 
             var itemCombos = GetInventoryCombinations(maxgold).Select(combo => (combo, combo.Select(i => i.Cost).Sum())).OrderByDescending(tup => tup.Item2);
 
             foreach (var combo in itemCombos)
             {
 
-                var key = string.Join(", ", combo.Item1.OrderBy(i => i.Name).Where(i => i.Name != "None"));
+                var key = string.Join(", ", combo.combo.OrderBy(i => i.Name).Where(i => i.Name != "None"));
                 var gold = combo.Item2;
                 if (triedCombos.Contains(key)) continue;
                 triedCombos.Add(key);
@@ -228,7 +228,7 @@ namespace AoC.Advent2015
 
                 //Console.WriteLine($"Bought {key} with {gold} gold");
 
-                player.SetInventory(combo.Item1);
+                player.SetInventory(combo.combo);
 
                 if (Fight(player, enemy) == enemy) return gold;
 

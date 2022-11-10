@@ -11,8 +11,8 @@ namespace AoC.Advent2018
 
         public class Train
         {
-            public ManhattanVector2 position = new ManhattanVector2(0, 0);
-            public Direction2 direction = new Direction2(0, 0);
+            public ManhattanVector2 position = new(0, 0);
+            public Direction2 direction = new(0, 0);
             public int turn;
             public bool crash;
 
@@ -27,9 +27,9 @@ namespace AoC.Advent2018
 
         public class TrainSim
         {
-            List<string> map = new List<string>();
+            readonly List<string> map = new();
 
-            List<Train> trains = new List<Train>();
+            List<Train> trains = new();
 
             public bool Debug { get; set; } = false;
 
@@ -200,8 +200,10 @@ namespace AoC.Advent2018
 
         public static string Part2(string input)
         {
-            var t2 = new TrainSim(input);
-            t2.StopOnCrash = false;
+            var t2 = new TrainSim(input)
+            {
+                StopOnCrash = false
+            };
             return t2.Run();
         }
 

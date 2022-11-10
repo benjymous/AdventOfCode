@@ -13,14 +13,11 @@ namespace AoC.Advent2016
 
         public static IEnumerable<bool> Iterate(IEnumerable<bool> input)
         {
-            var a = input;
-            var b = input.Reverse().Select(c => !c);
-            return a.Concat(pad).Concat(b);
+            return input.Concat(pad).Concat(input.Reverse().Select(c => !c)).ToArray();
         }
 
         public static IEnumerable<bool> Fill(IEnumerable<bool> input, int size)
-        {
-            IEnumerable<bool> vals = input;
+        {            
             while (input.Count() < size)
             {
                 input = Iterate(input);
@@ -43,9 +40,9 @@ namespace AoC.Advent2016
             var data = input.ToArray();
             while (true)
             {
-                if (data.Count() % 2 != 0) return data;
+                if (data.Length % 2 != 0) return data;
 
-                List<bool> result = new List<bool>();
+                List<bool> result = new();
 
                 for (int i = 0; i < data.Length; i += 2)
                 {

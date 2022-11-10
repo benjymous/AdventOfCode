@@ -12,7 +12,7 @@ namespace AoC.Advent2016
         const string opens = "BCDEF";
         const string direction = "UDLR";
 
-        static Direction2[] offsets = new Direction2[]
+        static readonly Direction2[] offsets = new Direction2[]
         {
             new Direction2(0,-1),
             new Direction2(0,1),
@@ -29,7 +29,7 @@ namespace AoC.Advent2016
             public bool[] directions;
         }
 
-        static AvailableDoors[,] availableDoors = GetAvailableDoors();
+        static readonly AvailableDoors[,] availableDoors = GetAvailableDoors();
 
         static AvailableDoors[,] GetAvailableDoors()
         {
@@ -118,8 +118,6 @@ namespace AoC.Advent2016
             jobqueue.Enqueue(("", new ManhattanVector2(0, 0)));
 
             int best = int.MinValue;
-            string path = "";
-
             var dest = new ManhattanVector2(3, 3);
 
             while (jobqueue.Any())
@@ -131,7 +129,6 @@ namespace AoC.Advent2016
                     if (entry.path.Length > best)
                     {
                         best = entry.path.Length;
-                        path = entry.path;
                     }
                     continue;  // don't continue if the path has reached the vault
                 }

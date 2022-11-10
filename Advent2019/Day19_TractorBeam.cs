@@ -10,11 +10,11 @@ namespace AoC.Advent2019
 
         public class TestDrone
         {
-            NPSA.IntCPU cpu;
+            readonly NPSA.IntCPU cpu;
 
             public int Scans { get; private set; } = 0;
 
-            Dictionary<string, Int64> Cache = new Dictionary<string, Int64>();
+            readonly Dictionary<string, Int64> Cache = new();
 
             public TestDrone(string program)
             {
@@ -27,8 +27,7 @@ namespace AoC.Advent2019
             public Int64 Visit(int scanX, int scanY)
             {
                 var key = $"{scanX},{scanY}";
-                Int64 res = 0;
-                if (Cache.TryGetValue(key, out res))
+                if (Cache.TryGetValue(key, out long res))
                 {
                     return res;
                 }
@@ -114,10 +113,8 @@ namespace AoC.Advent2019
         {
             const int boxSize = 100;
 
-            Dictionary<string, Int64> scanOutput = new Dictionary<string, Int64>();
-
-            ManhattanVector2 topPos = new ManhattanVector2(0, 0);
-            ManhattanVector2 bottomPos = new ManhattanVector2(0, 0);
+            ManhattanVector2 topPos = new(0, 0);
+            ManhattanVector2 bottomPos = new(0, 0);
 
             var drone = new TestDrone(input);
 

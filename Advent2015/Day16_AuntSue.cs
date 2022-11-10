@@ -21,8 +21,8 @@ namespace AoC.Advent2015
             public Dictionary<string, int> inventory;
             public Sue(string data)
             {
-                var part1 = data.Substring(0, data.IndexOf(":"));
-                var part2 = data.Substring(data.IndexOf(":") + 1);
+                var part1 = data[..data.IndexOf(":")];
+                var part2 = data[(data.IndexOf(":") + 1)..];
                 Id = int.Parse(part1.Split(" ")[1]);
                 inventory = ParseClues(part2);
             }
@@ -82,7 +82,7 @@ namespace AoC.Advent2015
 
             var clues = ParseClues("children: 3, cats: 7, samoyeds: 2, pomeranians: 3, akitas: 0, vizslas: 0, goldfish: 5, trees: 3, cars: 2, perfumes: 1");
 
-            var data = aunts.Select(a => Tuple.Create(a.ScorePart1(clues), a)).OrderBy(t => -t.Item1);
+            var data = aunts.Select(a => (a.ScorePart1(clues), a)).OrderBy(t => -t.Item1);
 
             return data.First().Item2.Id;
         }
@@ -93,7 +93,7 @@ namespace AoC.Advent2015
 
             var clues = ParseClues("children: 3, cats: 7, samoyeds: 2, pomeranians: 3, akitas: 0, vizslas: 0, goldfish: 5, trees: 3, cars: 2, perfumes: 1");
 
-            var data = aunts.Select(a => Tuple.Create(a.ScorePart2(clues), a)).OrderBy(t => -t.Item1);
+            var data = aunts.Select(a => (a.ScorePart2(clues), a)).OrderBy(t => -t.Item1);
 
             return data.First().Item2.Id;
         }

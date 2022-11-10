@@ -59,7 +59,7 @@ namespace AoC.Advent2016
                 }
             }
 
-            private char Increment(char c)
+            private static char Increment(char c)
             {
                 if (c == '-' || c == ' ') return ' ';
                 c++;
@@ -93,7 +93,7 @@ namespace AoC.Advent2016
         {
             var rooms = Util.Parse<Room>(input);
 
-            var decrypted = rooms.Where(r => r.IsReal).Select(r => Tuple.Create(r.Decrypt(), r));
+            var decrypted = rooms.Where(r => r.IsReal).Select(r => (r.Decrypt(), r));
 
             var found = decrypted.Where(d => d.Item1.Contains("north"));
 

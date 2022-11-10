@@ -30,14 +30,14 @@ namespace AoC.Advent2020
             }
 
             public string BagType;
-            public Dictionary<string, int> Children = new Dictionary<string, int>();
+            public Dictionary<string, int> Children = new();
         }
 
         public static int Part1(string input)
         {
             var rules = Util.Parse<BagRule>(input);
 
-            HashSet<string> goldholders = new HashSet<string> { "shiny gold" };
+            HashSet<string> goldholders = new() { "shiny gold" };
 
             var running = true;
 
@@ -59,7 +59,7 @@ namespace AoC.Advent2020
                 }
             }
 
-            return goldholders.Count() - 1;
+            return goldholders.Count - 1;
         }
 
 

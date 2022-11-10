@@ -10,7 +10,8 @@ namespace AoC.Advent2016
         {
             [Regex(@"Disc #(\d) has (\d+) positions; at time=0, it is at position (\d+).")]
             public Disc(int discNum, int numPos, int initialPos) => (NumPos, Offset) = (numPos, discNum + initialPos);
-            int NumPos, Offset;
+
+            readonly int NumPos, Offset;
 
             public bool CheckStep(int step) => (step + Offset) % NumPos == 0;
         }

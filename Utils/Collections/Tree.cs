@@ -16,17 +16,14 @@ namespace AoC.Utils.Collections
 
         public int GetDescendantCount() => Children.Count + Children.Select(c => c.GetDescendantCount()).Sum();
 
-        public override string ToString()
-        {
-            return Key.ToString();
-        }
+        public override string ToString() => Key.ToString();
     }
 
     public class Tree<TKeyType> : Tree<TKeyType, object> { }
 
     public class Tree<TKeyType, TDataType>
     {
-        Dictionary<TKeyType, TreeNode<TKeyType, TDataType>> index = new Dictionary<TKeyType, TreeNode<TKeyType, TDataType>>();
+        readonly Dictionary<TKeyType, TreeNode<TKeyType, TDataType>> index = new();
 
         public IEnumerable<TKeyType> GetIndex() => index.Keys;
         public IEnumerable<TreeNode<TKeyType, TDataType>> GetNodes() => index.Values;
@@ -34,10 +31,7 @@ namespace AoC.Utils.Collections
         TreeNode<TKeyType, TDataType> root = null;
         public TreeNode<TKeyType, TDataType> GetRoot()
         {
-            if (root == null)
-            {
-                root = TraverseToRoot(index.Keys.First()).Last();
-            }
+            root ??= TraverseToRoot(index.Keys.First()).Last();
             return root;
         }
 
@@ -66,18 +60,14 @@ namespace AoC.Utils.Collections
             n2.Children.Add(n1);
         }
 
-        public List<TreeNode<TKeyType, TDataType>> TraverseToRoot(TKeyType key)
+        public IEnumerable<TreeNode<TKeyType, TDataType>> TraverseToRoot(TKeyType key)
         {
-            var output = new List<TreeNode<TKeyType, TDataType>>();
             var node = GetNode(key);
-
             while (node.Parent != null)
             {
-                output.Add(node.Parent);
+                yield return node.Parent;
                 node = node.Parent;
             }
-
-            return output;
         }
     }
 

@@ -10,7 +10,7 @@ namespace AoC.Advent2018
 
         class Graph
         {
-            Dictionary<string, Node> index = new Dictionary<string, Node>();
+            readonly Dictionary<string, Node> index = new();
 
             public IEnumerable<string> GetIndex() => index.Keys;
             public IEnumerable<Node> GetNodes() => index.Values;
@@ -54,11 +54,11 @@ namespace AoC.Advent2018
         class Node
         {
             public ManhattanVector4 position;
-            public HashSet<Node> links = new HashSet<Node>();
+            public HashSet<Node> links = new();
 
             public HashSet<Node> FindAllLinks(HashSet<Node> seen = null)
             {
-                if (seen == null) seen = new HashSet<Node>();
+                seen ??= new HashSet<Node>();
                 foreach (var node in links)
                 {
                     if (!seen.Contains(node))
@@ -93,18 +93,10 @@ namespace AoC.Advent2018
             return Graph.CountGroups();
         }
 
-        public static int Part2(string input)
-        {
-            return 0;
-        }
-
         public void Run(string input, ILogger logger)
         {
-
-
             //Console.WriteLine(Part1("0,0,0,0\n3,0,0,0\n0,3,0,0\n0,0,3,0\n0,0,0,3\n0,0,0,6\n9,0,0,0\n12,0,0,0\n"));
             logger.WriteLine("- Pt1 - " + Part1(input));
-            //logger.WriteLine("- Pt2 - "+Part2(input));
         }
     }
 }

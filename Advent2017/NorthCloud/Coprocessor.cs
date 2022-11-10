@@ -31,9 +31,9 @@ namespace AoC.Advent2017.NorthCloud
             for (int i = 0; i < 26; ++i)
             {
                 sb.Append(((char)(i + 'a')));
-                sb.Append(":");
+                sb.Append(':');
                 sb.Append(Registers[i]);
-                sb.Append(" ");
+                sb.Append(' ');
             }
             return sb.ToString();
         }
@@ -94,7 +94,7 @@ namespace AoC.Advent2017.NorthCloud
         bool Next(int IP, IInstr instr, Variant x, Variant y, DataBus bus);
     }
 
-
+#pragma warning disable IDE1006 // Naming Styles
     namespace Instructions
     {
         namespace Common
@@ -185,8 +185,7 @@ namespace AoC.Advent2017.NorthCloud
             {
                 public int Do(Variant x, Variant y, DataBus bus)
                 {
-                    Int64 value = 0;
-                    if (bus.Input == null || bus.Input.Read(out value) == false)
+                    if (bus.Input == null || bus.Input.Read(out long value) == false)
                     {
                         bus.Waiting = true;
                         return 0;
@@ -223,7 +222,7 @@ namespace AoC.Advent2017.NorthCloud
             }
         }
     }
-
+#pragma warning restore IDE1006 // Naming Styles
     public static class Extensions
     {
         public static string Name(this IInstr instr)
@@ -265,8 +264,8 @@ namespace AoC.Advent2017.NorthCloud
                 .Select(x => (IInstr)Activator.CreateInstance(x));
         }
 
-        Dictionary<int, IInstr> InstrMap;
-        InstructionLine[] Instructions;
+        readonly Dictionary<int, IInstr> InstrMap;
+        readonly InstructionLine[] Instructions;
 
         public DataBus Bus { get; private set; } = new DataBus();
 
@@ -286,12 +285,12 @@ namespace AoC.Advent2017.NorthCloud
             InstrMap = new Dictionary<int, IInstr>();
             foreach (var instr in opcodes)
             {
-                int idx = reverseMap.Count();
-                reverseMap[instr.Key] = reverseMap.Count();
+                int idx = reverseMap.Count;
+                reverseMap[instr.Key] = reverseMap.Count;
                 InstrMap[idx] = instr.Value;
             }
 
-            List<InstructionLine> instrs = new List<InstructionLine>();
+            List<InstructionLine> instrs = new();
             var program = Util.Split(input, '\n');
             foreach (var line in program)
             {
@@ -301,7 +300,7 @@ namespace AoC.Advent2017.NorthCloud
                 if (reverseMap.TryGetValue(bits[0], out int icode))
                 {
                     // text mnemonic;
-                    var rest = Util.Parse<Variant>(line.Substring(4), " ").ToArray();
+                    var rest = Util.Parse<Variant>(line[4..], " ").ToArray();
 
                     instrs.Add(new InstructionLine(InstrMap[icode], rest));
                 }

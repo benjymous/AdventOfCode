@@ -8,7 +8,7 @@ namespace AoC.Advent2021.Test
     [TestClass]
     public class Day24Test
     {
-        string input = Util.GetInput<Day24>();
+        readonly string input = Util.GetInput<Day24>();
 
         public static bool ValidateMonad(long input)
         {

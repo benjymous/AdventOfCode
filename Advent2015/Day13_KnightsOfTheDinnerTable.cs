@@ -8,6 +8,20 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-13";
 
+        public class Entry
+        {
+            [Regex(@"(.+) would (.+) (.+) happiness units by sitting next to (.+)")]
+            public Entry(string name1, string factor, int units, string name2)
+            {
+                Initial1 = name1[0];
+                Initial2 = name2[0];
+                Score = units * ((factor == "lose") ? -1 : 1);
+            }
+
+            public char Initial1, Initial2;
+            public int Score;
+        }
+
         static int GetScore(char[] perm, Dictionary<int, int> scores)
         {
             int score = 0;
@@ -23,26 +37,20 @@ namespace AoC.Advent2015
 
         public static int Solve(string input, bool includeYou = false)
         {
-            var lines = Util.Split(input);
+            var entries = Util.RegexParse<Entry>(input);
 
-            HashSet<char> people = new HashSet<char>();
+            HashSet<char> people = new();
 
-            Dictionary<int, int> scores = new Dictionary<int, int>();
+            Dictionary<int, int> scores = new();
 
-            foreach (var line in lines)
+            foreach (var entry in entries)
             {
-                var words = line.Split();
-                var person1 = words.First()[0];
-                var person2 = words.Last()[0];
+                people.Add(entry.Initial1);
 
-                people.Add(person1);
+                var score = entry.Score;
 
-                var factor = words[2];
-                var score = int.Parse(words[3]);
-                if (factor == "lose") score *= -1;
-
-                scores.IncrementAtIndex(GetKey(person1, person2), score);
-                scores.IncrementAtIndex(GetKey(person2, person1), score);
+                scores.IncrementAtIndex(GetKey(entry.Initial1, entry.Initial2), score);
+                scores.IncrementAtIndex(GetKey(entry.Initial2, entry.Initial1), score);
             }
 
             var starter = '?';

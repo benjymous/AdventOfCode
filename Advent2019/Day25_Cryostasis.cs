@@ -8,7 +8,7 @@ namespace AoC.Advent2019
     {
         public string Name => "2019-25";
 
-        static HashSet<string> traps = new HashSet<string>()
+        static readonly HashSet<string> traps = new()
         {
             "molten lava",
             "infinite loop",
@@ -19,22 +19,22 @@ namespace AoC.Advent2019
 
         class SearchDroid : NPSA.ASCIITerminal
         {
-            int commandCount = 0;
-            int combosTried = 0;
-            int skippedCombos = 0;
+            //int commandCount = 0;
+            //int combosTried = 0;
+            //int skippedCombos = 0;
             public SearchDroid(string program) : base(program)
             {
                 //cpu.Reserve(5400);
             }
 
-            HashSet<string> HeldItems = new HashSet<string>();
+            readonly HashSet<string> HeldItems = new();
 
             HashSet<string> LastCombo;
 
             void TryCombo(IEnumerable<string> items)
             {
                 LastCombo = new HashSet<string>(items);
-                combosTried++;
+                //combosTried++;
                 foreach (var item in knownItems)
                 {
                     if (HeldItems.Contains(item) && !LastCombo.Contains(item))
@@ -56,10 +56,9 @@ namespace AoC.Advent2019
                 inputs.Enqueue("south");
             }
 
-            Queue<string> inputs = new Queue<string>();
+            readonly Queue<string> inputs = new();
             Queue<IEnumerable<string>> itemCombos = null;
-
-            List<string> knownItems = new List<string>();
+            readonly List<string> knownItems = new();
 
             public string Run()
             {
@@ -69,13 +68,13 @@ namespace AoC.Advent2019
                 return buffer.Lines.Last();
             }
 
-            public (string name, IEnumerable<string> exits, IEnumerable<string> items) ParseRoom(List<string> lines)
+            public static (string name, IEnumerable<string> exits, IEnumerable<string> items) ParseRoom(List<string> lines)
             {
                 // find LAST room header
                 var roomName = lines.Where(line => line.StartsWith("==")).LastOrDefault();
 
-                List<string> exits = new List<string>();
-                List<string> items = new List<string>();
+                List<string> exits = new();
+                List<string> items = new();
 
                 if (roomName == null)
                 {
@@ -88,7 +87,7 @@ namespace AoC.Advent2019
                 List<string> current = null;
 
 
-                for (int i = startIdx; i < lines.Count(); ++i)
+                for (int i = startIdx; i < lines.Count; ++i)
                 {
                     if (lines[i] == "Doors here lead:")
                     {
@@ -100,14 +99,14 @@ namespace AoC.Advent2019
                     }
                     else if (lines[i].StartsWith("-"))
                     {
-                        current.Add(lines[i].Substring(2));
+                        current.Add(lines[i][2..]);
                     }
                 }
 
                 return (roomName, exits, items);
             }
 
-            Dictionary<string, Room> rooms = new Dictionary<string, Room>();
+            readonly Dictionary<string, Room> rooms = new();
 
             public class Room
             {
@@ -120,7 +119,7 @@ namespace AoC.Advent2019
                     }
                 }
                 public string name;
-                public Dictionary<string, Room> exits = new Dictionary<string, Room>();
+                public Dictionary<string, Room> exits = new();
 
                 public override string ToString()
                 {
@@ -128,15 +127,14 @@ namespace AoC.Advent2019
                 }
             }
 
-            Dictionary<string, string> reverseDir = new Dictionary<string, string>()
+            readonly Dictionary<string, string> reverseDir = new()
             {
                 {"north", "south"},
                 {"south", "north"},
                 {"east", "west"},
                 {"west", "east"}
             };
-
-            Stack<(Room room, string exit)> unvisited = new Stack<(Room room, string exit)>();
+            readonly Stack<(Room room, string exit)> unvisited = new();
 
             Room currentRoom = null;
             Room lastRoom = null;
@@ -146,22 +144,20 @@ namespace AoC.Advent2019
             public override IEnumerable<string> AutomaticInput()
             {
                 var l = buffer.Lines.ToList();
-                var roomData = ParseRoom(l);
+                var (name, exits, items) = ParseRoom(l);
                 buffer.Clear();
 
-
-
-                if (roomData.name != null)
+                if (name != null)
                 {
 
-                    if (!rooms.TryGetValue(roomData.name, out currentRoom))
+                    if (!rooms.TryGetValue(name, out currentRoom))
                     {
                         //Console.WriteLine($"New room {roomData.name}");
-                        var newRoom = new Room(roomData.name, roomData.exits);
+                        var newRoom = new Room(name, exits);
 
-                        rooms[roomData.name] = newRoom;
+                        rooms[name] = newRoom;
 
-                        foreach (var e in roomData.exits)
+                        foreach (var e in exits)
                         {
                             if (e != backtrack)
                             {
@@ -170,7 +166,7 @@ namespace AoC.Advent2019
                             }
                         }
 
-                        foreach (var item in roomData.items)
+                        foreach (var item in items)
                         {
                             if (traps.Contains(item))
                             {
@@ -194,7 +190,7 @@ namespace AoC.Advent2019
                         lastRoom.exits[lastTravel] = currentRoom;
                     }
 
-                    if (roomData.name == "== Security Checkpoint ==" && unvisited.Count == 0)
+                    if (name == "== Security Checkpoint ==" && unvisited.Count == 0)
                     {
                         if (itemCombos == null)
                         {
@@ -203,7 +199,7 @@ namespace AoC.Advent2019
                             var perms = knownItems.Combinations().OrderBy(x => x.Count());
                             foreach (var perm in perms)
                             {
-                                if (perm.Count() > 0)
+                                if (perm.Any())
                                 {
                                     itemCombos.Enqueue(perm);
                                 }
@@ -217,14 +213,14 @@ namespace AoC.Advent2019
                             {
                                 //Console.WriteLine($"Combo '{string.Join(",", LastCombo)}' is too heavy");
 
-                                Queue<IEnumerable<string>> filteredCombos = new Queue<IEnumerable<string>>();
+                                Queue<IEnumerable<string>> filteredCombos = new();
 
                                 foreach (var combo in itemCombos)
                                 {
-                                    if (LastCombo.Intersect(combo).Count() == LastCombo.Count())
+                                    if (LastCombo.Intersect(combo).Count() == LastCombo.Count)
                                     {
                                         //Console.WriteLine($"Skip '{string.Join(",", combo)}'");
-                                        skippedCombos++;
+                                        //skippedCombos++;
                                     }
                                     else
                                     {
@@ -256,12 +252,12 @@ namespace AoC.Advent2019
 
                         //Console.WriteLine($"Will next visit {location.room.name} and go {location.exit}");
 
-                        pathFind(location);
+                        PathFind(location);
                     }
                     else
                     {
                         //Console.WriteLine("Have visited everywhere!");
-                        pathFind((rooms["== Security Checkpoint =="], null));
+                        PathFind((rooms["== Security Checkpoint =="], null));
                     }
                 }
 
@@ -276,7 +272,7 @@ namespace AoC.Advent2019
                         backtrack = reverseDir[command];
                     }
 
-                    commandCount++;
+                    //commandCount++;
                     yield return command;
 
                 }
@@ -289,7 +285,7 @@ namespace AoC.Advent2019
 
             }
 
-            private void pathFind((Room room, string exit) location)
+            private void PathFind((Room room, string exit) location)
             {
                 if (location.room == currentRoom)
                 {
@@ -314,10 +310,7 @@ namespace AoC.Advent2019
 
             public List<string> RouteFind(Room from, Room to, HashSet<Room> tried = null)
             {
-                if (tried == null)
-                {
-                    tried = new HashSet<Room>();
-                }
+                tried ??= new HashSet<Room>();
 
                 foreach (var exit in from.exits)
                 {
@@ -366,10 +359,10 @@ namespace AoC.Advent2019
 
             var result = droid.Run();
 
-            if (!interactive)
-            {
+            //if (!interactive)
+            //{
                 //Console.WriteLine(result);
-            }
+            //}
 
             if (result.Contains("Oh, hello")) return int.Parse(result.Split()[11]);
 

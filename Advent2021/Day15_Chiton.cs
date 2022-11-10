@@ -32,8 +32,8 @@ namespace AoC.Advent2021
             public int MaxX { get; private set; }
             public int MaxY { get; private set; }
 
-            int RealX, RealY;
-            Dictionary<(int x, int y), byte> Data;
+            readonly int RealX, RealY;
+            readonly Dictionary<(int x, int y), byte> Data;
 
             public IEnumerable<(int x, int y)> GetNeighbours((int x, int y) location)
             {

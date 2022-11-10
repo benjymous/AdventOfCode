@@ -9,10 +9,10 @@ namespace AoC.Advent2017
 
         class DebugPt1 : NorthCloud.IDebugger
         {
-            public int mulCount { get; private set; } = 0;
+            public int MulCount { get; private set; } = 0;
             public bool Next(int IP, IInstr instr, Variant x, Variant y, DataBus bus)
             {
-                if (instr.Name() == "mul") mulCount++;
+                if (instr.Name() == "mul") MulCount++;
                 return true;
             }
         }
@@ -31,7 +31,7 @@ namespace AoC.Advent2017
             var debugger = new DebugPt1();
             cpu.Debugger = debugger;
             cpu.Run();
-            return debugger.mulCount;
+            return debugger.MulCount;
         }
 
         public static Int64 Part2(string input)

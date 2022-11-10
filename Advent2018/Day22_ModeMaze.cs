@@ -27,8 +27,8 @@ namespace AoC.Advent2018
                 distanceLimit = (int)((targetX + targetY) * 1.25);
             }
 
-            Dictionary<string, int> GeoCache = new Dictionary<string, int>();
-            Dictionary<string, char> Map = new Dictionary<string, char>();
+            readonly Dictionary<string, int> GeoCache = new();
+            readonly Dictionary<string, char> Map = new();
 
             public char MapAt(ManhattanVector2 pos)
             {
@@ -50,13 +50,13 @@ namespace AoC.Advent2018
                     return GeoCache[key];
                 }
 
-                int result = 0;
-
                 if (pos.X < 0 || pos.Y < 0)
                 {
                     throw new Exception("Invalid coordinate");
                 }
 
+
+                int result;
                 // The region at 0,0 (the mouth of the cave) has a geologic index of 0.
                 if (pos == ManhattanVector2.Zero) result = 0;
 
@@ -85,36 +85,24 @@ namespace AoC.Advent2018
             {
                 if (pos.X < 0 || pos.Y < 0) return BLOCKED;
                 var erosionLevel = ErosionLevel(pos);
-                switch (erosionLevel % 3)
+                return (erosionLevel % 3) switch
                 {
-                    case 0:
-                        return ROCKY;
-
-                    case 1:
-                        return WET;
-
-                    case 2:
-                        return NARROW;
-                }
-
-                return BLOCKED;
+                    0 => ROCKY,
+                    1 => WET,
+                    2 => NARROW,
+                    _ => BLOCKED,
+                };
             }
 
             public static int RiskLevel(char typeChar)
             {
-                switch (typeChar)
+                return typeChar switch
                 {
-                    case ROCKY:
-                        return 0;
-
-                    case WET:
-                        return 1;
-
-                    case NARROW:
-                        return 2;
-                }
-
-                throw new Exception("Unknown area type");
+                    ROCKY => 0,
+                    WET => 1,
+                    NARROW => 2,
+                    _ => throw new Exception("Unknown area type"),
+                };
             }
 
             public int GetScore()
@@ -132,7 +120,7 @@ namespace AoC.Advent2018
             }
 
             public State target;
-            int depth;
+            readonly int depth;
 
             public int distanceLimit;
         }
@@ -146,7 +134,7 @@ namespace AoC.Advent2018
 
         public class State : IVec
         {
-            public ManhattanVector2 position = new ManhattanVector2(0, 0);
+            public ManhattanVector2 position = new(0, 0);
 
             public Tool tool = Tool.Torch;
 
@@ -154,32 +142,22 @@ namespace AoC.Advent2018
 
             public Int64 GetKey() => (position.X << 40) + (position.Y << 20) + (int)tool;
 
-            public State(ManhattanVector2 pos, Tool t)
+            public State(ManhattanVector2 pos, Tool t, int c)
             {
                 position = pos;
                 tool = t;
+                cost = c;
             }
 
             public State() { }
 
-            bool ToolValid(char cell, Tool tool)
+            static bool ToolValid(char cell, Tool tool) => cell switch
             {
-                switch (cell)
-                {
-                    case ROCKY:
-                        return tool != Tool.None;
-
-                    case WET:
-                        return tool != Tool.Torch;
-
-                    case NARROW:
-                        return tool != Tool.ClimbingGear;
-
-                    case BLOCKED:
-                    default:
-                        return false;
-                }
-            }
+                ROCKY => tool != Tool.None,
+                WET => tool != Tool.Torch,
+                NARROW => tool != Tool.ClimbingGear,
+                _ => false,
+            };
 
             bool CanMove(Cave cave, int dx, int dy)
             {
@@ -207,8 +185,7 @@ namespace AoC.Advent2018
             {
                 if (newTool != tool && CanSwitch(cave, tool))
                 {
-                    newState = new State(position, newTool);
-                    newState.cost = 7;
+                    newState = new State(position, newTool, 7);
 
                     return true;
                 }
@@ -221,8 +198,7 @@ namespace AoC.Advent2018
             {
                 if (CanMove(cave, dx, dy))
                 {
-                    newState = new State(new ManhattanVector2(position.X + dx, position.Y + dy), tool);
-                    newState.cost = 1;
+                    newState = new State(new ManhattanVector2(position.X + dx, position.Y + dy), tool, 1);
 
                     return true;
                 }
@@ -233,9 +209,8 @@ namespace AoC.Advent2018
 
             public IEnumerable<State> GetNeighbours(Cave cave)
             {
-                State newstate;
 
-                if (TryMove(cave, 1, 0, out newstate)) yield return newstate;
+                if (TryMove(cave, 1, 0, out State newstate)) yield return newstate;
                 if (TryMove(cave, 0, 1, out newstate)) yield return newstate;
                 if (TryMove(cave, -1, 0, out newstate)) yield return newstate;
                 if (TryMove(cave, 0, -1, out newstate)) yield return newstate;
@@ -247,7 +222,7 @@ namespace AoC.Advent2018
 
             public int Distance(IVec other)
             {
-                if (!(other is State)) return Int32.MaxValue;
+                if (other is not State) return Int32.MaxValue;
 
                 var man2 = other as State;
                 return position.Distance(man2.position) + Math.Abs((int)tool - (int)man2.tool);
@@ -255,33 +230,27 @@ namespace AoC.Advent2018
 
             public static bool operator ==(State v1, State v2)
             {
-                if (object.ReferenceEquals(v1, null) && object.ReferenceEquals(v2, null)) return true;
-                if (object.ReferenceEquals(v1, null) && !object.ReferenceEquals(v2, null)) return false;
+                if (v1 is null && v2 is null) return true;
+                if (v1 is null && v2 is not null) return false;
                 return v1.Equals(v2);
             }
 
             public static bool operator !=(State v1, State v2)
             {
-                if (object.ReferenceEquals(v1, null) && object.ReferenceEquals(v2, null)) return true;
-                if (object.ReferenceEquals(v1, null) && !object.ReferenceEquals(v2, null)) return false;
+                if (v1 is null && v2 is null) return true;
+                if (v1 is null && v2 is not null) return false;
                 return !v1.Equals(v2);
             }
 
             public override bool Equals(object other)
             {
-                if (!(other is State)) return false;
+                if (other is not State) return false;
                 return Distance(other as State) == 0;
             }
 
             public override int GetHashCode()
             {
-                unchecked
-                {
-                    int hash = 17;
-                    hash = hash * 31 + position.GetHashCode();
-                    hash = hash * 31 + tool.GetHashCode();
-                    return hash;
-                }
+                return HashCode.Combine(position, tool);
             }
 
             public override string ToString()
@@ -290,7 +259,7 @@ namespace AoC.Advent2018
             }
         }
 
-        public void DrawMap(char[][] map)
+        public static void DrawMap(char[][] map)
         {
             foreach (var line in map)
             {
@@ -316,14 +285,12 @@ namespace AoC.Advent2018
         {
             var cave = new Cave(tx, ty, depth);
 
-            var startPos = new State(new ManhattanVector2(0, 0), Tool.Torch);
+            var startPos = new State(new ManhattanVector2(0, 0), Tool.Torch, 0);
 
-            var jobqueue = new Queue<Tuple<State, int>>();
-            jobqueue.Enqueue(Tuple.Create(startPos, 0));
+            var jobqueue = new Queue<(State, int)>();
+            jobqueue.Enqueue((startPos, 0));
             int best = int.MaxValue;
-            var cache = new Dictionary<Int64, int>();
-
-            cache[startPos.GetKey()] = 0;
+            var cache = new Dictionary<Int64, int>() { { startPos.GetKey(), 0 } };
 
             while (jobqueue.Any())
             {
@@ -354,7 +321,7 @@ namespace AoC.Advent2018
                             }
                         }
                         cache[key] = newDistance;
-                        jobqueue.Enqueue(Tuple.Create(neighbour, newDistance));
+                        jobqueue.Enqueue((neighbour, newDistance));
                     }
                 }
             }

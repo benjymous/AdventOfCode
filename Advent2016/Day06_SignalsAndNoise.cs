@@ -16,7 +16,7 @@ namespace AoC.Advent2016
             var first = lines.First();
 
             var storage = new List<Dictionary<char, int>>();
-            foreach (var c in first)
+            foreach (var _ in first)
             {
                 storage.Add(new Dictionary<char, int>());
             }
@@ -34,7 +34,7 @@ namespace AoC.Advent2016
         public static string Part1(string input)
         {
             var storage = BuildDataMaps(input);
-            var processed = storage.Select(row => row.Select(kvp => Tuple.Create(kvp.Value, kvp.Key)).OrderBy(t => -t.Item1).First().Item2);
+            var processed = storage.Select(row => row.Select(kvp => (kvp.Value, kvp.Key)).OrderBy(t => -t.Item1).First().Item2);
 
             return processed.AsString();
         }
@@ -42,7 +42,7 @@ namespace AoC.Advent2016
         public static string Part2(string input)
         {
             var storage = BuildDataMaps(input);
-            var processed = storage.Select(row => row.Select(kvp => Tuple.Create(kvp.Value, kvp.Key)).OrderBy(t => t.Item1).First().Item2);
+            var processed = storage.Select(row => row.Select(kvp => (kvp.Value, kvp.Key)).OrderBy(t => t.Item1).First().Item2);
 
             return processed.AsString();
         }

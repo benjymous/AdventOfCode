@@ -30,7 +30,7 @@ namespace AoC.Advent2018
 
         private static List<Test> ParseTests(string[] lines)
         {
-            List<Test> tests = new List<Test>();
+            List<Test> tests = new();
 
             string before = null;
             string instr = null;
@@ -110,10 +110,10 @@ namespace AoC.Advent2018
                 for (int i = 0; i < 16; ++i)
                 {
                     if (mapping.ContainsKey(i)) continue;
-                    HashSet<ChronMatic.IInstr> potentials = new HashSet<ChronMatic.IInstr>(instrs);
+                    HashSet<ChronMatic.IInstr> potentials = new(instrs);
                     foreach (var test in tests.Where(t => t.instr == i))
                     {
-                        HashSet<ChronMatic.IInstr> pass = new HashSet<ChronMatic.IInstr>();
+                        HashSet<ChronMatic.IInstr> pass = new();
                         foreach (var instr in potentials)
                         {
                             if (DoTest(test, instr))
@@ -124,11 +124,11 @@ namespace AoC.Advent2018
                         potentials = pass;
                     }
 
-                    if (potentials.Count() == 0)
+                    if (potentials.Count == 0)
                     {
                         throw new Exception($"Failed to map {i}");
                     }
-                    if (potentials.Count() == 1)
+                    if (potentials.Count == 1)
                     {
                         var instr = potentials.First();
                         //Console.WriteLine($"instr {i} is {instr.GetType().Name}");

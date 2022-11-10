@@ -16,7 +16,7 @@ namespace AoC.Advent2015
             var rules = lines.Take(lines.Length - 1).Select(x => x.Split(" => "));
             var molecule = lines.Last();
 
-            HashSet<string> results = new HashSet<string>();
+            HashSet<string> results = new();
 
             foreach (var rule in rules)
             {
@@ -67,7 +67,7 @@ namespace AoC.Advent2015
             int steps = 0;
 
             // first remove all the bracketed sections (Rn..Ar)
-            while (molecule.Contains("("))
+            while (molecule.Contains('('))
             {
                 int left = 0;
                 while (true)
@@ -84,7 +84,7 @@ namespace AoC.Advent2015
                         i++;
                     }
 
-                    var substr = molecule.Substring(left, i - left);
+                    var substr = molecule[left..i];
 
                     var shrunk = substr;
                     if (ReduceSubPart(ref shrunk, ref steps, rules))
@@ -92,7 +92,7 @@ namespace AoC.Advent2015
                         molecule = molecule.ReplaceLast(substr, shrunk);
                     }
                 }
-                ReduceSubPart(ref molecule, ref steps, rules.Where(r => r[1].Contains("(")));
+                ReduceSubPart(ref molecule, ref steps, rules.Where(r => r[1].Contains('(')));
             }
 
             // with brackets gone, rest should reduce

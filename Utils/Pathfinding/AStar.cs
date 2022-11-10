@@ -19,22 +19,14 @@ namespace AoC.Utils.Pathfinding
 
     public class GridMap<TCellDataType> : IMap<ManhattanVector2>
     {
-        public Dictionary<string, TCellDataType> data = new Dictionary<string, TCellDataType>();
+        public Dictionary<string, TCellDataType> data = new();
 
         public TCellDataType WallType;
-
-        IIsWalkable<TCellDataType> Walkable;
+        readonly IIsWalkable<TCellDataType> Walkable;
 
         public GridMap(IIsWalkable<TCellDataType> walkable)
         {
-            if (walkable != null)
-            {
-                Walkable = walkable;
-            }
-            else
-            {
-                Walkable = this as IIsWalkable<TCellDataType>;
-            }
+            Walkable = walkable != null ? walkable : this as IIsWalkable<TCellDataType>;
         }
 
         public virtual IEnumerable<ManhattanVector2> GetNeighbours(ManhattanVector2 center)
@@ -58,30 +50,13 @@ namespace AoC.Utils.Pathfinding
 
         }
 
-        public bool IsValidNeighbour(ManhattanVector2 pt)
-        {
-            if (data.TryGetValue(pt.ToString(), out var room))
-            {
-                return Walkable.IsWalkable(room);
-            }
+        public bool IsValidNeighbour(ManhattanVector2 pt) => data.TryGetValue(pt.ToString(), out var room) ? Walkable.IsWalkable(room) : false;
 
-            return false;
-        }
+        public string FindCell(TCellDataType val) => data.Where(kvp => EqualityComparer<TCellDataType>.Default.Equals(kvp.Value, val)).First().Key;
 
-        public string FindCell(TCellDataType val)
-        {
-            return data.Where(kvp => EqualityComparer<TCellDataType>.Default.Equals(kvp.Value, val)).First().Key;
-        }
+        public int Heuristic(ManhattanVector2 location1, ManhattanVector2 location2) => location1.Distance(location2);
 
-        public int Heuristic(ManhattanVector2 location1, ManhattanVector2 location2)
-        {
-            return location1.Distance(location2);
-        }
-
-        public int GScore(ManhattanVector2 location)
-        {
-            return 1;
-        }
+        public int GScore(ManhattanVector2 location) => 1;
     }
 
  
@@ -111,9 +86,9 @@ namespace AoC.Utils.Pathfinding
                     if (state.closedSet.Contains(neighbour))
                         continue;
 
-                    var projectedG = state.getGScore(current) + map.GScore(neighbour);
+                    var projectedG = state.GetGScore(current) + map.GScore(neighbour);
 
-                    if (state.openSet.Contains(neighbour) && (projectedG >= state.getGScore(neighbour)))
+                    if (state.openSet.Contains(neighbour) && (projectedG >= state.GetGScore(neighbour)))
                         continue;
 
                     //record it
@@ -131,33 +106,29 @@ namespace AoC.Utils.Pathfinding
 
         class State
         {
-            public HashSet<TCoordinateType> closedSet = new HashSet<TCoordinateType>();
+            public HashSet<TCoordinateType> closedSet = new();
 
             //cost of start to goal, passing through key node
-            public HashSet<TCoordinateType> openSet = new HashSet<TCoordinateType>();
-            public PriorityQueue<TCoordinateType, int> taskQueue = new PriorityQueue<TCoordinateType, int>();
+            public HashSet<TCoordinateType> openSet = new();
+            public PriorityQueue<TCoordinateType, int> taskQueue = new();
 
             //cost of start to this key node
-            public Dictionary<TCoordinateType, int> gScore = new Dictionary<TCoordinateType, int>();
+            public Dictionary<TCoordinateType, int> gScore = new();
  
-            public Dictionary<TCoordinateType, TCoordinateType> nodeLinks = new Dictionary<TCoordinateType, TCoordinateType>();
+            public Dictionary<TCoordinateType, TCoordinateType> nodeLinks = new();
 
-            internal int getGScore(TCoordinateType pt)
-            {
-                gScore.TryGetValue(pt, out int score);
-                return score;
-            }
+            internal int GetGScore(TCoordinateType pt) => gScore[pt];
 
             internal IEnumerable<TCoordinateType> Reconstruct(TCoordinateType current)
             {
-                List<TCoordinateType> path = new List<TCoordinateType>();
+                List<TCoordinateType> path = new();
                 while (nodeLinks.ContainsKey(current))
                 {
                     path.Add(current);
                     current = nodeLinks[current];
                 }
 
-                return (path as IEnumerable<TCoordinateType>).Reverse();
+                return (path as IEnumerable<TCoordinateType>).Reverse().ToArray();
             }
         }
 

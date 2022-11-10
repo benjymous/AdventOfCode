@@ -20,37 +20,23 @@ namespace AoC.Advent2017
 
         static Operator Parse(string op)
         {
-            switch (op)
+            return op switch
             {
-                case "==":
-                    return Operator.Eq;
-
-                case "!=":
-                    return Operator.Neq;
-
-                case "<":
-                    return Operator.Lt;
-
-                case ">":
-                    return Operator.Gt;
-
-                case "<=":
-                    return Operator.Leq;
-
-                case ">=":
-                    return Operator.Geq;
-
+                "==" => Operator.Eq,
+                "!=" => Operator.Neq,
+                "<" => Operator.Lt,
+                ">" => Operator.Gt,
+                "<=" => Operator.Leq,
+                ">=" => Operator.Geq,
                 //case ""
                 //    return val1  val2;
-
-                default:
-                    throw new Exception("Unknown operator");
-            }
+                _ => throw new Exception("Unknown operator"),
+            };
         }
 
         class Instruction
         {
-            Dictionary<string, int> RegLookup;
+            readonly Dictionary<string, int> RegLookup;
 
             public Instruction(string line, Dictionary<string, int> lookup)
             {
@@ -67,7 +53,7 @@ namespace AoC.Advent2017
                 return RegLookup[name];
             }
 
-            int MaxRegs => RegLookup.Count();
+            //int MaxRegs => RegLookup.Count;
 
             // b inc 5 if a > 1
             private (int RegToChange, int Amount, int RegToCheck, Operator Operator, int CheckValue) Decode(string line)
@@ -78,31 +64,18 @@ namespace AoC.Advent2017
                 return (RegIndex(bits[0]), val, RegIndex(bits[4]), Parse(bits[5]), int.Parse(bits[6]));
             }
 
-            private bool Perform(int val1, Operator op, int val2)
+            private static bool Perform(int val1, Operator op, int val2)
             {
-                switch (op)
+                return op switch
                 {
-                    case Operator.Eq:
-                        return val1 == val2;
-
-                    case Operator.Neq:
-                        return val1 != val2;
-
-                    case Operator.Lt:
-                        return val1 < val2;
-
-                    case Operator.Gt:
-                        return val1 > val2;
-
-                    case Operator.Leq:
-                        return val1 <= val2;
-
-                    case Operator.Geq:
-                        return val1 >= val2;
-
-                    default:
-                        throw new Exception("Unknown operator");
-                }
+                    Operator.Eq => val1 == val2,
+                    Operator.Neq => val1 != val2,
+                    Operator.Lt => val1 < val2,
+                    Operator.Gt => val1 > val2,
+                    Operator.Leq => val1 <= val2,
+                    Operator.Geq => val1 >= val2,
+                    _ => throw new Exception("Unknown operator"),
+                };
             }
 
             public void Act(int[] regs)
@@ -119,7 +92,7 @@ namespace AoC.Advent2017
 
         public static (int largestEnd, int largestRecord) Run(string input)
         {
-            Dictionary<string, int> regLookup = new Dictionary<string, int>();
+            Dictionary<string, int> regLookup = new();
             var instructions = Util.Parse<Instruction, Dictionary<string, int>>(input, regLookup);
             var values = new int[1000];
 

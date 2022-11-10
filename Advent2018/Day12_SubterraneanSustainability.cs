@@ -83,7 +83,7 @@ namespace AoC.Advent2018
 
 
             int gen = 0;
-            int lastLeft = 0;
+            int lastLeft;
             while (true)
             {
                 // Keep the line padded with 5 .s either side
@@ -97,13 +97,13 @@ namespace AoC.Advent2018
                 var i = current.IndexOf('#');
                 if (i > 5)
                 {
-                    current = current.Substring(i - 5);
+                    current = current[(i - 5)..];
                     left += (i - 5);
                 }
                 var j = current.LastIndexOf("#");
                 if ((current.Length - j - 1) > 5)
                 {
-                    current = current.Substring(0, j + 6);
+                    current = current[..(j + 6)];
                 }
 
                 if (current == previous) break; // We've got a stable pattern

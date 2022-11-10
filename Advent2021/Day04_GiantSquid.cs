@@ -29,8 +29,8 @@ namespace AoC.Advent2021
                 index[num] = (x, y);
             }
 
-            Dictionary<int, (int x, int y)> index = new Dictionary<int, (int x, int y)>();
-            int[,] numbers = new int[5, 5];
+            readonly Dictionary<int, (int x, int y)> index = new();
+            readonly int[,] numbers = new int[5, 5];
 
             public bool PlayNumber(int num)
             {
@@ -67,7 +67,7 @@ namespace AoC.Advent2021
                     if (board.PlayNumber(num))
                     {
                         if (part.One() ||
-                            boards.Count(board => board.Complete) == boards.Count())
+                            boards.Count(board => board.Complete) == boards.Count)
                             return board.CalcScore(num);
                     }
                 }

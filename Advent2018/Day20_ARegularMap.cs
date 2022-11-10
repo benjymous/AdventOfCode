@@ -10,12 +10,13 @@ namespace AoC.Advent2018
     {
         public string Name => "2018-20";
 
-        static (int dx, int dy)[] Directions = { (0, -1), (1, 0), (0, 1), (-1, 0) };
+        static readonly (int dx, int dy)[] Directions = { (0, -1), (1, 0), (0, 1), (-1, 0) };
 
         public class Cell
         {
             public bool[] Exits = { false, false, false, false };
-            public int doorDistance { get; set; } = int.MaxValue;
+
+            public int DoorDistance { get; set; } = int.MaxValue;
         }
 
         const int NORTH = 0;
@@ -25,33 +26,33 @@ namespace AoC.Advent2018
 
         static IEnumerable<string> SplitOptions(string input)
         {
-            List<string> parts = new List<string>();
+            List<string> parts = new();
 
             int close = 1;
             int depth = 1;
-            string part = "";
+            List<char> part = new();
             while (depth > 0)
             {
                 var c = input[close++];
                 switch (c)
                 {
-                    case '(': depth++; part += c; break;
-                    case ')': depth--; part += c; break;
+                    case '(': depth++; part.Add(c); break;
+                    case ')': depth--; part.Add(c); break;
                     case '|':
                         {
                             if (depth == 1)
                             {
-                                parts.Add(part); part = "";
+                                parts.Add(part.AsString()); part.Clear();
                             }
-                            else part += c;
+                            else part.Add(c);
                             break;
                         }
-                    default: part += c; break;
+                    default: part.Add(c); break;
                 }
             }
-            parts.Add(part);
+            parts.Add(part.AsString());
 
-            var rest = input.Substring(close);
+            var rest = input[close..];
 
             foreach (var p in parts)
             {
@@ -64,14 +65,13 @@ namespace AoC.Advent2018
 
             Queue<((int x, int y) position, string tape)> queue = new();
 
-            queue.Enqueue(((0, 0), input.Substring(1)));
+            queue.Enqueue(((0, 0), input[1..]));
 
-            map[(0, 0)] = new Cell();
+            map[(0, 0)] = new();
 
             while (queue.TryDequeue(out var state))
             {
                 var ch = state.tape.First();
-
 
                 var cell = map[state.position];
 
@@ -118,7 +118,7 @@ namespace AoC.Advent2018
 
             if (logger != null) logger.WriteLine("Built map");
 
-            map[(0, 0)].doorDistance = 0;
+            map[(0, 0)].DoorDistance = 0;
             CalcFurthestDistance(map, (0, 0));
 
             if (logger != null) logger.WriteLine("Calculated distances");
@@ -200,13 +200,13 @@ namespace AoC.Advent2018
         {
             var cell = map[pos];
 
-            foreach (var dir in cell.Exits.WithIndex().Where(e => e.Value).Select(e => Directions[e.Index]))
+            foreach (var (dx, dy) in cell.Exits.WithIndex().Where(e => e.Value).Select(e => Directions[e.Index]))
             {
-                var neighbourPos = (pos.x + dir.dx, pos.y + dir.dy);
+                var neighbourPos = (pos.x + dx, pos.y + dy);
                 var neighbour = map[neighbourPos];
-                if (neighbour.doorDistance > cell.doorDistance + 1)
+                if (neighbour.DoorDistance > cell.DoorDistance + 1)
                 {
-                    neighbour.doorDistance = cell.doorDistance + 1;
+                    neighbour.DoorDistance = cell.DoorDistance + 1;
                     CalcFurthestDistance(map, neighbourPos);
                 }
             }
@@ -214,19 +214,17 @@ namespace AoC.Advent2018
 
         public static int Part1(string input, Dictionary<(int x, int y), Cell> map = null)
         {
-            if (map == null) map = BuildMap(input);
+            map ??= BuildMap(input);
 
-            //Display(map);
-
-            return map.Values.Max(c => c.doorDistance);
+            return map.Values.Max(c => c.DoorDistance);
         }
 
 
         public static int Part2(string input, Dictionary<(int x, int y), Cell> map = null)
         {
-            if (map==null) map = BuildMap(input);
+            map ??= BuildMap(input);
 
-            return map.Values.Where(c => c.doorDistance >= 1000).Count();
+            return map.Values.Where(c => c.DoorDistance >= 1000).Count();
         }
     
         public void Run(string input, ILogger logger)

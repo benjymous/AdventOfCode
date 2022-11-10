@@ -8,7 +8,7 @@ namespace AoC.Advent2018.Test
     [TestClass]
     public class Day13Test
     {
-        string input = Util.GetInput<Day13>();
+        readonly string input = Util.GetInput<Day13>();
 
         [TestCategory("Test")]
         [DataRow(">-<", "Crash at 1,0")]
@@ -27,8 +27,10 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void Trains02(string input, string expected)
         {
-            var t = new Day13.TrainSim(input);
-            t.StopOnCrash = false;
+            var t = new Day13.TrainSim(input)
+            {
+                StopOnCrash = false
+            };
             var res = t.Run();
             Assert.AreEqual(expected, res);
         }

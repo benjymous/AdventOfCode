@@ -9,13 +9,13 @@ namespace AoC.Advent2019
     {
         public string Name => "2019-10";
 
-        static List<ManhattanVector2> Parse32(string input)
+        static List<ManhattanVector2> Parse(string input)
         {
             var lines = Util.Split(input);
 
             var result = new List<ManhattanVector2>();
 
-            for (var y = 0; y < lines.Count(); ++y)
+            for (var y = 0; y < lines.Length; ++y)
             {
                 var line = lines[y];
                 for (var x = 0; x < line.Length; ++x)
@@ -65,11 +65,11 @@ namespace AoC.Advent2019
         //     return n;
         // }
 
-        public static IEnumerable<IEnumerable<IGrouping<double, Tuple<ManhattanVector2, ManhattanVector2>>>> BuildGroups(string input)
+        public static IEnumerable<IEnumerable<IGrouping<double, (ManhattanVector2, ManhattanVector2)>>> BuildGroups(string input)
         {
-            var data = Parse32(input);
+            var data = Parse(input);
 
-            var groups = data.Select(a1 => data.Select(a2 => Tuple.Create(AngleBetween(a1, a2), Tuple.Create(a1, a2))).GroupBy(tup => tup.Item1, tup => tup.Item2));
+            var groups = data.Select(a1 => data.Select(a2 => (AngleBetween(a1, a2), (a1, a2))).GroupBy(tup => tup.Item1, tup => tup.Item2));
 
             return groups;
         }
@@ -92,7 +92,7 @@ namespace AoC.Advent2019
 
         public static List<ManhattanVector2> TargetOrder(string input)
         {
-            var data = Parse32(input);
+            var data = Parse(input);
 
             var grouped = BuildGroups(input);
 
@@ -106,26 +106,26 @@ namespace AoC.Advent2019
             // Extract the position from this (ick!)
             var bestPosition = result.First().First().Item1;
 
-            var targets = result.Select(x => x.Select(y => Tuple.Create(x.Key, y.Item2)));
+            var targets = result.Select(x => x.Select(y => (x.Key, y.Item2)));
 
             // now sort into order
-            var order = new List<Tuple<double, int, ManhattanVector2>>();
+            var order = new List<(double, int, ManhattanVector2)>();
             foreach (var x in targets)
             {
                 foreach (var y in x)
                 {
-                    order.Add(Tuple.Create(y.Item1, y.Item2.Distance(bestPosition), y.Item2));
+                    order.Add((y.Item1, y.Item2.Distance(bestPosition), y.Item2));
                 }
             }
 
             var sorted = order.OrderBy(x => x.Item1).ThenBy(y => y.Item2)
                 .Skip(1); // ignore first element, as the base can't target itself
 
-            var queue = new Queue<Tuple<double, int, ManhattanVector2>>(sorted);
+            var queue = new Queue<(double, int, ManhattanVector2)>(sorted);
 
             double currentAngle = 0;
 
-            List<ManhattanVector2> destroyed = new List<ManhattanVector2>();
+            List<ManhattanVector2> destroyed = new();
 
             while (queue.Any())
             {

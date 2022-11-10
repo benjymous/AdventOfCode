@@ -18,7 +18,7 @@ namespace AoC
             var puzzles = Util.GetPuzzles();
             var timings = new ConcurrentDictionary<string, long>();
 
-            Mutex mut = new Mutex();
+            Mutex mut = new();
 
             int total = puzzles.Count();
             int finished = 0;
@@ -47,7 +47,7 @@ namespace AoC
                 }
                 else
                 {
-                    ConcurrentDictionary<string, bool> running = new ConcurrentDictionary<string, bool>();
+                    ConcurrentDictionary<string, bool> running = new();
 
                     Parallel.ForEach(puzzles, (puzzle) =>
                     {
@@ -58,7 +58,7 @@ namespace AoC
                         Console.WriteLine($"Running: [{string.Join(", ", running.Keys)}]");
                         mut.ReleaseMutex();
 
-                        TextBuffer buffer = new TextBuffer();
+                        TextBuffer buffer = new();
                         timings[puzzle.Name] = puzzle.TimeRun(new TimeLogger(buffer));
 
                         running.TryRemove(puzzle.Name, out var _);

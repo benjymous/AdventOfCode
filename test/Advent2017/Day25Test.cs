@@ -6,9 +6,9 @@ namespace AoC.Advent2017.Test
     [TestClass]
     public class Day25Test
     {
-        string input = Util.GetInput<Day25>();
+        readonly string input = Util.GetInput<Day25>();
 
-        string test = @"Begin in state A.
+        readonly string test = @"Begin in state A.
         Perform a diagnostic checksum after 6 steps.
 
         In state A:

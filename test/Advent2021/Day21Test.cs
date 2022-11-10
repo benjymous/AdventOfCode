@@ -7,11 +7,12 @@ using static AoC.Advent2021.Day21;
 namespace AoC.Advent2021.Test
 {
     [TestCategory("2021")]
+    [TestCategory("RegexParse")]
     [TestClass]
     public class Day21Test
     {
-        string input = Util.GetInput<Day21>();
-        string test = "Player 1 starting position: 4\nPlayer 2 starting position: 8";
+        readonly string input = Util.GetInput<Day21>();
+        readonly string test = "Player 1 starting position: 4\nPlayer 2 starting position: 8";
 
         [TestCategory("Test")]
         [DataTestMethod]

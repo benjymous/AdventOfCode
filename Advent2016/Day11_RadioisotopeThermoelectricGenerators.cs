@@ -87,7 +87,7 @@ namespace AoC.Advent2016
                 generatorsPerFloor[newFloor] += (byte)moveGens;
             }
 
-            static byte empty = 0;
+            static readonly byte empty = 0;
 
             public IEnumerable<State> GetMoves()
             {
@@ -178,8 +178,7 @@ namespace AoC.Advent2016
 
             public byte[] chipsPerFloor;
             public byte[] generatorsPerFloor;
-
-            int elevator = 0;
+            readonly int elevator = 0;
             public int steps = 0;
         }
 
@@ -194,7 +193,7 @@ namespace AoC.Advent2016
             int bestScore = int.MaxValue;
             int closest = int.MaxValue;
 
-            while (queue.TryDequeue(out var state, out int _))
+            queue.Operate((state) =>
             {
                 foreach (var move in state.GetMoves().Where(move => move.IsValid()))
                 {
@@ -216,7 +215,7 @@ namespace AoC.Advent2016
 
                     queue.Enqueue(move, move.steps + remaining);
                 }
-            }
+            });
 
             return bestScore;
         }

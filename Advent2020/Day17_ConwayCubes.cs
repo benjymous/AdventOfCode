@@ -41,14 +41,14 @@ namespace AoC.Advent2020
                 WRange.Reset();
             }
 
-            int Dimensions;
-            Accumulator XRange = new Accumulator();
-            Accumulator YRange = new Accumulator();
-            Accumulator ZRange = new Accumulator();
-            Accumulator WRange = new Accumulator();
+            readonly int Dimensions;
+            readonly Accumulator XRange = new();
+            readonly Accumulator YRange = new();
+            readonly Accumulator ZRange = new();
+            readonly Accumulator WRange = new();
             public HashSet<(Int64 x, Int64 y, Int64 z, Int64 w)> Cells { get; private set; } = new HashSet<(Int64 x, Int64 y, Int64 z, Int64 w)>();
 
-            Int64[] BlankDim = new Int64[] { 0 };
+            readonly Int64[] BlankDim = new Int64[] { 0 };
 
             public IEnumerable<(Int64 x, Int64 y, Int64 z, Int64 w)> Range()
             {
@@ -83,7 +83,7 @@ namespace AoC.Advent2020
             public bool Get((Int64 x, Int64 y, Int64 z, Int64 w) pos)
                 => Cells.Contains(pos);
 
-            IEnumerable<(Int64 x, Int64 y, Int64 z, Int64 w)> directions;
+            readonly IEnumerable<(Int64 x, Int64 y, Int64 z, Int64 w)> directions;
 
             public static IEnumerable<(Int64 x, Int64 y, Int64 z, Int64 w)> Directions(int dimensions)
             {
@@ -167,7 +167,7 @@ namespace AoC.Advent2020
                 current = 1 - current;
             }
 
-            return states[current].Cells.Count();
+            return states[current].Cells.Count;
         }
 
         public static int Part1(string input)

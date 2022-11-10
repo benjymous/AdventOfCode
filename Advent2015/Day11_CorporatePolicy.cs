@@ -7,7 +7,7 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-11";
 
-        static char[] bads = new char[]
+        static readonly char[] bads = new char[]
         {
             'i', 'o', 'l',
         };

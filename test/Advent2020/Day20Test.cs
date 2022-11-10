@@ -6,9 +6,9 @@ namespace AoC.Advent2020.Test
     [TestClass]
     public class Day20Test
     {
-        string input = Util.GetInput<Day20>();
+        readonly string input = Util.GetInput<Day20>();
 
-        string test = "Tile 2311:\n" +
+        readonly string test = "Tile 2311:\n" +
             "..##.#..#.\n" +
             "##..#.....\n" +
             "#...##..#.\n" +
@@ -162,7 +162,7 @@ namespace AoC.Advent2020.Test
             }
             Assert.AreEqual(orientation % 8, tile.Orientation);
             Assert.AreEqual(expected, tile.Transformed().Trim().Replace("\r", ""));
-            Assert.AreEqual(tile.Edges[0], tile.Transformed().Substring(0, 3)); // top edge should match transform
+            Assert.AreEqual(tile.Edges[0], tile.Transformed()[..3]); // top edge should match transform
         }
 
         [TestCategory("Regression")]

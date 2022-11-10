@@ -6,7 +6,7 @@ namespace AoC.Advent2020.Test
     [TestClass]
     public class Day19Test
     {
-        string input = Util.GetInput<Day19>();
+        readonly string input = Util.GetInput<Day19>();
 
 
 

@@ -77,12 +77,11 @@ namespace AoC.Advent2020
                 }
             }
 
-            List<Food> FoodList;
+            readonly List<Food> FoodList;
+            readonly Dictionary<string, Dictionary<string, int>> Counts = new();
 
-            Dictionary<string, Dictionary<string, int>> Counts = new Dictionary<string, Dictionary<string, int>>();
-
-            public Dictionary<string, HashSet<int>> Ingredients = new Dictionary<string, HashSet<int>>();
-            public Dictionary<string, string> Allergens = new Dictionary<string, string>();
+            public Dictionary<string, HashSet<int>> Ingredients = new();
+            public Dictionary<string, string> Allergens = new();
         }
 
         public static int Part1(string input)
@@ -96,7 +95,7 @@ namespace AoC.Advent2020
                 ingredients.Remove(kvp.Value);
             }
 
-            return ingredients.Values.Select(h => h.Count()).Sum();
+            return ingredients.Values.Select(h => h.Count).Sum();
         }
 
         public static string Part2(string input)

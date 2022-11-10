@@ -10,19 +10,16 @@ namespace AoC.Advent2017
 
         public struct Component
         {
-            public Component(string input)
+            [Regex(@"(.+)\/(.+)")]
+            public Component(int x, int y)
             {
-                var bits = input.Split('/');
-                int x = int.Parse(bits[0]);
-                int y = int.Parse(bits[1]);
-
                 val1 = Math.Min(x, y);
                 val2 = Math.Max(x, y);
             }
             public int val1;
             public int val2;
 
-            public bool isDifferent(Component other)
+            public bool IsDifferent(Component other)
             {
                 return other.val1 != val1 || other.val2 != val2;
             }
@@ -49,37 +46,34 @@ namespace AoC.Advent2017
 
             foreach (var component in first)
             {
-                yield return new List<Component> { component };
-                var rest = inputs.Where(c => c.isDifferent(component));
+                yield return new Component[] { component };
+                var rest = inputs.Where(c => c.IsDifferent(component)).ToArray();
 
                 var childResults = GetChains(component.Other(currentPort), rest);
                 foreach (var item in childResults)
                 {
-                    List<Component> newList = new List<Component>();
-                    newList.Add(component);
-                    newList.AddRange(item);
-                    yield return newList;
+                    yield return item.Prepend(component).ToArray();
                 }
             }
         }
 
         public static int Part1(string input)
         {
-            var data = Util.Parse<Component>(input);
-            var chains = GetChains(0, data);
+            var data = Util.RegexParse<Component>(input);
+            var chains = GetChains(0, data).ToArray();
 
             return Part1(chains);
         }
 
         public static int Part1(IEnumerable<IEnumerable<Component>> chains)
         {
-            return chains.AsParallel().Select(chain => chain.Select(comp => comp.Strength()).Sum()).Max();
+            return chains.Select(chain => chain.Select(comp => comp.Strength()).Sum()).Max();
         }
 
         public static int Part2(string input)
         {
-            var data = Util.Parse<Component>(input);
-            var chains = GetChains(0, data);
+            var data = Util.RegexParse<Component>(input);
+            var chains = GetChains(0, data).ToArray();
 
             return Part2(chains);
         }
@@ -105,8 +99,8 @@ namespace AoC.Advent2017
             var data = Util.Parse<Component>(input);
             var chains = GetChains(0, data).ToList();
 
-            //logger.WriteLine("- Pt1 - " + Part1(chains));
-            //logger.WriteLine("- Pt2 - " + Part2(chains));
+            logger.WriteLine("- Pt1 - " + Part1(chains));
+            logger.WriteLine("- Pt2 - " + Part2(chains));
         }
     }
 }

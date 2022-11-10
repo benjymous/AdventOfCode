@@ -34,7 +34,7 @@ namespace AoC.Advent2017
                 Out = Util.ParseSparseMatrix<char>(outLines).Where(kvp => kvp.Value=='#').Select(kvp=>kvp.Key).ToHashSet();
             }
 
-            List<string> In = new();
+            readonly List<string> In = new();
             public readonly HashSet<(int x, int y)> Out = new();
 
 
@@ -112,9 +112,9 @@ namespace AoC.Advent2017
                             }
                         }
 
-                        foreach (var p in rules[cell].Out)
+                        foreach (var (x, y) in rules[cell].Out)
                         {
-                            yield return(p.x + (cellx * 3), p.y + (celly * 3));
+                            yield return(x + (cellx * 3), y + (celly * 3));
                         }
                     }
                 }
@@ -138,9 +138,9 @@ namespace AoC.Advent2017
                             }
                         }
 
-                        foreach (var p in rules[cell+16].Out)
+                        foreach (var (x, y) in rules[cell+16].Out)
                         {
-                            yield return(p.x + (cellx * 4), p.y + (celly * 4));
+                            yield return(x + (cellx * 4), y + (celly * 4));
                         }
                     }
                 }

@@ -11,7 +11,7 @@ namespace AoC.Advent2016
 
         class Outputter : BunniTek.IOutput
         {
-            public List<int> values = new List<int>();
+            public List<int> values = new();
             public bool Put(int i)
             {
                 values.Add(i);

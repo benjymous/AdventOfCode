@@ -7,7 +7,7 @@ namespace AoC.Advent2018.Test
     [TestClass]
     public class Day11Test
     {
-        string input = Util.GetInput<Day11>();
+        readonly string input = Util.GetInput<Day11>();
 
         [TestCategory("Test")]
         [DataRow(8, 3, 5, 4)] // Fuel cell at 3,5, grid with serial number 8: power level 4

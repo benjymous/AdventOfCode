@@ -6,7 +6,7 @@ namespace AoC.Advent2017.Test
     [TestClass]
     public class Day06Test
     {
-        string input = Util.GetInput<Day06>();
+        readonly string input = Util.GetInput<Day06>();
 
         [TestCategory("Test")]
         [DataRow("0\t2\t7\t0", 5)]

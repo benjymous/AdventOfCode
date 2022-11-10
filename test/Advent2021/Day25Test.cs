@@ -10,9 +10,9 @@ namespace AoC.Advent2021.Test
     [TestClass]
     public class Day25Test
     {
-        string input = Util.GetInput<Day25>();
+        readonly string input = Util.GetInput<Day25>();
 
-        string test = @"v...>>.vv>
+        readonly string test = @"v...>>.vv>
 .vv>>.vv..
 >>.>v>...v
 >>v>>.>.v.

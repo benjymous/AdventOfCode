@@ -7,7 +7,7 @@ namespace intcomp
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main(string[] _)
         {
 
             //var file = File.ReadAllText(@"C:\Users\Rich\code\Advent\intcomp\examples\add.intcode").Split("\n");
@@ -16,16 +16,17 @@ namespace intcomp
 
             Console.WriteLine(file);
 
-            Dictionary<string, int> variables = new Dictionary<string, int>();
-            Dictionary<string, int> keywords = new Dictionary<string, int>();
+            Dictionary<string, int> variables = new();
+            Dictionary<string, int> keywords = new()
+            {
+                ["ADD"] = 1,
+                ["MUL"] = 2,
 
-            keywords["ADD"] = 1;
-            keywords["MUL"] = 2;
+                ["GET"] = 3,
+                ["OUT"] = 4,
 
-            keywords["GET"] = 3;
-            keywords["OUT"] = 4;
-
-            keywords["HALT"] = 99;
+                ["HALT"] = 99
+            };
 
             var outMem = new List<string>();
 
@@ -69,7 +70,7 @@ namespace intcomp
             }
 
 
-            Dictionary<int, string> backmap = new Dictionary<int, string>();
+            Dictionary<int, string> backmap = new();
             foreach (var kvp in variables)
             {
                 backmap[kvp.Value] = kvp.Key;

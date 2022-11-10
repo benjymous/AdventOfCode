@@ -16,7 +16,7 @@ namespace AoC.Utils
 
         public static string GetSHA256String(this string inputString)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             foreach (byte b in GetSHA256(inputString))
                 sb.Append(b.ToString("X2"));
 
@@ -46,7 +46,7 @@ namespace AoC.Utils
             }
         }
 
-        private static string vowels = "aeiouAEIOU";
+        private static readonly string vowels = "aeiouAEIOU";
 
         public static bool IsVowel(this char c)
         {
@@ -56,7 +56,7 @@ namespace AoC.Utils
         public static IEnumerable<int> AllIndexesOf(this string str, string value)
         {
             if (String.IsNullOrEmpty(value))
-                throw new ArgumentException("the string to find may not be empty", "value");
+                throw new ArgumentException("the string to find may not be empty", nameof(value));
             for (int index = 0; ; index += value.Length)
             {
                 index = str.IndexOf(value, index);
@@ -130,6 +130,11 @@ namespace AoC.Utils
                 }
             }
             return d[n, m];
+        }
+
+        public static string MultipleWithS(this int value, string str)
+        {
+            return value == 1 ? str : $"{value} {str}s";
         }
 
         public static string Reversed(this string str)

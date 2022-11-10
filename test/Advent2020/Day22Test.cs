@@ -6,9 +6,8 @@ namespace AoC.Advent2020.Test
     [TestClass]
     public class Day22Test
     {
-        string input = Util.GetInput<Day22>();
-
-        string test =
+        readonly string input = Util.GetInput<Day22>();
+        readonly string test =
             "Player 1:\n" +
             "9\n" +
             "2\n" +

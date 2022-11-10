@@ -18,6 +18,7 @@ namespace AoC.Advent2018
             public int W;
             public int H;
 
+            [Regex(@"#(\d+) @ (\d+),(\d+): (\d+)x(\d+)")]
             public Shape(string id, int l, int t, int w, int h)
             {
                 ID = id;
@@ -28,42 +29,14 @@ namespace AoC.Advent2018
             }
         }
 
-        static List<Shape> Parse32(string input)
-        {
-            var lines = input.Split("\n");
-            List<Shape> shapes = new List<Shape>();
-
-            foreach (var l in lines)
-            {
-                if (string.IsNullOrEmpty(l)) continue;
-
-                var line = l;
-                line = line.Replace(",", " ");
-                line = line.Replace(":", "");
-                line = line.Replace("x", " ");
-                line = line.Replace("#", "");
-
-                var bits = line.Split(" ");
-                var id = bits[0];
-                var left = int.Parse(bits[2]);
-                var top = int.Parse(bits[3]);
-                var w = int.Parse(bits[4]);
-                var h = int.Parse(bits[5]);
-
-                shapes.Add(new Shape(id, left, top, w, h));
-            }
-
-            return shapes;
-        }
-
         static int GetKey(int x, int y)
         {
             return x + (y * FabricSize);
         }
 
-        static Dictionary<int, int> FindOverlaps(List<Shape> shapes)
+        static Dictionary<int, int> FindOverlaps(IEnumerable<Shape> shapes)
         {
-            Dictionary<int, int> square = new Dictionary<int, int>();
+            Dictionary<int, int> square = new();
             foreach (var shape in shapes)
             {
                 for (var y = shape.Top; y < shape.Top + shape.H; ++y)
@@ -80,7 +53,7 @@ namespace AoC.Advent2018
 
         public static int Part1(string input)
         {
-            var shapes = Parse32(input);
+            var shapes = Util.RegexParse<Shape>(input);
             var square = FindOverlaps(shapes);
 
             var count = square.Select(i => i.Value > 1 ? 1 : 0).Sum();
@@ -90,7 +63,7 @@ namespace AoC.Advent2018
 
         public static string Part2(string input)
         {
-            var shapes = Parse32(input);
+            var shapes = Util.RegexParse<Shape>(input);
             var square = FindOverlaps(shapes);
 
             foreach (var shape in shapes)

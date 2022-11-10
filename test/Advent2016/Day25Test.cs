@@ -3,10 +3,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AoC.Advent2016.Test
 {
     [TestCategory("2016")]
+    [TestCategory("BunnyCPU")]
     [TestClass]
     public class Day25Test
     {
-        string input = Util.GetInput<Day25>();
+        readonly string input = Util.GetInput<Day25>();
 
         [TestCategory("Regression")]
         [DataTestMethod]

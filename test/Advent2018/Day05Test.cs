@@ -6,7 +6,7 @@ namespace AoC.Advent2018.Test
     [TestClass]
     public class Day05Test
     {
-        string input = Util.GetInput<Day05>();
+        readonly string input = Util.GetInput<Day05>();
 
         [TestCategory("Test")]
         [DataRow("aA", 0)]
@@ -14,7 +14,7 @@ namespace AoC.Advent2018.Test
         [DataRow("abAB", 4)]
         [DataRow("aabAAB", 6)]
         [DataRow("dabAcCaCBAcCcaDA", 10)]
-        public void Polymer01Test(string input, int expected)
+        public static void Polymer01Test(string input, int expected)
         {
             Assert.AreEqual(expected, Advent2018.Day05.Part1(input));
         }

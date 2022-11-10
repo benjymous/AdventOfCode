@@ -85,7 +85,7 @@ namespace AoC.Advent2020
         }
 
         static Queue<char> ToQueue(string input)
-            => new Queue<char>(input.Replace(" ", ""));
+            => new(input.Replace(" ", ""));
 
         public static Int64 Solve1(string input)
             => Solve(ToQueue(input), QuestionPart.Part1);

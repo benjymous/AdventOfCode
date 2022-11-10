@@ -9,7 +9,7 @@ namespace AoC.Advent2019
     {
         public string Name => "2019-16";
 
-        static int[] initialPattern = new int[] { 0, 1, 0, -1 };
+        static readonly int[] initialPattern = new int[] { 0, 1, 0, -1 };
 
         public static int SequenceAt(int iter, int pos) => initialPattern[((pos + 1) / (iter + 1) % 4)];
 
@@ -44,7 +44,7 @@ namespace AoC.Advent2019
 
         public static string Part1(string input)
         {
-            return ApplyRepeatedFFT(input, 100).Substring(0, 8);
+            return ApplyRepeatedFFT(input, 100)[..8];
         }
 
         // Thanks to FirescuOvidiu
@@ -55,12 +55,11 @@ namespace AoC.Advent2019
         {
             var newSequence = Enumerable.Repeat(0, sequence.Length).ToArray();
             int sizeSequence = sequence.Length;
-            int sum = 0;
             int phase = 0;
 
             while (phase < 100)
             {
-                sum = 0;
+                int sum = 0;
                 for (int position = sizeSequence - 1; position >= sizeSequence / 2; position--)
                 {
                     sum += sequence[position];
@@ -79,7 +78,7 @@ namespace AoC.Advent2019
 
             var signal = ProcessSignal(initial.ToArray());
 
-            int messageOffset = int.Parse(input.Substring(0, 7));
+            int messageOffset = int.Parse(input[..7]);
 
             var outStr = signal.Skip(messageOffset).Take(8).Select(c => (char)('0' + c)).ToArray().AsString();
 

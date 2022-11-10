@@ -14,23 +14,23 @@ namespace AoC.Advent2021
 
             public int[,] Cells { get; private set; }
 
-            static (int dx, int dy)[] directions = new (int, int)[] { (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1) };
+            static readonly (int dx, int dy)[] directions = new (int, int)[] { (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1) };
 
             static IEnumerable<(int x, int y)> Neighbours((int x, int y) pos) => from dir in directions select (pos.x + dir.dx, pos.y + dir.dy);
             
             public int Step()
             {
                 // inc all cells
-                foreach (var pos in Cells.Keys()) Cells[pos.x, pos.y]++;
+                foreach (var (x, y) in Cells.Keys()) Cells[x, y]++;
 
                 // flash reaction
                 var toFlash = Cells.Entries().Where(entry => entry.value > 9);
                 while (toFlash.Any())
                 {
-                    foreach (var cell in toFlash)
+                    foreach (var (key, value) in toFlash)
                     {
-                        Cells[cell.key.x, cell.key.y] = -100; // enough that it can't flash again this step
-                        foreach (var neighbour in Neighbours(cell.key)) Cells.TryIncrement(neighbour);
+                        Cells[key.x, key.y] = -100; // enough that it can't flash again this step
+                        foreach (var neighbour in Neighbours(key)) Cells.TryIncrement(neighbour);
                     }
                 }
 
@@ -38,7 +38,7 @@ namespace AoC.Advent2021
                 var flashed = Cells.Entries().Where(entry => entry.value < 0).ToList();
                 flashed.ForEach(entry => Cells[entry.key.x, entry.key.y] = 0);
 
-                return flashed.Count(); 
+                return flashed.Count; 
             }
         }
 

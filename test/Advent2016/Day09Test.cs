@@ -6,7 +6,7 @@ namespace AoC.Advent2016.Test
     [TestClass]
     public class Day09Test
     {
-        string input = Util.GetInput<Day09>();
+        readonly string input = Util.GetInput<Day09>();
 
         [TestCategory("Regression")]
         [DataTestMethod]

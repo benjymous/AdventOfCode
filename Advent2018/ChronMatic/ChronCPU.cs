@@ -11,6 +11,7 @@ namespace AoC.Advent2018.ChronMatic
         string Dump(int a, int b, int c);
     }
 
+#pragma warning disable IDE1006 // Naming Styles
     namespace Instructions
     {
         class addr : IInstr
@@ -100,6 +101,7 @@ namespace AoC.Advent2018.ChronMatic
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} == r{b}) ? 1 : 0;";
         }
     }
+#pragma warning restore IDE1006 // Naming Styles
 
     public static class Extensions
     {
@@ -132,8 +134,8 @@ namespace AoC.Advent2018.ChronMatic
                 .Select(x => (IInstr)Activator.CreateInstance(x));
         }
 
-        Dictionary<int, IInstr> InstrMap;
-        InstructionLine[] Instructions;
+        readonly Dictionary<int, IInstr> InstrMap;
+        readonly InstructionLine[] Instructions;
 
         long[] Registers = new long[] { 0, 0, 0, 0, 0, 0 };
 
@@ -160,13 +162,13 @@ namespace AoC.Advent2018.ChronMatic
                 InstrMap = new Dictionary<int, IInstr>();
                 foreach (var instr in opcodes)
                 {
-                    int idx = reverseMap.Count();
-                    reverseMap[instr.Key] = reverseMap.Count();
+                    int idx = reverseMap.Count;
+                    reverseMap[instr.Key] = reverseMap.Count;
                     InstrMap[idx] = instr.Value;
                 }
             }
 
-            List<InstructionLine> instrs = new List<InstructionLine>();
+            List<InstructionLine> instrs = new();
             foreach (var line in program)
             {
                 if (string.IsNullOrEmpty(line)) continue;

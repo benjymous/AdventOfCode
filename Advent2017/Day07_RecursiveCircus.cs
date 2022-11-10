@@ -72,7 +72,7 @@ namespace AoC.Advent2017
 
             foreach (var node in tree.GetNodes())
             {
-                if (node.Children.Count() == 0)
+                if (node.Children.Count == 0)
                 {
                     leaves.Add(node);
                     currentParents.Add(node.Parent);

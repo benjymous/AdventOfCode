@@ -31,7 +31,7 @@ namespace AoC.Advent2021
                     {
                         for (int transformIdx = 0; transformIdx < Transforms.Length; ++transformIdx)
                         {
-                            var test = other.Transform(transformIdx, theirs.Value);
+                            var test = Transform(transformIdx, theirs.Value);
                             foreach (var mine in Offsets)
                             {
                                 if (mine.Value.Intersect(test).Count() == 12) return (true, transformIdx, new ManhattanVector3(mine.Key) - new ManhattanVector3(Transforms[transformIdx](theirs.Key)));
@@ -47,7 +47,8 @@ namespace AoC.Advent2021
             public readonly IEnumerable<(int x, int y, int z)> Points;
             public readonly HashSet<(int v1, int v2)> Fingerprint;
             readonly Dictionary<(int x, int y, int z), HashSet<(int x, int y, int z)>> Offsets = new();
-            HashSet<(int x, int y, int z)> Transform(int transformIdx, HashSet<(int x, int y, int z)> data) => data.Select(point => Transforms[transformIdx](point)).ToHashSet();
+
+            static HashSet<(int x, int y, int z)> Transform(int transformIdx, HashSet<(int x, int y, int z)> data) => data.Select(point => Transforms[transformIdx](point)).ToHashSet();
         }
 
         private static IEnumerable<Group> AlignGroups(string input)
@@ -63,10 +64,10 @@ namespace AoC.Advent2021
                 {
                     foreach (var fixedGroup in aligned)
                     {
-                        var overlap = fixedGroup.TestOverlap(group);
-                        if (overlap.isOverlap)
+                        var (isOverlap, transformIdx, offset) = fixedGroup.TestOverlap(group);
+                        if (isOverlap)
                         {
-                            aligned.Add(new Group(group.Points.Select(p => new ManhattanVector3(Transforms[overlap.transformIdx](p)) + overlap.offset), overlap.offset.AsSimple(), group.Id));
+                            aligned.Add(new Group(group.Points.Select(p => new ManhattanVector3(Transforms[transformIdx](p)) + offset), offset.AsSimple(), group.Id));
                             unaligned.Remove(group);
                             break;
                         }
@@ -76,7 +77,7 @@ namespace AoC.Advent2021
             return aligned;
         }
 
-        private static int Part1(IEnumerable<Group> aligned) => aligned.Select(g => g.Points.AsEnumerable()).Aggregate((lhs, rhs) => lhs.Union(rhs)).ToHashSet().Count();
+        private static int Part1(IEnumerable<Group> aligned) => aligned.Select(g => g.Points.AsEnumerable()).Aggregate((lhs, rhs) => lhs.Union(rhs)).ToHashSet().Count;
         public static int Part2(IEnumerable<Group> aligned) => Util.Matrix(aligned, aligned).Max(pair => pair.item1.Origin.Distance(pair.item2.Origin));
         
         public static int Part1(string input)

@@ -7,9 +7,9 @@ namespace AoC.Advent2020.Test
     [TestClass]
     public class Day24Test
     {
-        string input = Util.GetInput<Day24>();
+        readonly string input = Util.GetInput<Day24>();
 
-        string test = "sesenwnenenewseeswwswswwnenewsewsw\n" +
+        readonly string test = "sesenwnenenewseeswwswswwnenewsewsw\n" +
             "neeenesenwnwwswnenewnwwsewnenwseswesw\n" +
             "seswneswswsenwwnwse\n" +
             "nwnwneseeswswnenewneswwnewseswneseene\n" +

@@ -80,12 +80,12 @@ namespace AoC.Advent2021
             return (w * (long)Math.Pow(10, 13 - digit)) + ((digit > 0) ? Reconstruct(cache, z, digit - 1) : 0);
         }
 
-        public static long Part1(string input)
+        public static long Part1(string _)
         {
             return FindModelNumber(biggest: true);
         }
 
-        public static long Part2(string input)
+        public static long Part2(string _)
         {
             return FindModelNumber(biggest: false);
         }

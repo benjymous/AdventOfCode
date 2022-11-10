@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using AoC.Advent2020.Elforola;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2015
@@ -7,7 +9,7 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-20";
 
-        public static IEnumerable<int> getFactors(int x)
+        public static IEnumerable<int> GetFactors(int x)
         {
             for (int i = 1; i * i <= x; i++)
             {
@@ -24,20 +26,14 @@ namespace AoC.Advent2015
 
         static int NumPresents(int doorNumber)
         {
-            int score = 0;
-            var factors = getFactors(doorNumber);
-            foreach (var factor in factors)
-            {
-                score += factor * 10;
-            }
-            return score;
+            return GetFactors(doorNumber).Select(f => f * 10).Sum();
         }
 
-        static Dictionary<int, int> elfCount = new Dictionary<int, int>();
+        static readonly Dictionary<int, int> elfCount = new();
         static int NumPresents2(int doorNumber)
         {
             int score = 0;
-            var factors = getFactors(doorNumber);
+            var factors = GetFactors(doorNumber);
             foreach (var factor in factors)
             {
                 if (!elfCount.ContainsKey(factor)) elfCount[factor] = 0;
@@ -46,7 +42,6 @@ namespace AoC.Advent2015
                     elfCount[factor]++;
                     score += factor * 11;
                 }
-
             }
             return score;
         }

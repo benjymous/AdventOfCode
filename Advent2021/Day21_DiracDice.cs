@@ -17,7 +17,7 @@ namespace AoC.Advent2021
             public int Roll3() => Roll() + Roll() + Roll();
         }
 
-        static (int roll, int weight)[] weights = new (int roll, int weight)[] {
+        static readonly (int roll, int weight)[] weights = new (int roll, int weight)[] {
             (3,1), (4,3), (5,6), (6,7), (7,6), (8,3), (9,1)
         };
 

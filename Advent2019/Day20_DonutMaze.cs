@@ -80,7 +80,7 @@ namespace AoC.Advent2019
                                 }
                             }
 
-                            if (!ReferenceEquals(v, null))
+                            if (v is not null)
                             {
                                 portals[v] = code;
                                 innerPortals[v] = isInner;
@@ -98,8 +98,8 @@ namespace AoC.Advent2019
                 {
                     if (group.Count() == 2)
                     {
-                        Portals[GetKey(group.First().Key)] = Tuple.Create(group.Last().Key, innerPortals[group.First().Key]);
-                        Portals[GetKey(group.Last().Key)] = Tuple.Create(group.First().Key, innerPortals[group.Last().Key]);
+                        Portals[GetKey(group.First().Key)] = (group.Last().Key, innerPortals[group.First().Key]);
+                        Portals[GetKey(group.Last().Key)] = (group.First().Key, innerPortals[group.Last().Key]);
                     }
                 }
 
@@ -110,7 +110,7 @@ namespace AoC.Advent2019
 
             public bool Part2 { get; set; } = false;
 
-            public Dictionary<int, Tuple<ManhattanVector2, bool>> Portals { get; private set; } = new Dictionary<int, Tuple<ManhattanVector2, bool>>();
+            public Dictionary<int, (ManhattanVector2, bool)> Portals { get; private set; } = new Dictionary<int, (ManhattanVector2, bool)>();
 
             public ManhattanVector2 Start { get; private set; }
             public ManhattanVector2 End { get; private set; }
@@ -131,7 +131,7 @@ namespace AoC.Advent2019
                 foreach (var v in base.GetNeighbours(centre)) yield return v;
             }
 
-            public IEnumerable<Tuple<ManhattanVector2, int>> GetNeighbours2(ManhattanVector2 centre, int level)
+            public IEnumerable<(ManhattanVector2, int)> GetNeighbours2(ManhattanVector2 centre, int level)
             {
                 if (Portals.TryGetValue(GetKey(centre), out var other))
                 {
@@ -146,11 +146,11 @@ namespace AoC.Advent2019
                     }
                     if (newLevel >= 0 && newLevel <= MaxDepth)
                     {
-                        yield return Tuple.Create(other.Item1, newLevel);
+                        yield return (other.Item1, newLevel);
                     }
                 }
 
-                foreach (var v in base.GetNeighbours(centre)) yield return Tuple.Create(v, level);
+                foreach (var v in base.GetNeighbours(centre)) yield return (v, level);
             }
 
             public bool IsWalkable(char cell)
@@ -166,12 +166,10 @@ namespace AoC.Advent2019
         {
             var map = new PortalMap(input);
 
-            var jobqueue = new Queue<Tuple<ManhattanVector2, int>>();
-            jobqueue.Enqueue(Tuple.Create(map.End, 0));
+            var jobqueue = new Queue<(ManhattanVector2, int)>();
+            jobqueue.Enqueue((map.End, 0));
             int best = int.MaxValue;
-            var cache = new Dictionary<int, int>();
-
-            cache[GetKey(map.End)] = 0;
+            var cache = new Dictionary<int, int>() { { GetKey(map.End), 0 } };
 
             while (jobqueue.Any())
             {
@@ -199,7 +197,7 @@ namespace AoC.Advent2019
                             }
                         }
                         cache[key] = newDistance;
-                        jobqueue.Enqueue(Tuple.Create(neighbour, newDistance));
+                        jobqueue.Enqueue((neighbour, newDistance));
                     }
                 }
             }
@@ -246,12 +244,10 @@ namespace AoC.Advent2019
         {
             var map = new PortalMap(input);
 
-            var jobqueue = new Queue<Tuple<ManhattanVector2, int, int>>();
-            jobqueue.Enqueue(Tuple.Create(map.End, 0, 0));
+            var jobqueue = new Queue<(ManhattanVector2, int, int)>();
+            jobqueue.Enqueue((map.End, 0, 0));
             int best = int.MaxValue;
-            var cache = new Dictionary<int, int>();
-
-            cache[GetKey(map.End, 0)] = 0;
+            var cache = new Dictionary<int, int>() { { GetKey(map.End, 0), 0 } };
 
             int deepest = 0;
 
@@ -285,7 +281,7 @@ namespace AoC.Advent2019
                             }
                         }
                         cache[key] = newDistance;
-                        jobqueue.Enqueue(Tuple.Create(neighbour.Item1, neighbour.Item2, newDistance));
+                        jobqueue.Enqueue((neighbour.Item1, neighbour.Item2, newDistance));
                     }
                 }
             }

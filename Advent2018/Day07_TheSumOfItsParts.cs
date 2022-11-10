@@ -32,9 +32,9 @@ namespace AoC.Advent2018
         {
             ParseInput(input, out HashSet<string> steps, out Dictionary<string, HashSet<string>> dependencies);
 
-            List<string> result = new List<string>();
-            HashSet<string> ready = new HashSet<string>();
-            while (steps.Count() > 0)
+            List<string> result = new();
+            HashSet<string> ready = new();
+            while (steps.Count > 0)
             {
 
                 foreach (var step in steps)
@@ -73,10 +73,10 @@ namespace AoC.Advent2018
         {
             ParseInput(input, out HashSet<string> steps, out Dictionary<string, HashSet<string>> dependencies);
 
-            List<string> result = new List<string>();
-            HashSet<string> ready = new HashSet<string>();
+            List<string> result = new();
+            HashSet<string> ready = new();
 
-            List<Worker> workers = new List<Worker>();
+            List<Worker> workers = new();
 
             const int workerCount = 5;
 
@@ -87,7 +87,7 @@ namespace AoC.Advent2018
 
             int time = 0;
 
-            while (steps.Count() > 0 || workers.Where(w => w.step != null).Count() != 0)
+            while (steps.Count > 0 || workers.Where(w => w.step != null).Any())
             {
                 foreach (var step in steps)
                 {

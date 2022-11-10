@@ -35,7 +35,7 @@ namespace AoC.Advent2020
             return (smallest - timestamp) * bestbus;
         }
 
-        static bool Check(UInt64 i, List<Tuple<int, int>> vals)
+        static bool Check(UInt64 i, List<(int, int)> vals)
         {
             foreach (var t in vals)
             {
@@ -51,12 +51,12 @@ namespace AoC.Advent2020
             var lines = Util.Split(input, '\n');
             var times = Util.Split(lines[1]);
             int i = 0;
-            var nums = new List<Tuple<int, int>>();
+            var nums = new List<(int, int)>();
             foreach (var t in times)
             {
                 if (t != "x")
                 {
-                    nums.Add(Tuple.Create(Int32.Parse(t), i));
+                    nums.Add((Int32.Parse(t), i));
                 }
                 i++;
             }
@@ -83,13 +83,13 @@ namespace AoC.Advent2020
             var lines = Util.Split(input, '\n');
             var times = Util.Split(lines[1]);
 
-            var nums = new List<Tuple<UInt64, UInt64>>();
+            var nums = new List<(UInt64, UInt64)>();
             UInt64 i = 0;
             foreach (var t in times)
             {
                 if (t != "x")
                 {
-                    nums.Add(Tuple.Create(UInt64.Parse(t), i));
+                    nums.Add((UInt64.Parse(t), i));
                 }
                 i++;
             }

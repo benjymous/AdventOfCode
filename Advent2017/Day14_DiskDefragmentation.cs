@@ -24,8 +24,7 @@ namespace AoC.Advent2017
 
         static void FloodFill(int x, int y, bool[][] matrix)
         {
-            if ((x < 0) || (y < 0) || x > 127 || y > 127) return;
-            if (matrix[y][x] == false) return;
+            if ((x < 0) || (y < 0) || x > 127 || y > 127 || matrix[y][x] == false) return;
             matrix[y][x] = false;
             FloodFill(x, y + 1, matrix);
             FloodFill(x, y - 1, matrix);

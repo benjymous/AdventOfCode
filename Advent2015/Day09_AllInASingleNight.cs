@@ -10,55 +10,46 @@ namespace AoC.Advent2015
 
         class Distance
         {
-            public Distance(string line)
+            [Regex(@"(.+) to (.+) = (.+)")]
+            public Distance(string from, string to, int distance)
             {
-                var bits = line.Split(" ");
-                from = bits[0];
-                to = bits[2];
-                distance = int.Parse(bits[4]);
+                (From, To, Dist) = (from.GetHashCode(), to.GetHashCode(), distance);
             }
 
-            public string from;
-            public string to;
-            public int distance;
+            public int From;
+            public int To;
+            public int Dist;
 
             public override string ToString()
             {
-                return $"{from} -> {to} = {distance}";
+                return $"{From} -> {To} = {Dist}";
             }
         }
 
-        static int GetDistance(IEnumerable<string> route, Dictionary<string, int> atlas)
+        static int GetDistance(IEnumerable<int> route, Dictionary<int, int> atlas)
         {
             var r = route.ToArray();
 
             var distance = 0;
             for (int i = 0; i < r.Length - 1; ++i)
             {
-                var key = $"{r[i]}:{r[i + 1]}";
-                if (!atlas.ContainsKey(key))
-                {
-                    key = $"{r[i + 1]}:{r[i]}";
-                }
-                distance += atlas[key];
+                distance += atlas[r[i] * r[i + 1]];
             }
-
-            //Console.WriteLine($"{String.Join(" -> ", route)} = {distance}");
 
             return distance;
         }
 
         public static IEnumerable<int> GetRoutes(string input)
         {
-            var distances = Util.Parse<Distance>(input);
+            var distances = Util.RegexParse<Distance>(input);
 
-            var lookup = distances.ToDictionary(d => $"{d.from}:{d.to}", d => d.distance);
+            var lookup = distances.ToDictionary(d => d.From * d.To, d => d.Dist);
 
-            var names = distances.Select(d => d.from).Union(distances.Select(d => d.to)).Distinct();
+            var names = distances.Select(d => d.From).Union(distances.Select(d => d.To)).Distinct().ToArray();
 
-            var permutations = names.Permutations();
+            var permutations = names.Permutations().ToArray();
 
-            return permutations.AsParallel().Select(r => GetDistance(r, lookup));
+            return permutations.Select(r => GetDistance(r, lookup));
         }
 
         public static int Part1(string input)

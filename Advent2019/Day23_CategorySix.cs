@@ -22,10 +22,9 @@ namespace AoC.Advent2019
 
         public class NetworkNode : NPSA.ICPUInterrupt
         {
-            NPSA.IntCPU cpu;
-            int NetworkId;
-
-            NetworkController controller;
+            readonly NPSA.IntCPU cpu;
+            readonly int NetworkId;
+            readonly NetworkController controller;
 
             public NetworkNode(string program, int networkId, NetworkController networkController)
             {
@@ -73,10 +72,8 @@ namespace AoC.Advent2019
             public BigVec lastPacket = null;
 
             public Int64 LastY = -1;
-
-            NetworkController controller;
-
-            Dictionary<int, int> IdleCount = new Dictionary<int, int>();
+            readonly NetworkController controller;
+            readonly Dictionary<int, int> IdleCount = new();
 
             public NAT(NetworkController networkController, int numNodes)
             {
@@ -119,9 +116,9 @@ namespace AoC.Advent2019
 
         public class NetworkController
         {
-            List<NetworkNode> nodes = new List<NetworkNode>();
+            readonly List<NetworkNode> nodes = new();
 
-            public Dictionary<int, Queue<BigVec>> messageQueue = new Dictionary<int, Queue<BigVec>>();
+            public Dictionary<int, Queue<BigVec>> messageQueue = new();
 
             public NAT Nat = null;
 

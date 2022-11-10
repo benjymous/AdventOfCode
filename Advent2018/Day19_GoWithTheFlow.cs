@@ -9,7 +9,7 @@ namespace AoC.Advent2018
 
         public static long Part1(string input)
         {
-            ChronMatic.ChronCPU cpu = new ChronMatic.ChronCPU(input);
+            ChronMatic.ChronCPU cpu = new(input);
             //cpu.PeekTime = 10000;
             cpu.Run();
             //Console.WriteLine(cpu.Speed());
@@ -44,7 +44,7 @@ namespace AoC.Advent2018
             return 0;
 #else
 
-            HashSet<int> jumps = new HashSet<int>();
+            HashSet<int> jumps = new();
 
             int r0 = 1, r1 = 0, r2 = 0, r3 = 0, r4 = 0, r5 = 0;
             Int64 cycle = 0;
@@ -98,7 +98,7 @@ namespace AoC.Advent2018
                     case 7: r0 = r3 + r0; r1++; goto case 8;
                     // addi 5 1 5
                     case 8:
-                        r5 = r5 + 1; r1++; //goto case 9;
+                        r5++; r1++; //goto case 9;
                                            // gtrr 5 2 4
                         /*case 9:*/
                         r4 = (r5 > r2) ? 1 : 0; r1++; //goto case 10;
@@ -111,7 +111,7 @@ namespace AoC.Advent2018
 
                     // addi 3 1 3
                     case 12:
-                        r3 = r3 + 1; r1++; //goto case 13;
+                        r3++; r1++; //goto case 13;
                                            // gtrr 3 2 4
                         /*case 13:*/
                         r4 = (r3 > r2) ? 1 : 0; r1++; //goto case 14;
@@ -127,28 +127,28 @@ namespace AoC.Advent2018
 
                     // addi 2 2 2
                     case 17:
-                        r2 = r2 + 2; r1++; //goto case 18;
+                        r2 += 2; r1++; //goto case 18;
                                            // mulr 2 2 2
                         /*case 18:*/
-                        r2 = r2 * r2; r1++; //goto case 19;
+                        r2 *= r2; r1++; //goto case 19;
                                             // mulr 1 2 2
                         /*case 19:*/
                         r2 = r1 * r2; r1++; //goto case 20;
                                             // muli 2 11 2
                         /*case 20:*/
-                        r2 = r2 * 11; r1++; //goto case 21;
+                        r2 *= 11; r1++; //goto case 21;
                                             // addi 4 7 4
                         /*case 21:*/
-                        r4 = r4 + 7; r1++; //goto case 22;
+                        r4 += 7; r1++; //goto case 22;
                                            // mulr 4 1 4
                         /*case 22:*/
-                        r4 = r4 * r1; r1++; //goto case 23;
+                        r4 *= r1; r1++; //goto case 23;
                                             // addi 4 13 4
                         /*case 23:*/
-                        r4 = r4 + 13; r1++; //goto case 24;
+                        r4 += 13; r1++; //goto case 24;
                                             // addr 2 4 2
                         /*case 24:*/
-                        r2 = r2 + r4; r1++; //goto case 25;
+                        r2 += r4; r1++; //goto case 25;
                                             // addr 1 0 1
                         /*case 25:*/
                         r1 = r1 + r0 + 1; break;
@@ -161,7 +161,7 @@ namespace AoC.Advent2018
                         r4 = r1; r1++; //goto case 28;
                                        // mulr 4 1 4
                         /*case 28:*/
-                        r4 = r4 * r1; r1++; //goto case 29;
+                        r4 *= r1; r1++; //goto case 29;
                                             // addr 1 4 4
                         /*case 29:*/
                         r4 = r1 + r4; r1++; //goto case 30;
@@ -170,13 +170,13 @@ namespace AoC.Advent2018
                         r4 = r1 * r4; r1++; //goto case 31;
                                             // muli 4 14 4
                         /*case 31:*/
-                        r4 = r4 * 14; r1++; //goto case 32;
+                        r4 *= 14; r1++; //goto case 32;
                                             // mulr 4 1 4
                         /*case 32:*/
-                        r4 = r4 * r1; r1++; //goto case 33;
+                        r4 *= r1; r1++; //goto case 33;
                                             // addr 2 4 2
                         /*case 33:*/
-                        r2 = r2 + r4; r1++; //goto case 34;
+                        r2 += r4; r1++; //goto case 34;
                                             // seti 0 2 0
 
                         return GetFactorSum(r2); // We know the source number, so short circuit the rest;

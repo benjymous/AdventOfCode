@@ -18,11 +18,12 @@ namespace AoC.Advent2017
                     AddGroup(bits);
                 }
             }
-            List<HashSet<int>> pools = new List<HashSet<int>>();
+
+            readonly List<HashSet<int>> pools = new();
 
             public void AddGroup(int[] group)
             {
-                List<HashSet<int>> joinedPools = new List<HashSet<int>>();
+                List<HashSet<int>> joinedPools = new();
 
                 foreach (var pool in pools)
                 {
@@ -48,7 +49,7 @@ namespace AoC.Advent2017
                 else
                 {
                     // multiple pools spanned, or new pool
-                    HashSet<int> newPool = new HashSet<int>(group);
+                    HashSet<int> newPool = new(group);
 
                     foreach (var oldPool in joinedPools)
                     {
@@ -69,13 +70,13 @@ namespace AoC.Advent2017
                 return null;
             }
 
-            public int NumGroups() => pools.Count();
+            public int NumGroups() => pools.Count;
         }
 
         public static int Part1(string input)
         {
             var pools = new Pools(input);
-            return pools.FindPool(0).Count();
+            return pools.FindPool(0).Count;
         }
 
         public static int Part2(string input)

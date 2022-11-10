@@ -21,7 +21,7 @@ namespace AoC.Advent2017
         public static IEnumerable<int> GeneratorA(int input, bool picky) => Generator(input, 16807, picky ? 4 : 1);
         public static IEnumerable<int> GeneratorB(int input, bool picky) => Generator(input, 48271, picky ? 8 : 1);
 
-        public static IEnumerable<Tuple<int, int>> GeneratorDual(int inputA, int inputB, bool picky)
+        public static IEnumerable<(int a, int b)> GeneratorDual(int inputA, int inputB, bool picky)
         {
             var gena = GeneratorA(inputA, picky).GetEnumerator();
             var genb = GeneratorB(inputB, picky).GetEnumerator();
@@ -29,7 +29,7 @@ namespace AoC.Advent2017
             while (true)
             {
                 gena.MoveNext(); genb.MoveNext();
-                yield return Tuple.Create(gena.Current, genb.Current);
+                yield return (gena.Current, genb.Current);
             }
         }
 
@@ -37,10 +37,10 @@ namespace AoC.Advent2017
         {
             int matches = 0;
             var values = Util.ExtractNumbers(input);
-            foreach (var pair in GeneratorDual(values[0], values[1], picky).Take(pairs))
+            foreach (var (a,b) in GeneratorDual(values[0], values[1], picky).Take(pairs))
             {
-                var seq1 = pair.Item1.BinarySequence().Take(16);
-                var seq2 = pair.Item2.BinarySequence().Take(16);
+                var seq1 = a.BinarySequence().Take(16);
+                var seq2 = b.BinarySequence().Take(16);
 
                 if (seq1.SequenceEqual(seq2))
                 {

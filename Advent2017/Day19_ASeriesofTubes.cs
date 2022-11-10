@@ -34,7 +34,7 @@ namespace AoC.Advent2017
                 ++y;
             }
 
-            Direction2 dir = new Direction2(0, 1);
+            Direction2 dir = new(0, 1);
             string word = "";
             int count = 0;
 

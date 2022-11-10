@@ -16,7 +16,7 @@ namespace AoC.Advent2020
                 .ToDictionary(pair => pair[0], pair => pair[1]));
         }
 
-        static readonly HashSet<string> eyeCols = new HashSet<string> { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" };
+        static readonly HashSet<string> eyeCols = new() { "amb", "blu", "brn", "gry", "grn", "hzl", "oth" };
         private static bool ValidateEntry(string key, string val)
         {
             try
@@ -47,19 +47,14 @@ namespace AoC.Advent2020
                     case "hgt":
                         // Height - a number followed by either cm or in:
                         {
-                            var height = int.Parse(val.Substring(0, val.Length - 2));
-                            var unit = val.Substring(val.Length - 2);
-                            switch (unit)
+                            var height = int.Parse(val[..^2]);
+                            var unit = val[^2..];
+                            return unit switch
                             {
-                                case "cm":
-                                    // If cm, the number must be at least 150 and at most 193.
-                                    return height >= 150 && height <= 193;
-                                case "in":
-                                    // If in, the number must be at least 59 and at most 76.
-                                    return height >= 59 && height <= 76;
-                            }
-
-                            return false;
+                                "cm" => height >= 150 && height <= 193,// If cm, the number must be at least 150 and at most 193.
+                                "in" => height >= 59 && height <= 76,// If in, the number must be at least 59 and at most 76.
+                                _ => false,
+                            };
                         }
 
                     case "hcl":
@@ -111,7 +106,7 @@ namespace AoC.Advent2020
 
         private static int CountValid(IEnumerable<Dictionary<string, string>> records)
         {
-            return records.Where(r => r.Keys.Intersect(expectedFields).Count() == expectedFields.Count()).Count();
+            return records.Where(r => r.Keys.Intersect(expectedFields).Count() == expectedFields.Length).Count();
         }
 
         public static int Part1(string input)

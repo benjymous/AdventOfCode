@@ -6,18 +6,18 @@ namespace AoC.Advent2016.Test
     [TestClass]
     public class Day21Test
     {
-        string input = Util.GetInput<Day21>();
+        readonly string input = Util.GetInput<Day21>();
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Part1_Regression()
+        public void PasswordScramble_Part1_Regression()
         {
             Assert.AreEqual("dbfgaehc", Day21.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Part2_Regression()
+        public void PasswordScramble_Part2_Regression()
         {
             Assert.AreEqual("aghfcdeb", Day21.Part2(input));
         }

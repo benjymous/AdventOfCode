@@ -128,7 +128,7 @@ namespace AoC.Advent2015
 
         public static int Run(string input, int steps, bool stuckCorners = false)
         {
-            Queue<State> states = new Queue<State>();
+            Queue<State> states = new();
             states.Enqueue(new State(input));
             states.Enqueue(new State(states.First().width, states.First().height));
 
@@ -156,7 +156,7 @@ namespace AoC.Advent2015
             }
 
             var end = states.Dequeue();
-            var count = end.cells.Values().Where(v => v == true).Count();
+            var count = end.cells.Values().Count(v => v == true);
 
             return count;
         }

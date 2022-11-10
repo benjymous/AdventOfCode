@@ -22,7 +22,7 @@ namespace AoC.Advent2017
         {
             public int SendCount { get; internal set; } = 0;
 
-            Queue<Int64> values = new Queue<Int64>();
+            readonly Queue<Int64> values = new();
 
             public bool Read(out Int64 value)
             {

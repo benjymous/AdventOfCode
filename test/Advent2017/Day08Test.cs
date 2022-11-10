@@ -6,9 +6,8 @@ namespace AoC.Advent2017.Test
     [TestClass]
     public class Day08Test
     {
-        string input = Util.GetInput<Day08>();
-
-        string testInput =
+        readonly string input = Util.GetInput<Day08>();
+        readonly string testInput =
 @"b inc 5 if a > 1
 a inc 1 if b < 5
 c dec -10 if a >= 1

@@ -9,7 +9,7 @@ namespace AoC.Advent2021.Test
     [TestClass]
     public class Day16Test
     {
-        string input = Util.GetInput<Day16>();
+        readonly string input = Util.GetInput<Day16>();
 
         [TestCategory("Test")]
         [DataRow("D2FE28", "[6:LiteralValue = 2021]")]

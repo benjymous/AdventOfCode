@@ -1,4 +1,6 @@
 using System;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -33,10 +35,10 @@ namespace AoC.Utils.Vectors
             return string.Join(",", Component);
         }
 
-        private string[] Split(string val)
+        private static string[] Split(string val)
         {
             const string keep = "0192345678,-";
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             foreach (var c in val)
             {
                 if (keep.Contains(c)) sb.Append(c);
@@ -88,7 +90,7 @@ namespace AoC.Utils.Vectors
 
         public int Distance(IVec other)
         {
-            if (!(other is ManhattanVectorN)) return Int32.MaxValue;
+            if (other is not ManhattanVectorN) return Int32.MaxValue;
 
             var man2 = other as ManhattanVectorN;
 
@@ -132,7 +134,7 @@ namespace AoC.Utils.Vectors
 
         public override bool Equals(object other)
         {
-            if (!(other is ManhattanVectorN)) return false;
+            if (other is not ManhattanVectorN) return false;
             return Distance(other as ManhattanVectorN) == 0;
         }
 
@@ -148,8 +150,10 @@ namespace AoC.Utils.Vectors
                 return hash;
             }
         }
+
     }
 
+    [TypeConverter(typeof(ManhattanVector2TypeConverter))]
     public class ManhattanVector2 : ManhattanVectorN
     {
         public ManhattanVector2(params int[] vals)
@@ -232,7 +236,7 @@ namespace AoC.Utils.Vectors
         }
 
 
-        public static ManhattanVector2 operator +(ManhattanVector2 a, ManhattanVector2 b) => new ManhattanVector2((ManhattanVectorN)a + (ManhattanVectorN)b);
+        public static ManhattanVector2 operator +(ManhattanVector2 a, ManhattanVector2 b) => new((ManhattanVectorN)a + (ManhattanVectorN)b);
 
         public static ManhattanVector2 operator +(ManhattanVector2 a, Direction2 b)
         {
@@ -241,13 +245,14 @@ namespace AoC.Utils.Vectors
             return res;
         }
 
-        public static ManhattanVector2 operator -(ManhattanVector2 a, ManhattanVector2 b) => new ManhattanVector2((ManhattanVectorN)a - (ManhattanVectorN)b);
+        public static ManhattanVector2 operator -(ManhattanVector2 a, ManhattanVector2 b) => new((ManhattanVectorN)a - (ManhattanVectorN)b);
 
 
 
-        public static ManhattanVector2 Zero = new ManhattanVector2(0, 0);
+        public static readonly ManhattanVector2 Zero = new(0, 0);
     }
 
+    [TypeConverter(typeof(ManhattanVector3TypeConverter))]
     public class ManhattanVector3 : ManhattanVectorN
     {
         public ManhattanVector3(params int[] vals)
@@ -280,12 +285,13 @@ namespace AoC.Utils.Vectors
 
         public (int x, int y, int z) AsSimple() => (X, Y, Z);
 
-        public static ManhattanVector3 operator +(ManhattanVector3 a, ManhattanVector3 b) => new ManhattanVector3(a + (ManhattanVectorN)b);
-        public static ManhattanVector3 operator -(ManhattanVector3 a, ManhattanVector3 b) => new ManhattanVector3((ManhattanVectorN)a - (ManhattanVectorN)b);
+        public static ManhattanVector3 operator +(ManhattanVector3 a, ManhattanVector3 b) => new(a + (ManhattanVectorN)b);
+        public static ManhattanVector3 operator -(ManhattanVector3 a, ManhattanVector3 b) => new((ManhattanVectorN)a - (ManhattanVectorN)b);
 
-        public static ManhattanVector3 Zero = new ManhattanVector3(0, 0, 0);
+        public static readonly ManhattanVector3 Zero = new(0, 0, 0);
     }
 
+    [TypeConverter(typeof(ManhattanVector4TypeConverter))]
     public class ManhattanVector4 : ManhattanVectorN
     {
         public ManhattanVector4(params int[] vals)
@@ -311,11 +317,54 @@ namespace AoC.Utils.Vectors
         public int Z { get { return Component[2]; } set { Component[2] = value; } }
         public int W { get { return Component[3]; } set { Component[3] = value; } }
 
-        public static ManhattanVector4 operator +(ManhattanVector4 a, ManhattanVector4 b) => new ManhattanVector4(a + (ManhattanVectorN)b);
-        public static ManhattanVector4 operator -(ManhattanVector4 a, ManhattanVector4 b) => new ManhattanVector4((ManhattanVectorN)a - (ManhattanVectorN)b);
+        public static ManhattanVector4 operator +(ManhattanVector4 a, ManhattanVector4 b) => new(a + (ManhattanVectorN)b);
+        public static ManhattanVector4 operator -(ManhattanVector4 a, ManhattanVector4 b) => new((ManhattanVectorN)a - (ManhattanVectorN)b);
 
-        public static ManhattanVector4 Zero = new ManhattanVector4(0, 0, 0, 0);
+        public static readonly ManhattanVector4 Zero = new(0, 0, 0, 0);
     }
+
+
+    #region typeconverters
+    public class ManhattanVector2TypeConverter : TypeConverter
+    {
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        {
+            return new ManhattanVector2(value as string);
+        }
+    }
+
+    public class ManhattanVector3TypeConverter : TypeConverter
+    {
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        {
+            return new ManhattanVector3(value as string);
+        }
+    }
+
+    public class ManhattanVector4TypeConverter : TypeConverter
+    {
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        {
+            return new ManhattanVector4(value as string);
+        }
+    }
+
+    #endregion
 
     public class Direction2
     {
@@ -415,10 +464,10 @@ namespace AoC.Utils.Vectors
             throw new Exception("Unknown direction state");
         }
 
-        public static Direction2 North = new Direction2(0, -1);
-        public static Direction2 South = new Direction2(0, 1);
-        public static Direction2 East = new Direction2(1, 0);
-        public static Direction2 West = new Direction2(-1, 0);
+        public static readonly Direction2 North = new(0, -1);
+        public static readonly Direction2 South = new(0, 1);
+        public static readonly Direction2 East = new(1, 0);
+        public static readonly Direction2 West = new(-1, 0);
 
         public override string ToString()
         {

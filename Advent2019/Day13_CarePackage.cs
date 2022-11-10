@@ -12,9 +12,8 @@ namespace AoC.Advent2019
 
         public class NPVGS : NPSA.ICPUInterrupt
         {
-            NPSA.IntCPU cpu;
-
-            Dictionary<string, int> screen = new Dictionary<string, int>();
+            readonly NPSA.IntCPU cpu;
+            readonly Dictionary<string, int> screen = new();
 
             // 0 is an empty tile. No game object appears in this tile.
             // 1 is a wall tile. Walls are indestructible barriers.

@@ -17,7 +17,7 @@ namespace AoC.Advent2021
             => Util.Range2DInclusive(GetRange(input, margin))
                    .Where(pos => rules[GetRuleIndex(input, pos.x, pos.y)]);
 
-        static int GetRuleIndex(HashSet<(int x, int y)> input, int x, int y)
+        static int GetRuleIndex(IEnumerable<(int x, int y)> input, int x, int y)
         {
             int result = 0;
             for (int y1 = y - 1; y1 <= y + 1; ++y1)
@@ -40,7 +40,7 @@ namespace AoC.Advent2021
 
             for (int i = 0; i < steps; i++)
             {
-                var next = Step(map, rules, margin);
+                IEnumerable<(int x, int y)> next = Step(map, rules, margin);
 
                 if (crop && (i % 2) == 1) // Pretend that infinite mess never happened!
                 {

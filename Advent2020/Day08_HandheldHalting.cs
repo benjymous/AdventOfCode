@@ -38,7 +38,7 @@ namespace AoC.Advent2020
 
         public static int Part1(string input)
         {
-            Elf80 cpu = new Elf80(input);
+            Elf80 cpu = new(input);
 
             var seen = new HashSet<int>();
             int cycles = 0;
@@ -48,7 +48,7 @@ namespace AoC.Advent2020
 
         public static int Part2(string input)
         {
-            Elf80 cpu = new Elf80(input);
+            Elf80 cpu = new(input);
 
             int cyclesTested = 0;
 

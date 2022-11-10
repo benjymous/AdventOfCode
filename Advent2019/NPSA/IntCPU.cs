@@ -34,27 +34,14 @@ namespace AoC.Advent2019.NPSA
 
         static byte InstructionSize(Opcode code)
         {
-            switch (code)
+            return code switch
             {
-                case Opcode.HALT:
-                    return 1;
-
-                case Opcode.GET:
-                case Opcode.OUT:
-                case Opcode.SETR:
-                    return 2;
-
-                case Opcode.JNZ:
-                case Opcode.JZ:
-                    return 3;
-
-                case Opcode.ADD:
-                case Opcode.MUL:
-                case Opcode.LT:
-                case Opcode.EQ:
-                    return 4;
-            }
-            throw new Exception("Bad instruction");
+                Opcode.HALT => 1,
+                Opcode.GET or Opcode.OUT or Opcode.SETR => 2,
+                Opcode.JNZ or Opcode.JZ => 3,
+                Opcode.ADD or Opcode.MUL or Opcode.LT or Opcode.EQ => 4,
+                _ => throw new Exception("Bad instruction"),
+            };
         }
 
         enum ParamMode : byte
@@ -65,7 +52,7 @@ namespace AoC.Advent2019.NPSA
         }
 
         Int64[] Memory;
-        IEnumerable<Int64> initialState;
+        readonly IEnumerable<Int64> initialState;
         Int64 InstructionPointer = 0;
         Int64 RelBase = 0;
         public Queue<Int64> Input { get; set; } = new Queue<Int64>();
@@ -77,7 +64,7 @@ namespace AoC.Advent2019.NPSA
         double speed = 0;
         double runTimeSecs = 0;
 
-        IEnumerable<int> PossibleParamModes()
+        static IEnumerable<int> PossibleParamModes()
         {
             for (int x = 0; x < 3; ++x)
                 for (int y = 0; y < 3; ++y)
@@ -114,25 +101,19 @@ namespace AoC.Advent2019.NPSA
         Int64 GetAddr(int paramIdx)
         {
             Int64 offset = InstructionPointer + paramIdx;
-            switch (paramMode[paramIdx - 1])
+            return paramMode[paramIdx - 1] switch
             {
-                case ParamMode.Position:
-                    return Memory[offset];
-
-                case ParamMode.Immediate:
-                    return offset;
-
-                case ParamMode.Relative:
-                    return (Memory[offset] + RelBase);
-            }
-
-            throw new Exception($"Unexpected ParamMode {paramMode[paramIdx - 1]}");
+                ParamMode.Position => Memory[offset],
+                ParamMode.Immediate => offset,
+                ParamMode.Relative => (Memory[offset] + RelBase),
+                _ => throw new Exception($"Unexpected ParamMode {paramMode[paramIdx - 1]}"),
+            };
         }
 
         static readonly int[] mods = { 100, 1000, 10000, 100000 };
         static readonly int MAX_PARAMS = 3;
 
-        ParamMode[] DecodeParams(int raw)
+        static ParamMode[] DecodeParams(int raw)
         {
             ParamMode[] mode = new ParamMode[MAX_PARAMS];
             for (var i = 0; i < MAX_PARAMS; ++i)
@@ -142,7 +123,7 @@ namespace AoC.Advent2019.NPSA
             return mode;
         }
 
-        static ParamMode[][] paramCache = new ParamMode[333][];
+        static readonly ParamMode[][] paramCache = new ParamMode[333][];
 
         ParamMode[] paramMode;
 
@@ -239,7 +220,7 @@ namespace AoC.Advent2019.NPSA
 
         public void Run()
         {
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            System.Diagnostics.Stopwatch sw = new();
             sw.Start();
 
             while (Step()) ;

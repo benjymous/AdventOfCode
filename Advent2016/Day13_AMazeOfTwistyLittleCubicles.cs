@@ -20,9 +20,8 @@ namespace AoC.Advent2016
 
         public class CubicleMap : IMap<ManhattanVector2>
         {
-            public Dictionary<string, bool> data = new Dictionary<string, bool>();
-
-            int Seed = 0;
+            public Dictionary<string, bool> data = new();
+            readonly int Seed = 0;
 
             public CubicleMap(int seed)
             {

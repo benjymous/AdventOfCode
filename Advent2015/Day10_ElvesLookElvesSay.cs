@@ -9,8 +9,8 @@ namespace AoC.Advent2015
 
         public static string SayIt(string input)
         {
-            StringBuilder builder = new StringBuilder();
-            int run = 0;
+            StringBuilder builder = new();
+            int run;
             for (int i = 0; i < input.Length; i += run)
             {
                 run = 0;

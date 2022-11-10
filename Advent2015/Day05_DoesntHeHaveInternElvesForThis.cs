@@ -24,7 +24,7 @@ namespace AoC.Advent2015
             return false;
         }
 
-        static string[] bads = new string[]
+        static readonly string[] bads = new string[]
         {
             "ab", "cd", "pq", "xy"
         };

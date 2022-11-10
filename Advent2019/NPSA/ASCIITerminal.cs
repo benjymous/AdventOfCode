@@ -12,7 +12,7 @@ namespace AoC.Advent2019.NPSA
     {
         protected NPSA.IntCPU cpu;
 
-        protected NPSA.ASCIIBuffer buffer = new NPSA.ASCIIBuffer();
+        protected NPSA.ASCIIBuffer buffer = new();
 
         protected Int64 finalOutput;
 
@@ -20,8 +20,10 @@ namespace AoC.Advent2019.NPSA
 
         public ASCIITerminal(string program)
         {
-            cpu = new NPSA.IntCPU(program);
-            cpu.Interrupt = this;
+            cpu = new NPSA.IntCPU(program)
+            {
+                Interrupt = this
+            };
         }
 
         public void SetDisplay(bool on)
@@ -98,7 +100,7 @@ namespace AoC.Advent2019.NPSA
 
     public class ASCIIBuffer
     {
-        Dictionary<string, char> screenBuffer = new Dictionary<string, char>();
+        readonly Dictionary<string, char> screenBuffer = new();
 
         public ManhattanVector2 Cursor { get; } = new ManhattanVector2(0, 0);
 
@@ -107,7 +109,7 @@ namespace AoC.Advent2019.NPSA
         public bool DisplayLive { get; set; } = false;
 
         public List<string> Lines { get; set; } = new List<string>();
-        private StringBuilder sb = new StringBuilder();
+        private StringBuilder sb = new();
 
         public ASCIIBuffer()
         {

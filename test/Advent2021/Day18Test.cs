@@ -10,7 +10,7 @@ namespace AoC.Advent2021.Test
     [TestClass]
     public class Day18Test
     {
-        string input = Util.GetInput<Day18>();
+        readonly string input = Util.GetInput<Day18>();
 
         string AsString(Val v) => v.IsPair ? $"[{AsString(v.first)},{AsString(v.second)}]" : v.Value.ToString();
         public static Val Parse(string data) => Day18.Val.Parse(data.ToQueue());

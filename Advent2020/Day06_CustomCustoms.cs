@@ -15,7 +15,7 @@ namespace AoC.Advent2020
             {
                 var merged = g.Replace("\n", "");
                 var set = new HashSet<char>(merged);
-                total += set.Count();
+                total += set.Count;
             }
             return total;
         }

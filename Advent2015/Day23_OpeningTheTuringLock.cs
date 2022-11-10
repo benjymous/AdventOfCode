@@ -9,9 +9,9 @@ namespace AoC.Advent2015
 
         public class CPU
         {
-            string[] program;
+            readonly string[] program;
             int programCounter = 0;
-            Dictionary<string, int> registers = new Dictionary<string, int>();
+            Dictionary<string, int> registers = new();
             public CPU(string input)
             {
                 program = Util.Split(input.Replace(",", ""));

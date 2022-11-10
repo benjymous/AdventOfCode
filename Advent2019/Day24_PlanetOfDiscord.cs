@@ -57,7 +57,7 @@ namespace AoC.Advent2019
                 return count;
             }
 
-            public Dictionary<int, int> cells = new Dictionary<int, int>();
+            public Dictionary<int, int> cells = new();
 
             public static int Bit(int x, int y) => 1 << ((y * 5) + x);
 
@@ -77,7 +77,7 @@ namespace AoC.Advent2019
                 else return ((cells[level] & Bit(x, y)) > 0) ? 1 : 0;
             }
 
-            IEnumerable<(int x, int y, int level)> GetNeighboursFlat(int x, int y, int level)
+            static IEnumerable<(int x, int y, int level)> GetNeighboursFlat(int x, int y, int level)
             {
                 yield return (x - 1, y, level);
                 yield return (x + 1, y, level);
@@ -251,9 +251,9 @@ namespace AoC.Advent2019
 
         public static int Part1(string input)
         {
-            HashSet<int> seen = new HashSet<int>();
+            HashSet<int> seen = new();
 
-            Queue<State> states = new Queue<State>();
+            Queue<State> states = new();
             states.Enqueue(new State(input));
             states.Enqueue(new State());
 
@@ -278,7 +278,7 @@ namespace AoC.Advent2019
 
         public static int Part2(string input, int runs = 200)
         {
-            Queue<State> states = new Queue<State>();
+            Queue<State> states = new();
             states.Enqueue(new State(input) { Infinite = true });
             states.Enqueue(new State() { Infinite = true });
 

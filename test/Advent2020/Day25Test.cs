@@ -6,8 +6,8 @@ namespace AoC.Advent2020.Test
     [TestClass]
     public class Day25Test
     {
-        string input = Util.GetInput<Day25>();
-        string test = "5764801\n17807724";
+        readonly string input = Util.GetInput<Day25>();
+        readonly string test = "5764801\n17807724";
 
         [TestCategory("Test")]
         [DataTestMethod]

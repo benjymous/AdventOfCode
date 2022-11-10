@@ -58,7 +58,7 @@ namespace AoC.Advent2020
             public int Count { get; private set; } = 0;
             public int LastNum { get; private set; } = 0;
 
-            Dictionary<int, Entry> values = new Dictionary<int, Entry>();
+            readonly Dictionary<int, Entry> values = new();
             Entry LastEntry = null;
         }
 

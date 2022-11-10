@@ -20,7 +20,7 @@ namespace AoC.Advent2019
 
             var minDist = int.MaxValue;
 
-            Dictionary<string, int> seen = new Dictionary<string, int>();
+            Dictionary<string, int> seen = new();
 
             foreach (var line in lines)
             {
@@ -29,12 +29,12 @@ namespace AoC.Advent2019
 
                 var position = new ManhattanVector2(0, 0);
                 int steps = 0;
-                Dictionary<string, int> current = new Dictionary<string, int>();
+                Dictionary<string, int> current = new();
 
                 foreach (var i in instructions)
                 {
                     if (string.IsNullOrEmpty(i)) continue;
-                    var distance = int.Parse(i.Substring(1));
+                    var distance = int.Parse(i[1..]);
 
                     for (var j = 0; j < distance; ++j)
                     {

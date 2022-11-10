@@ -8,11 +8,11 @@ namespace AoC.Advent2016
     {
         public string Name => "2016-02";
 
-        static string keypad1 = "123  \n" +
+        static readonly string keypad1 = "123  \n" +
                                 "456  \n" +
                                 "789";
 
-        static string keypad2 = "  1   \n" +
+        static readonly string keypad2 = "  1   \n" +
                                 " 234  \n" +
                                 "56789 \n" +
                                 " ABC  \n" +
@@ -55,9 +55,9 @@ namespace AoC.Advent2016
             }
 
             var lines = Util.Split(input);
-            StringBuilder code = new StringBuilder();
+            StringBuilder code = new();
 
-            ManhattanVector2 newPos = new ManhattanVector2(0, 0);
+            ManhattanVector2 newPos = new(0, 0);
 
             foreach (var line in lines)
             {

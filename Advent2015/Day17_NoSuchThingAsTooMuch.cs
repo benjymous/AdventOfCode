@@ -8,17 +8,17 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-17";
 
-
         private static Dictionary<string, int> Noggify(string input)
         {
             int i = 0;
             var sizes = Util.Parse32(input).OrderBy(x => -x).ToDictionary(x => i++, x => x);
 
-            var jobqueue = new Queue<Tuple<HashSet<int>, int>>();
-            jobqueue.Enqueue(Tuple.Create(new HashSet<int>(), 0));
-            var cache = new Dictionary<string, int>();
-
-            cache[""] = 0;
+            var jobqueue = new Queue<(HashSet<int>, int)>();
+            jobqueue.Enqueue((new HashSet<int>(), 0));
+            var cache = new Dictionary<string, int>
+            {
+                [""] = 0
+            };
 
             while (jobqueue.Any())
             {
@@ -39,7 +39,7 @@ namespace AoC.Advent2015
                         if (!cache.ContainsKey(key))
                         {
                             cache[key] = newScore;
-                            jobqueue.Enqueue(Tuple.Create(newValues, newScore));
+                            jobqueue.Enqueue((newValues, newScore));
                         }
                     }
                 }

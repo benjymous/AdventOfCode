@@ -139,14 +139,13 @@ namespace AoC.Advent2017
                 return Tape.Values.Sum();
             }
 
-            Dictionary<int, int> Tape = new Dictionary<int, int>();
+            readonly Dictionary<int, int> Tape = new();
 
             State State;
-            char Start = '?';
+            readonly char Start = '?';
             int Position = 0;
-            int Diagnostic = 0;
-
-            Dictionary<char, State> States = new Dictionary<char, State>();
+            readonly int Diagnostic = 0;
+            readonly Dictionary<char, State> States = new();
         }
 
         public static int Part1(string input)

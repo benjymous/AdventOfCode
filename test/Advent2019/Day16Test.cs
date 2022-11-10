@@ -6,7 +6,7 @@ namespace AoC.Advent2019.Test
     [TestClass]
     public class Day16Test
     {
-        string input = Util.GetInput<Day16>();
+        readonly string input = Util.GetInput<Day16>();
 
         [TestCategory("Test")]
         [DataRow("80871224585914546619083218645595", "24176176")]
@@ -22,7 +22,7 @@ namespace AoC.Advent2019.Test
         [DataRow("03036732577212944063491565474664", "84462026")]
         [DataRow("02935109699940807407585447034323", "78725270")]
         [DataRow("03081770884921959731165446850517", "53553731")]
-        public void FF2Test(string input, string expected)
+        public static void FF2Test(string input, string expected)
         {
             Assert.AreEqual(expected, Day16.Part2(input));
         }

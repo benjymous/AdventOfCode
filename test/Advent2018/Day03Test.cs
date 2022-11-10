@@ -3,10 +3,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AoC.Advent2018.Test
 {
     [TestCategory("2018")]
+    [TestCategory("RegexParse")]
     [TestClass]
     public class Day03Test
     {
-        string input = Util.GetInput<Day03>();
+        readonly string input = Util.GetInput<Day03>();
 
         [TestCategory("Test")]
         [DataRow("#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2\n", 4)]

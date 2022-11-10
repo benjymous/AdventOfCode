@@ -21,7 +21,7 @@ namespace AoC.Advent2015
                 {
                     int shortest = int.MaxValue;
                     Int64 QE = Int64.MaxValue;
-                    HashSet<string> seen = new HashSet<string>();
+                    HashSet<string> seen = new();
                     foreach (var child in Groupings(available.Where(x => x != first), target - first))
                     {
                         if (child.Count() <= shortest)
@@ -69,7 +69,7 @@ namespace AoC.Advent2015
             int smallestGroup = int.MaxValue;
             Int64 QE = Int64.MaxValue;
 
-            HashSet<string> seen = new HashSet<string>();
+            HashSet<string> seen = new();
 
             foreach (var g in groups)//.Reverse())// .OrderBy(g => g.Count()))
             {

@@ -10,9 +10,9 @@ namespace AoC.Advent2021.Test
     [TestClass]
     public class Day19Test
     {
-        string input = Util.GetInput<Day19>();
+        readonly string input = Util.GetInput<Day19>();
 
-        string test = @"--- scanner 0 ---
+        readonly string test = @"--- scanner 0 ---
 404,-588,-901
 528,-643,409
 -838,591,734

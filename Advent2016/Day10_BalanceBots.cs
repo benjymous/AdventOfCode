@@ -16,7 +16,7 @@ namespace AoC.Advent2016
                 parts.Add(num);
             }
 
-            public List<int> parts = new List<int>();
+            public List<int> parts = new();
 
             public int Value()
             {
@@ -51,8 +51,8 @@ namespace AoC.Advent2016
 
         class Factory
         {
-            public Dictionary<string, Entity> Entities = new Dictionary<string, Entity>();
-            public Dictionary<string, string> Log = new Dictionary<string, string>();
+            public Dictionary<string, Entity> Entities = new();
+            public Dictionary<string, string> Log = new();
 
             public Factory(string input)
             {

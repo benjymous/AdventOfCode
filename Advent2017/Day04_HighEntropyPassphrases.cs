@@ -10,19 +10,17 @@ namespace AoC.Advent2017
         public static bool ValidationRule1(string passphrase)
         {
             var words = passphrase.Split(" ");
-            return words.GroupBy(w => w)
+            return !words.GroupBy(w => w)
                         .Where(group => group.Count() > 1)
-                        .Select(group => group.Key)
-                        .Count() == 0;
+                        .Select(group => group.Key).Any();
         }
 
         public static bool ValidationRule2(string passphrase)
         {
             var words = passphrase.Split(" ").Select(x => String.Join("", x.ToCharArray().OrderBy(y => y)));
-            return words.GroupBy(w => w)
+            return !words.GroupBy(w => w)
                         .Where(group => group.Count() > 1)
-                        .Select(group => group.Key)
-                        .Count() == 0;
+                        .Select(group => group.Key).Any();
         }
 
         // public static bool ValidationRule2(string passphrase)

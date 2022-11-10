@@ -41,7 +41,8 @@ namespace AoC.Advent2020.Elforola
     public class Elf80
     {
         public Instruction[] Instructions { get; set; }
-        int[] Registers = new int[] { 0, 0 };
+
+        readonly int[] Registers = new int[] { 0, 0 };
 
         System.Diagnostics.Stopwatch sw;
 

@@ -9,7 +9,7 @@ namespace AoC.Advent2018
 
         static List<int> Parse32(string input)
         {
-            List<int> recipe = new List<int>();
+            List<int> recipe = new();
             foreach (var c in input.Trim())
             {
                 var i = c - '0';

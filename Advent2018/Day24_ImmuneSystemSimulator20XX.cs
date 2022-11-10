@@ -67,8 +67,8 @@ namespace AoC.Advent2018
             public uint Initiative;
             public uint EffectivePower => UnitCount * AttackDamage;
 
-            HashSet<AttackType> Weak = new();
-            HashSet<AttackType> Immune = new();
+            readonly HashSet<AttackType> Weak = new();
+            readonly HashSet<AttackType> Immune = new();
 
             public long EstimateDamage(Group attacker)
             {
@@ -100,7 +100,7 @@ namespace AoC.Advent2018
             public Group target = null;
         }
 
-        private static (bool,long) Run(string input, uint boost = 0)
+        private static (bool win, long res) Run(string input, uint boost = 0)
         {
             IEnumerable<Group> groups = Parse(input, boost);
 
@@ -155,14 +155,14 @@ namespace AoC.Advent2018
         {
             var parts = input.Split("\n\n");
 
-            var immune = Util.RegexParse<Group>(parts[0].Split("\n", StringSplitOptions.TrimEntries).Skip(1)).ToArray();
-            var infection = Util.RegexParse<Group>(parts[1].Split("\n", StringSplitOptions.TrimEntries).Skip(1)).ToArray();
+            var immune = Util.RegexParse<Group>(parts[0].Split("\n", StringSplitOptions.TrimEntries).Skip(1));
+            var infection = Util.RegexParse<Group>(parts[1].Split("\n", StringSplitOptions.TrimEntries).Skip(1));
             immune.WithIndex().ForEach(g => g.Value.Id = g.Index + 1);
             immune.ForEach(g => g.AttackDamage += boost);
             infection.WithIndex().ForEach(g => { g.Value.ImmuneSystem = false; g.Value.Id = g.Index + 1; });
 
             IEnumerable<Group> groups = immune.Concat(infection);
-            return groups;
+            return groups.ToArray();
         }
 
         public static long Part1(string input)
@@ -172,14 +172,12 @@ namespace AoC.Advent2018
 
         public static long Part2(string input)
         {
-            uint boost = Util.BinarySearch(1, 5000, boost =>
+            return Util.BinarySearch(1, boost =>
             {
-                bool win = Run(input, boost).Item1;
-                Console.WriteLine($"{boost} => {win}");
-                return win;
-            });
-
-            return Run(input, boost).Item2;
+                var res = Run(input, boost);
+                Console.WriteLine($"{boost} => {res}");
+                return res;
+            }).result;
         }
 
         public void Run(string input, ILogger logger)

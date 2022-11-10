@@ -10,7 +10,7 @@ namespace AoC.Advent2021.Test
     [TestClass]
     public class Day23Test
     {
-        string input = Util.GetInput<Day23>();
+        readonly string input = Util.GetInput<Day23>();
 
         const string test1 = @"#############
 #...........#

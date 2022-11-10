@@ -38,7 +38,7 @@ namespace AoC.Advent2015
 
         public static int Part1(string input)
         {
-            Dictionary<string, int> visited = new Dictionary<string, int>();
+            Dictionary<string, int> visited = new();
 
             var santa = new SantaStepper();
 
@@ -49,12 +49,12 @@ namespace AoC.Advent2015
                 visited.IncrementAtIndex(santa.Position.ToString());
             }
 
-            return visited.Count();
+            return visited.Count;
         }
 
         public static int Part2(string input)
         {
-            Dictionary<string, int> visited = new Dictionary<string, int>();
+            Dictionary<string, int> visited = new();
 
             var santas = new Queue<SantaStepper>();
             santas.Enqueue(new SantaStepper());
@@ -73,7 +73,7 @@ namespace AoC.Advent2015
                 santas.Enqueue(santa);
             }
 
-            return visited.Count();
+            return visited.Count;
         }
 
         public void Run(string input, ILogger logger)

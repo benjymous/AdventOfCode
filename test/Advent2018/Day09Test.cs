@@ -7,7 +7,7 @@ namespace AoC.Advent2018.Test
     [TestClass]
     public class Day09Test
     {
-        string input = Util.GetInput<Day09>();
+        readonly string input = Util.GetInput<Day09>();
 
         [TestCategory("Test")]
         [DataRow(9, 25, 32)] // 9 players; last marble is worth 25 points: high score is 32
@@ -16,7 +16,7 @@ namespace AoC.Advent2018.Test
         [DataRow(17, 1104, 2764)] // 17 players; last marble is worth 1104 points: high score is 2764
         [DataRow(21, 6111, 54718)] // 21 players; last marble is worth 6111 points: high score is 54718
         [DataRow(30, 5807, 37305)] // 30 players; last marble is worth 5807 points: high score is 37305
-        public void Marbles01Test(int numPlayers, int numMarbles, int expected)
+        public static void Marbles01Test(int numPlayers, int numMarbles, int expected)
         {
             Assert.AreEqual(expected, Advent2018.Day09.MarbleGame(numPlayers, numMarbles));
         }

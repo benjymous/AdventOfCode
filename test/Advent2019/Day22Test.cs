@@ -7,7 +7,7 @@ namespace AoC.Advent2019.Test
     [TestClass]
     public class Day22Test
     {
-        string input = Util.GetInput<Day22>();
+        readonly string input = Util.GetInput<Day22>();
 
         public static IEnumerable<object[]> GetData()
         {

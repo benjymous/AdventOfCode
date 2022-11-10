@@ -48,7 +48,7 @@ namespace AoC.Advent2021
 
                 current = current.Where(l => l[i] == filter).ToArray();
 
-                if (current.Count() == 1) break;
+                if (current.Length == 1) break;
             }
 
             return Convert.ToInt32(current.First(), 2);

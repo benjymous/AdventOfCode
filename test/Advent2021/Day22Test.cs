@@ -7,10 +7,11 @@ using static AoC.Advent2021.Day22;
 namespace AoC.Advent2021.Test
 {
     [TestCategory("2021")]
+    [TestCategory("RegexParse")]
     [TestClass]
     public class Day22Test
     {
-        string input = Util.GetInput<Day22>();
+        readonly string input = Util.GetInput<Day22>();
 
         const string test0 = @"on x=10..12,y=10..12,z=10..12
 on x=11..13,y=11..13,z=11..13

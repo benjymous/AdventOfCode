@@ -4,10 +4,11 @@ namespace AoC.Advent2017.Test
 {
     [TestCategory("2017")]
     [TestCategory("FloodFill")]
+    [TestCategory("AStar")]
     [TestClass]
     public class Day14Test
     {
-        string input = Util.GetInput<Day14>();
+        readonly string input = Util.GetInput<Day14>();
 
         [DataTestMethod]
         public void Defrag01Test()

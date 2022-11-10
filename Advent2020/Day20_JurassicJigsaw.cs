@@ -104,39 +104,23 @@ namespace AoC.Advent2020
             {
                 var h = Grid.Length - 1;
                 var w = Grid[0].Length - 1;
-                switch (Orientation)
+                return Orientation switch
                 {
-                    case 0:
-                        return Grid[y][x];
-
-                    case 1:
-                        return Grid[w - x][y];
-
-                    case 2:
-                        return Grid[h - y][w - x];
-
-                    case 3:
-                        return Grid[x][h - y];
-
-                    case 4:
-                        return Grid[x][y];
-
-                    case 5:
-                        return Grid[y][w - x];
-
-                    case 6:
-                        return Grid[w - x][h - y];
-
-                    case 7:
-                        return Grid[h - y][x];
-                }
-
-                throw new Exception("Bad orientation");
+                    0 => Grid[y][x],
+                    1 => Grid[w - x][y],
+                    2 => Grid[h - y][w - x],
+                    3 => Grid[x][h - y],
+                    4 => Grid[x][y],
+                    5 => Grid[y][w - x],
+                    6 => Grid[w - x][h - y],
+                    7 => Grid[h - y][x],
+                    _ => throw new Exception("Bad orientation"),
+                };
             }
 
             public string Transformed()
             {
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new();
                 for (int y = 0; y < Grid.Length; ++y)
                 {
                     for (int x = 0; x < Grid[0].Length; ++x)

@@ -44,7 +44,7 @@ namespace AoC.Advent2018
                     case 0: r1 = 123; break;
 
                     // bani 1 456 1
-                    case 1: r1 = r1 & 456; break;
+                    case 1: r1 &= 456; break;
 
                     // eqri 1 72 1
                     case 2: r1 = (r1 == 72) ? 1 : 0; break;
@@ -68,16 +68,16 @@ namespace AoC.Advent2018
                     case 8: r5 = r4 & 255; break;
 
                     // addr 1 5 1
-                    case 9: r1 = r1 + r5; break;
+                    case 9: r1 += r5; break;
 
                     // bani 1 16777215 1
-                    case 10: r1 = r1 & 16777215; break;
+                    case 10: r1 &= 16777215; break;
 
                     // muli 1 65899 1
-                    case 11: r1 = r1 * 65899; break;
+                    case 11: r1 *= 65899; break;
 
                     // bani 1 16777215 1
-                    case 12: r1 = r1 & 16777215; break;
+                    case 12: r1 &= 16777215; break;
 
                     // gtir 256 4 5
                     case 13: r5 = (256 > r4) ? 1 : 0; break;
@@ -86,7 +86,7 @@ namespace AoC.Advent2018
                     case 14: r3 = r5 + r3; break;
 
                     // addi 3 1 3
-                    case 15: r3 = r3 + 1; break;
+                    case 15: r3++; break;
 
                     // seti 27 6 3
                     case 16: r3 = 27; break;
@@ -98,7 +98,7 @@ namespace AoC.Advent2018
                     case 18: r2 = r5 + 1; break;
 
                     // muli 2 256 2
-                    case 19: r2 = r2 * 256; break;
+                    case 19: r2 *= 256; break;
 
                     // gtrr 2 4 2
                     case 20: r2 = (r2 > r4) ? 1 : 0; break;
@@ -107,13 +107,13 @@ namespace AoC.Advent2018
                     case 21: r3 = r2 + r3; break;
 
                     // addi 3 1 3
-                    case 22: r3 = r3 + 1; break;
+                    case 22: r3++; break;
 
                     // seti 25 3 3
                     case 23: r3 = 25; break;
 
                     // addi 5 1 5
-                    case 24: r5 = r5 + 1; break;
+                    case 24: r5++; break;
 
                     // seti 17 1 3
                     case 25: r3 = 17; break;
@@ -146,7 +146,7 @@ namespace AoC.Advent2018
 
         }
 
-        public static int Part2(string input)
+        public static int Part2(string _)
         {
             HashSet<long> seen = new();
 
@@ -174,7 +174,7 @@ namespace AoC.Advent2018
                     case 0: r1 = 123; break;
 
                     // bani 1 456 1
-                    case 1: r1 = r1 & 456; break;
+                    case 1: r1 &= 456; break;
 
                     // eqri 1 72 1
                     case 2: r1 = (r1 == 72) ? 1 : 0; break;
@@ -198,16 +198,16 @@ namespace AoC.Advent2018
                     case 8: r5 = r4 & 255; break;
 
                     // addr 1 5 1
-                    case 9: r1 = r1 + r5; break;
+                    case 9: r1 += r5; break;
 
                     // bani 1 16777215 1
-                    case 10: r1 = r1 & 16777215; break;
+                    case 10: r1 &= 16777215; break;
 
                     // muli 1 65899 1
-                    case 11: r1 = r1 * 65899; break;
+                    case 11: r1 *= 65899; break;
 
                     // bani 1 16777215 1
-                    case 12: r1 = r1 & 16777215; break;
+                    case 12: r1 &= 16777215; break;
 
                     // gtir 256 4 5
                     case 13: r5 = (256 > r4) ? 1 : 0; break;
@@ -216,7 +216,7 @@ namespace AoC.Advent2018
                     case 14: r3 = r5 + r3; break;
 
                     // addi 3 1 3
-                    case 15: r3 = r3 + 1; break;
+                    case 15: r3++; break;
 
                     // seti 27 6 3
                     case 16: r3 = 27; break;
@@ -228,7 +228,7 @@ namespace AoC.Advent2018
                     case 18: r2 = r5 + 1; break;
 
                     // muli 2 256 2
-                    case 19: r2 = r2 * 256; break;
+                    case 19: r2 *= 256; break;
 
                     // gtrr 2 4 2
                     case 20: r2 = (r2 > r4) ? 1 : 0; break;
@@ -237,13 +237,13 @@ namespace AoC.Advent2018
                     case 21: r3 = r2 + r3; break;
 
                     // addi 3 1 3
-                    case 22: r3 = r3 + 1; break;
+                    case 22: r3++; break;
 
                     // seti 25 3 3
                     case 23: r3 = 25; break;
 
                     // addi 5 1 5
-                    case 24: r5 = r5 + 1; break;
+                    case 24: r5++; break;
 
                     // seti 17 1 3
                     case 25: r3 = 17; break;

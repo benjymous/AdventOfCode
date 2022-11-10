@@ -76,7 +76,7 @@ namespace AoC.Advent2017
         public static int CountGarbage(string input)
         {
             var state = new State(input);
-            var stripped = StripGarbage(state).AsString();
+            _ = StripGarbage(state).AsString();
             return state.GarbageCount;
         }
 

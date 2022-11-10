@@ -8,7 +8,7 @@ namespace AoC.Advent2017.Test
     [TestClass]
     public class Day09Test
     {
-        string input = Util.GetInput<Day09>();
+        readonly string input = Util.GetInput<Day09>();
 
         [DataRow("<>", "")] // empty garbage.
         [DataRow("<random characters>", "")] // garbage containing random characters.

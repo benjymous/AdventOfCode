@@ -12,7 +12,7 @@ namespace AoC.Advent2015
 
         public static IEnumerable<int> FindNumbers(string input)
         {
-            StringBuilder current = new StringBuilder();
+            StringBuilder current = new();
             for (int i = 0; i < input.Length; ++i)
             {
                 if (input[i] == '-' || (input[i] >= '0' && input[i] <= '9'))

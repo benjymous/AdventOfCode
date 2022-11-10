@@ -42,7 +42,7 @@ namespace AoC.Advent2015
         {
             if (input.StartsWith("\"") && input.EndsWith("\""))
             {
-                return input.Substring(1, input.Length - 2);
+                return input[1..^1];
             }
             return input;
         }
@@ -54,12 +54,12 @@ namespace AoC.Advent2015
 
         public static string Encode(char input)
         {
-            switch (input)
+            return input switch
             {
-                case '\"': return "\\\"";
-                case '\\': return "\\\\";
-            }
-            return $"{input}";
+                '\"' => "\\\"",
+                '\\' => "\\\\",
+                _ => $"{input}",
+            };
         }
 
         public static string Escape(string input)
@@ -71,7 +71,7 @@ namespace AoC.Advent2015
         {
             var lines = Util.Split(input, '\n');
 
-            var result = lines.Select(line => Tuple.Create(line, Unescape(line)));
+            var result = lines.Select(line => (line, Unescape(line)));
 
             // foreach (var r in result)
             // {
@@ -85,7 +85,7 @@ namespace AoC.Advent2015
         {
             var lines = Util.Split(input, '\n');
 
-            var result = lines.Select(line => Tuple.Create(line, Escape(line)));
+            var result = lines.Select(line => (line, Escape(line)));
 
             // foreach (var r in result)
             // {

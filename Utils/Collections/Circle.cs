@@ -8,11 +8,11 @@ namespace AoC.Utils.Collections
     {
         public T Value { get; set; }
 
-        Dictionary<T, Circle<T>> index;
+        readonly Dictionary<T, Circle<T>> index;
 
         public static Circle<T> Create(IEnumerable<T> input)
         {
-            Circle<T> first = new Circle<T>(input.First());
+            Circle<T> first = new(input.First());
             var current = first;
             current.InsertRange(input.Skip(1));
             return first;
@@ -147,7 +147,7 @@ namespace AoC.Utils.Collections
             this.Value = val;
         }
 
-        public int Count() => index.Count();
+        public int Count() => index.Count;
 
         public Circle<T> Find(T v)
         {

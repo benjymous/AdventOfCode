@@ -17,7 +17,7 @@ namespace AoC.Advent2015
             Recharge,
         }
 
-        static Dictionary<Spell, (int mana, int duration)> Spells = new()
+        static readonly Dictionary<Spell, (int mana, int duration)> Spells = new()
         {
             { Spell.MagicMissile,  (53,0) },
             { Spell.Drain,  (73,0) },
@@ -67,15 +67,15 @@ namespace AoC.Advent2015
 
             public IEnumerable<State> Tick()
             {
-                foreach (var kvp in ActiveEffects)
+                foreach (var (effect, duration) in ActiveEffects)
                 {
-                    switch (kvp.effect)
+                    switch (effect)
                     {
                         case Spell.Poison:
                             BossHP -= 3;
                             break;
                         case Spell.Shield:
-                            if (kvp.duration == 1)
+                            if (duration == 1)
                             {
                                 PlayerArmour -= 7;
                             }

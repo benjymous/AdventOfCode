@@ -12,11 +12,11 @@ namespace AoC.Advent2020
             public Instruction(string line)
             {
                 cmd = line[0];
-                val = Int32.Parse(line.Substring(1));
+                val = Int32.Parse(line[1..]);
             }
 
-            char cmd;
-            int val;
+            readonly char cmd;
+            readonly int val;
 
             public override string ToString()
             {

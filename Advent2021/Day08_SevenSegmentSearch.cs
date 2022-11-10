@@ -17,7 +17,8 @@ namespace AoC.Advent2021
                 diagnostic = bits[0].Split(" ").Select(v => v.OrderBy(c => (int)c).ToArray().AsString());
                 output = bits[1].Split(" ").Select(v => v.OrderBy(c => (int)c).ToArray().AsString());
             }
-            IEnumerable<string> diagnostic, output;
+
+            readonly IEnumerable<string> diagnostic, output;
 
             public int CountOutputMatches(int size) => output.Count(v => v.Length == size);
 

@@ -7,9 +7,9 @@ namespace AoC.Advent2021.Test
     [TestClass]
     public class Day15Test
     {
-        string input = Util.GetInput<Day15>();
+        readonly string input = Util.GetInput<Day15>();
 
-        string test = @"1163751742
+        readonly string test = @"1163751742
 1381373672
 2136511328
 3694931569

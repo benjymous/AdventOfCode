@@ -7,9 +7,9 @@ namespace AoC.Advent2021.Test
     [TestClass]
     public class Day09Test
     {
-        string input = Util.GetInput<Day09>();
+        readonly string input = Util.GetInput<Day09>();
 
-        string test = "2199943210\n3987894921\n9856789892\n8767896789\n9899965678";
+        readonly string test = "2199943210\n3987894921\n9856789892\n8767896789\n9899965678";
 
         [TestCategory("Test")]
         [DataTestMethod]

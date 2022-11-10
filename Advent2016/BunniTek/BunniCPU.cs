@@ -21,60 +21,54 @@ namespace AoC.Advent2016.BunniTek
         d = 3
     };
 
-    public class Value
+    public struct Value
     {
-        public bool isInt { get; private set; }
-        public int intVal { get; private set; }
+        public bool IsInt { get; private set; }
+        public int IntVal { get; private set; }
 
         public Value(int input)
         {
-            isInt = true;
-            intVal = input;
+            IsInt = true;
+            IntVal = input;
         }
 
         public Value(RegisterId input)
         {
-            isInt = false;
-            intVal = (int)input;
+            IsInt = false;
+            IntVal = (int)input;
         }
 
         public Value(string input)
         {
             if (int.TryParse(input, out int v))
             {
-                isInt = true;
-                intVal = v;
+                IsInt = true;
+                IntVal = v;
             }
             else if (Enum.TryParse(input, out RegisterId r))
             {
-                intVal = (int)r;
-                isInt = false;
+                IntVal = (int)r;
+                IsInt = false;
             }
             else
             {
-                isInt = true;
-                intVal = 0;
+                IsInt = true;
+                IntVal = 0;
             }
         }
 
-        public Value(Value other)
-        {
-            intVal = other.intVal;
-            isInt = other.isInt;
-        }
-
-        public static implicit operator Value(int rhs) => new Value(rhs);
-        public static implicit operator Value(RegisterId rhs) => new Value(rhs);
+        public static implicit operator Value(int rhs) => new(rhs);
+        public static implicit operator Value(RegisterId rhs) => new(rhs);
 
         public override string ToString()
         {
-            if (isInt)
+            if (IsInt)
             {
-                return $"{intVal}";
+                return $"{IntVal}";
             }
             else
             {
-                return ((RegisterId)intVal).ToString();
+                return ((RegisterId)IntVal).ToString();
             }
         }
     }
@@ -83,7 +77,7 @@ namespace AoC.Advent2016.BunniTek
     {
         public OpCode Opcode;
         public Value X;
-        public Value Y;
+        public Value? Y = null;
 
         public Instruction(string line)
         {
@@ -98,12 +92,12 @@ namespace AoC.Advent2016.BunniTek
             }
         }
 
-        public Instruction(Instruction other)
-        {
-            Opcode = other.Opcode;
-            X = new Value(other.X);
-            if (other.Y != null) Y = new Value(other.Y);
-        }
+        //public Instruction(Instruction other)
+        //{
+        //    Opcode = other.Opcode;
+        //    X = new Value(other.X);
+        //    if (other.Y != null) Y = new Value(other.Y.Value);
+        //}
 
         public override string ToString() => $"{Opcode} {X} {Y}";
     }
@@ -115,8 +109,8 @@ namespace AoC.Advent2016.BunniTek
 
     public class BunnyCPU
     {
-        Instruction[] Instructions;
-        int[] Registers = new int[] { 0, 0, 0, 0 };
+        readonly Instruction[] Instructions;
+        readonly int[] Registers = new int[] { 0, 0, 0, 0 };
 
         System.Diagnostics.Stopwatch sw;
         Int64 CycleCount = 0;
@@ -139,12 +133,12 @@ namespace AoC.Advent2016.BunniTek
 
         public int Get(Value source)
         {
-            if (source.isInt)
+            if (source.IsInt)
             {
-                return source.intVal;
+                return source.IntVal;
             }
 
-            return Registers[source.intVal];
+            return Registers[source.IntVal];
         }
 
         public bool Step()
@@ -163,22 +157,22 @@ namespace AoC.Advent2016.BunniTek
             switch (instr.Opcode)
             {
                 case OpCode.cpy:
-                    Set(instr.Y.intVal, instr.X);
+                    Set(instr.Y.Value.IntVal, instr.X);
                     break;
 
                 case OpCode.inc:
-                    Registers[instr.X.intVal]++;
+                    Registers[instr.X.IntVal]++;
                     break;
 
                 case OpCode.dec:
-                    Registers[instr.X.intVal]--;
+                    Registers[instr.X.IntVal]--;
                     break;
 
                 case OpCode.jnz:
                     int val = Get(instr.X);
                     if (val != 0)
                     {
-                        InstructionPointer += Get(instr.Y);
+                        InstructionPointer += Get(instr.Y.Value);
                         return true;
                     }
                     break;

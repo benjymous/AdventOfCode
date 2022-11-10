@@ -5,10 +5,11 @@ namespace AoC.Advent2018.Test
 {
     [TestCategory("2018")]
     [TestCategory("ManhattanVector")]
+    [TestCategory("RegexParse")]
     [TestClass]
     public class Day10Test
     {
-        string input = Util.GetInput<Day10>();
+        readonly string input = Util.GetInput<Day10>();
 
         [TestCategory("Regression")]
         [DataTestMethod]

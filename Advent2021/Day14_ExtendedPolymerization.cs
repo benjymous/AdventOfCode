@@ -39,7 +39,7 @@ namespace AoC.Advent2021
                 pairs = Step(rules, pairs);
             }
 
-            Dictionary<char, long> groups = new Dictionary<char, long>();
+            Dictionary<char, long> groups = new();
             foreach (var pair in pairs)
             {
                 groups.IncrementAtIndex(pair.Key[0], pair.Value);
@@ -52,7 +52,7 @@ namespace AoC.Advent2021
 
         private static Dictionary<string, long> Step(Dictionary<string, Rule> rules, Dictionary<string, long> pairs)
         {
-            Dictionary<string, long> next = new Dictionary<string, long>();
+            Dictionary<string, long> next = new();
             foreach (var pair in pairs)
             {
                 if (rules.TryGetValue(pair.Key, out var rule))

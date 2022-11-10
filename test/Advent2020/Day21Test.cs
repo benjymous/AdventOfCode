@@ -6,9 +6,9 @@ namespace AoC.Advent2020.Test
     [TestClass]
     public class Day21Test
     {
-        string input = Util.GetInput<Day21>();
+        readonly string input = Util.GetInput<Day21>();
 
-        string test = "mxmxvkd kfcds sqjhc nhms (contains dairy, fish)\n" +
+        readonly string test = "mxmxvkd kfcds sqjhc nhms (contains dairy, fish)\n" +
             "trh fvjkl sbzzf mxmxvkd (contains dairy)\n" +
             "sqjhc fvjkl (contains soy)\n" +
             "sqjhc mxmxvkd sbzzf (contains fish)";

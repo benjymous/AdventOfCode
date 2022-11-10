@@ -46,7 +46,7 @@ namespace AoC.Advent2017
 
         public static IEnumerable<ManhattanVector2> Spiralize()
         {
-            ManhattanVector2 position = new ManhattanVector2(0, 0);
+            ManhattanVector2 position = new(0, 0);
 
             Direction dir = Direction.Right;
             int step = 1;

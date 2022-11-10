@@ -74,7 +74,7 @@ namespace AoC.Advent2021
             public int ReadInteger(int numBits) => Util.Repeat(ReadBit, numBits).Aggregate(0, (total, val) => (total << 1) + val);
             public int ReadBit() => stream.Pop().val;
 
-            IEnumerable<(int, int)> Bits(string raw) => raw.Select(ch => ch.ParseHex()).SelectMany(n => n.BinarySequenceBigEndian(8)).WithIndex().Select(v => (v.Value, v.Index));
+            static IEnumerable<(int, int)> Bits(string raw) => raw.Select(ch => ch.ParseHex()).SelectMany(n => n.BinarySequenceBigEndian(8)).WithIndex().Select(v => (v.Value, v.Index));
             (bool continueRead, int value) ReadChunk() => (ReadBit() == 1, ReadInteger(4));
             readonly IEnumerator<(int val,int idx)> stream;
         }

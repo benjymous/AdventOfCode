@@ -20,8 +20,8 @@ namespace AoC.Advent2021
                 foldLine = pos;
             }
 
-            bool foldX;
-            int foldLine;
+            readonly bool foldX;
+            readonly int foldLine;
 
             public IEnumerable<(int x, int y)> Perform(IEnumerable<(int x, int y)> dots)
             {
@@ -34,7 +34,7 @@ namespace AoC.Advent2021
 
         static string Display(HashSet<(int x, int y)> dots)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine();
 
             var maxX = dots.Max(v => v.x);
@@ -68,7 +68,7 @@ namespace AoC.Advent2021
 
             var data = folds.First().Perform(dots).ToHashSet();
 
-            return data.Count();
+            return data.Count;
         }
 
         public static string Part2(string input, ILogger logger=null)

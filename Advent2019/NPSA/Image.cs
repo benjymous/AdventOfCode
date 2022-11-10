@@ -37,8 +37,8 @@ namespace AoC.Advent2019.NPSA
         public int Width { get; private set; }
         public int Height { get; private set; }
 
-        IEnumerable<IEnumerable<char>> groups;
-        List<char> pixelData = new List<char>();
+        readonly IEnumerable<IEnumerable<char>> groups;
+        readonly List<char> pixelData = new();
 
         public int GetChecksum()
         {

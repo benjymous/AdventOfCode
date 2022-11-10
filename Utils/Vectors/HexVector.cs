@@ -21,7 +21,7 @@ namespace Advent.Utils.Vectors
         }
 
         // east/west sides
-        static Dictionary<string, (int x, int y, int z)> directions_pointy = new Dictionary<string, (int x, int y, int z)>()
+        static readonly Dictionary<string, (int x, int y, int z)> directions_pointy = new()
         {
             { "ne", (+1,-1, 0) },
             { "e",  (+1, 0, -1) },
@@ -32,7 +32,7 @@ namespace Advent.Utils.Vectors
         };
 
         // flat topped north
-        static Dictionary<string, (int x, int y, int z)> directions_flat = new Dictionary<string, (int x, int y, int z)>()
+        static readonly Dictionary<string, (int x, int y, int z)> directions_flat = new()
         {
             { "ne", (+1,-1, 0) },
             { "se", (+1, 0, -1) },

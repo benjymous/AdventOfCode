@@ -2,6 +2,7 @@ using Microsoft.Collections.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace AoC.Utils
 {
@@ -42,7 +43,7 @@ namespace AoC.Utils
         public static T GetStrKey<T>(this Dictionary<string, T> dict, string key)
         {
             if (dict.TryGetValue(key, out T val)) return val;
-            return default(T);
+            return default;
         }
 
         public static T GetObjKey<T>(this Dictionary<string, T> dict, object key)
@@ -76,7 +77,7 @@ namespace AoC.Utils
 
         public static IEnumerable<IEnumerable<T>> Permutations<T>(this IEnumerable<T> set, IEnumerable<T> subset = null)
         {
-            if (subset == null) subset = new T[] { };
+            subset ??= Array.Empty<T>();
             if (!set.Any()) yield return subset;
 
             for (var i = 0; i < set.Count(); i++)
@@ -157,7 +158,7 @@ namespace AoC.Utils
             while (true)
             {
                 var vals = input.Skip(i++).Take(2).ToArray();
-                if (vals.Count() < 2) break;
+                if (vals.Length < 2) break;
                 yield return (vals[0], vals[1]);
             }
         }
@@ -250,7 +251,7 @@ namespace AoC.Utils
         {
             if (row >= array2d.Height() || col >= array2d.Width() || row < 0 || col < 0)
             {
-                return default(T);
+                return default;
             }
 
             return array2d[col, row];
@@ -312,7 +313,7 @@ namespace AoC.Utils
         public static int MaxIndex<T>(this IEnumerable<T> sequence) where T : IComparable<T>
         {
             int maxIndex = -1;
-            T maxValue = default(T); // Immediately overwritten anyway
+            T maxValue = default; // Immediately overwritten anyway
 
             int index = 0;
             foreach (T value in sequence)
@@ -329,7 +330,7 @@ namespace AoC.Utils
 
         public static int CombinedHashCode<T>(this IEnumerable<T> sequence)
         {
-            HashCode hc = new HashCode();
+            HashCode hc = new();
             foreach (var v in sequence)
             {
                 hc.Add(v);
@@ -346,7 +347,7 @@ namespace AoC.Utils
 
         public static void Add<T>(this Queue<T> queue, T item) => queue.Enqueue(item);
 
-        public static Queue<T> ToQueue<T>(this IEnumerable<T> sequence) => new Queue<T>(sequence);
+        public static Queue<T> ToQueue<T>(this IEnumerable<T> sequence) => new(sequence);
 
         public static void EnqueueRange<T>(this Queue<T> queue, IEnumerable<T> sequence)
         {
@@ -358,6 +359,19 @@ namespace AoC.Utils
             T val = enumerator.Current;
             enumerator.MoveNext();
             return val;
+        }
+
+        public static void Operate<TElement, TPriority>(this PriorityQueue<TElement, TPriority> queue, Action<TElement> action)
+        {
+            while (queue.TryDequeue(out var element, out var _))
+            {
+                action(element);
+            }
+        }
+
+        public static IEnumerable<T> InsertRangeAt<T>(this IEnumerable<T> into, IEnumerable<T> elements, int pos)
+        {
+            return into.Take(pos).Union(elements).Union(into.Skip(pos));
         }
     }
 }

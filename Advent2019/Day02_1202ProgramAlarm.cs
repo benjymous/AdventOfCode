@@ -21,8 +21,8 @@ namespace AoC.Advent2019
         const int Part2_Target = 19690720;
 
         public static int Part2(string input) => Util.Matrix(100, 100)
-                   .Where(val => RunProgram(input, val.Item1, val.Item2) == Part2_Target)
-                   .Select(val => (100 * val.Item1) + val.Item2).FirstOrDefault();
+                   .Where(val => RunProgram(input, val.x, val.y) == Part2_Target)
+                   .Select(val => (100 * val.x) + val.y).FirstOrDefault();
 
         public void Run(string input, ILogger logger)
         {

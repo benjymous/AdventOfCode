@@ -20,7 +20,8 @@ namespace AoC.Advent2020
 
             public int Height { get; private set; }
             public int Width { get; private set; }
-            QuestionPart part;
+
+            readonly QuestionPart part;
 
             public State(string input, QuestionPart p)
             {
@@ -68,7 +69,7 @@ namespace AoC.Advent2020
                 }
             }
 
-            static (int dx, int dy)[] directions = new (int, int)[]
+            static readonly (int dx, int dy)[] directions = new (int, int)[]
             {
                 (0, 1),   // N
                 (1, 1),   // NE

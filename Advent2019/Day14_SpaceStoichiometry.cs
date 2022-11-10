@@ -16,7 +16,7 @@ namespace AoC.Advent2019
 
             public Component(string input)
             {
-                if (input.Contains(",")) throw new Exception("comma in input!");
+                if (input.Contains(',')) throw new Exception("comma in input!");
 
                 var bits = input.Trim().Split(" ");
                 quantity = Int64.Parse(bits[0]);
@@ -58,10 +58,10 @@ namespace AoC.Advent2019
         public static Int64 Decompose(Component input, Dictionary<string, Rule> rules)
         {
             Int64 ore = 0;
-            Queue<Component> currentSet = new Queue<Component>();
+            Queue<Component> currentSet = new();
             currentSet.Enqueue(input);
 
-            Dictionary<string, int> wasteHeap = new Dictionary<string, int>();
+            Dictionary<string, int> wasteHeap = new();
 
             while (currentSet.Count > 0)
             {
@@ -130,7 +130,7 @@ namespace AoC.Advent2019
 
             Int64 oreFor1Fuel = Decompose(new Component("1 FUEL"), rules);
 
-            HashSet<Int64> seen = new HashSet<Int64>();
+            HashSet<Int64> seen = new();
 
             Int64 guess = ore / oreFor1Fuel;
             Int64 bestGuess = guess;

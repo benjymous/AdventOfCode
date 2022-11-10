@@ -13,11 +13,11 @@ namespace AoC.Advent2019
 
         public class RepairDrone : NPSA.ICPUInterrupt
         {
-            NPSA.IntCPU cpu;
-            ManhattanVector2 position = new ManhattanVector2(0, 0);
+            readonly NPSA.IntCPU cpu;
+            ManhattanVector2 position = new(0, 0);
 
             ManhattanVector2 tryState = null;
-            Tuple<ManhattanVector2, ManhattanVector2> target = null;
+            (ManhattanVector2, ManhattanVector2) target = (null,null);
             bool hasTarget = false;
 
             public int Steps { get; private set; } = 0;
@@ -37,14 +37,14 @@ namespace AoC.Advent2019
                 }
             }
 
-            public GridMap<int> map = new GridMap<int>(new Walkable());
+            public GridMap<int> map = new(new Walkable());
 
             public string FindCell(int num)
             {
                 return map.FindCell(num);
             }
 
-            Stack<Tuple<ManhattanVector2, ManhattanVector2>> unknowns = new Stack<Tuple<ManhattanVector2, ManhattanVector2>>();
+            readonly Stack<(ManhattanVector2, ManhattanVector2)> unknowns = new();
 
             public enum Mode
             {
@@ -57,8 +57,10 @@ namespace AoC.Advent2019
 
             public RepairDrone(string input)
             {
-                cpu = new NPSA.IntCPU(input);
-                cpu.Interrupt = this;
+                cpu = new NPSA.IntCPU(input)
+                {
+                    Interrupt = this
+                };
             }
 
             public void Run()
@@ -71,7 +73,7 @@ namespace AoC.Advent2019
             {
                 if (!map.data.ContainsKey(neighbour.ToString()))
                 {
-                    unknowns.Push(Tuple.Create(current, neighbour));
+                    unknowns.Push((current, neighbour));
                 }
             }
 
@@ -155,16 +157,12 @@ namespace AoC.Advent2019
                         }
                         else
                         {
-                            switch (GetMapData(x, y))
+                            line += GetMapData(x, y) switch
                             {
-                                case 0:
-                                    line += "."; break;
-                                case 1:
-                                    line += "#"; break;
-                                default:
-                                    line += "?"; break;
-                            }
-
+                                0 => ".",
+                                1 => "#",
+                                _ => "?",
+                            };
                         }
                     }
                     logger.WriteLine(line);

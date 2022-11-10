@@ -4,12 +4,13 @@ namespace AoC.Advent2021.Test
 {
     [TestCategory("2021")]
     [TestCategory("Lines")]
+    [TestCategory("RegexParse")]
     [TestClass]
     public class Day05Test
     {
-        string input = Util.GetInput<Day05>();
+        readonly string input = Util.GetInput<Day05>();
 
-        string test = @"0,9 -> 5,9
+        readonly string test = @"0,9 -> 5,9
 8,0 -> 0,8
 9,4 -> 3,4
 2,2 -> 2,1

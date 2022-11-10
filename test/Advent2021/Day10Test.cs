@@ -7,9 +7,9 @@ namespace AoC.Advent2021.Test
     [TestClass]
     public class Day10Test
     {
-        string input = Util.GetInput<Day10>();
+        readonly string input = Util.GetInput<Day10>();
 
-        string test = @"[({(<(())[]>[[{[]{<()<>>
+        readonly string test = @"[({(<(())[]>[[{[]{<()<>>
 [(()[<>])]({[<{<<[]>>(
 {([(<{}[<>[]}>{[]{[(<()>
 (((({<>}<{<{<>}{[]{[]{}

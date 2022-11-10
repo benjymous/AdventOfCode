@@ -29,7 +29,7 @@ namespace AoC.Advent2016
 
         static Circle<Elf> CreateCircle(int numElves)
         {
-            Circle<Elf> start = new Circle<Elf>(new Elf(1, 1));
+            Circle<Elf> start = new(new Elf(1, 1));
             var node = start;
             for (int i = 1; i < numElves; ++i)
             {

@@ -11,16 +11,12 @@ namespace AoC.Advent2017
 
         class Particle
         {
-            static readonly string pattern = @"[p]=<(-*\d+,-*\d+,-*\d+)>, [v]=<(-*\d+,-*\d+,-*\d+)>, [a]=<(-*\d+,-*\d+,-*\d+)>";
-            public Particle(string line)
+            [Regex(@"[p]=<(-*\d+,-*\d+,-*\d+)>, [v]=<(-*\d+,-*\d+,-*\d+)>, [a]=<(-*\d+,-*\d+,-*\d+)>")]
+            public Particle(ManhattanVector3 p, ManhattanVector3 v, ManhattanVector3 a)
             {
-                var match = Regex.Matches(line, pattern).First();
-
-                var vals = match.Groups.Values.ToArray();
-
-                pos = new ManhattanVector3(vals[1].Value);
-                vel = new ManhattanVector3(vals[2].Value);
-                acc = new ManhattanVector3(vals[3].Value);
+                pos = p;
+                vel = v;
+                acc = a;
             }
 
             public ManhattanVector3 pos;
@@ -49,7 +45,7 @@ namespace AoC.Advent2017
 
         public static int Part1(string input)
         {
-            var particles = Util.Parse<Particle>(input);
+            var particles = Util.RegexParse<Particle>(input).ToList();
 
             var slowest = particles.OrderBy(p => p.acc.Length).First();
             return particles.IndexOf(slowest);
@@ -57,7 +53,7 @@ namespace AoC.Advent2017
 
         public static int Part2(string input)
         {
-            IEnumerable<Particle> particles = Util.Parse<Particle>(input);
+            IEnumerable<Particle> particles = Util.RegexParse<Particle>(input);
 
             int lastCol = 0;
 

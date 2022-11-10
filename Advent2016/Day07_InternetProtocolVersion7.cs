@@ -41,8 +41,8 @@ namespace AoC.Advent2016
         {
             int bracketCount = 0;
 
-            HashSet<string> abas = new HashSet<string>();
-            HashSet<string> babs = new HashSet<string>();
+            HashSet<string> abas = new();
+            HashSet<string> babs = new();
 
             for (int i = 0; i < address.Length - 2; ++i)
             {

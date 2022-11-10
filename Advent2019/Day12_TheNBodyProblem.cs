@@ -15,7 +15,7 @@ namespace AoC.Advent2019
         public class Body
         {
             public ManhattanVector3 position;
-            public ManhattanVector3 velocity = new ManhattanVector3(0, 0, 0);
+            public ManhattanVector3 velocity = new(0, 0, 0);
             public Body(string input)
             {
                 position = new ManhattanVector3(input);
@@ -59,7 +59,7 @@ namespace AoC.Advent2019
 
         public class System
         {
-            List<Body> bodies;
+            readonly List<Body> bodies;
             public System(string input)
             {
                 bodies = Util.Parse<Body>(input);

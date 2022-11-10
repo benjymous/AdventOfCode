@@ -23,7 +23,7 @@ namespace AoC.Advent2016
                     case 'R': direction.TurnRight(); break;
                 }
 
-                var distance = int.Parse(instruction.Substring(1));
+                var distance = int.Parse(instruction[1..]);
                 position.Offset(direction, distance);
 
             }
@@ -48,7 +48,7 @@ namespace AoC.Advent2016
                     case 'R': direction.TurnRight(); break;
                 }
 
-                var distance = int.Parse(instruction.Substring(1));
+                var distance = int.Parse(instruction[1..]);
 
                 for (int i = 0; i < distance; ++i)
                 {

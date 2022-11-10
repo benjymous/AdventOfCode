@@ -46,7 +46,7 @@ namespace AoC.Advent2019
 
         private static Dictionary<string, int> FindPatterns(string value)
         {
-            List<string> patternToSearchList = new List<string>();
+            List<string> patternToSearchList = new();
             for (int i = 0; i < value.Length; i++)
             {
                 for (int j = 2; j <= value.Length / 2; j++)
@@ -57,7 +57,7 @@ namespace AoC.Advent2019
                     }
                 }
             }
-            Dictionary<string, int> results = new Dictionary<string, int>();
+            Dictionary<string, int> results = new();
             foreach (string pattern in patternToSearchList)
             {
                 int occurence = Regex.Matches(value, pattern, RegexOptions.IgnoreCase).Count;
@@ -65,7 +65,7 @@ namespace AoC.Advent2019
                 var firstc = pattern.First();
                 bool startsWithCommand = (firstc == 'L' || firstc == 'R');
                 bool endsNumeric = finalc >= '0' && finalc <= '9';
-                bool containsSubroutine = pattern.Contains("-");
+                bool containsSubroutine = pattern.Contains('-');
                 if (pattern.Length <= 21 && !containsSubroutine && startsWithCommand && pattern.EndsWith(",") && endsNumeric)
                 {
                     results[pattern] = occurence;
@@ -80,9 +80,9 @@ namespace AoC.Advent2019
         {
             var shrunk = unoptimised.Replace(" ", "");
 
-            if (!shrunk.EndsWith(",")) shrunk = shrunk + ",";
+            if (!shrunk.EndsWith(",")) shrunk += ",";
 
-            List<string> subs = new List<string>();
+            List<string> subs = new();
 
             var result = TrySubstitute(shrunk, subs);
 
@@ -96,7 +96,7 @@ namespace AoC.Advent2019
 
         static bool NeedsToShrink(string s)
         {
-            return s.Contains("L") || s.Contains("R");
+            return s.Contains('L') || s.Contains('R');
         }
 
         public static string Filter(string input)
@@ -105,7 +105,7 @@ namespace AoC.Advent2019
 
             if (input.EndsWith(","))
             {
-                input = input.Substring(0, input.Length - 1);
+                input = input[..^1];
             }
 
             return input;
@@ -169,7 +169,7 @@ namespace AoC.Advent2019
             return null;
         }
 
-        IEnumerable<string> Compile(string program)
+        static IEnumerable<string> Compile(string program)
         {
             var shrunk = program.Replace(" ", "");
 
@@ -178,7 +178,7 @@ namespace AoC.Advent2019
             return lines;
         }
 
-        int countNeighbours(int x, int y)
+        int CountNeighbours(int x, int y)
         {
             int count = 0;
             if (buffer.GetAt(x - 1, y) == '#') count++;
@@ -195,7 +195,7 @@ namespace AoC.Advent2019
             var direction = new Direction2(0, -1);
             while (true)
             {
-                if (countNeighbours(position.X, position.Y) == 1 && command.Any()) break;
+                if (CountNeighbours(position.X, position.Y) == 1 && command.Any()) break;
 
                 int spins = 0;
                 while (buffer.GetAt(position.X + direction.DX, position.Y + direction.DY) != '#' || spins == 2)

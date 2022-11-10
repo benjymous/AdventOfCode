@@ -3,10 +3,8 @@ using System.Collections.Generic;
 
 namespace AoC.Utils
 {
-
     public static class Extensions
     {
-
         // iterate over bits, returns sequence like 1,2,4,8 (only returning set bits in input)
         public static IEnumerable<int> BitSequence(this int v)
         {
@@ -47,7 +45,7 @@ namespace AoC.Utils
         {
             for (Int64 k = 1; k <= v; k <<= 1)
             {
-                yield return ((v & k) > 0) ? true : false;
+                yield return ((v & k) > 0);
             }
         }
 
@@ -63,43 +61,18 @@ namespace AoC.Utils
             double exponent = Math.Log10(Math.Abs(d));
             if (Math.Abs(d) >= 1)
             {
-                switch ((int)Math.Floor(exponent))
+                return (int)Math.Floor(exponent) switch
                 {
-                    case 0:
-                    case 1:
-                    case 2:
-                        return d.ToString();
-                    case 3:
-                    case 4:
-                    case 5:
-                        return (d / 1e3).ToString(fmt) + "k";
-                    case 6:
-                    case 7:
-                    case 8:
-                        return (d / 1e6).ToString(fmt) + "M";
-                    case 9:
-                    case 10:
-                    case 11:
-                        return (d / 1e9).ToString(fmt) + "G";
-                    case 12:
-                    case 13:
-                    case 14:
-                        return (d / 1e12).ToString(fmt) + "T";
-                    case 15:
-                    case 16:
-                    case 17:
-                        return (d / 1e15).ToString(fmt) + "P";
-                    case 18:
-                    case 19:
-                    case 20:
-                        return (d / 1e18).ToString(fmt) + "E";
-                    case 21:
-                    case 22:
-                    case 23:
-                        return (d / 1e21).ToString(fmt) + "Z";
-                    default:
-                        return (d / 1e24).ToString(fmt) + "Y";
-                }
+                    0 or 1 or 2 => d.ToString(),
+                    3 or 4 or 5 => (d / 1e3).ToString(fmt) + "k",
+                    6 or 7 or 8 => (d / 1e6).ToString(fmt) + "M",
+                    9 or 10 or 11 => (d / 1e9).ToString(fmt) + "G",
+                    12 or 13 or 14 => (d / 1e12).ToString(fmt) + "T",
+                    15 or 16 or 17 => (d / 1e15).ToString(fmt) + "P",
+                    18 or 19 or 20 => (d / 1e18).ToString(fmt) + "E",
+                    21 or 22 or 23 => (d / 1e21).ToString(fmt) + "Z",
+                    _ => (d / 1e24).ToString(fmt) + "Y",
+                };
             }
             else if (Math.Abs(d) > 0)
             {
@@ -130,17 +103,6 @@ namespace AoC.Utils
             }
         }
 
-        public static string MultipleWithS(this int value, string str)
-        {
-            if (value == 1)
-            {
-                return str;
-            }
-            else
-            {
-                return $"{value} {str}s";
-            }
-        }
         public static int ParseHex(this char c)
         {
             if (c >= '0' && c <= '9') return c - '0';

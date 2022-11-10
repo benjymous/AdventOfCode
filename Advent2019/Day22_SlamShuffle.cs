@@ -12,7 +12,7 @@ namespace AoC.Advent2019
         public class Deck
         {
             public IEnumerable<int> cards;
-            int size;
+            readonly int size;
 
             public Deck(int deckSize)
             {
@@ -33,13 +33,12 @@ namespace AoC.Advent2019
 
             public Deck Cut(int cut)
             {
-                int front = 0;
-                int back = 0;
-
+                int front;
+                int back;
                 if (cut >= 0)
                 {
                     front = cut;
-                    back = size - front;
+                    _ = size - front;
                 }
                 else
                 {
@@ -84,7 +83,7 @@ namespace AoC.Advent2019
             }
         }
 
-        static HashSet<string> seen = new HashSet<string>();
+        static readonly HashSet<string> seen = new();
 
         private static Deck Shuffle(Deck deck, string input)
         {
@@ -169,13 +168,13 @@ namespace AoC.Advent2019
             }
         };
 
-        static Matrix antiCut(BigInteger c) => new Matrix(1, c, 0, 1);
+        static Matrix AntiCut(BigInteger c) => new(1, c, 0, 1);
 
-        static Matrix antiRev() => new Matrix(-1, numCards - 1, 0, 1);
+        static Matrix AntiRev() => new(-1, numCards - 1, 0, 1);
 
-        static Matrix antiInc(BigInteger num) => new Matrix(modInverse(num), 0, 0, 1);
+        static Matrix AntiInc(BigInteger num) => new(ModInverse(num), 0, 0, 1);
 
-        static BigInteger modInverse(BigInteger b) => Pow(b, numCards - 2);
+        static BigInteger ModInverse(BigInteger b) => Pow(b, numCards - 2);
 
         static BigInteger Pow(BigInteger baseVal, BigInteger exp)
         {
@@ -196,7 +195,7 @@ namespace AoC.Advent2019
                 return new Matrix(1, 0, 0, 1);
             }
             var ans = Pow(m, exp / 2);
-            ans = ans * ans;
+            ans *= ans;
             if ((exp & 1) > 0)
             {
                 return m * ans;
@@ -220,19 +219,19 @@ namespace AoC.Advent2019
                 if (line.StartsWith("deal with increment"))
                 {
                     var value = int.Parse(line.Split(" ").Last());
-                    m = m * antiInc(value);
+                    m *= AntiInc(value);
 
                 }
                 else if (line.StartsWith("cut"))
                 {
                     var value = Int64.Parse(line.Split(" ").Last());
 
-                    m = m * antiCut(value);
+                    m *= AntiCut(value);
 
                 }
                 else if (line.Contains("new stack"))
                 {
-                    m = m * antiRev();
+                    m *= AntiRev();
                 }
                 else
                 {

@@ -12,9 +12,9 @@ namespace AoC.Advent2016
 
         public class Display
         {
-            int GridWidth;
-            int GridHeight;
-            bool[,] pixels;
+            readonly int GridWidth;
+            readonly int GridHeight;
+            readonly bool[,] pixels;
 
             public Display(string input, int w, int h)
             {
@@ -81,7 +81,7 @@ namespace AoC.Advent2016
 
             void RotateRow(int row, int shift)
             {
-                List<bool> changedRow = new List<bool>();
+                List<bool> changedRow = new();
                 for (int x = 0; x < GridWidth; ++x)
                 {
                     int nx = (GridWidth + (x - shift)) % GridWidth;
@@ -96,7 +96,7 @@ namespace AoC.Advent2016
 
             void RotateCol(int col, int shift)
             {
-                List<bool> changedCol = new List<bool>();
+                List<bool> changedCol = new();
                 for (int y = 0; y < GridHeight; ++y)
                 {
                     int ny = (GridHeight + (y - shift)) % GridHeight;

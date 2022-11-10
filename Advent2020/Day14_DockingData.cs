@@ -108,8 +108,8 @@ namespace AoC.Advent2020
 
         class MemoryContainer<T>
         {
-            Queue<T> items = new Queue<T>();
-            HashSet<T> seen = new HashSet<T>();
+            readonly Queue<T> items = new();
+            readonly HashSet<T> seen = new();
             public void Push(T v)
             {
                 if (!seen.Contains(v))
@@ -130,19 +130,19 @@ namespace AoC.Advent2020
 
             while (inputs.Any)
             {
-                var next = inputs.Take();
+                var (Value, QuantumBits) = inputs.Take();
 
-                if (next.QuantumBits == 0)
+                if (QuantumBits == 0)
                 {
-                    yield return next.Value;
+                    yield return Value;
                 }
                 else
                 {
-                    foreach (var b in next.QuantumBits.BitSequence())
+                    foreach (var b in QuantumBits.BitSequence())
                     {
-                        Int64 newq = next.QuantumBits & ~b;
-                        inputs.Push((next.Value & ~(b), newq));
-                        inputs.Push((next.Value | b, newq));
+                        Int64 newq = QuantumBits & ~b;
+                        inputs.Push((Value & ~(b), newq));
+                        inputs.Push((Value | b, newq));
                     }
                 }
             }

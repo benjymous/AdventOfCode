@@ -21,7 +21,7 @@ namespace AoC.Advent2015
                 {
                     case 1:
                         {
-                            if (int.TryParse(split2[0], out int v))
+                            if (int.TryParse(split2[0], out int _))
                             {
                                 Value = int.Parse(split2[0]);
                                 HasValue = true;
@@ -79,7 +79,6 @@ namespace AoC.Advent2015
 
             public void Override(string wire, int value)
             {
-                var x = index[wire];
                 index[wire].Value = value;
                 index[wire].HasValue = true;
             }
@@ -111,31 +110,15 @@ namespace AoC.Advent2015
                 else
                 {
 
-                    switch (comp.Operator)
+                    comp.Value = comp.Operator switch
                     {
-                        case "AND":
-                            comp.Value = Solve(comp.Input1) & Solve(comp.Input2);
-                            break;
-
-                        case "OR":
-                            comp.Value = Solve(comp.Input1) | Solve(comp.Input2);
-                            break;
-
-                        case "LSHIFT":
-                            comp.Value = Solve(comp.Input1) << Solve(comp.Input2);
-                            break;
-
-
-                        case "RSHIFT":
-                            comp.Value = Solve(comp.Input1) >> Solve(comp.Input2);
-                            break;
-
-                        case "NOT":
-                            comp.Value = 65535 - Solve(comp.Input1);
-                            break;
-
-                        default: throw new Exception("Unknown operator!");
-                    }
+                        "AND" => Solve(comp.Input1) & Solve(comp.Input2),
+                        "OR" => Solve(comp.Input1) | Solve(comp.Input2),
+                        "LSHIFT" => Solve(comp.Input1) << Solve(comp.Input2),
+                        "RSHIFT" => Solve(comp.Input1) >> Solve(comp.Input2),
+                        "NOT" => 65535 - Solve(comp.Input1),
+                        _ => throw new Exception("Unknown operator!"),
+                    };
                     comp.HasValue = true;
                     return comp.Value;
                 }
@@ -143,7 +126,7 @@ namespace AoC.Advent2015
                 return 0;
             }
 
-            Dictionary<string, Component> index;
+            readonly Dictionary<string, Component> index;
         }
 
 

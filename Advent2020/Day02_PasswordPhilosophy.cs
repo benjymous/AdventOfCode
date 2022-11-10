@@ -9,25 +9,24 @@ namespace AoC.Advent2020
 
         public class Record
         {
-            public Record(string row)
+            [Regex(@"(\d+)-(\d+) (.): (.+)")]
+            public Record(int low, int high, char testChar, string password)
             {
-                var parts = row.Split(' ');
-                Password = parts[2].Trim();
-                TestChar = parts[1][0];
-                Values = Util.Parse32(parts[0], '-');
-                if (Values.Length != 2) throw new InvalidProgramException($"Invalid record {row}");
+                (LowCount, HighCount) = (low, high);
+                TestChar = testChar;
+                Password = password;
             }
 
-            public string Password;
-            public char TestChar;
-            public int[] Values;
+            readonly int LowCount, HighCount;
+            readonly char TestChar;
+            readonly string Password;
 
             public bool ValidPt1
             {
                 get
                 {
                     var test = Password.Count(c => c == TestChar);
-                    return test >= Values[0] && test <= Values[1];
+                    return test >= LowCount && test <= HighCount;
                 }
             }
 
@@ -35,8 +34,8 @@ namespace AoC.Advent2020
             {
                 get
                 {
-                    var is1 = Password[Values[0] - 1] == TestChar;
-                    var is2 = Password[Values[1] - 1] == TestChar;
+                    var is1 = Password[LowCount - 1] == TestChar;
+                    var is2 = Password[HighCount - 1] == TestChar;
 
                     return is1 ^ is2; // Exclusive or
                 }
@@ -45,14 +44,12 @@ namespace AoC.Advent2020
 
         public static int Part1(string input)
         {
-            var records = Util.Parse<Record>(input);
-            return records.Count(r => r.ValidPt1);
+            return Util.RegexParse<Record>(input).Count(r => r.ValidPt1);
         }
 
         public static int Part2(string input)
         {
-            var records = Util.Parse<Record>(input);
-            return records.Count(r => r.ValidPt2);
+            return Util.RegexParse<Record>(input).Count(r => r.ValidPt2);
         }
 
         public void Run(string input, ILogger logger)

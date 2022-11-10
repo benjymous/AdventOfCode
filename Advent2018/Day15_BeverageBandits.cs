@@ -23,7 +23,7 @@ namespace AoC.Advent2018
             public int AP = 3;
         }
 
-        static readonly IEnumerable<(int dx, int dy)> InRange = Util.Values((0, -1), (-1, 0), (1, 0), (0, 1));
+        static readonly (int dx, int dy)[] InRange = { (0, -1), (-1, 0), (1, 0), (0, 1) };
 
         class Map : IMap<(int x, int y)>
         {
@@ -38,8 +38,8 @@ namespace AoC.Advent2018
                 Creatures = gobins.Union(elves).ToDictionary();
             }
 
-            HashSet<(int x, int y)> Walls;
-            Dictionary<(int x, int y), Creature> Creatures;
+            readonly HashSet<(int x, int y)> Walls;
+            readonly Dictionary<(int x, int y), Creature> Creatures;
 
             public int ElfCount() => Creatures.Values.Where(c => c.type == CreatureType.Elf).Count();
 
@@ -50,7 +50,7 @@ namespace AoC.Advent2018
 
             (bool hasTarget, (int x, int y) newPos) MoveUnit(KeyValuePair<(int x, int y), Creature> creature)
             {
-                var targets = Creatures.Where(c => c.Value.type != creature.Value.type);
+                var targets = Creatures.Where(c => c.Value.type != creature.Value.type).ToDictionary();
 
                 if (!targets.Any()) return (false, (0,0));
 
@@ -65,33 +65,22 @@ namespace AoC.Advent2018
                 return (true, target);
             }
 
-            (int x, int y) FindTarget(KeyValuePair<(int x, int y), Creature> creature, IEnumerable<KeyValuePair<(int x, int y), Creature>> targets)
+            (int x, int y) FindTarget(KeyValuePair<(int x, int y), Creature> creature, Dictionary<(int x, int y), Creature> targets)
             {
-                foreach (var neighbour in InRange)
+                foreach (var (dx, dy) in InRange)
                 {
-                    var pos = (creature.Key.x + neighbour.dx, creature.Key.y + neighbour.dy);
-                    if (Creatures.TryGetValue(pos, out var potential))
+                    var pos = (x:creature.Key.x + dx, y:creature.Key.y + dy);
+                    if (targets.TryGetValue(pos, out var potential))
                     {
-                        if (potential.type != creature.Value.type)
-                        {
-                            //Console.WriteLine("Doesn't move");
-                            return (creature.Key);
-                        }
+                        return (creature.Key);
                     }
                 }
 
-                var potentialTargets = targets.SelectMany(target => InRange.Select(offset => (target.Key.x + offset.dx, target.Key.y + offset.dy))).Where(pos => IsClear(pos) || pos == creature.Key).ToHashSet();
+                var potentialTargets = targets.SelectMany(target => InRange.Select(offset => (x:target.Key.x + offset.dx, y: target.Key.y + offset.dy))).Where(pos => IsClear(pos) || pos == creature.Key).ToHashSet();
 
-                List<((int x, int y) pos, int dist)> reachable = new();
-
-                foreach (var pos in potentialTargets)
-                {
-                    var path = AStar<(int x, int y)>.FindPath(this, creature.Key, pos);
-                    if (path.Any())
-                    {
-                        reachable.Add((pos, path.Count()));
-                    }
-                }
+                var reachable = potentialTargets.Select(pos => (pos, path: AStar<(int x, int y)>.FindPath(this, creature.Key, pos)))
+                                                 .Where(entry => entry.path.Any())
+                                                 .Select(entry => (entry.pos, dist:entry.path.Count()));
 
                 if (!reachable.Any()) return creature.Key;
 
@@ -105,9 +94,9 @@ namespace AoC.Advent2018
             public (int x, int y) ReadingOrderMove((int x, int y) pos, (int x, int y) dest)
             {
                 List<((int x, int y) pos, int dist)> readingOrder = new();
-                foreach (var dir in InRange)
+                foreach (var (dx, dy) in InRange)
                 {
-                    var newPos = (pos.x + dir.dx, pos.y + dir.dy);
+                    var newPos = (pos.x + dx, pos.y + dy);
                     if (newPos == dest) return newPos;
                     if (IsClear(newPos))
                     {
@@ -129,15 +118,15 @@ namespace AoC.Advent2018
 
                     if (creature.Value.HP <= 0) continue;
 
-                    var moved = MoveUnit(creature);
-                    if (!moved.hasTarget) return false;
+                    var (hasTarget, newPos) = MoveUnit(creature);
+                    if (!hasTarget) return false;
 
-                    var creaturePos = moved.newPos;
+                    var (x, y) = newPos;
 
                     var targets = new List<((int x, int y) pos, Creature creature)>();
-                    foreach (var neighbour in InRange)
+                    foreach (var (dx, dy) in InRange)
                     {
-                        var pos = (creaturePos.x + neighbour.dx, creaturePos.y + neighbour.dy);
+                        var pos = (x + dx, y + dy);
                         if (Creatures.TryGetValue(pos, out var potential))
                         {
                             if (potential.type != creature.Value.type)
@@ -241,18 +230,13 @@ namespace AoC.Advent2018
 
         public static int Part2(string input)
         {
-            Dictionary<uint, int> results = new();
-
-            var elfAP = Util.BinarySearch(4, 100, elfAP =>
+            return Util.BinarySearch(4, elfAP =>
             {
                 var score = ElfBattle(input, (int)elfAP, true);
-                results[elfAP] = score;
                 bool win = score > 0;
                 Console.WriteLine($"{elfAP} => {win}");
-                return win;
-            });
-
-            return results[elfAP];
+                return (win, score);
+            }).result;
 
         }
 

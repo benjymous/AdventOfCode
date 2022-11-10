@@ -12,13 +12,10 @@ namespace AoC.Advent2019
 
         public class EmergencyHullPainterRobot : NPSA.ICPUInterrupt
         {
-            NPSA.IntCPU cpu;
-
-            ManhattanVector2 position = new ManhattanVector2(0, 0);
-
-            Dictionary<string, int> hullColours = new Dictionary<string, int>();
-
-            Direction2 direction = new Direction2(0, -1);
+            readonly NPSA.IntCPU cpu;
+            readonly ManhattanVector2 position = new(0, 0);
+            readonly Dictionary<string, int> hullColours = new();
+            readonly Direction2 direction = new(0, -1);
 
             int minx = 0;
             int miny = 0;
@@ -59,7 +56,7 @@ namespace AoC.Advent2019
 
             public int GetPaintedTileCount()
             {
-                return hullColours.Count();
+                return hullColours.Count;
             }
 
 

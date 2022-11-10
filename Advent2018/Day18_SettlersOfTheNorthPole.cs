@@ -35,8 +35,8 @@ namespace AoC.Advent2018
                     // An acre containing a lumberyard will remain a lumberyard if it was adjacent
                     // to at least one other lumberyard and at least one acre containing trees.
                     // Otherwise, it becomes open.
-                    if (neighbours.Where(n => n == LUMBERYARD).Count() >= 1 &&
-                        neighbours.Where(n => n == TREES).Count() >= 1) return LUMBERYARD;
+                    if (neighbours.Where(n => n == LUMBERYARD).Any() &&
+                        neighbours.Where(n => n == TREES).Any()) return LUMBERYARD;
                     else return OPEN;
             }
 
@@ -77,7 +77,7 @@ namespace AoC.Advent2018
 
             for (var i = 0; i < iterations; ++i)
             {
-                var score = Count(TREES, currentState) * Count(LUMBERYARD, currentState);
+                _ = Count(TREES, currentState) * Count(LUMBERYARD, currentState);
 
                 // if (score == LOOKFOR)
                 // {

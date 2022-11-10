@@ -11,7 +11,6 @@ namespace AoC.Advent2021
 
         static readonly Dictionary<byte, char> destinations = new() { { Convert(3, 2), 'A' },  { Convert(5, 2), 'B' }, { Convert(7, 2), 'C' },  { Convert(9, 2), 'D' },  { Convert(3, 3), 'A' },  { Convert(5, 3), 'B' }, { Convert(7, 3), 'C' }, { Convert(9, 3), 'D' }, { Convert(3, 4), 'A' }, { Convert(5, 4), 'B' }, { Convert(7, 4), 'C' }, { Convert(9, 4), 'D' }, { Convert(3, 5), 'A' }, { Convert(5, 5), 'B' }, { Convert(7, 5), 'C' }, { Convert(9, 5), 'D' } };
         static readonly int[] destinationCol = new int[] { 3, 5, 7, 9 };
-        static readonly HashSet<int> doorCells = new() { 3, 5, 7, 9 };
         static readonly int[] moveCosts = new int[] { 1, 10, 100, 1000 };
 
         static bool IsClear(int x1, int x2, State state) => !Util.RangeInclusive(Math.Min(x1, x2), Math.Max(x1, x2)).Where(x => !state.CellOpen(Convert(x, 1))).Any();
@@ -30,7 +29,7 @@ namespace AoC.Advent2021
             {
                 (OpenCells, Critters, Score) = (openCells, critters, score);
                 Key = (Critters.Keys.Select(k => 1UL << k).Sum(), Critters.OrderBy(kvp => kvp.Key).Select(kvp => (uint)(kvp.Value - 'A')).Aggregate(0U, (p, v) => (p << 2) + v));
-                EstimatedScore = Score + Critters.Sum(c => Convert(c.Key).x != destinationCol[c.Value - 'A'] ? (Convert(c.Key).y - 1 + Math.Abs(Convert(c.Key).x - destinationCol[c.Value - 'A'])) * moveCosts[c.Value - 'A'] : 0);
+                EstimatedScore = Score + Critters.Select(c => (Pos: Convert(c.Key), c.Value)).Sum(v => v.Pos.x != destinationCol[v.Value - 'A'] ? (v.Pos.y - 1 + Math.Abs(v.Pos.x - destinationCol[v.Value - 'A'])) * moveCosts[v.Value - 'A'] : 0);
             }
 
             public bool CellOpen(int bit) => ((OpenCells >> bit) & 1) == 1;
@@ -69,7 +68,7 @@ namespace AoC.Advent2021
                     for (int i = 1; i < 9; ++i)
                     {
                         int x = critterPos.x + (i * dir);
-                        if (!doorCells.Contains(x))
+                        if (!destinationCol.Contains(x))
                         {
                             var move = Convert(x, 1);
                             if (state.CellOpen(move)) yield return(critter, move, critterPos.y - 1 + i, false);
@@ -90,7 +89,7 @@ namespace AoC.Advent2021
             queue.Enqueue(new State(map.Where(kvp => kvp.Value == '.').Select(kvp => kvp.Key).Select(p => 1UL << Convert(p.x, p.y)).Sum(), map.Where(kvp => kvp.Value >= 'A' && kvp.Value <= 'D').ToDictionary(kvp => Convert(kvp.Key.x, kvp.Key.y), kvp => kvp.Value), 0), 0);
             int bestScore = int.MaxValue;
 
-            while (queue.TryDequeue(out var state, out var _))
+            queue.Operate((state) =>
             {
                 foreach (var move in state.Critters.SelectMany(critter => CritterMoves(state, critter)))
                 {
@@ -99,12 +98,10 @@ namespace AoC.Advent2021
 
                     CloseCompleted(newState);
 
-                    if (newState.Critters.Any())
-                        queue.Enqueue(newState, newState.EstimatedScore);
-                    else
-                        bestScore = Math.Min(bestScore, newState.Score);
+                    if (newState.Critters.Any()) queue.Enqueue(newState, newState.EstimatedScore);
+                    else bestScore = Math.Min(bestScore, newState.Score);
                 }
-            }
+            });
 
             return bestScore;
         }
@@ -116,8 +113,7 @@ namespace AoC.Advent2021
 
         public static int Part2(string input)
         {
-            var lines = input.Split('\n');
-            return ShrimpStacker(lines.Take(3).Union(new string[] { "  #D#C#B#A#", "  #D#B#A#C#" }).Union(lines.Skip(3)));
+            return ShrimpStacker(input.Split('\n').InsertRangeAt(new string[] { "  #D#C#B#A#", "  #D#B#A#C#" }, 3));
         }
 
         public void Run(string input, ILogger logger)

@@ -12,11 +12,12 @@ namespace AoC.Advent2018
         {
             public ManhattanVector2 position;
             public ManhattanVector2 velocity;
-            public Drone(string line)
+
+            [Regex(@"position=<(.+, .+)> velocity=<(.+, .+)>")]
+            public Drone(ManhattanVector2 pos, ManhattanVector2 vel)
             {
-                var nums = Util.ExtractNumbers(line);
-                position = new ManhattanVector2(nums[0], nums[1]);
-                velocity = new ManhattanVector2(nums[2], nums[3]);
+                position = pos;
+                velocity = vel;
             }
 
             public void Step() => position += velocity;
@@ -27,7 +28,7 @@ namespace AoC.Advent2018
 
         public static (int steps, string message) Solve(string input)
         {
-            var drones = Util.Parse<Drone>(input);
+            var drones = Util.RegexParse<Drone>(input);
 
             int steps = 0;
             while (true)
@@ -67,7 +68,7 @@ namespace AoC.Advent2018
                             }
                             sb.Append(hit ? "#" : " ");
                         }
-                        sb.Append("\n");
+                        sb.Append('\n');
                     }
                     return (steps, sb.ToString());
                 }

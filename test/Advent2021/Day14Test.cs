@@ -3,12 +3,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AoC.Advent2021.Test
 {
     [TestCategory("2021")]
+    [TestCategory("RegexParse")]
     [TestClass]
     public class Day14Test
     {
-        string input = Util.GetInput<Day14>();
+        readonly string input = Util.GetInput<Day14>();
 
-        string test = @"NNCB
+        readonly string test = @"NNCB
 
 CH -> B
 HH -> N

@@ -58,9 +58,14 @@ namespace AoC
             return v % length;
         }
 
+        public static T Create<T>(string line)
+        {
+            return (T)Activator.CreateInstance(typeof(T), new object[] { line });
+        }
+
         public static List<T> Parse<T>(IEnumerable<string> input)
         {
-            return input.Select(line => (T)Activator.CreateInstance(typeof(T), new object[] { line }))
+            return input.Select(line => Create<T>(line))
                         .ToList();
         }
 
@@ -86,25 +91,29 @@ namespace AoC
         {
             foreach (var typeConstructor in typeof(T).GetConstructors())
             {
-                if (!(typeConstructor?.GetCustomAttributes(typeof(RegexAttribute), true)
-                    .FirstOrDefault() is RegexAttribute attribute)) continue;
+                if (typeConstructor?.GetCustomAttributes(typeof(RegexAttribute), true)
+                    .FirstOrDefault() is not RegexAttribute attribute) continue; // skip constructor if it doesn't have attr
 
-                try
-                {
-                    return (T)Activator.CreateInstance
-                    (
-                        typeof(T), Enumerable.Zip(
-                            typeConstructor.GetParameters(),
-                            Regex.Matches(line, attribute.Pattern)[0]
-                                .Groups.Values.Where(v => !string.IsNullOrWhiteSpace(v.Value))
-                                .Skip(1).Select(g => g.Value)
-                        )
-                        .Select(kvp => TypeDescriptor.GetConverter(kvp.First.ParameterType).ConvertFromString(kvp.Second)).ToArray()
-                    );
-                }
-                catch { }
+                var matches = Regex.Matches(line, attribute.Pattern); // match this constructor against the input line
+
+                if (!matches.Any()) continue; // Try other constructors to see if they match
+
+                var paramInfo = typeConstructor.GetParameters();
+
+                var regexValues = matches[0]
+                    .Groups.Values.Where(v => !string.IsNullOrWhiteSpace(v.Value))
+                    .Skip(1).Select(g => g.Value);
+
+                if (regexValues.Count() != paramInfo.Length) throw new Exception("RegexParse couldn't match constructor param count");
+
+                var instanceParams = Enumerable.Zip(paramInfo, regexValues); // collate parameter types and matched substrings
+
+                var convertedParams = instanceParams
+                    .Select(kvp => TypeDescriptor.GetConverter(kvp.First.ParameterType).ConvertFromString(kvp.Second)).ToArray(); // convert substrings to match constructor input
+
+                return (T)Activator.CreateInstance(typeof(T), convertedParams);
             }
-            throw new Exception("RegexParse failed to find suitable constructor");
+            throw new Exception("RegexParse failed to find suitable constructor for "+typeof(T).Name);
         }
 
         public static IEnumerable<T> RegexParse<T>(IEnumerable<string> input) =>
@@ -125,36 +134,36 @@ namespace AoC
         public static Int64[] Parse64(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int64.Parse(s)).ToArray();
         public static UInt64[] ParseU64(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => UInt64.Parse(s)).ToArray();
 
-        interface Convertomatic
+        interface IConvertomatic
         {
             public abstract object Convert(char c);
             public abstract bool ShouldConvert(char c);
         }
 
-        class ConvertInt : Convertomatic
+        class ConvertInt : IConvertomatic
         {
             public object Convert(char c) => c - '0';
 
             public bool ShouldConvert(char c) => true;
         }
-        class ConvertByte : Convertomatic
+        class ConvertByte : IConvertomatic
         {
             public object Convert(char c) => (byte)(c - '0');
             public bool ShouldConvert(char c) => true;
         }
-        class ConvertBool : Convertomatic
+        class ConvertBool : IConvertomatic
         {
             public object Convert(char c) => c == '#';
             public bool ShouldConvert(char c) => c == '#';
         }
-        class ConvertChar : Convertomatic
+        class ConvertChar : IConvertomatic
         {
             public object Convert(char c) => c;
             public bool ShouldConvert(char c) => true;
         }
 
 
-        static Convertomatic GetConverter<T>()
+        static IConvertomatic GetConverter<T>()
         {
             if (typeof(T) == typeof(int)) return new ConvertInt();
             if (typeof(T) == typeof(byte)) return new ConvertByte();
@@ -169,7 +178,7 @@ namespace AoC
         public static T[,] ParseMatrix<T>(IEnumerable<string> input)
         {
             int height = input.Count();
-            int width = input.First().Count();
+            int width = input.First().Length;
             var mtx = new T[width, height];
 
             var converter = GetConverter<T>();
@@ -184,7 +193,7 @@ namespace AoC
         public static Dictionary<(int x, int y), T> ParseSparseMatrix<T>(IEnumerable<string> input)
         {
             int height = input.Count();
-            int width = input.First().Count();
+            int width = input.First().Length;
             var dic = new Dictionary<(int x, int y), T>();
 
             var converter = GetConverter<T>();
@@ -274,7 +283,7 @@ namespace AoC
 
         public static IEnumerable<T> RepeatWhile<T>(Func<T> generator, Func<T,bool> shouldContinue)
         {
-            bool cont = true;
+            bool cont;
             do
             {
                 T v = generator();
@@ -323,21 +332,50 @@ namespace AoC
             value &= ~(1L << i);
         }
 
-        public static uint BinarySearch(uint min, uint max, Func<uint, bool> test)
+        public static (uint input, TResult result) BinarySearch<TResult>(uint start, Func<uint, (bool success, TResult res)> test)
+            => BinarySearch(start, 0, test);
+
+        public static (uint input, TResult result) BinarySearch<TResult>(uint min, uint max, Func<uint, (bool success, TResult res)> test)
         {
+            Dictionary<uint, TResult> results = new();
+
+            if (max == 0)
+            {
+                max = min+1;
+                bool success = false;
+
+                while (!success)
+                {
+                    var res = test(max);
+                    success = res.success;
+
+                    if (success)
+                    {
+                        results[max] = res.res;
+                    }
+                    else
+                    {
+                        min = max;
+                        max *= 3;
+                    }
+                }
+            }
+
             while (max - min > 1)
             {
                 var mid = (max + min) / 2;
-                if (test(mid))
+                var res = test(mid);
+                if (res.success)
                 {
                     max = mid;
+                    results[mid] = res.res;
                 }
                 else
                 {
                     min = mid;
                 }
             }
-            return max;
+            return (max, results[max]);
         }
 
         public static int Log2i(ulong num) => num switch
@@ -406,7 +444,7 @@ namespace AoC
             2305843009213693952 => 61,
             4611686018427387904 => 62,
             9223372036854775808 => 63,
-            _ => throw new ArgumentException(),
+            _ => throw new ArgumentException("input out of range")
         };
 
         public static string FormatMs(long ms)
@@ -414,7 +452,7 @@ namespace AoC
             var span = TimeSpan.FromMilliseconds(ms);
             if (ms < 1000)
             {
-                return $"     .{span.ToString("fff")}";
+                return $"     .{span:fff}";
             }
             else
             {
@@ -425,11 +463,11 @@ namespace AoC
                 }
                 if ((int)span.TotalMinutes > 0)
                 {
-                    return $"{span.ToString(@"mm\:ss\.fff")}";
+                    return $"{span:mm\\:ss\\.fff}";
                 }
                 else
                 {
-                    return $"   {span.ToString(@"ss\.fff")}";
+                    return $"   {span:ss\\.fff}";
                 }
             }
         }
@@ -444,7 +482,7 @@ namespace AoC
 
         DataType Get(int key)
         {
-            if (key >= data.Length) return default(DataType);
+            if (key >= data.Length) return default;
             return data[key];
         }
 
@@ -486,7 +524,7 @@ namespace AoC
 
     public class TextBuffer : System.IO.TextWriter
     {
-        StringBuilder builder = new StringBuilder();
+        readonly StringBuilder builder = new();
         public override void Write(char value)
         {
             builder.Append(value);
@@ -520,7 +558,6 @@ namespace AoC
             return GetHash(num, baseStr).AsNybbles().Take(numZeroes).All(v => v==0);
         }
 
-        const int blockSize = 1000;
         public static int FindHash(string baseStr, int numZeroes, int start = 0)
         {
             return Util.Forever(start).Where(n => IsHash(n, baseStr, numZeroes)).First();
@@ -529,8 +566,8 @@ namespace AoC
 
     public class TimeLogger : ILogger
     {
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-        System.IO.TextWriter output;
+        readonly System.Diagnostics.Stopwatch sw = new();
+        readonly System.IO.TextWriter output;
 
         public TimeLogger(System.IO.TextWriter tw)
         {
@@ -610,6 +647,7 @@ namespace AoC
         public Int64 Sum { get; private set; }
     }
 
+    [AttributeUsage(AttributeTargets.Constructor)]
     public class RegexAttribute : Attribute
     {
         public RegexAttribute(string pattern)
@@ -622,10 +660,10 @@ namespace AoC
 
     public class Boxed<T>
     {
-        T value;
+        readonly T value;
         public Boxed(T v) => value = v;
         public static implicit operator T(Boxed<T> boxed) => boxed.value;
-        public static implicit operator Boxed<T>(T value) => new Boxed<T>(value);
+        public static implicit operator Boxed<T>(T value) => new(value);
     }
 
 }

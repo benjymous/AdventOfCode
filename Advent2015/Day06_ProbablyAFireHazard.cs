@@ -43,26 +43,24 @@ namespace AoC.Advent2015
 
             bool Apply(bool val)
             {
-                switch (mode)
+                return mode switch
                 {
-                    case Mode.on: return true;
-                    case Mode.off: return false;
-                    case Mode.toggle: return !val;
-                }
-
-                throw new Exception("Unexpected light mode");
+                    Mode.on => true,
+                    Mode.off => false,
+                    Mode.toggle => !val,
+                    _ => throw new Exception("Unexpected light mode"),
+                };
             }
 
             int Apply(int val)
             {
-                switch (mode)
+                return mode switch
                 {
-                    case Mode.on: return val + 1;
-                    case Mode.off: return Math.Max(0, val - 1);
-                    case Mode.toggle: return val + 2;
-                }
-
-                throw new Exception("Unexpected light mode");
+                    Mode.on => val + 1,
+                    Mode.off => Math.Max(0, val - 1),
+                    Mode.toggle => val + 2,
+                    _ => throw new Exception("Unexpected light mode"),
+                };
             }
 
             public void Apply(bool[,] grid)

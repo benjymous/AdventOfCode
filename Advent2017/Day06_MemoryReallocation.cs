@@ -27,7 +27,7 @@ namespace AoC.Advent2017
         {
             var banks = Util.Parse32(input, '\t');
 
-            HashSet<string> seen = new HashSet<string>();
+            HashSet<string> seen = new();
 
             while (true)
             {
@@ -45,7 +45,7 @@ namespace AoC.Advent2017
         {
             var banks = Util.Parse32(input, '\t');
 
-            Dictionary<string, int> seen = new Dictionary<string, int>();
+            Dictionary<string, int> seen = new();
 
             int iteration = 0;
             while (true)
