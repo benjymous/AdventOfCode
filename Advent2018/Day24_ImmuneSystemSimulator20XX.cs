@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2018
 {
@@ -30,7 +29,7 @@ namespace AoC.Advent2018
                 AttackType = damageType;
                 Initiative = initiative;
 
-                var bits = attributes.Replace(",","").Split(';', StringSplitOptions.TrimEntries);
+                var bits = attributes.Replace(",", "").Split(';', StringSplitOptions.TrimEntries);
                 foreach (var bit in bits)
                 {
                     var bits2 = bit.Split(' ');
@@ -74,7 +73,7 @@ namespace AoC.Advent2018
             {
                 if (Immune.Contains(attacker.AttackType)) return 0;
                 if (Weak.Contains(attacker.AttackType)) return attacker.EffectivePower * 2;
-                return attacker.EffectivePower;             
+                return attacker.EffectivePower;
             }
 
             public int DoAttack()
@@ -187,5 +186,5 @@ namespace AoC.Advent2018
 
             // 1009 too low
         }
-     }
- }
+    }
+}

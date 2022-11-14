@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2015
@@ -32,8 +31,7 @@ namespace AoC.Advent2015
 
                         if (newScore > 150) continue;
 
-                        var newValues = new HashSet<int>(entry.Item1);
-                        newValues.Add(other.Key);
+                        var newValues = new HashSet<int>(entry.Item1) { other.Key };
 
                         var key = string.Join(",", newValues.OrderBy(x => x));
                         if (!cache.ContainsKey(key))

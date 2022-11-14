@@ -37,7 +37,7 @@ namespace AoC.Advent2021
             public Dictionary<(int x, int y), int> Data { get; private set; }
         }
 
-        static readonly (int x, int y)[] directions = new (int x, int y)[] { (-1,0), (1,0), (0,-1), (0,1) };
+        static readonly (int x, int y)[] directions = new (int x, int y)[] { (-1, 0), (1, 0), (0, -1), (0, 1) };
 
         public static int Part1(string input)
         {

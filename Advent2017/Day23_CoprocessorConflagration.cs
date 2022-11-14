@@ -17,7 +17,7 @@ namespace AoC.Advent2017
             }
         }
 
-        class DebugPt2: NorthCloud.IDebugger
+        class DebugPt2 : NorthCloud.IDebugger
         {
             public bool Next(int IP, IInstr instr, Variant x, Variant y, DataBus bus)
             {
@@ -47,9 +47,9 @@ namespace AoC.Advent2017
 
             // counting non primes between b and b+17000 (in 17 step increments)
 
-            for (long i=b; i<=b + 17000; i+=17)
+            for (long i = b; i <= b + 17000; i += 17)
             {
-                for (long j=2; j<i; ++j)
+                for (long j = 2; j < i; ++j)
                 {
                     if (i % j == 0)
                     {

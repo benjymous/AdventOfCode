@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2015
@@ -84,7 +83,7 @@ namespace AoC.Advent2015
 
             var data = aunts.Select(a => (a.ScorePart1(clues), a)).OrderBy(t => -t.Item1);
 
-            return data.First().Item2.Id;
+            return data.First().a.Id;
         }
 
         public static int Part2(string input)
@@ -95,7 +94,7 @@ namespace AoC.Advent2015
 
             var data = aunts.Select(a => (a.ScorePart2(clues), a)).OrderBy(t => -t.Item1);
 
-            return data.First().Item2.Id;
+            return data.First().a.Id;
         }
 
         public void Run(string input, ILogger logger)

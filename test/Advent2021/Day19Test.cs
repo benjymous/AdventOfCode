@@ -1,8 +1,4 @@
-using AoC.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Linq;
-using static AoC.Advent2021.Day19;
 
 namespace AoC.Advent2021.Test
 {
@@ -147,7 +143,7 @@ namespace AoC.Advent2021.Test
 839,-516,451
 891,-625,532
 -652,-548,-490
-30,-46,-14".Replace("\r","");
+30,-46,-14".Replace("\r", "");
 
         [TestCategory("Test")]
         [DataTestMethod]

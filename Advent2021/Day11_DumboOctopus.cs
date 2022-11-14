@@ -17,7 +17,7 @@ namespace AoC.Advent2021
             static readonly (int dx, int dy)[] directions = new (int, int)[] { (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1) };
 
             static IEnumerable<(int x, int y)> Neighbours((int x, int y) pos) => from dir in directions select (pos.x + dir.dx, pos.y + dir.dy);
-            
+
             public int Step()
             {
                 // inc all cells
@@ -38,7 +38,7 @@ namespace AoC.Advent2021
                 var flashed = Cells.Entries().Where(entry => entry.value < 0).ToList();
                 flashed.ForEach(entry => Cells[entry.key.x, entry.key.y] = 0);
 
-                return flashed.Count; 
+                return flashed.Count;
             }
         }
 

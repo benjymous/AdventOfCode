@@ -136,7 +136,7 @@ namespace AoC.Advent2015
                         PlayerTurn = !PlayerTurn;
                         yield return this;
                     }
-                }             
+                }
             }
         }
 

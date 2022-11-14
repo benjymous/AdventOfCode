@@ -1,6 +1,4 @@
-﻿using AoC.Advent2020.Elforola;
-using AoC.Utils;
-using System;
+﻿using AoC.Utils;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,7 +9,7 @@ namespace AoC.Advent2015
         public string Name => "2015-20";
 
         public static IEnumerable<int> GetFactors(int x)
-        {            
+        {
             for (int i = 1; i * i <= x; i++)
             {
                 if (0 == (x % i))

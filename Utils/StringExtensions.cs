@@ -29,7 +29,7 @@ namespace AoC.Utils
             return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
         }
 
-        public static string GetMD5String(this string inputString, bool lowerCase=false)
+        public static string GetMD5String(this string inputString, bool lowerCase = false)
         {
             return string.Concat(Array.ConvertAll(GetMD5(inputString),
                                        h => h.ToString(lowerCase ? "x2" : "X2")));

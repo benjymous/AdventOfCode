@@ -21,7 +21,7 @@ namespace AoC.Advent2021
             (3,1), (4,3), (5,6), (6,7), (7,6), (8,3), (9,1)
         };
 
-        static (long p1Won, long p2Won) DoStep(int p1Pos, int p2Pos, int p1Score, int p2Score, int turn, Dictionary<(int, int, int, int, int), (long,long)> cache)
+        static (long p1Won, long p2Won) DoStep(int p1Pos, int p2Pos, int p1Score, int p2Score, int turn, Dictionary<(int, int, int, int, int), (long, long)> cache)
         {
             if (p1Score >= 21) return (1, 0);
             if (p2Score >= 21) return (0, 1);

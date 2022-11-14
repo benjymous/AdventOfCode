@@ -9,7 +9,7 @@ namespace AoC.Advent2021
     {
         public string Name => "2021-23";
 
-        static readonly Dictionary<byte, char> destinations = new() { { Convert(3, 2), 'A' },  { Convert(5, 2), 'B' }, { Convert(7, 2), 'C' },  { Convert(9, 2), 'D' },  { Convert(3, 3), 'A' },  { Convert(5, 3), 'B' }, { Convert(7, 3), 'C' }, { Convert(9, 3), 'D' }, { Convert(3, 4), 'A' }, { Convert(5, 4), 'B' }, { Convert(7, 4), 'C' }, { Convert(9, 4), 'D' }, { Convert(3, 5), 'A' }, { Convert(5, 5), 'B' }, { Convert(7, 5), 'C' }, { Convert(9, 5), 'D' } };
+        static readonly Dictionary<byte, char> destinations = new() { { Convert(3, 2), 'A' }, { Convert(5, 2), 'B' }, { Convert(7, 2), 'C' }, { Convert(9, 2), 'D' }, { Convert(3, 3), 'A' }, { Convert(5, 3), 'B' }, { Convert(7, 3), 'C' }, { Convert(9, 3), 'D' }, { Convert(3, 4), 'A' }, { Convert(5, 4), 'B' }, { Convert(7, 4), 'C' }, { Convert(9, 4), 'D' }, { Convert(3, 5), 'A' }, { Convert(5, 5), 'B' }, { Convert(7, 5), 'C' }, { Convert(9, 5), 'D' } };
         static readonly int[] destinationCol = new int[] { 3, 5, 7, 9 };
         static readonly int[] moveCosts = new int[] { 1, 10, 100, 1000 };
 
@@ -71,7 +71,7 @@ namespace AoC.Advent2021
                         if (!destinationCol.Contains(x))
                         {
                             var move = Convert(x, 1);
-                            if (state.CellOpen(move)) yield return(critter, move, critterPos.y - 1 + i, false);
+                            if (state.CellOpen(move)) yield return (critter, move, critterPos.y - 1 + i, false);
                             else break;
                         }
                     }

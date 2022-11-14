@@ -109,7 +109,7 @@ namespace AoC.Advent2019
                             // door
                             doors[KeyCode(c)] = new ManhattanVector2(x, y);
                         }
-                        data.PutStrKey($"{x},{y}", c);
+                        Data.PutStrKey($"{x},{y}", c);
                     }
                 }
             }
@@ -126,12 +126,12 @@ namespace AoC.Advent2019
                     startPositions.Add(new ManhattanVector2(centrePoint.X - 1, centrePoint.Y + 1));
                     startPositions.Add(new ManhattanVector2(centrePoint.X + 1, centrePoint.Y + 1));
 
-                    data[$"{centrePoint.X},{centrePoint.Y}"] = '#';
+                    Data[$"{centrePoint.X},{centrePoint.Y}"] = '#';
 
-                    data[$"{centrePoint.X - 1},{centrePoint.Y}"] = '#';
-                    data[$"{centrePoint.X + 1},{centrePoint.Y}"] = '#';
-                    data[$"{centrePoint.X},{centrePoint.Y - 1}"] = '#';
-                    data[$"{centrePoint.X},{centrePoint.Y + 1}"] = '#';
+                    Data[$"{centrePoint.X - 1},{centrePoint.Y}"] = '#';
+                    Data[$"{centrePoint.X + 1},{centrePoint.Y}"] = '#';
+                    Data[$"{centrePoint.X},{centrePoint.Y - 1}"] = '#';
+                    Data[$"{centrePoint.X},{centrePoint.Y + 1}"] = '#';
                 }
             }
 
@@ -141,7 +141,7 @@ namespace AoC.Advent2019
                 {
                     for (var x = 0; x < 7; ++x)
                     {
-                        var c = data.GetStrKey($"{x},{y}");
+                        var c = Data.GetStrKey($"{x},{y}");
 
                         var pos = new ManhattanVector2(x, y);
 
@@ -174,7 +174,7 @@ namespace AoC.Advent2019
                         var path = AStar<ManhattanVector2>.FindPath(this, player, keyPositions[k1]);
                         if (path.Any())
                         {
-                            Paths[playerId | k1] = new RoomPath(data, path);
+                            Paths[playerId | k1] = new RoomPath(Data, path);
                         }
                     }
                     foreach (var k2 in Bits(AllKeys))
@@ -185,7 +185,7 @@ namespace AoC.Advent2019
                             var path = AStar<ManhattanVector2>.FindPath(this, keyPositions[k1], keyPositions[k2]);
                             if (path.Any())
                             {
-                                Paths[k1 | k2] = new RoomPath(data, path); // since we're using bitwise, we just store two bits for k1|k2 it doesn't matter which way around
+                                Paths[k1 | k2] = new RoomPath(Data, path); // since we're using bitwise, we just store two bits for k1|k2 it doesn't matter which way around
                             }
                         }
                     }

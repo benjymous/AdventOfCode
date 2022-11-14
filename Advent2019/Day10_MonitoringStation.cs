@@ -114,7 +114,7 @@ namespace AoC.Advent2019
             {
                 foreach (var y in x)
                 {
-                    order.Add((y.Item1, y.Item2.Distance(bestPosition), y.Item2));
+                    order.Add((y.Key, y.Item2.Distance(bestPosition), y.Item2));
                 }
             }
 

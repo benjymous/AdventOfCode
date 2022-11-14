@@ -114,7 +114,7 @@ namespace AoC
 
                 return (T)Activator.CreateInstance(typeof(T), convertedParams);
             }
-            throw new Exception("RegexParse failed to find suitable constructor for "+typeof(T).Name);
+            throw new Exception("RegexParse failed to find suitable constructor for " + typeof(T).Name);
         }
 
         public static IEnumerable<T> RegexParse<T>(IEnumerable<string> input) =>
@@ -225,9 +225,9 @@ namespace AoC
 
         public static IEnumerable<(int x, int y)> Range2DInclusive((int minY, int maxY, int minX, int maxX) range)
         {
-            for (int y=range.minY; y<=range.maxY; ++y)
+            for (int y = range.minY; y <= range.maxY; ++y)
             {
-                for (int x=range.minX; x<=range.maxX; ++x)
+                for (int x = range.minX; x <= range.maxX; ++x)
                 {
                     yield return (x, y);
                 }
@@ -264,7 +264,7 @@ namespace AoC
 
         public static string GetInput<T>() where T : IPuzzle, new() => GetInput(new T());
 
-        public static IEnumerable<int> Forever(int start = 0) => Enumerable.Range(start, int.MaxValue-start);
+        public static IEnumerable<int> Forever(int start = 0) => Enumerable.Range(start, int.MaxValue - start);
 
         public static IEnumerable<int> RepeatForever(IEnumerable<int> input)
         {
@@ -279,10 +279,10 @@ namespace AoC
 
         public static IEnumerable<T> Repeat<T>(Func<T> generator, int count)
         {
-            for(int i=0; i<count; ++i) yield return generator();
+            for (int i = 0; i < count; ++i) yield return generator();
         }
 
-        public static IEnumerable<T> RepeatWhile<T>(Func<T> generator, Func<T,bool> shouldContinue)
+        public static IEnumerable<T> RepeatWhile<T>(Func<T> generator, Func<T, bool> shouldContinue)
         {
             bool cont;
             do
@@ -460,7 +460,7 @@ namespace AoC
             }
             else
             {
-                
+
                 if ((int)span.TotalHours > 0)
                 {
                     return span.ToString(@"hh\:mm\:ss.fff");
@@ -559,7 +559,7 @@ namespace AoC
 
         static bool IsHash(int num, string baseStr, int numZeroes)
         {
-            return GetHash(num, baseStr).AsNybbles().Take(numZeroes).All(v => v==0);
+            return GetHash(num, baseStr).AsNybbles().Take(numZeroes).All(v => v == 0);
         }
 
         public static int FindHash(string baseStr, int numZeroes, int start = 0)

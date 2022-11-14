@@ -18,12 +18,12 @@ namespace AoC.Advent2016
                 Dictionary<string, int> nameLookup = new();
                 chipsPerFloor = new byte[4];
                 generatorsPerFloor = new byte[4];
-                for (int i= 0; i < 4; ++i)
+                for (int i = 0; i < 4; ++i)
                 {
                     chipsPerFloor[i] = 0;
                     generatorsPerFloor[i] = 0;
                 }
-                
+
                 int floor = 0;
                 foreach (var line in lines)
                 {
@@ -79,7 +79,7 @@ namespace AoC.Advent2016
 
                 chipsPerFloor = previous.chipsPerFloor.ToArray();
                 generatorsPerFloor = previous.generatorsPerFloor.ToArray();
- 
+
                 chipsPerFloor[oldfloor] -= (byte)moveChips;
                 chipsPerFloor[newFloor] += (byte)moveChips;
 
@@ -130,7 +130,7 @@ namespace AoC.Advent2016
 
             public bool IsValid()
             {
-                for (int i=0; i<4; ++i)
+                for (int i = 0; i < 4; ++i)
                 {
                     if (generatorsPerFloor[i] > 0 && chipsPerFloor[i] > 0)
                     {
@@ -150,7 +150,7 @@ namespace AoC.Advent2016
             public int Remaining()
             {
                 int sum = 0;
-                for (int i=0; i<3; ++i)
+                for (int i = 0; i < 3; ++i)
                 {
                     sum += chipsPerFloor[i].CountBits();
                     sum += generatorsPerFloor[i].CountBits();
@@ -162,7 +162,7 @@ namespace AoC.Advent2016
             {
                 ulong result = 0;
 
-                for (int i=0; i<4; ++i)
+                for (int i = 0; i < 4; ++i)
                 {
                     result <<= 7;
                     result += chipsPerFloor[i];
@@ -272,7 +272,7 @@ public static class Extension
         int i = 0;
         while (num > 0)
         {
-            if ((num&1) == 1) { i++; }
+            if ((num & 1) == 1) { i++; }
             num >>= 1;
         }
         return i;

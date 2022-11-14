@@ -361,7 +361,7 @@ namespace AoC.Advent2019
 
             //if (!interactive)
             //{
-                //Console.WriteLine(result);
+            //Console.WriteLine(result);
             //}
 
             if (result.Contains("Oh, hello")) return int.Parse(result.Split()[11]);

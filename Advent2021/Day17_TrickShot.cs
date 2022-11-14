@@ -24,9 +24,9 @@ namespace AoC.Advent2021
             public bool Contains((int X, int Y) point, bool ignoreX) => ignoreX ? point.Y >= Y1 && point.Y <= Y2 : point.X >= X1 && point.Y >= Y1 && point.X <= X2 && point.Y <= Y2;
 
             public bool Missed((int X, int Y) point, bool ignoreX) => ignoreX ? point.Y < Y1 : point.X > X2 || point.Y < Y1;
-        }        
+        }
 
-        public static (bool hit, int maxY) TestShot(TargetRect rect, (int DX, int DY) vel, bool ignoreX=false)
+        public static (bool hit, int maxY) TestShot(TargetRect rect, (int DX, int DY) vel, bool ignoreX = false)
         {
             (int X, int Y) pos = (0, 0);
             int maxY = 0;
@@ -57,10 +57,10 @@ namespace AoC.Advent2021
         {
             var target = TargetRect.Create(input);
 
-            return Util.Matrix(Util.RangeBetween(1, target.X2+1), Util.RangeBetween(target.Y1, 150))
+            return Util.Matrix(Util.RangeBetween(1, target.X2 + 1), Util.RangeBetween(target.Y1, 150))
                         .Select(pos => TestShot(target, pos, false))
                         .Where(res => res.hit)
-                        .Count(); 
+                        .Count();
         }
 
         public void Run(string input, ILogger logger)

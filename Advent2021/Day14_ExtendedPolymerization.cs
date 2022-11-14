@@ -1,8 +1,6 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2021
 {
@@ -33,7 +31,7 @@ namespace AoC.Advent2021
                                .Select(p => p.AsString())
                                .GroupBy(p => p)
                                .ToDictionary(g => g.Key, g => (long)g.Count());
-    
+
             for (int i = 0; i < steps; ++i)
             {
                 pairs = Step(rules, pairs);

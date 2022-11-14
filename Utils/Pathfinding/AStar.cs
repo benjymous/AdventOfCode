@@ -11,7 +11,7 @@ namespace AoC.Utils.Pathfinding
         int Heuristic(TCoordinateType location, TCoordinateType goal) => 1;
         int GScore(TCoordinateType location) => 1;
     }
-    
+
     public interface IIsWalkable<TCellDataType>
     {
         bool IsWalkable(TCellDataType cell);
@@ -19,14 +19,20 @@ namespace AoC.Utils.Pathfinding
 
     public class GridMap<TCellDataType> : IMap<ManhattanVector2>
     {
-        public Dictionary<string, TCellDataType> data = new();
+        public Dictionary<string, TCellDataType> Data = new();
 
         public TCellDataType WallType;
         readonly IIsWalkable<TCellDataType> Walkable;
 
         public GridMap(IIsWalkable<TCellDataType> walkable)
         {
-            Walkable = walkable != null ? walkable : this as IIsWalkable<TCellDataType>;
+            Walkable = walkable ?? this as IIsWalkable<TCellDataType>;
+        }
+
+        public GridMap(IIsWalkable<TCellDataType> walkable, Dictionary<string, TCellDataType> data)
+        {
+            Walkable = walkable ?? this as IIsWalkable<TCellDataType>;
+            Data = data;
         }
 
         public virtual IEnumerable<ManhattanVector2> GetNeighbours(ManhattanVector2 center)
@@ -50,16 +56,16 @@ namespace AoC.Utils.Pathfinding
 
         }
 
-        public bool IsValidNeighbour(ManhattanVector2 pt) => data.TryGetValue(pt.ToString(), out var room) ? Walkable.IsWalkable(room) : false;
+        public bool IsValidNeighbour(ManhattanVector2 pt) => Data.TryGetValue(pt.ToString(), out var room) && Walkable.IsWalkable(room);
 
-        public string FindCell(TCellDataType val) => data.Where(kvp => EqualityComparer<TCellDataType>.Default.Equals(kvp.Value, val)).First().Key;
+        public string FindCell(TCellDataType val) => Data.Where(kvp => EqualityComparer<TCellDataType>.Default.Equals(kvp.Value, val)).First().Key;
 
         public int Heuristic(ManhattanVector2 location1, ManhattanVector2 location2) => location1.Distance(location2);
 
         public int GScore(ManhattanVector2 location) => 1;
     }
 
- 
+
     public static class AStar<TCoordinateType>
     {
         public static IEnumerable<TCoordinateType> FindPath(IMap<TCoordinateType> map, TCoordinateType start, TCoordinateType goal)
@@ -114,7 +120,7 @@ namespace AoC.Utils.Pathfinding
 
             //cost of start to this key node
             public Dictionary<TCoordinateType, int> gScore = new();
- 
+
             public Dictionary<TCoordinateType, TCoordinateType> nodeLinks = new();
 
             internal int GetGScore(TCoordinateType pt) => gScore[pt];

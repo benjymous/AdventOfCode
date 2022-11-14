@@ -1,6 +1,5 @@
 ﻿using AoC.Utils.Vectors;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2018

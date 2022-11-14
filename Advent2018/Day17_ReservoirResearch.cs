@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 namespace AoC.Advent2018
@@ -52,7 +51,7 @@ namespace AoC.Advent2018
                     x2++;
                 }
                 bool openRight = !IsWall(x2 + 1, pos.y, grid);
-            
+
                 if (!openLeft && !openRight)
                 {
                     for (int x = x1; x <= x2; ++x)
@@ -71,7 +70,7 @@ namespace AoC.Advent2018
                     {
                         Set((pos.x + 1, pos.y), grid, maxY);
                     }
-                }             
+                }
             }
         }
 
@@ -104,7 +103,7 @@ namespace AoC.Advent2018
         //        {
         //            Color col = Color.MidnightBlue;
         //            if (!data.TryGetValue((x, y), out var c)) c = '.';
-                   
+
         //            if (c == '#') col = Color.Black;
         //            if (c == '~') col = Color.DodgerBlue;
         //            if (c == '|') col = Color.DeepSkyBlue;

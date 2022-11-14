@@ -63,8 +63,7 @@ namespace AoC.Advent2016
 
             var empty = nodes.Where(n => n.Used == 0).First();
 
-            GridMap<Node> map = new(new Walkable(empty.Free));
-            map.data = grid;
+            GridMap<Node> map = new(new Walkable(empty.Free), grid);
 
             // move empty square to the left of the payload (avoiding the unmovable squares)
             var steps = AStar<ManhattanVector2>.FindPath(map, empty.position, new ManhattanVector2(sourceX, 0)).Count() - 1;

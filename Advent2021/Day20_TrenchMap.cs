@@ -7,13 +7,13 @@ namespace AoC.Advent2021
     {
         public string Name => "2021-20";
 
-        static (int minY, int maxY, int minX, int maxX) GetRange(IEnumerable<(int x, int y)> input, int margin) 
+        static (int minY, int maxY, int minX, int maxX) GetRange(IEnumerable<(int x, int y)> input, int margin)
             => (minY: input.Min(k => k.y) - margin,
                 maxY: input.Max(k => k.y) + margin,
                 minX: input.Min(k => k.x) - margin,
                 maxX: input.Max(k => k.x) + margin);
 
-        static IEnumerable<(int x, int y)> Step(HashSet<(int x, int y)> input, bool[] rules, int margin) 
+        static IEnumerable<(int x, int y)> Step(HashSet<(int x, int y)> input, bool[] rules, int margin)
             => Util.Range2DInclusive(GetRange(input, margin))
                    .Where(pos => rules[GetRuleIndex(input, pos.x, pos.y)]);
 

@@ -195,7 +195,7 @@ namespace AoC.Test
         {
             var obj = Util.RegexCreate<RegexCreationTest1>("10,10 20,20,5 32");
             Assert.AreEqual(new ManhattanVector2(10, 10), obj.A);
-            Assert.AreEqual(new ManhattanVector3(20, 20,5), obj.B);
+            Assert.AreEqual(new ManhattanVector3(20, 20, 5), obj.B);
             Assert.AreEqual(32, obj.C);
         }
 

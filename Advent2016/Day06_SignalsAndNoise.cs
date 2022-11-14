@@ -1,5 +1,4 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -34,7 +33,7 @@ namespace AoC.Advent2016
         public static string Part1(string input)
         {
             var storage = BuildDataMaps(input);
-            var processed = storage.Select(row => row.Select(kvp => (kvp.Value, kvp.Key)).OrderBy(t => -t.Item1).First().Item2);
+            var processed = storage.Select(row => row.Select(kvp => (kvp.Value, kvp.Key)).OrderBy(t => -t.Value).First().Key);
 
             return processed.AsString();
         }
@@ -42,7 +41,7 @@ namespace AoC.Advent2016
         public static string Part2(string input)
         {
             var storage = BuildDataMaps(input);
-            var processed = storage.Select(row => row.Select(kvp => (kvp.Value, kvp.Key)).OrderBy(t => t.Item1).First().Item2);
+            var processed = storage.Select(row => row.Select(kvp => (kvp.Value, kvp.Key)).OrderBy(t => t.Value).First().Key);
 
             return processed.AsString();
         }

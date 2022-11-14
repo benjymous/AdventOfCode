@@ -93,7 +93,7 @@ namespace AoC.Advent2016
                 var trip = FindTriplet(i, input, stretch, tripCache, hashCache);
                 if (trip != 0)
                 {
-                    if (quintCache2.TryGetValue(trip, out var cached) && cached.Any(x => x>i))
+                    if (quintCache2.TryGetValue(trip, out var cached) && cached.Any(x => x > i))
                     {
                         found++;
                         if (stretch && logger != null) logger.WriteLine($"Key {found} found at {i}");
@@ -119,12 +119,12 @@ namespace AoC.Advent2016
                 i++;
             }
         }
-        public static int Part1(string input, ILogger logger=null)
+        public static int Part1(string input, ILogger logger = null)
         {
             return GenKeys(input, false, logger);
         }
 
-        public static int Part2(string input, ILogger logger=null)
+        public static int Part2(string input, ILogger logger = null)
         {
             return GenKeys(input, true, logger);
         }

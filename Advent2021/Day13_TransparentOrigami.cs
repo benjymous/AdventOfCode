@@ -1,6 +1,5 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Vectors;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -55,7 +54,7 @@ namespace AoC.Advent2021
         static (IEnumerable<(int x, int y)>, IEnumerable<Fold>) Parse(string input)
         {
             var bits = input.Split("\n\n");
-            return 
+            return
             (
                 Util.Parse<ManhattanVector2>(bits[0]).Select(v => ((int, int))v),
                 Util.RegexParse<Fold>(bits[1])
@@ -71,14 +70,14 @@ namespace AoC.Advent2021
             return data.Count;
         }
 
-        public static string Part2(string input, ILogger logger=null)
+        public static string Part2(string input, ILogger logger = null)
         {
             (var dots, var folds) = Parse(input);
 
             var data = folds.Aggregate(dots, (folded, fold) => fold.Perform(folded)).ToHashSet();
 
             var display = Display(data);
-            if (logger != null) logger.WriteLine(display);
+            logger?.WriteLine(display);
 
             return display.GetMD5String(false);
         }

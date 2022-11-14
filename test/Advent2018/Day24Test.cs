@@ -21,7 +21,7 @@ Infection:
         [DataTestMethod]
         public void ImmuneTest1()
         {
-            Assert.AreEqual(5216, Day24.Part1(test.Replace("\r",""))); 
+            Assert.AreEqual(5216, Day24.Part1(test.Replace("\r", "")));
         }
 
         [DataTestMethod]

@@ -39,7 +39,7 @@ namespace AoC.Advent2016
                             Locations[code] = new ManhattanVector2(x, y);
                             AllLocations += code;
                         }
-                        data.PutStrKey($"{x},{y}", c);
+                        Data.PutStrKey($"{x},{y}", c);
                     }
                 }
 
@@ -55,8 +55,8 @@ namespace AoC.Advent2016
                         if (loc1.Key != loc2.Key)
                         {
                             var path = AStar<ManhattanVector2>.FindPath(this, loc1.Value, loc2.Value);
-                            _ = data.GetObjKey(loc1.Value);
-                            _ = data.GetObjKey(loc2.Value);
+                            _ = Data.GetObjKey(loc1.Value);
+                            _ = Data.GetObjKey(loc2.Value);
 
                             paths[loc1.Key + loc2.Key] = path.Count();
                         }

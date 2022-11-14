@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2018
 {
@@ -116,12 +115,12 @@ namespace AoC.Advent2018
                 }
             }
 
-            if (logger != null) logger.WriteLine("Built map");
+            logger?.WriteLine("Built map");
 
             map[(0, 0)].DoorDistance = 0;
             CalcFurthestDistance(map, (0, 0));
 
-            if (logger != null) logger.WriteLine("Calculated distances");
+            logger?.WriteLine("Calculated distances");
 
             return map;
         }
@@ -133,12 +132,12 @@ namespace AoC.Advent2018
             var maxx = map.Max(kvp => kvp.Key.x);
             var maxy = map.Max(kvp => kvp.Key.y);
 
-            for (int y=miny; y<=maxy; y++)
+            for (int y = miny; y <= maxy; y++)
             {
                 Console.Write("#");
-                for (int x=minx; x<=maxx; x++)
+                for (int x = minx; x <= maxx; x++)
                 {
-                    if (map.TryGetValue((x,y), out var cell))
+                    if (map.TryGetValue((x, y), out var cell))
                     {
                         Console.Write(cell.Exits[NORTH] ? " #" : "##");
                     }
@@ -169,7 +168,7 @@ namespace AoC.Advent2018
                             Console.Write('#');
                         }
                     }
-                    
+
                 }
                 Console.WriteLine();
 
@@ -189,7 +188,7 @@ namespace AoC.Advent2018
                     }
                     Console.WriteLine();
                 }
-                
+
             }
 
             Console.WriteLine();
@@ -226,7 +225,7 @@ namespace AoC.Advent2018
 
             return map.Values.Where(c => c.DoorDistance >= 1000).Count();
         }
-    
+
         public void Run(string input, ILogger logger)
         {
             var map = BuildMap(input, logger);

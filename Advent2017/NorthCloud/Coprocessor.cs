@@ -329,7 +329,7 @@ namespace AoC.Advent2017.NorthCloud
 
             var line = Instructions[InstructionPointer];
 
-            if (Debugger?.Next(InstructionPointer, line.instr, line.values[0], line.values[1], Bus)==false) return false;
+            if (Debugger?.Next(InstructionPointer, line.instr, line.values[0], line.values[1], Bus) == false) return false;
             InstructionPointer += line.instr.Do(line.values[0], line.values[1], Bus);
 
             return true;

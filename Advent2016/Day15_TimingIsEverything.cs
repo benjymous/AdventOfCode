@@ -20,8 +20,8 @@ namespace AoC.Advent2016
         {
             var discs = Util.RegexParse<Disc>(input).ToArray();
 
-            for (int i=0; true; i++)
-            {            
+            for (int i = 0; true; i++)
+            {
                 if (CheckDiscs(discs, i)) return i;
             }
         }

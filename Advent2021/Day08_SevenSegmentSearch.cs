@@ -1,5 +1,4 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,7 +22,7 @@ namespace AoC.Advent2021
             public int CountOutputMatches(int size) => output.Count(v => v.Length == size);
 
             public int Decode()
-            {       
+            {
                 /*    0:      1:      2:      3:      4:           2 segs = 1
                      aaaa    ....    aaaa    aaaa    ....          3 segs = 7
                     b    c  .    c  .    c  .    c  b    c         4 segs = 4
@@ -41,7 +40,7 @@ namespace AoC.Advent2021
                     .    f  e    f  .    f  e    f  .    f
                     .    f  e    f  .    f  e    f  .    f
                      gggg    gggg    ....    gggg    gggg   */
-                
+
                 var segments = diagnostic.GroupBy(v => v.Length).ToDictionary(kvp => kvp.Key, kvp => kvp.ToList());
 
                 string zero, one, two, three, four, five, six, seven, eight, nine;

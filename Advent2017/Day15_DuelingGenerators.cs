@@ -37,7 +37,7 @@ namespace AoC.Advent2017
         {
             int matches = 0;
             var values = Util.ExtractNumbers(input);
-            foreach (var (a,b) in GeneratorDual(values[0], values[1], picky).Take(pairs))
+            foreach (var (a, b) in GeneratorDual(values[0], values[1], picky).Take(pairs))
             {
                 var seq1 = a.BinarySequence().Take(16);
                 var seq2 = b.BinarySequence().Take(16);

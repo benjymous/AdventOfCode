@@ -1,8 +1,4 @@
-using AoC.Utils.Vectors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using static AoC.Advent2021.Day17;
 
 namespace AoC.Advent2021.Test
@@ -14,7 +10,7 @@ namespace AoC.Advent2021.Test
         readonly string input = Util.GetInput<Day17>();
 
         [TestCategory("Test")]
-        [DataRow("target area: x=20..30, y=-10..-5", 20,-10, true)]
+        [DataRow("target area: x=20..30, y=-10..-5", 20, -10, true)]
         [DataRow("target area: x=20..30, y=-10..-5", 25, -7, true)]
         [DataRow("target area: x=20..30, y=-10..-5", 30, -5, true)]
         [DataRow("target area: x=20..30, y=-10..-5", 31, -10, false)]

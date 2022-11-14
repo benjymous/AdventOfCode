@@ -1,9 +1,6 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Vectors;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2017
 {
@@ -18,7 +15,7 @@ namespace AoC.Advent2017
             var width = data.Max(kvp => kvp.Key.x);
             var height = data.Max(kvp => kvp.Key.y);
 
-            var pos = (x:width / 2, y:height / 2);
+            var pos = (x: width / 2, y: height / 2);
             var dir = new Direction2(0, 0);
             dir.FaceNorth();
 
@@ -26,7 +23,7 @@ namespace AoC.Advent2017
 
             int infections = 0;
 
-            for (int i=0; i< 10000; ++i)
+            for (int i = 0; i < 10000; ++i)
             {
                 var infected = grid.Contains(pos);
                 if (!infected)
@@ -54,7 +51,7 @@ namespace AoC.Advent2017
             var width = data.Max(kvp => kvp.Key.x);
             var height = data.Max(kvp => kvp.Key.y);
 
-            var pos = (x:width / 2, y:height / 2);
+            var pos = (x: width / 2, y: height / 2);
             var dir = new Direction2(0, 0);
             dir.FaceNorth();
 

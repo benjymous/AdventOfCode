@@ -38,8 +38,8 @@ namespace AoC.Advent2019
                         {
                             // part of a portal
 
-                            var leftNeighbour = data.GetStrKey($"{x - 1},{y}");
-                            var aboveNeighbour = data.GetStrKey($"{x},{y - 1}");
+                            var leftNeighbour = Data.GetStrKey($"{x - 1},{y}");
+                            var aboveNeighbour = Data.GetStrKey($"{x},{y - 1}");
 
                             string code = null;
 
@@ -50,7 +50,7 @@ namespace AoC.Advent2019
                             {
                                 code = $"{leftNeighbour}{c}";
 
-                                var leftLeftNeighbour = data.GetStrKey($"{x - 2},{y}");
+                                var leftLeftNeighbour = Data.GetStrKey($"{x - 2},{y}");
 
                                 if (leftLeftNeighbour == '.')
                                 {
@@ -67,7 +67,7 @@ namespace AoC.Advent2019
                             else if (IsCapitalLetter(aboveNeighbour))
                             {
                                 code = $"{aboveNeighbour}{c}";
-                                var aboveAboveNeighbour = data.GetStrKey($"{x},{y - 2}");
+                                var aboveAboveNeighbour = Data.GetStrKey($"{x},{y - 2}");
                                 if (aboveAboveNeighbour == '.')
                                 {
                                     v = new ManhattanVector2(x, y - 2);
@@ -88,7 +88,7 @@ namespace AoC.Advent2019
 
 
                         }
-                        data.PutStrKey($"{x},{y}", c);
+                        Data.PutStrKey($"{x},{y}", c);
                     }
                 }
 

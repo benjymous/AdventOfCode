@@ -31,10 +31,10 @@ namespace AoC.Advent2021
             var startNode = map.GetNode("start");
             var endNode = map.GetNode("end");
 
-            var queue = new Queue<(TreeNode<string, object> location, ulong key, uint seen, bool canRevisit)> 
+            var queue = new Queue<(TreeNode<string, object> location, ulong key, uint seen, bool canRevisit)>
                 { (startNode, (ulong)startNode.Id, SetSeen(startNode.Id), revisit) };
 
-            var cache = new HashSet<ulong>() 
+            var cache = new HashSet<ulong>()
                 { (ulong)startNode.Id };
 
             int routes = 0;
@@ -66,7 +66,7 @@ namespace AoC.Advent2021
 
                     var key = (item.key << 4) + (ulong)neighbour.Id;
                     if (cache.Contains(key)) continue;
-       
+
                     cache.Add(key);
 
                     queue.Enqueue((neighbour, key, SetSeen(item.seen, neighbour.Id), canRevisit));

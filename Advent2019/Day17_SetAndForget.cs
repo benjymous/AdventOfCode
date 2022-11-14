@@ -111,7 +111,7 @@ namespace AoC.Advent2019
             return input;
         }
 
-        public static List<string> TestResult(string shrunk, List<string> used)
+        public static IEnumerable<string> TestResult(string shrunk, List<string> used)
         {
             if (NeedsToShrink(shrunk))
             {
@@ -119,14 +119,11 @@ namespace AoC.Advent2019
             }
             else
             {
-                var result = new List<string>();
-                result.Add(Filter(shrunk));
-                result.AddRange(used);
-                return result;
+                return used.Prepend(Filter(shrunk));
             }
         }
 
-        public static List<string> TrySubstitute(string shrunk, List<string> used)
+        public static IEnumerable<string> TrySubstitute(string shrunk, List<string> used)
         {
             if (!NeedsToShrink(shrunk))
             {
@@ -144,7 +141,6 @@ namespace AoC.Advent2019
 
             foreach (var pattern in patterns)
             {
-
                 var result = shrunk.Replace(pattern, $"-{(char)('A' + used.Count)}-,");
                 var newUsed = new List<string>();
                 newUsed.AddRange(used);
@@ -220,7 +216,6 @@ namespace AoC.Advent2019
                     Console.WriteLine("?");
                 }
             }
-
 
             return command;
         }

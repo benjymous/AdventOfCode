@@ -21,7 +21,7 @@ namespace AoC.Advent2015
             {
                 Name = name;
 
-                Qualities = new int[] {capacity, durability, flavor, texture, calories };
+                Qualities = new int[] { capacity, durability, flavor, texture, calories };
             }
         }
 
@@ -29,7 +29,7 @@ namespace AoC.Advent2015
         {
             int score = 1;
 
-            for (int q=0; q<4; ++q)
+            for (int q = 0; q < 4; ++q)
             {
                 int qualScore = 0;
                 for (int i = 0; i < weights.Length; ++i)

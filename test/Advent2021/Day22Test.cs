@@ -1,8 +1,4 @@
-using AoC.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Linq;
-using static AoC.Advent2021.Day22;
 
 namespace AoC.Advent2021.Test
 {
@@ -119,7 +115,7 @@ off x=-93533..-4276,y=-16170..68771,z=-104985..-24507";
         [DataRow(test3, 2758514936282235)]
         public void ReactorTest(string input, long expected)
         {
-            Assert.AreEqual(expected, Day22.RunOperation(Day22.ParseData(input.Replace("\r",""))));
+            Assert.AreEqual(expected, Day22.RunOperation(Day22.ParseData(input.Replace("\r", ""))));
         }
 
 

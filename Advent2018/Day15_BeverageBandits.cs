@@ -52,7 +52,7 @@ namespace AoC.Advent2018
             {
                 var targets = Creatures.Where(c => c.Value.type != creature.Value.type).ToDictionary();
 
-                if (!targets.Any()) return (false, (0,0));
+                if (!targets.Any()) return (false, (0, 0));
 
                 var target = FindTarget(creature, targets);
 
@@ -69,18 +69,18 @@ namespace AoC.Advent2018
             {
                 foreach (var (dx, dy) in InRange)
                 {
-                    var pos = (x:creature.Key.x + dx, y:creature.Key.y + dy);
+                    var pos = (x: creature.Key.x + dx, y: creature.Key.y + dy);
                     if (targets.TryGetValue(pos, out var potential))
                     {
                         return (creature.Key);
                     }
                 }
 
-                var potentialTargets = targets.SelectMany(target => InRange.Select(offset => (x:target.Key.x + offset.dx, y: target.Key.y + offset.dy))).Where(pos => IsClear(pos) || pos == creature.Key).ToHashSet();
+                var potentialTargets = targets.SelectMany(target => InRange.Select(offset => (x: target.Key.x + offset.dx, y: target.Key.y + offset.dy))).Where(pos => IsClear(pos) || pos == creature.Key).ToHashSet();
 
                 var reachable = potentialTargets.Select(pos => (pos, path: AStar<(int x, int y)>.FindPath(this, creature.Key, pos)))
                                                  .Where(entry => entry.path.Any())
-                                                 .Select(entry => (entry.pos, dist:entry.path.Count()));
+                                                 .Select(entry => (entry.pos, dist: entry.path.Count()));
 
                 if (!reachable.Any()) return creature.Key;
 
@@ -138,7 +138,7 @@ namespace AoC.Advent2018
 
                     if (targets.Any())
                     {
-                        var target= targets.OrderBy(t => (t.creature.HP, t.pos.y, t.pos.x)).First();
+                        var target = targets.OrderBy(t => (t.creature.HP, t.pos.y, t.pos.x)).First();
 
                         //Console.WriteLine($"{creature.Value.type} {creature.Key} attacks {target.creature.type} {target.pos}");
 

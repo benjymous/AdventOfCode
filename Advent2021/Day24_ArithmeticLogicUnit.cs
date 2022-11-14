@@ -10,14 +10,28 @@ namespace AoC.Advent2021
 
         static (int i, int j, int k) GetCycleParams(int digit) => digit switch
         {
-            0 => (1, 15, 15), 1 => (1, 12, 5), 2 => (1, 13, 6), 3 => (26, -14, 7), 4 => (1, 15, 9), 5 => (26, -7, 6), 6 => (1, 14, 14), 7 => (1, 15, 3), 8 => (1, 15, 1), 9 => (26, -7, 3), 10 => (26, -8, 4), 11 => (26, -7, 6), 12 => (26, -5, 7), 13 => (26, -10, 1), _ => (0, 0, 0),
+            0 => (1, 15, 15),
+            1 => (1, 12, 5),
+            2 => (1, 13, 6),
+            3 => (26, -14, 7),
+            4 => (1, 15, 9),
+            5 => (26, -7, 6),
+            6 => (1, 14, 14),
+            7 => (1, 15, 3),
+            8 => (1, 15, 1),
+            9 => (26, -7, 3),
+            10 => (26, -8, 4),
+            11 => (26, -7, 6),
+            12 => (26, -5, 7),
+            13 => (26, -10, 1),
+            _ => (0, 0, 0),
         };
 
         public static int CalcPart(int w, int z, int digit)
         {
             var (i, j, k) = GetCycleParams(digit);
 
-            int x = (z % 26) + j;            
+            int x = (z % 26) + j;
             z /= i;
             return (w != x) ? (z * 26) + w + k : z;
         }
@@ -53,7 +67,7 @@ namespace AoC.Advent2021
                                 seen.Add(next);
                             }
                         }
-                        else if (newZ == 0) endStates.Add((state.prevZ, inputW));                           
+                        else if (newZ == 0) endStates.Add((state.prevZ, inputW));
                     }
                 }
 

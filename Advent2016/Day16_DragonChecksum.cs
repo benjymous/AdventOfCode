@@ -17,7 +17,7 @@ namespace AoC.Advent2016
         }
 
         public static IEnumerable<bool> Fill(IEnumerable<bool> input, int size)
-        {            
+        {
             while (input.Count() < size)
             {
                 input = Iterate(input);

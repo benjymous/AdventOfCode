@@ -99,7 +99,7 @@ namespace AoC.Advent2018
                     // addi 5 1 5
                     case 8:
                         r5++; r1++; //goto case 9;
-                                           // gtrr 5 2 4
+                                    // gtrr 5 2 4
                         /*case 9:*/
                         r4 = (r5 > r2) ? 1 : 0; r1++; //goto case 10;
                                                       // addr 1 4 1
@@ -112,7 +112,7 @@ namespace AoC.Advent2018
                     // addi 3 1 3
                     case 12:
                         r3++; r1++; //goto case 13;
-                                           // gtrr 3 2 4
+                                    // gtrr 3 2 4
                         /*case 13:*/
                         r4 = (r3 > r2) ? 1 : 0; r1++; //goto case 14;
                                                       // addr 4 1 1
@@ -128,28 +128,28 @@ namespace AoC.Advent2018
                     // addi 2 2 2
                     case 17:
                         r2 += 2; r1++; //goto case 18;
-                                           // mulr 2 2 2
+                                       // mulr 2 2 2
                         /*case 18:*/
                         r2 *= r2; r1++; //goto case 19;
-                                            // mulr 1 2 2
+                                        // mulr 1 2 2
                         /*case 19:*/
                         r2 = r1 * r2; r1++; //goto case 20;
                                             // muli 2 11 2
                         /*case 20:*/
                         r2 *= 11; r1++; //goto case 21;
-                                            // addi 4 7 4
+                                        // addi 4 7 4
                         /*case 21:*/
                         r4 += 7; r1++; //goto case 22;
-                                           // mulr 4 1 4
+                                       // mulr 4 1 4
                         /*case 22:*/
                         r4 *= r1; r1++; //goto case 23;
-                                            // addi 4 13 4
+                                        // addi 4 13 4
                         /*case 23:*/
                         r4 += 13; r1++; //goto case 24;
-                                            // addr 2 4 2
+                                        // addr 2 4 2
                         /*case 24:*/
                         r2 += r4; r1++; //goto case 25;
-                                            // addr 1 0 1
+                                        // addr 1 0 1
                         /*case 25:*/
                         r1 = r1 + r0 + 1; break;
 
@@ -162,7 +162,7 @@ namespace AoC.Advent2018
                                        // mulr 4 1 4
                         /*case 28:*/
                         r4 *= r1; r1++; //goto case 29;
-                                            // addr 1 4 4
+                                        // addr 1 4 4
                         /*case 29:*/
                         r4 = r1 + r4; r1++; //goto case 30;
                                             // mulr 1 4 4
@@ -171,13 +171,13 @@ namespace AoC.Advent2018
                                             // muli 4 14 4
                         /*case 31:*/
                         r4 *= 14; r1++; //goto case 32;
-                                            // mulr 4 1 4
+                                        // mulr 4 1 4
                         /*case 32:*/
                         r4 *= r1; r1++; //goto case 33;
-                                            // addr 2 4 2
+                                        // addr 2 4 2
                         /*case 33:*/
                         r2 += r4; r1++; //goto case 34;
-                                            // seti 0 2 0
+                                        // seti 0 2 0
 
                         return GetFactorSum(r2); // We know the source number, so short circuit the rest;
 

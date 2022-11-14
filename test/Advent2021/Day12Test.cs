@@ -44,19 +44,19 @@ namespace AoC.Advent2021.Test
                 hash = Day12.SetSeen(hash, i);
             }
 
-            for (int j=0; j<30; ++j)
+            for (int j = 0; j < 30; ++j)
             {
                 Assert.IsTrue(Day12.Contains(hash, j));
             }
 
-            for (int k=0; k<30; ++k)
+            for (int k = 0; k < 30; ++k)
             {
                 hash = Day12.SetSeen(0, k);
 
-                for (int l=0; l<30; ++l)
+                for (int l = 0; l < 30; ++l)
                 {
                     Assert.AreEqual((k == l), Day12.Contains(hash, l));
-                }    
+                }
             }
         }
 

@@ -59,13 +59,13 @@ namespace intcomp
             // second pass, replace variables
             for (var i = 0; i < outMem.Count; ++i)
             {
-                if (variables.ContainsKey(outMem[i]))
+                if (variables.TryGetValue(outMem[i], out int value))
                 {
-                    outMem[i] = variables[outMem[i]].ToString();
+                    outMem[i] = value.ToString();
                 }
-                else if (keywords.ContainsKey(outMem[i]))
+                else if (keywords.TryGetValue(outMem[i], out int value2))
                 {
-                    outMem[i] = keywords[outMem[i]].ToString();
+                    outMem[i] = value2.ToString();
                 }
             }
 
@@ -81,9 +81,9 @@ namespace intcomp
             foreach (var token in outMem)
             {
                 string comment = "";
-                if (backmap.ContainsKey(position))
+                if (backmap.TryGetValue(position, out string value))
                 {
-                    comment = $" ; {backmap[position]}";
+                    comment = $" ; {value}";
                 }
                 string lineOut = $"{position} '{token}'{comment}";
                 Console.WriteLine(lineOut);

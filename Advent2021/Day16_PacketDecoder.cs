@@ -48,13 +48,13 @@ namespace AoC.Advent2021
             public long GetValue() => Header.Type switch
             {
                 PacketType.LiteralValue => LiteralValue,
-                PacketType.Sum          => ChildValues.Sum(),
-                PacketType.Product      => ChildValues.Product(),
-                PacketType.Minimum      => ChildValues.Min(),
-                PacketType.Maximum      => ChildValues.Max(),
-                PacketType.GreaterThan  => ChildValues[0] >  ChildValues[1] ? 1 : 0,
-                PacketType.LessThan     => ChildValues[0] <  ChildValues[1] ? 1 : 0,
-                PacketType.EqualTo      => ChildValues[0] == ChildValues[1] ? 1 : 0,
+                PacketType.Sum => ChildValues.Sum(),
+                PacketType.Product => ChildValues.Product(),
+                PacketType.Minimum => ChildValues.Min(),
+                PacketType.Maximum => ChildValues.Max(),
+                PacketType.GreaterThan => ChildValues[0] > ChildValues[1] ? 1 : 0,
+                PacketType.LessThan => ChildValues[0] < ChildValues[1] ? 1 : 0,
+                PacketType.EqualTo => ChildValues[0] == ChildValues[1] ? 1 : 0,
                 _ => 0,
             };
             long[] ChildValues => Children.Select(c => c.GetValue()).ToArray();
@@ -76,7 +76,7 @@ namespace AoC.Advent2021
 
             static IEnumerable<(int, int)> Bits(string raw) => raw.Select(ch => ch.ParseHex()).SelectMany(n => n.BinarySequenceBigEndian(8)).WithIndex().Select(v => (v.Value, v.Index));
             (bool continueRead, int value) ReadChunk() => (ReadBit() == 1, ReadInteger(4));
-            readonly IEnumerator<(int val,int idx)> stream;
+            readonly IEnumerator<(int val, int idx)> stream;
         }
 
         public static int Part1(string input)

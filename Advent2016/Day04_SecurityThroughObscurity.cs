@@ -97,7 +97,7 @@ namespace AoC.Advent2016
 
             var found = decrypted.Where(d => d.Item1.Contains("north"));
 
-            return found.First().Item2.SectionID;
+            return found.First().r.SectionID;
         }
 
         public void Run(string input, ILogger logger)

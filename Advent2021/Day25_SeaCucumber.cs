@@ -23,10 +23,10 @@ namespace AoC.Advent2021
             do
             {
                 moved = false;
-             
-                for (int phase=0; phase<2; ++phase)
+
+                for (int phase = 0; phase < 2; ++phase)
                 {
-                    var (moving, waiting) = phase == 0 ? ('>','v') : ('v','>');
+                    var (moving, waiting) = phase == 0 ? ('>', 'v') : ('v', '>');
 
                     next = new(state.Where(kvp => kvp.Value == waiting));
 

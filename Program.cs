@@ -36,7 +36,7 @@ namespace AoC
 
                 if (singleThread)
                 {
-                    foreach(var puzzle in puzzles)
+                    foreach (var puzzle in puzzles)
                     {
                         var timing = puzzle.TimeRun(new ConsoleOut());
                         timings[puzzle.Name] = timing;

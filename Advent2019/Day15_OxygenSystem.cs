@@ -17,7 +17,7 @@ namespace AoC.Advent2019
             ManhattanVector2 position = new(0, 0);
 
             ManhattanVector2 tryState = null;
-            (ManhattanVector2, ManhattanVector2) target = (null,null);
+            (ManhattanVector2, ManhattanVector2) target = (null, null);
             bool hasTarget = false;
 
             public int Steps { get; private set; } = 0;
@@ -71,7 +71,7 @@ namespace AoC.Advent2019
 
             public void AddIfUnknown(ManhattanVector2 current, ManhattanVector2 neighbour)
             {
-                if (!map.data.ContainsKey(neighbour.ToString()))
+                if (!map.Data.ContainsKey(neighbour.ToString()))
                 {
                     unknowns.Push((current, neighbour));
                 }
@@ -95,27 +95,27 @@ namespace AoC.Advent2019
                         {
                             if (mode == Mode.Interactive) Console.WriteLine("Wall!");
 
-                            map.data.PutObjKey(tryState, WALL);
+                            map.Data.PutObjKey(tryState, WALL);
                         }
                         break;
                     case 1:
                         {
                             if (mode == Mode.Interactive) Console.WriteLine("Ok");
-                            map.data.PutObjKey(tryState, OPEN);
+                            map.Data.PutObjKey(tryState, OPEN);
                             position = tryState;
                         }
                         break;
                     case 2:
                         {
                             if (mode == Mode.Interactive) Console.WriteLine("Found Oxygen system");
-                            map.data.PutObjKey(tryState, OXYGEN);
+                            map.Data.PutObjKey(tryState, OXYGEN);
                             position = tryState;
                         }
                         break;
                     default:
                         {
                             if (mode == Mode.Interactive) Console.WriteLine("??? {val}");
-                            map.data.PutObjKey(tryState, (int)val);
+                            map.Data.PutObjKey(tryState, (int)val);
                             position = tryState;
                         }
                         break;
@@ -130,9 +130,9 @@ namespace AoC.Advent2019
             public int GetMapData(int x, int y)
             {
                 var key = $"{x},{y}";
-                if (map.data.ContainsKey(key))
+                if (map.Data.ContainsKey(key))
                 {
-                    return map.data.GetStrKey(key);
+                    return map.Data.GetStrKey(key);
                 }
                 else return 0;
             }

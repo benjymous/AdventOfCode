@@ -1,9 +1,7 @@
-using Microsoft.Collections.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Xml.Linq;
 
 namespace AoC.Utils
 {
@@ -16,7 +14,7 @@ namespace AoC.Utils
         {
             if (dict.ContainsKey(key))
             {
-                dict[key] +=val;
+                dict[key] += val;
             }
             else
             {
@@ -46,7 +44,7 @@ namespace AoC.Utils
             return GetStrKey(dict, k);
         }
 
-        public static T GetOrCalculate<K,T>(this Dictionary<K, T> dict, K key, Func<K,T> predicate)
+        public static T GetOrCalculate<K, T>(this Dictionary<K, T> dict, K key, Func<K, T> predicate)
         {
             if (!dict.TryGetValue(key, out T val))
             {
@@ -193,7 +191,7 @@ namespace AoC.Utils
         {
             for (int y = 0; y < array2d.Height(); ++y)
                 for (int x = 0; x < array2d.Width(); ++x)
-                    yield return ((x, y), array2d[x,y]);
+                    yield return ((x, y), array2d[x, y]);
         }
 
         public static IEnumerable<T> Row<T>(this T[,] array2d, int row)

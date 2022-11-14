@@ -1,8 +1,4 @@
-using AoC.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Linq;
-using static AoC.Advent2021.Day25;
 
 namespace AoC.Advent2021.Test
 {

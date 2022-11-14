@@ -19,7 +19,7 @@ namespace AoC.Advent2016
                 var hashString = HashBreaker.GetHashChars(hashNumber, doorId);
                 char c = hashString.Skip(5).First();
                 sb.Add(c);
-                if (logger!=null) logger.WriteLine($"{c} {sb.AsString()}");
+                logger?.WriteLine($"{c} {sb.AsString()}");
             }
 
             return sb.AsString().ToLower();
@@ -44,7 +44,7 @@ namespace AoC.Advent2016
                     outpass[pos] = c;
                 }
 
-                if (logger!=null) logger.WriteLine($"{hashNumber,8} [{pos,2}]:{c} {outpass.AsString()}");
+                logger?.WriteLine($"{hashNumber,8} [{pos,2}]:{c} {outpass.AsString()}");
             }
 
             return outpass.AsString().ToLower();

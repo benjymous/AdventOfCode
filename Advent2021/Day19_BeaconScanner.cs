@@ -14,7 +14,7 @@ namespace AoC.Advent2021
 
         public class Group
         {
-            public Group(IEnumerable<ManhattanVector3> input, (int x, int y, int z) origin, int id=0)
+            public Group(IEnumerable<ManhattanVector3> input, (int x, int y, int z) origin, int id = 0)
             {
                 Id = id;
                 Origin = new ManhattanVector3(origin);
@@ -53,13 +53,13 @@ namespace AoC.Advent2021
 
         private static IEnumerable<Group> AlignGroups(string input)
         {
-            var groups = input.Split("\n\n").Select(bit => Util.Parse<ManhattanVector3>(bit.Split("\n", StringSplitOptions.RemoveEmptyEntries).Skip(1)).ToArray()).ToArray().WithIndex().Select(item => new Group(item.Value, (0,0,0), item.Index)).ToArray();
+            var groups = input.Split("\n\n").Select(bit => Util.Parse<ManhattanVector3>(bit.Split("\n", StringSplitOptions.RemoveEmptyEntries).Skip(1)).ToArray()).ToArray().WithIndex().Select(item => new Group(item.Value, (0, 0, 0), item.Index)).ToArray();
 
             HashSet<Group> aligned = groups.Take(1).ToHashSet();
             HashSet<Group> unaligned = groups.Skip(1).ToHashSet();
 
             while (unaligned.Any())
-            { 
+            {
                 foreach (var group in unaligned)
                 {
                     foreach (var fixedGroup in aligned)
@@ -79,7 +79,7 @@ namespace AoC.Advent2021
 
         private static int Part1(IEnumerable<Group> aligned) => aligned.Select(g => g.Points.AsEnumerable()).Aggregate((lhs, rhs) => lhs.Union(rhs)).ToHashSet().Count;
         public static int Part2(IEnumerable<Group> aligned) => Util.Matrix(aligned, aligned).Max(pair => pair.item1.Origin.Distance(pair.item2.Origin));
-        
+
         public static int Part1(string input)
         {
             return Part1(AlignGroups(input));

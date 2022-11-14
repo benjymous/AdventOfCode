@@ -1,8 +1,4 @@
-using AoC.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Linq;
-using static AoC.Advent2021.Day23;
 
 namespace AoC.Advent2021.Test
 {
@@ -32,7 +28,7 @@ namespace AoC.Advent2021.Test
         [DataRow(test1, 12521)]
         public void ShrimpTest1(string input, int expected)
         {
-            Assert.AreEqual(expected, Day23.ShrimpStacker(input.Replace("\r","").Split('\n')));
+            Assert.AreEqual(expected, Day23.ShrimpStacker(input.Replace("\r", "").Split('\n')));
         }
 
         [TestCategory("Test")]
