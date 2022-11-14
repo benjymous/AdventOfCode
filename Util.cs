@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -332,16 +333,19 @@ namespace AoC
             value &= ~(1L << i);
         }
 
-        public static (uint input, TResult result) BinarySearch<TResult>(uint start, Func<uint, (bool success, TResult res)> test)
-            => BinarySearch(start, 0, test);
+        public static (TInput input, TResult result) BinarySearch<TInput, TResult>(TInput start, Func<TInput, (bool success, TResult res)> test) where TInput : IBinaryInteger<TInput>
+            => BinarySearch(start, TInput.Zero, test);
 
-        public static (uint input, TResult result) BinarySearch<TResult>(uint min, uint max, Func<uint, (bool success, TResult res)> test)
+        public static (TInput input, TResult result) BinarySearch<TInput, TResult>(TInput min, TInput max, Func<TInput, (bool success, TResult res)> test) where TInput : IBinaryInteger<TInput>
         {
-            Dictionary<uint, TResult> results = new();
+            TInput two = TInput.One + TInput.One;
+            TInput three = TInput.One + TInput.One + TInput.One;
 
-            if (max == 0)
+            Dictionary<TInput, TResult> results = new();
+
+            if (max == TInput.Zero)
             {
-                max = min+1;
+                max = min + TInput.One;
                 bool success = false;
 
                 while (!success)
@@ -356,14 +360,14 @@ namespace AoC
                     else
                     {
                         min = max;
-                        max *= 3;
+                        max *= three;
                     }
                 }
             }
 
-            while (max - min > 1)
+            while (max - min > TInput.One)
             {
-                var mid = (max + min) / 2;
+                var mid = (max + min) / two;
                 var res = test(mid);
                 if (res.success)
                 {

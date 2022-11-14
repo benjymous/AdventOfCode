@@ -167,12 +167,12 @@ namespace AoC.Advent2018
 
         public static long Part1(string input)
         {
-            return Run(input).Item2;
+            return Run(input).res;
         }
 
         public static long Part2(string input)
         {
-            return Util.BinarySearch(1, boost =>
+            return Util.BinarySearch<uint, long>(1, boost =>
             {
                 var res = Run(input, boost);
                 Console.WriteLine($"{boost} => {res}");

@@ -2,6 +2,7 @@ using Microsoft.Collections.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Xml.Linq;
 
 namespace AoC.Utils
@@ -11,18 +12,11 @@ namespace AoC.Utils
         public static void IncrementAtIndex<T>(this Dictionary<T, int> dict, T key, int val = 1) => IncrementAtIndex<T, int>(dict, key, val);
         public static void IncrementAtIndex<T>(this Dictionary<T, long> dict, T key, long val = 1) => IncrementAtIndex<T, long>(dict, key, val);
 
-        public static void Add<K, V>(this Dictionary<K, V> dict, KeyValuePair<K, V> kvp) => dict.Add(kvp.Key, kvp.Value);
-
-        static T Add<T>(T x, T y) => Add((dynamic)x, (dynamic)y);
-        static int Add(int a, int b) => a + b;
-        static long Add(long a, long b) => a + b;
-        static ulong Add(ulong a, ulong b) => a + b;
-
-        public static void IncrementAtIndex<T, V>(this Dictionary<T, V> dict, T key, V val)
+        public static void IncrementAtIndex<T, V>(this Dictionary<T, V> dict, T key, V val) where V : INumber<V>
         {
             if (dict.ContainsKey(key))
             {
-                dict[key] = Add(dict[key], val);
+                dict[key] +=val;
             }
             else
             {
@@ -326,16 +320,6 @@ namespace AoC.Utils
                 index++;
             }
             return maxIndex;
-        }
-
-        public static int CombinedHashCode<T>(this IEnumerable<T> sequence)
-        {
-            HashCode hc = new();
-            foreach (var v in sequence)
-            {
-                hc.Add(v);
-            }
-            return hc.ToHashCode();
         }
 
         public static IEnumerable<(int Index, T Value)> WithIndex<T>(this IEnumerable<T> sequence)
