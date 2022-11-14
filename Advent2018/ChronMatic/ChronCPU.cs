@@ -14,88 +14,88 @@ namespace AoC.Advent2018.ChronMatic
 #pragma warning disable IDE1006 // Naming Styles
     namespace Instructions
     {
-        class addr : IInstr
+        class @addr : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] + regs[b];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} + r{b};";
         }
-        class addi : IInstr
+        class @addi : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] + b;
             public string Dump(int a, int b, int c) => $"r{c} = r{a} + {b};";
         }
 
-        class mulr : IInstr
+        class @mulr : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] * regs[b];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} * r{b};";
         }
-        class muli : IInstr
+        class @muli : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] * b;
             public string Dump(int a, int b, int c) => $"r{c} = r{a} * {b};";
         }
 
-        class banr : IInstr
+        class @banr : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] & regs[b];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} & r{b};";
         }
-        class bani : IInstr
+        class @bani : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] & b;
             public string Dump(int a, int b, int c) => $"r{c} = r{a} & {b};";
         }
 
-        class borr : IInstr
+        class @borr : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] | regs[b];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} | r{b};";
         }
-        class bori : IInstr
+        class @bori : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] | b;
             public string Dump(int a, int b, int c) => $"r{c} = r{a} | {b};";
         }
 
-        class setr : IInstr
+        class @setr : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a];
             public string Dump(int a, int b, int c) => $"r{c} = r{a};";
         }
-        class seti : IInstr
+        class @seti : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = a;
             public string Dump(int a, int b, int c) => $"r{c} = {a};";
         }
 
-        class gtir : IInstr
+        class @gtir : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (a > regs[b]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = ({a} > r{b}) ? 1 : 0;";
         }
-        class gtri : IInstr
+        class @gtri : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (regs[a] > b) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} > {b}) ? 1 : 0;";
         }
-        class gtrr : IInstr
+        class @gtrr : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (regs[a] > regs[b]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} > r{b}) ? 1 : 0;";
         }
 
-        class eqir : IInstr
+        class @eqir : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (a == regs[b]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = ({a} == r{b}) ? 1 : 0;";
         }
-        class eqri : IInstr
+        class @eqri : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (regs[a] == b) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} == {b}) ? 1 : 0;";
         }
-        class eqrr : IInstr
+        class @eqrr : IInstr
         {
             public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (regs[a] == regs[b]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} == r{b}) ? 1 : 0;";

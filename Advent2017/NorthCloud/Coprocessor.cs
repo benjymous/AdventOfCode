@@ -99,7 +99,7 @@ namespace AoC.Advent2017.NorthCloud
     {
         namespace Common
         {
-            class set : IInstr
+            class @set : IInstr
             {
                 public int Do(Variant x, Variant y, DataBus bus)
                 {
@@ -108,7 +108,7 @@ namespace AoC.Advent2017.NorthCloud
                 }
             }
 
-            class mul : IInstr
+            class @mul : IInstr
             {
                 public int Do(Variant x, Variant y, DataBus bus)
                 {
@@ -120,7 +120,7 @@ namespace AoC.Advent2017.NorthCloud
 
         namespace Day18
         {
-            class snd : IInstr
+            class @snd : IInstr
             {
                 public int Do(Variant x, Variant y, DataBus bus)
                 {
@@ -129,7 +129,7 @@ namespace AoC.Advent2017.NorthCloud
                 }
             }
 
-            class add : IInstr
+            class @add : IInstr
             {
                 public int Do(Variant x, Variant y, DataBus bus)
                 {
@@ -138,7 +138,7 @@ namespace AoC.Advent2017.NorthCloud
                 }
             }
 
-            class mod : IInstr
+            class @mod : IInstr
             {
                 public int Do(Variant x, Variant y, DataBus bus)
                 {
@@ -149,7 +149,7 @@ namespace AoC.Advent2017.NorthCloud
 
 
 
-            class jgz : IInstr
+            class @jgz : IInstr
             {
                 public int Do(Variant x, Variant y, DataBus bus)
                 {
@@ -165,7 +165,7 @@ namespace AoC.Advent2017.NorthCloud
 
         namespace Day18Part1
         {
-            class rcv : IInstr
+            class @rcv : IInstr
             {
                 public int Do(Variant x, Variant y, DataBus bus)
                 {
@@ -181,7 +181,7 @@ namespace AoC.Advent2017.NorthCloud
 
         namespace Day18Part2
         {
-            class rcv : IInstr
+            class @rcv : IInstr
             {
                 public int Do(Variant x, Variant y, DataBus bus)
                 {
@@ -200,7 +200,7 @@ namespace AoC.Advent2017.NorthCloud
 
         namespace Day23
         {
-            class jnz : IInstr
+            class @jnz : IInstr
             {
                 public int Do(Variant x, Variant y, DataBus bus)
                 {
@@ -212,7 +212,7 @@ namespace AoC.Advent2017.NorthCloud
                 }
             }
 
-            class sub : IInstr
+            class @sub : IInstr
             {
                 public int Do(Variant x, Variant y, DataBus bus)
                 {
