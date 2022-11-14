@@ -1,4 +1,5 @@
 ﻿using AoC.Advent2020.Elforola;
+using AoC.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace AoC.Advent2015
         public string Name => "2015-20";
 
         public static IEnumerable<int> GetFactors(int x)
-        {
+        {            
             for (int i = 1; i * i <= x; i++)
             {
                 if (0 == (x % i))
@@ -29,17 +30,15 @@ namespace AoC.Advent2015
             return GetFactors(doorNumber).Select(f => f * 10).Sum();
         }
 
-        static readonly Dictionary<int, int> elfCount = new();
-        static int NumPresents2(int doorNumber)
+        static int NumPresents2(int doorNumber, Dictionary<int, int> elfCount)
         {
             int score = 0;
             var factors = GetFactors(doorNumber);
             foreach (var factor in factors)
             {
-                if (!elfCount.ContainsKey(factor)) elfCount[factor] = 0;
-                if (elfCount[factor] < 50)
+                elfCount.IncrementAtIndex(factor);
+                if (elfCount[factor] <= 50)
                 {
-                    elfCount[factor]++;
                     score += factor * 11;
                 }
             }
@@ -55,7 +54,8 @@ namespace AoC.Advent2015
         public static int Part2(string input)
         {
             int target = int.Parse(input);
-            return Util.Forever(1).Where(i => NumPresents2(i) > target).First();
+            Dictionary<int, int> elfCount = new();
+            return Util.Forever(1).Where(i => NumPresents2(i, elfCount) > target).First();
         }
 
         public void Run(string input, ILogger logger)
