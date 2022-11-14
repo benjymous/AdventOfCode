@@ -1,21 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
-
-
   <PropertyGroup>
-	  <DebugType>Full</DebugType>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
-
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
-
-
   <ItemGroup>
     <Compile Remove="MMXIX\**" />
     <Compile Remove="test\**" />
@@ -23,26 +16,24 @@
     <EmbeddedResource Remove="test\**" />
     <None Remove="MMXIX\**" />
     <None Remove="test\**" />
-    
     <Compile Remove="intcomp\**" />
     <EmbeddedResource Remove="intcomp\**" />
     <None Remove="intcomp\**" />
-    
     <Compile Remove="IntCpuCmd\**" />
     <EmbeddedResource Remove="IntCpuCmd\**" />
     <None Remove="IntCpuCmd\**" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="Data\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.Experimental.Collections" Version="1.0.6-e190117-3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.355802">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
-
 </Project>
