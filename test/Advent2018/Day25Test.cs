@@ -26,12 +26,5 @@ namespace AoC.Advent2018.Test
             Assert.AreEqual(381, Advent2018.Day25.Part1(input));
         }
 
-        // [TestCategory("Regression")]
-        // [DataTestMethod]
-        // public void Constellation_Part2_Regression()
-        // {
-        //     Assert.AreEqual(0, MMXVIII.Day25.Part2(input));
-        // }
-
     }
 }

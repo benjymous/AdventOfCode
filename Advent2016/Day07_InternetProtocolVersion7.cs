@@ -78,12 +78,12 @@ namespace AoC.Advent2016
 
         public static int Part1(string input)
         {
-            return Util.Split(input).Where(i => HasAbba(i)).Count();
+            return Util.Split(input).Where(HasAbba).Count();
         }
 
         public static int Part2(string input)
         {
-            return Util.Split(input).Where(i => HasAbaBab(i)).Count();
+            return Util.Split(input).Where(HasAbaBab).Count();
         }
 
         public void Run(string input, ILogger logger)

@@ -24,7 +24,7 @@ namespace AoC.Advent2016
             var lines = Util.Split(input);
             var data = lines.Select(line => Util.Parse32(line, ' '));
 
-            var valid = data.Where(row => TriangleValid(row));
+            var valid = data.Where(TriangleValid);
 
             return valid.Count();
         }

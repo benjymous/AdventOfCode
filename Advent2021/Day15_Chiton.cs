@@ -55,7 +55,7 @@ namespace AoC.Advent2021
 
         private static int Solve(Map map) => AStar<(int x, int y)>
                                                  .FindPath(map, (0, 0), (map.MaxX, map.MaxY))
-                                                 .Sum(pos => map.GScore(pos));
+                                                 .Sum(map.GScore);
 
         public static int Part1(string input)
         {

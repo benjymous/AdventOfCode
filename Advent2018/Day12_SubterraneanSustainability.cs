@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AoC.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,36 +9,36 @@ namespace AoC.Advent2018
     {
         public string Name => "2018-12";
 
-        private static string Step(Dictionary<string, string> rules, string current)
+        private static string Step(Dictionary<string, char> rules, string current)
         {
-            var next = "..";
+            List<char> next = new() { '.', '.' };
             for (var i = 0; i < current.Length - 5; ++i)
             {
                 var sub = current.Substring(i, 5);
 
                 if (rules.TryGetValue(sub, out var rule))
                 {
-                    next += rule;
+                    next.Add(rule);
                 }
                 else
                 {
-                    next += ".";
+                    next.Add('.');
                 }
             }
-            next += "..";
-            current = next;
+            next.AddRange("..");
+            current = next.AsString();
             return current;
         }
 
-        private static void ParseInput(string input, out string initialState, out Dictionary<string, string> rules)
+        private static void ParseInput(string input, out string initialState, out Dictionary<string, char> rules)
         {
             var lines = Util.Split(input);
             initialState = lines[0].Split(": ")[1];
-            rules = new Dictionary<string, string>();
+            rules = new();
             foreach (var line in lines.Skip(1))
             {
                 var bits = line.Split(" => ");
-                rules[bits[0]] = bits[1];
+                rules[bits[0]] = bits[1][0];
             }
         }
 

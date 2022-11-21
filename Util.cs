@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -66,7 +67,7 @@ namespace AoC
 
         public static List<T> Parse<T>(IEnumerable<string> input)
         {
-            return input.Select(line => Create<T>(line))
+            return input.Select(Create<T>)
                         .ToList();
         }
 
@@ -101,28 +102,63 @@ namespace AoC
 
                 var paramInfo = typeConstructor.GetParameters();
 
-                var regexValues = matches[0]
-                    .Groups.Values.Where(v => !string.IsNullOrWhiteSpace(v.Value))
-                    .Skip(1).Select(g => g.Value);
-
-                if (regexValues.Count() != paramInfo.Length) throw new Exception("RegexParse couldn't match constructor param count");
-
-                var instanceParams = Enumerable.Zip(paramInfo, regexValues); // collate parameter types and matched substrings
-
-                var convertedParams = instanceParams
-                    .Select(kvp => TypeDescriptor.GetConverter(kvp.First.ParameterType).ConvertFromString(kvp.Second)).ToArray(); // convert substrings to match constructor input
+                object[] convertedParams = ConstructParams(matches, paramInfo);
 
                 return (T)Activator.CreateInstance(typeof(T), convertedParams);
             }
             throw new Exception("RegexParse failed to find suitable constructor for " + typeof(T).Name);
         }
 
+        private static object[] ConstructParams(MatchCollection matches, ParameterInfo[] paramInfo)
+        {
+            var regexValues = matches[0]
+                .Groups.Values.Where(v => !string.IsNullOrWhiteSpace(v.Value))
+                .Skip(1).Select(g => g.Value);
+
+            if (regexValues.Count() != paramInfo.Length) throw new Exception("RegexParse couldn't match constructor param count");
+
+            var instanceParams = Enumerable.Zip(paramInfo, regexValues); // collate parameter types and matched substrings
+
+            var convertedParams = instanceParams
+                .Select(kvp => TypeDescriptor.GetConverter(kvp.First.ParameterType).ConvertFromString(kvp.Second)).ToArray(); // convert substrings to match constructor input
+            return convertedParams;
+        }
+
         public static IEnumerable<T> RegexParse<T>(IEnumerable<string> input) =>
             input.Where(x => !string.IsNullOrWhiteSpace(x))
-                 .Select(line => RegexCreate<T>(line)).ToList();
+                 .Select(RegexCreate<T>);//.ToList();
 
         public static IEnumerable<T> RegexParse<T>(string input, string splitter = "\n") =>
             RegexParse<T>(input.Split(splitter));
+
+
+        public static T RegexFactoryCreate<T>(string line, object factory)
+        {
+            foreach (var func in factory.GetType().GetMethods())
+            {
+                if (func.GetCustomAttributes(typeof(RegexAttribute), true)
+                    .FirstOrDefault() is not RegexAttribute attribute) continue; // skip function if it doesn't have attr
+
+                var matches = Regex.Matches(line, attribute.Pattern); // match this constructor against the input line
+
+                if (!matches.Any()) continue; // Try other constructors to see if they match
+
+                var paramInfo = func.GetParameters();
+
+                object[] convertedParams = ConstructParams(matches, paramInfo);
+
+                return (T)func.Invoke(factory, convertedParams);
+
+            }
+            throw new Exception($"RegexFactory failed to find suitable factory function for {line}");
+        }
+
+        public static IEnumerable<T> RegexFactory<T>(IEnumerable<string> input, object factory) => 
+            input.Where(x => !string.IsNullOrWhiteSpace(x))
+                 .Select(line => RegexFactoryCreate<T>(line, factory));
+
+        public static IEnumerable<T> RegexFactory<T>(string input, object factory, string splitter = "\n") =>
+            RegexFactory<T>(input.Split(splitter), factory);
 
 
         public static int[] Parse32(string input, char splitChar = '\0') => Parse32(Split(input, splitChar));
@@ -130,10 +166,10 @@ namespace AoC
         public static Int64[] Parse64(string input, char splitChar = '\0') => Parse64(Split(input, splitChar));
         public static UInt64[] ParseU64(string input, char splitChar = '\0') => ParseU64(Split(input, splitChar));
 
-        public static int[] Parse32(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int32.Parse(s)).ToArray();
-        public static uint[] ParseU32(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => UInt32.Parse(s)).ToArray();
-        public static Int64[] Parse64(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => Int64.Parse(s)).ToArray();
-        public static UInt64[] ParseU64(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => UInt64.Parse(s)).ToArray();
+        public static int[] Parse32(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(Int32.Parse).ToArray();
+        public static uint[] ParseU32(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(UInt32.Parse).ToArray();
+        public static Int64[] Parse64(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(Int64.Parse).ToArray();
+        public static UInt64[] ParseU64(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(UInt64.Parse).ToArray();
 
         interface IConvertomatic
         {
@@ -318,9 +354,9 @@ namespace AoC
             Console.WriteLine(actual);
         }
 
-        public static int[] ExtractNumbers(IEnumerable<char> input) => input.Where(c => (c == ' ' || c == '-' || (c >= '0' && c <= '9'))).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(w => int.Parse(w)).ToArray();
+        public static int[] ExtractNumbers(IEnumerable<char> input) => input.Where(c => (c == ' ' || c == '-' || (c >= '0' && c <= '9'))).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(int.Parse).ToArray();
 
-        public static long[] ExtractLongNumbers(IEnumerable<char> input) => input.Where(c => (c == ' ' || c == '-' || (c >= '0' && c <= '9'))).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(w => long.Parse(w)).ToArray();
+        public static long[] ExtractLongNumbers(IEnumerable<char> input) => input.Where(c => (c == ' ' || c == '-' || (c >= '0' && c <= '9'))).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(long.Parse).ToArray();
 
 
         public static void SetBit(ref Int64 value, int i)
@@ -651,14 +687,13 @@ namespace AoC
         public Int64 Sum { get; private set; }
     }
 
-    [AttributeUsage(AttributeTargets.Constructor)]
+    [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method)]
     public class RegexAttribute : Attribute
     {
         public RegexAttribute(string pattern)
         {
             Pattern = pattern;
         }
-
         public string Pattern { get; private set; }
     }
 

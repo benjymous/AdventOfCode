@@ -4,7 +4,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AoC.Advent2018.Test
 {
     [TestCategory("2018")]
-    [TestCategory("ManhattanVector")]
     [TestClass]
     public class Day22Test
     {
@@ -64,12 +63,12 @@ namespace AoC.Advent2018.Test
             Assert.AreEqual(7299, Advent2018.Day22.Part1(input));
         }
 
-        // [TestCategory("Regression")]
-        // [DataTestMethod]
-        // public void Caves_Part2_Regression()
-        // {
-        //     Assert.AreEqual(0, MMXVIII.Day22.Part2(input));
-        // }
+        [TestCategory("Regression")]
+        [DataTestMethod]
+        public void Caves_Part2_Regression()
+        {
+            Assert.AreEqual(1008, Advent2018.Day22.Part2(input));
+        }
 
     }
 }

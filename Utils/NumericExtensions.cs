@@ -90,5 +90,21 @@ namespace AoC.Utils
             if (c >= 'a' && c <= 'f') return c - 'a' + 10;
             throw new Exception("Bad hex");
         }
+
+
+        public static int Distance(this (int x, int y) a, (int x, int y) b)
+        {
+            return Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
+        }
+
+        public static int Distance(this (int x, int y, int z) a, (int x, int y, int z) b)
+        {
+            return Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y) + Math.Abs(a.z - b.z);
+        }
+
+        public static int Distance(this (int x, int y, int z, int w) a, (int x, int y, int z, int w) b)
+        {
+            return Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y) + Math.Abs(a.z - b.z) + Math.Abs(a.w - b.w); ;
+        }
     }
 }

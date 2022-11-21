@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace AoC.Advent2018
 {
@@ -7,54 +7,27 @@ namespace AoC.Advent2018
     {
         public string Name => "2018-14";
 
-        static List<int> Parse32(string input)
+        static IEnumerable<int> Parse(string input)
         {
-            List<int> recipe = new();
-            foreach (var c in input.Trim())
+            foreach (var c in input)
             {
-                var i = c - '0';
-                recipe.Add(i);
+                yield return c - '0';
             }
-
-            return recipe;
         }
 
-        static List<int> Combine(int r1, int r2)
+        static IEnumerable<int> Combine(int r1, int r2)
         {
             int sum = r1 + r2;
 
-            return Parse32(sum.ToString());
+            return Parse(sum.ToString());
         }
 
-        static void Display(List<int> recipe, int[] current)
-        {
-            string str = "";
-            for (var i = 0; i < recipe.Count; ++i)
-            {
-                if (current[0] == i)
-                {
-                    str += $"({recipe[i]})";
-                }
-                else if (current[1] == i)
-                {
-                    str += $"[{recipe[i]}]";
-                }
-                else
-                {
-                    str += $" {recipe[i]} ";
-                }
-            }
-            Console.WriteLine(str);
-        }
-
-        public static int[] MoveCurrent(List<int> recipe, int[] current)
+        public static void MoveCurrent(List<int> recipe, ref int[] current)
         {
             for (int j = 0; j < 2; ++j)
             {
-                int forward = 1 + recipe[current[j]];
-                current[j] = (current[j] + forward) % recipe.Count;
+                current[j] = (current[j] + 1 + recipe[current[j]]) % recipe.Count;
             }
-            return current;
         }
 
         public static string Part1(int start, int keep)
@@ -65,19 +38,18 @@ namespace AoC.Advent2018
 
             while (recipe.Count < start + keep)
             {
-                var step = Combine(recipe[current[0]], recipe[current[1]]);
-                recipe.AddRange(step);
+                recipe.AddRange(Combine(recipe[current[0]], recipe[current[1]]));
 
-                current = MoveCurrent(recipe, current);
+                MoveCurrent(recipe, ref current);
             }
 
-            return String.Join("", recipe).Substring(start, keep);
+            return string.Join("", recipe).Substring(start, keep);
         }
 
         public static int Part2(string input)
         {
             var recipe = new List<int> { 3, 7 };
-            var toFind = Parse32(input.Trim());
+            var toFind = Parse(input.Trim()).ToArray();
 
             int[] current = { 0, 1 };
 
@@ -85,21 +57,20 @@ namespace AoC.Advent2018
 
             while (true)
             {
-                while (recipe.Count < searchPos + toFind.Count)
+                while (recipe.Count < searchPos + toFind.Length)
                 {
-                    var step = Combine(recipe[current[0]], recipe[current[1]]);
-                    recipe.AddRange(step);
+                    recipe.AddRange(Combine(recipe[current[0]], recipe[current[1]]));
 
-                    current = MoveCurrent(recipe, current);
+                    MoveCurrent(recipe, ref current);
                 }
 
                 bool found = true;
-                for (int i = 0; i < toFind.Count; ++i)
+                for (int i = 0; i < toFind.Length; ++i)
                 {
-                    if (i + searchPos > recipe.Count) { found = false; break; }
                     if (recipe[i + searchPos] != toFind[i]) { found = false; break; }
                 }
                 if (found) return searchPos;
+
                 searchPos++;
             }
         }

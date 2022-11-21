@@ -22,7 +22,7 @@ namespace AoC.Advent2018
 
         public static int Part1(string input)
         {
-            var data = Util.RegexParse<Entry>(input);
+            var data = Util.RegexParse<Entry>(input).ToArray();
 
             var strongest = data.OrderBy(e => e.radius).LastOrDefault();
 
@@ -31,7 +31,7 @@ namespace AoC.Advent2018
 
         public static int Part2(string input)
         {
-            var data = Util.RegexParse<Entry>(input);
+            var data = Util.RegexParse<Entry>(input).ToArray();
 
             int maxx = int.MinValue;
             int minx = int.MaxValue;

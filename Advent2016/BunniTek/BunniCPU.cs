@@ -76,8 +76,8 @@ namespace AoC.Advent2016.BunniTek
     class Instruction
     {
         public OpCode Opcode;
-        public Value X;
-        public Value? Y = null;
+        public readonly Value X;
+        public readonly Value? Y = null;
 
         public Instruction(string line)
         {

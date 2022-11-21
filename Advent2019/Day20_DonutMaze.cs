@@ -22,8 +22,8 @@ namespace AoC.Advent2019
                 : base(null)
             {
                 var lines = Util.Split(input);
-                var portals = new Dictionary<ManhattanVector2, string>();
-                var innerPortals = new Dictionary<ManhattanVector2, bool>();
+                var portals = new Dictionary<(int x, int y), string>();
+                var innerPortals = new Dictionary<(int x, int y), bool>();
 
                 Height = lines.Length;
                 Width = lines.First().Length;
@@ -38,8 +38,8 @@ namespace AoC.Advent2019
                         {
                             // part of a portal
 
-                            var leftNeighbour = Data.GetStrKey($"{x - 1},{y}");
-                            var aboveNeighbour = Data.GetStrKey($"{x},{y - 1}");
+                            var leftNeighbour = Data.GetOrDefault((x - 1,y));
+                            var aboveNeighbour = Data.GetOrDefault((x,y - 1));
 
                             string code = null;
 
@@ -50,16 +50,16 @@ namespace AoC.Advent2019
                             {
                                 code = $"{leftNeighbour}{c}";
 
-                                var leftLeftNeighbour = Data.GetStrKey($"{x - 2},{y}");
+                                var leftLeftNeighbour = Data.GetOrDefault((x - 2, y));
 
                                 if (leftLeftNeighbour == '.')
                                 {
-                                    v = new ManhattanVector2(x - 2, y);
+                                    v = (x - 2, y);
                                     isInner = v.X != Width - 3;
                                 }
                                 else
                                 {
-                                    v = new ManhattanVector2(x + 1, y);
+                                    v = (x + 1, y);
                                     isInner = v.X != 2;
                                 }
 
@@ -67,15 +67,15 @@ namespace AoC.Advent2019
                             else if (IsCapitalLetter(aboveNeighbour))
                             {
                                 code = $"{aboveNeighbour}{c}";
-                                var aboveAboveNeighbour = Data.GetStrKey($"{x},{y - 2}");
+                                var aboveAboveNeighbour = Data.GetOrDefault((x,y-2));
                                 if (aboveAboveNeighbour == '.')
                                 {
-                                    v = new ManhattanVector2(x, y - 2);
+                                    v = (x, y - 2);
                                     isInner = v.Y != Height - 3;
                                 }
                                 else
                                 {
-                                    v = new ManhattanVector2(x, y + 1);
+                                    v = (x, y + 1);
                                     isInner = v.Y != 2;
                                 }
                             }
@@ -88,7 +88,7 @@ namespace AoC.Advent2019
 
 
                         }
-                        Data.PutStrKey($"{x},{y}", c);
+                        Data[(x,y)] = c;
                     }
                 }
 
@@ -110,10 +110,10 @@ namespace AoC.Advent2019
 
             public bool Part2 { get; set; } = false;
 
-            public Dictionary<int, (ManhattanVector2, bool)> Portals { get; private set; } = new Dictionary<int, (ManhattanVector2, bool)>();
+            public Dictionary<int, ((int x, int y), bool)> Portals { get; private set; } = new Dictionary<int, ((int x, int y), bool)>();
 
-            public ManhattanVector2 Start { get; private set; }
-            public ManhattanVector2 End { get; private set; }
+            public (int x, int y) Start { get; private set; }
+            public (int x, int y) End { get; private set; }
 
             public int Width { get; private set; }
             public int Height { get; private set; }
@@ -121,7 +121,7 @@ namespace AoC.Advent2019
             public int MaxDepth { get; set; } = 25;
 
 
-            public override IEnumerable<ManhattanVector2> GetNeighbours(ManhattanVector2 centre)
+            public override IEnumerable<(int x, int y)> GetNeighbours((int x, int y) centre)
             {
                 if (Portals.TryGetValue(GetKey(centre), out var other))
                 {
@@ -131,7 +131,7 @@ namespace AoC.Advent2019
                 foreach (var v in base.GetNeighbours(centre)) yield return v;
             }
 
-            public IEnumerable<(ManhattanVector2, int)> GetNeighbours2(ManhattanVector2 centre, int level)
+            public IEnumerable<((int x, int y), int)> GetNeighbours2((int x, int y) centre, int level)
             {
                 if (Portals.TryGetValue(GetKey(centre), out var other))
                 {
@@ -159,14 +159,14 @@ namespace AoC.Advent2019
             }
         }
 
-        public static int GetKey(ManhattanVector2 pos) => (pos.X << 8) + (pos.Y);
-        public static int GetKey(ManhattanVector2 pos, int level) => (pos.X << 16) + (pos.Y << 8) + level;
+        public static int GetKey((int x, int y) pos) => (pos.x << 8) + (pos.y);
+        public static int GetKey((int x, int y) pos, int level) => (pos.x << 16) + (pos.y << 8) + level;
 
         public static int Part1(string input)
         {
             var map = new PortalMap(input);
 
-            var jobqueue = new Queue<(ManhattanVector2, int)>();
+            var jobqueue = new Queue<((int x, int y), int)>();
             jobqueue.Enqueue((map.End, 0));
             int best = int.MaxValue;
             var cache = new Dictionary<int, int>() { { GetKey(map.End), 0 } };
@@ -244,7 +244,7 @@ namespace AoC.Advent2019
         {
             var map = new PortalMap(input);
 
-            var jobqueue = new Queue<(ManhattanVector2, int, int)>();
+            var jobqueue = new Queue<((int x, int y), int, int)>();
             jobqueue.Enqueue((map.End, 0, 0));
             int best = int.MaxValue;
             var cache = new Dictionary<int, int>() { { GetKey(map.End, 0), 0 } };

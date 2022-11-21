@@ -25,7 +25,7 @@ namespace AoC.Advent2018
 
         static readonly (int dx, int dy)[] InRange = { (0, -1), (-1, 0), (1, 0), (0, 1) };
 
-        class Map : IMap<(int x, int y)>
+        class Map : IMap<(int x, int y)>, IComparer<(int x, int y)>
         {
             public Map(string input, int elfAP)
             {
@@ -35,11 +35,11 @@ namespace AoC.Advent2018
                 var gobins = data.Where(kvp => kvp.Value == 'G').ToDictionary(kvp => kvp.Key, _ => new Creature { type = CreatureType.Goblin });
                 var elves = data.Where(kvp => kvp.Value == 'E').ToDictionary(kvp => kvp.Key, _ => new Creature { type = CreatureType.Elf, AP = elfAP });
 
-                Creatures = gobins.Union(elves).ToDictionary();
+                Creatures = gobins.Union(elves).ToSortedDictionary(this);
             }
 
             readonly HashSet<(int x, int y)> Walls;
-            readonly Dictionary<(int x, int y), Creature> Creatures;
+            readonly SortedDictionary<(int x, int y), Creature> Creatures;
 
             public int ElfCount() => Creatures.Values.Where(c => c.type == CreatureType.Elf).Count();
 
@@ -58,7 +58,6 @@ namespace AoC.Advent2018
 
                 if (target != creature.Key)
                 {
-                    //Console.WriteLine($"{creature.Value.type} moves to {target}");
                     Creatures.Remove(creature.Key);
                     Creatures.Add(target, creature.Value);
                 }
@@ -76,17 +75,17 @@ namespace AoC.Advent2018
                     }
                 }
 
-                var potentialTargets = targets.SelectMany(target => InRange.Select(offset => (x: target.Key.x + offset.dx, y: target.Key.y + offset.dy))).Where(pos => IsClear(pos) || pos == creature.Key).ToHashSet();
+                var potentialTargets = targets.SelectMany(target => InRange.Select(offset => (x: target.Key.x + offset.dx, y: target.Key.y + offset.dy))).Where(pos => IsClear(pos) || pos == creature.Key).Distinct();
 
                 var reachable = potentialTargets.Select(pos => (pos, path: AStar<(int x, int y)>.FindPath(this, creature.Key, pos)))
-                                                 .Where(entry => entry.path.Any())
-                                                 .Select(entry => (entry.pos, dist: entry.path.Count()));
+                                                 .Where(entry => entry.path.Any());                                                                                                  
 
                 if (!reachable.Any()) return creature.Key;
 
-                var targetPos = reachable.OrderBy(v => (v.dist, v.pos.y, v.pos.x)).First();
+                var targetPos = reachable.OrderBy(v => (v.path.Count(), v.pos.y, v.pos.x))
+                                         .First();
 
-                //Console.WriteLine($"Heads towards {targetPos.pos}");
+                //return targetPos.path.First();
 
                 return ReadingOrderMove(creature.Key, targetPos.pos);
             }
@@ -110,18 +109,14 @@ namespace AoC.Advent2018
 
             public bool PerformTurn()
             {
-                var moveOrder = Creatures.OrderBy(kvp => (kvp.Key.y, kvp.Key.x)).ToArray();
+                var moveOrder = Creatures.ToArray();
 
                 foreach (var creature in moveOrder)
                 {
-                    //Console.WriteLine($"{creature.Value.type} {creature.Key} considers turn");
-
                     if (creature.Value.HP <= 0) continue;
 
-                    var (hasTarget, newPos) = MoveUnit(creature);
+                    var (hasTarget, (x,y)) = MoveUnit(creature);
                     if (!hasTarget) return false;
-
-                    var (x, y) = newPos;
 
                     var targets = new List<((int x, int y) pos, Creature creature)>();
                     foreach (var (dx, dy) in InRange)
@@ -140,13 +135,10 @@ namespace AoC.Advent2018
                     {
                         var target = targets.OrderBy(t => (t.creature.HP, t.pos.y, t.pos.x)).First();
 
-                        //Console.WriteLine($"{creature.Value.type} {creature.Key} attacks {target.creature.type} {target.pos}");
-
                         target.creature.HP -= creature.Value.AP;
 
                         if (target.creature.HP <= 0)
                         {
-                            //Console.WriteLine($"{target.creature.type} dies");
                             Creatures.Remove(target.pos);
                         }
                     }
@@ -162,33 +154,15 @@ namespace AoC.Advent2018
             public int Heuristic((int x, int y) location1, (int x, int y) location2) => Math.Abs(location1.x - location2.x) + Math.Abs(location1.y - location2.y);
             public int GScore((int x, int y) location) => 1;
 
-            //public void Display()
-            //{
-            //    int maxX = Walls.Max(p => p.x);
-            //    int maxY = Walls.Max(p => p.x);
-            //    for (int y = 0; y <= maxY; ++y)
-            //    {
-            //        var lineStats = "   ";
-            //        for (int x = 0; x <= maxX; ++x)
-            //        {                
-            //            var c = ' ';
-            //            if (Walls.Contains((x, y))) c = '#';
-            //            else if (Creatures.TryGetValue((x,y), out var creature))
-            //            {                       
-            //                c = creature.type == CreatureType.Elf ? 'E' : 'G';
-
-            //                lineStats += $"{c}({creature.HP}) ";
-            //            }
-            //            Console.Write(c);
-            //        }
-            //        Console.Write(lineStats);
-            //        Console.WriteLine();
-            //    }
-
-            //    Console.WriteLine();
-            //}
-
             public int Score() { return Creatures.Sum(c => c.Value.HP); }
+
+            public int Compare((int x, int y) a, (int x, int y) b)
+            {
+                int result = a.y.CompareTo(b.y);
+                if (result == 0)
+                    result = a.x.CompareTo(b.x);
+                return result;
+            }
         }
 
 
@@ -199,11 +173,8 @@ namespace AoC.Advent2018
 
             int turns = 0;
 
-            //map.Display();
-
             while (true)
             {
-
                 if (!map.PerformTurn()) break;
 
                 if (endOnElfLoss)
@@ -214,9 +185,6 @@ namespace AoC.Advent2018
                     }
                 }
                 turns++;
-                //Console.WriteLine();
-                //Console.WriteLine($"After {turns} rounds");
-                //map.Display();
             }
 
             return map.Score() * turns;
@@ -232,7 +200,7 @@ namespace AoC.Advent2018
         {
             return Util.BinarySearch(4, elfAP =>
             {
-                var score = ElfBattle(input, (int)elfAP, true);
+                var score = ElfBattle(input, elfAP, true);
                 bool win = score > 0;
                 Console.WriteLine($"{elfAP} => {win}");
                 return (win, score);

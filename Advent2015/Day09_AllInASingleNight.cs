@@ -47,7 +47,7 @@ namespace AoC.Advent2015
 
             var names = distances.Select(d => d.From).Union(distances.Select(d => d.To)).Distinct().ToArray();
 
-            var permutations = names.Permutations().ToArray();
+            var permutations = names.Permutations();
 
             return permutations.Select(r => GetDistance(r, lookup));
         }

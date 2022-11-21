@@ -4,7 +4,6 @@ namespace AoC.Advent2019.Test
 {
     [TestCategory("2019")]
     [TestCategory("AStar")]
-    [TestCategory("ManhattanVector")]
     [TestClass]
     public class Day18Test
     {

@@ -29,7 +29,7 @@ namespace AoC.Advent2016
             public override string ToString() => $"{position} : U{Used}:F{Free} [{Size}]";
         }
 
-        static IEnumerable<Node> Parse(string input) => Util.RegexParse<Node>(Util.Split(input).Where(line => line.StartsWith("/dev/")));
+        static IEnumerable<Node> Parse(string input) => Util.RegexParse<Node>(Util.Split(input).Where(line => line.StartsWith("/dev/"))).ToArray();
 
         public static int Part1(string input)
         {
@@ -58,7 +58,7 @@ namespace AoC.Advent2016
         {
             var nodes = Parse(input);
 
-            var grid = nodes.ToDictionary(el => el.position.ToString(), el => el);
+            var grid = nodes.ToDictionary(el => el.position.AsSimple(), el => el);
             var sourceX = nodes.Where(n => n.position.Y == 0).Select(n => n.position.X).Max();
 
             var empty = nodes.Where(n => n.Used == 0).First();
@@ -66,7 +66,7 @@ namespace AoC.Advent2016
             GridMap<Node> map = new(new Walkable(empty.Free), grid);
 
             // move empty square to the left of the payload (avoiding the unmovable squares)
-            var steps = AStar<ManhattanVector2>.FindPath(map, empty.position, new ManhattanVector2(sourceX, 0)).Count() - 1;
+            var steps = AStar<(int x, int y)>.FindPath(map, empty.position, (sourceX, 0)).Count() - 1;
 
             steps++; // move payload left
             steps += 5 * (sourceX - 1); // repeated cycles of moving empty cell to left of payload, and moving payload left again

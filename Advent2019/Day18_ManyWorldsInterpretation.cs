@@ -25,14 +25,14 @@ namespace AoC.Advent2019
 
         public class RoomPath
         {
-            public RoomPath(Dictionary<string, char> map, IEnumerable<ManhattanVector2> path)
+            public RoomPath(Dictionary<(int x, int y), char> map, IEnumerable<(int x, int y)> path)
             {
                 if (!path.Any()) throw new Exception("empty path");
 
                 // find all the doors this path passes through
                 foreach (var pos in path)
                 {
-                    var c = map.GetObjKey(pos);
+                    var c = map[pos];
 
                     if (c >= 'A' && c <= 'Z')
                     {
@@ -51,13 +51,13 @@ namespace AoC.Advent2019
 
         public class MapData : GridMap<char>
         {
-            readonly List<ManhattanVector2> startPositions = new();
+            readonly List<(int x, int y)> startPositions = new();
 
             public int AllKeys { get; private set; } = 0;
             public int AllPlayers { get; private set; } = 0;
 
-            readonly Dictionary<int, ManhattanVector2> keyPositions = new();
-            readonly Dictionary<int, ManhattanVector2> doors = new();
+            readonly Dictionary<int, (int x, int y)> keyPositions = new();
+            readonly Dictionary<int, (int x, int y)> doors = new();
             public Dictionary<int, RoomPath> Paths { get; private set; } = new Dictionary<int, RoomPath>();
 
             class Walkable : IIsWalkable<char>
@@ -95,21 +95,21 @@ namespace AoC.Advent2019
                         if (c == '@')
                         {
                             // player start position
-                            startPositions.Add(new ManhattanVector2(x, y));
+                            startPositions.Add((x, y));
                             c = '.';
                         }
                         if (c >= 'a' && c <= 'z')
                         {
                             // key
-                            keyPositions[KeyCode(c)] = new ManhattanVector2(x, y);
+                            keyPositions[KeyCode(c)] = (x, y);
                             AllKeys |= KeyCode(c);
                         }
                         if (c >= 'A' && c <= 'Z')
                         {
                             // door
-                            doors[KeyCode(c)] = new ManhattanVector2(x, y);
+                            doors[KeyCode(c)] = (x, y);
                         }
-                        Data.PutStrKey($"{x},{y}", c);
+                        Data[(x,y)] = c;
                     }
                 }
             }
@@ -121,17 +121,17 @@ namespace AoC.Advent2019
                     var centrePoint = startPositions.First();
                     startPositions.Clear();
 
-                    startPositions.Add(new ManhattanVector2(centrePoint.X - 1, centrePoint.Y - 1));
-                    startPositions.Add(new ManhattanVector2(centrePoint.X + 1, centrePoint.Y - 1));
-                    startPositions.Add(new ManhattanVector2(centrePoint.X - 1, centrePoint.Y + 1));
-                    startPositions.Add(new ManhattanVector2(centrePoint.X + 1, centrePoint.Y + 1));
+                    startPositions.Add((centrePoint.x - 1, centrePoint.y - 1));
+                    startPositions.Add((centrePoint.x + 1, centrePoint.y - 1));
+                    startPositions.Add((centrePoint.x - 1, centrePoint.y + 1));
+                    startPositions.Add((centrePoint.x + 1, centrePoint.y + 1));
 
-                    Data[$"{centrePoint.X},{centrePoint.Y}"] = '#';
+                    Data[(centrePoint.x,centrePoint.y)] = '#';
 
-                    Data[$"{centrePoint.X - 1},{centrePoint.Y}"] = '#';
-                    Data[$"{centrePoint.X + 1},{centrePoint.Y}"] = '#';
-                    Data[$"{centrePoint.X},{centrePoint.Y - 1}"] = '#';
-                    Data[$"{centrePoint.X},{centrePoint.Y + 1}"] = '#';
+                    Data[(centrePoint.x - 1,centrePoint.y)] = '#';
+                    Data[(centrePoint.x + 1,centrePoint.y)] = '#';
+                    Data[(centrePoint.x,centrePoint.y - 1)] = '#';
+                    Data[(centrePoint.x,centrePoint.y + 1)] = '#';
                 }
             }
 
@@ -141,9 +141,9 @@ namespace AoC.Advent2019
                 {
                     for (var x = 0; x < 7; ++x)
                     {
-                        var c = Data.GetStrKey($"{x},{y}");
+                        var c = Data[(x,y)];
 
-                        var pos = new ManhattanVector2(x, y);
+                        var pos = (x, y);
 
                         if (startPositions.Contains(pos))
                         {
@@ -171,7 +171,7 @@ namespace AoC.Advent2019
                     foreach (var player in startPositions)
                     {
                         int playerId = PlayerCode(startPositions.IndexOf(player));
-                        var path = AStar<ManhattanVector2>.FindPath(this, player, keyPositions[k1]);
+                        var path = AStar<(int x, int y)>.FindPath(this, player, keyPositions[k1]);
                         if (path.Any())
                         {
                             Paths[playerId | k1] = new RoomPath(Data, path);
@@ -182,7 +182,7 @@ namespace AoC.Advent2019
                         if (k2 > k1)
                         {
                             // path from k1 to k2
-                            var path = AStar<ManhattanVector2>.FindPath(this, keyPositions[k1], keyPositions[k2]);
+                            var path = AStar<(int x, int y)>.FindPath(this, keyPositions[k1], keyPositions[k2]);
                             if (path.Any())
                             {
                                 Paths[k1 | k2] = new RoomPath(Data, path); // since we're using bitwise, we just store two bits for k1|k2 it doesn't matter which way around

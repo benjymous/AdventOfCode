@@ -52,7 +52,7 @@ namespace AoC.Advent2021
         {
             var map = new Map(input);
 
-            return map.Coordinates.Select(pos => map.FloodFill(pos))
+            return map.Coordinates.Select(map.FloodFill)
                       .OrderByDescending(x => x)
                       .Take(3)
                       .Product();

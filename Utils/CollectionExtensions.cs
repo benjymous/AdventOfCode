@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 
@@ -43,6 +44,13 @@ namespace AoC.Utils
             var k = key.ToString();
             return GetStrKey(dict, k);
         }
+
+        public static T2 GetOrDefault<T1, T2>(this Dictionary<T1, T2> dict, T1 key)
+        {
+            if (dict.TryGetValue(key, out T2 val)) return val;
+            return default;
+        }
+
 
         public static T GetOrCalculate<K, T>(this Dictionary<K, T> dict, K key, Func<K, T> predicate)
         {
@@ -152,6 +160,17 @@ namespace AoC.Utils
                 var vals = input.Skip(i++).Take(2).ToArray();
                 if (vals.Length < 2) break;
                 yield return (vals[0], vals[1]);
+            }
+        }
+
+        public static IEnumerable<(T first, T second, T third)> OverlappingTriplets<T>(this IEnumerable<T> input)
+        {
+            int i = 0;
+            while (true)
+            {
+                var vals = input.Skip(i++).Take(3).ToArray();
+                if (vals.Length < 3) break;
+                yield return (vals[0], vals[1], vals[2]);
             }
         }
 
@@ -266,6 +285,18 @@ namespace AoC.Utils
             return enumerable.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
+        public static SortedDictionary<TKey, TValue> ToSortedDictionary<TKey,TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> enumerable, IComparer<TKey> comparer)
+        {
+            var dict = new SortedDictionary<TKey, TValue>(comparer);
+
+            foreach (var kvp in enumerable)
+            {
+                dict.Add(kvp.Key, kvp.Value);
+            }
+
+            return dict;
+        }
+
         public static int Height<T>(this T[,] array2d) => array2d.GetLength(0);
         public static int Width<T>(this T[,] array2d) => array2d.GetLength(1);
 
@@ -355,5 +386,30 @@ namespace AoC.Utils
         {
             return into.Take(pos).Union(elements).Union(into.Skip(pos));
         }
+
+        public static int GetCombinedHashCode(this IEnumerable<int> collection)
+        {
+            unchecked
+            {
+                int hash = 17;
+                foreach (var v in collection)
+                {
+                    hash = hash * 31 + v;
+                }
+                return hash;
+            }
+        }
+
+        public static int IndexOf<T>(this IEnumerable<T> collection, T item) where T : IComparable<T>
+        {
+            int count = 0;
+            foreach (var el in collection)
+            {
+                if (el.CompareTo(item) == 0) return count;
+                count++;
+            }
+            return -1;
+        }
     }
+   
 }

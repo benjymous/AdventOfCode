@@ -23,7 +23,7 @@ namespace AoC.Utils.Vectors
         public ManhattanVectorN(string val)
         {
             var bits = Split(val);
-            Component = bits.Select(s => int.Parse(s)).ToArray();
+            Component = bits.Select(int.Parse).ToArray();
         }
 
         public int[] Component = null;
@@ -174,12 +174,18 @@ namespace AoC.Utils.Vectors
             if (ComponentCount != 2) throw new Exception("Invalid component count for Vector2");
         }
 
+        public ManhattanVector2((int x, int y) val)
+            : base(new int[] {val.x, val.y})
+        {
+        }
+
         public int X { get { return Component[0]; } set { Component[0] = value; } }
         public int Y { get { return Component[1]; } set { Component[1] = value; } }
 
         public (int x, int y) AsSimple() => (X, Y);
 
-        public static explicit operator ValueTuple<int, int>(ManhattanVector2 v) => v.AsSimple();
+        public static implicit operator ValueTuple<int, int>(ManhattanVector2 v) => v.AsSimple();
+        public static implicit operator ManhattanVector2(ValueTuple<int, int> v) => new(v);
 
         public void Offset(Direction2 dir, int multiple = 1)
         {
@@ -240,7 +246,7 @@ namespace AoC.Utils.Vectors
 
         public static ManhattanVector2 operator +(ManhattanVector2 a, Direction2 b)
         {
-            var res = new ManhattanVector2(a);
+            var res = new ManhattanVector2(a.X, a.Y);
             res.Offset(b);
             return res;
         }
@@ -316,6 +322,8 @@ namespace AoC.Utils.Vectors
         public int Y { get { return Component[1]; } set { Component[1] = value; } }
         public int Z { get { return Component[2]; } set { Component[2] = value; } }
         public int W { get { return Component[3]; } set { Component[3] = value; } }
+
+        public (int x, int y, int z, int w) AsSimple() => (X, Y, Z, W);
 
         public static ManhattanVector4 operator +(ManhattanVector4 a, ManhattanVector4 b) => new(a + (ManhattanVectorN)b);
         public static ManhattanVector4 operator -(ManhattanVector4 a, ManhattanVector4 b) => new((ManhattanVectorN)a - (ManhattanVectorN)b);

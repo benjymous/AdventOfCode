@@ -50,7 +50,7 @@ namespace AoC.Advent2021
         public static long Part2(string input)
         {
             var lines = Util.Split(input)
-                            .Select(line => CheckLine(line))
+                            .Select(CheckLine)
                             .Where(res => res.found == 0);
 
             return lines.Select(line => line.stack.Select(line => Score(ExpectedClose(line)).part2)

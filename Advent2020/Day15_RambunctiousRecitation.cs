@@ -37,9 +37,9 @@ namespace AoC.Advent2020
                 }
             }
 
-            public int Next() => AddNumber(LastEntry.IsFirst ? 0 : Count - LastEntry.Get);
+            public void Next() => AddNumber(LastEntry.IsFirst ? 0 : Count - LastEntry.Get);
 
-            int AddNumber(int val)
+            void AddNumber(int val)
             {
                 LastNum = val;
                 if (values.TryGetValue(LastNum, out Entry entry))
@@ -52,7 +52,6 @@ namespace AoC.Advent2020
                     LastEntry = new Entry(++Count);
                     values[val] = LastEntry;
                 }
-                return val;
             }
 
             public int Count { get; private set; } = 0;

@@ -17,9 +17,9 @@ namespace AoC.Utils.Pathfinding
         bool IsWalkable(TCellDataType cell);
     }
 
-    public class GridMap<TCellDataType> : IMap<ManhattanVector2>
+    public class GridMap<TCellDataType> : IMap<(int x, int y)>
     {
-        public Dictionary<string, TCellDataType> Data = new();
+        public Dictionary<(int x, int y), TCellDataType> Data = new();
 
         public TCellDataType WallType;
         readonly IIsWalkable<TCellDataType> Walkable;
@@ -29,40 +29,39 @@ namespace AoC.Utils.Pathfinding
             Walkable = walkable ?? this as IIsWalkable<TCellDataType>;
         }
 
-        public GridMap(IIsWalkable<TCellDataType> walkable, Dictionary<string, TCellDataType> data)
+        public GridMap(IIsWalkable<TCellDataType> walkable, Dictionary<(int x, int y), TCellDataType> data)
         {
             Walkable = walkable ?? this as IIsWalkable<TCellDataType>;
             Data = data;
         }
 
-        public virtual IEnumerable<ManhattanVector2> GetNeighbours(ManhattanVector2 center)
+        public virtual IEnumerable<(int x, int y)> GetNeighbours((int x, int y) center)
         {
-            ManhattanVector2 pt;
-            pt = new ManhattanVector2(center.X - 1, center.Y);
+            (int x, int y) pt;
+            pt = (center.x - 1, center.y);
             if (IsValidNeighbour(pt))
                 yield return pt;
 
-            pt = new ManhattanVector2(center.X + 1, center.Y);
+            pt = (center.x + 1, center.y);
             if (IsValidNeighbour(pt))
                 yield return pt;
 
-            pt = new ManhattanVector2(center.X, center.Y + 1);
+            pt = (center.x, center.y + 1);
             if (IsValidNeighbour(pt))
                 yield return pt;
 
-            pt = new ManhattanVector2(center.X, center.Y - 1);
+            pt = (center.x, center.y - 1);
             if (IsValidNeighbour(pt))
                 yield return pt;
-
         }
 
-        public bool IsValidNeighbour(ManhattanVector2 pt) => Data.TryGetValue(pt.ToString(), out var room) && Walkable.IsWalkable(room);
+        public bool IsValidNeighbour((int x, int y) pt) => Data.TryGetValue(pt, out var room) && Walkable.IsWalkable(room);
 
-        public string FindCell(TCellDataType val) => Data.Where(kvp => EqualityComparer<TCellDataType>.Default.Equals(kvp.Value, val)).First().Key;
+        public (int x, int y) FindCell(TCellDataType val) => Data.Where(kvp => EqualityComparer<TCellDataType>.Default.Equals(kvp.Value, val)).First().Key;
 
-        public int Heuristic(ManhattanVector2 location1, ManhattanVector2 location2) => location1.Distance(location2);
+        public int Heuristic((int x, int y) location1, (int x, int y) location2) => Math.Abs(location1.x - location2.x) + Math.Abs(location1.y - location2.y);
 
-        public int GScore(ManhattanVector2 location) => 1;
+        public int GScore((int x, int y) location) => 1;
     }
 
 

@@ -28,14 +28,14 @@ namespace AoC.Advent2021
                 {
                     var (moving, waiting) = phase == 0 ? ('>', 'v') : ('v', '>');
 
-                    next = new(state.Where(kvp => kvp.Value == waiting));
+                    next = state.Where(kvp => kvp.Value == waiting).ToDictionary();
 
-                    foreach (var cell in state.Where(kvp => kvp.Value == moving))
+                    foreach (var cell in state.Where(kvp => kvp.Value == moving).Select(kvp => kvp.Key))
                     {
-                        var dest = phase == 0 ? ((cell.Key.x + 1) % maxx, cell.Key.y) : (cell.Key.x, (cell.Key.y + 1) % maxy);
-                        if (state.ContainsKey(dest)) dest = cell.Key;
+                        var dest = phase == 0 ? ((cell.x + 1) % maxx, cell.y) : (cell.x, (cell.y + 1) % maxy);
+                        if (state.ContainsKey(dest)) dest = cell;
                         else moved = true;
-                        next[dest] = cell.Value;
+                        next[dest] = moving;
                     }
 
                     state = next;

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace AoC.Advent2018
 {
@@ -13,7 +14,7 @@ namespace AoC.Advent2018
         const char TREES = '|';
         const char LUMBERYARD = '#';
 
-        public static char Step(char current, string neighbours)
+        public static char Step(char current, IEnumerable<char> neighbours)
         {
             switch (current)
             {
@@ -43,69 +44,57 @@ namespace AoC.Advent2018
             return current;
         }
 
-        static int Count(char type, string[] state)
+        static IEnumerable<char> Flat(char[][] data)
         {
-            var all = String.Join("", state);
+            foreach (var line in data)
+                foreach (var ch in line)
+                    yield return ch;
+        }
+
+        public static int CalcHash(char[][] data)
+        {
+            return new BigInteger(Flat(data).Select(x => (byte)x).ToArray()).GetHashCode();
+        }
+
+        static int Count(char type, char[][] state)
+        {
+            var all = Flat(state);
             return all.Where(c => c == type).Count();
         }
 
-        static char GetAt(string[] input, int x, int y)
+        static char GetAt(char[][] input, int x, int y)
         {
             if (y < 0 || y >= input.Length) return '-';
             if (x < 0 || x >= input[y].Length) return '-';
             return input[y][x];
         }
 
-        static void Display(string[] state)
-        {
-            foreach (var line in state) Console.WriteLine(line);
-            Console.WriteLine();
-        }
-
         public static int Run(string input, int iterations)
         {
-            var currentState = Util.Split(input);
-            var newState = (string[])currentState.Clone();
+            var currentState = Util.Split(input).Select(line => line.ToArray()).ToArray();
+            var newState = (char[][])currentState.Clone();
 
-            var previous = new Queue<string>();
+            var previous = new Queue<int>();
             int targetStep = -1;
-
-            //Display(currentState);
-
-            //var LOOKFOR = 190512;
-
 
             for (var i = 0; i < iterations; ++i)
             {
-                _ = Count(TREES, currentState) * Count(LUMBERYARD, currentState);
-
-                // if (score == LOOKFOR)
-                // {
-                //     Console.WriteLine($"Answer at {i}");
-                // }
-
                 if (targetStep == i)
                 {
                     return Count(TREES, currentState) * Count(LUMBERYARD, currentState);
                 }
+                else if (targetStep == -1)
+                { 
+                    var hash = CalcHash(currentState);
 
-                var hash = String.Join("", currentState).GetSHA256String();
-
-                var matchIdx = i - previous.Count;
-                foreach (var prev in previous)
-                {
-                    matchIdx++;
-                    if (prev == hash)
+                    var matchIdx = i - previous.Count;
+                    foreach (var prev in previous)
                     {
-                        //Console.WriteLine($"Cycle detected between {matchIdx} and {i}");
-
-                        var cycleLength = i - matchIdx + 1;
-                        //Console.WriteLine($"Cycle length = {cycleLength}");
-
-                        //Console.WriteLine($"{i},{Count(TREES, currentState) * Count(LUMBERYARD, currentState)}");
-
-                        if (targetStep == -1)
+                        matchIdx++;
+                        if (prev == hash)
                         {
+                            var cycleLength = i - matchIdx + 1;
+
                             if (cycleLength == 1)
                             {
                                 targetStep = i + 1;
@@ -114,23 +103,21 @@ namespace AoC.Advent2018
                             {
                                 int cycleOffset = (i % cycleLength);
                                 targetStep = i + ((iterations - cycleOffset) % cycleLength);
-                            }
+                            }                      
                         }
-
-
                     }
-                }
 
-                previous.Enqueue(hash);
-                if (previous.Count > 50) previous.Dequeue();
+                    previous.Enqueue(hash);
+                    if (previous.Count > 50) previous.Dequeue();
+                }
 
                 for (var y = 0; y < currentState.Length; ++y)
                 {
-                    var line = "";
+                    List<char> line = new();
                     for (var x = 0; x < currentState[y].Length; ++x)
                     {
                         var cell = GetAt(currentState, x, y);
-                        string neighbours = "";
+                        List<char> neighbours = new();
 
                         for (var y1 = y - 1; y1 <= y + 1; ++y1)
                         {
@@ -138,19 +125,16 @@ namespace AoC.Advent2018
                             {
                                 if (x != x1 || y != y1)
                                 {
-                                    neighbours += GetAt(currentState, x1, y1);
+                                    neighbours.Add(GetAt(currentState, x1, y1));
                                 }
                             }
                         }
 
-                        line += Step(cell, neighbours);
+                        line.Add(Step(cell, neighbours));
                     }
-                    newState[y] = line;
+                    newState[y] = line.ToArray();
                 }
-                currentState = (string[])newState.Clone();
-
-                //Display(currentState);
-                //if (i%1000 == 0) Console.WriteLine($"{i}/{iterations}");
+                currentState = (char[][])newState.Clone();
             }
 
             return Count(TREES, currentState) * Count(LUMBERYARD, currentState);
@@ -168,10 +152,6 @@ namespace AoC.Advent2018
 
         public void Run(string input, ILogger logger)
         {
-            //Console.WriteLine(Step('|', "...|||.."));
-
-            //Console.WriteLine(Run("......,......,..#|..,..#|..,..||..,......", 1000000));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

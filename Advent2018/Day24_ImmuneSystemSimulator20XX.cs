@@ -100,7 +100,7 @@ namespace AoC.Advent2018
         }
 
         private static (bool win, long res) Run(string input, uint boost = 0)
-        {
+        { 
             IEnumerable<Group> groups = Parse(input, boost);
 
             bool haveAttacked = false;
@@ -108,7 +108,7 @@ namespace AoC.Advent2018
             {
                 haveAttacked = false;
 
-                HashSet<Group> targetable = groups.ToHashSet();
+                var targetable = groups.ToHashSet();
 
                 var targetOrder = groups.OrderByDescending(g => (g.EffectivePower, g.Initiative));
                 foreach (var g in targetOrder)
@@ -128,7 +128,6 @@ namespace AoC.Advent2018
                                              .Select(res => res.g2)
                                              .OrderByDescending(g2 => (g2.EstimateDamage(g), g2.EffectivePower, g2.Initiative));
 
-
                             g.target = targets.FirstOrDefault();
                             targetable.Remove(g.target);
                         }
@@ -140,10 +139,9 @@ namespace AoC.Advent2018
                     if (g.target == null) continue;
 
                     if (g.DoAttack() > 0) haveAttacked = true;
-
                 }
 
-                groups = groups.Where(g => g.UnitCount > 0);
+                groups = groups.Where(g => g.UnitCount > 0).ToArray();
 
             } while (haveAttacked);
 
@@ -154,8 +152,8 @@ namespace AoC.Advent2018
         {
             var parts = input.Split("\n\n");
 
-            var immune = Util.RegexParse<Group>(parts[0].Split("\n", StringSplitOptions.TrimEntries).Skip(1));
-            var infection = Util.RegexParse<Group>(parts[1].Split("\n", StringSplitOptions.TrimEntries).Skip(1));
+            var immune = Util.RegexParse<Group>(parts[0].Split("\n", StringSplitOptions.TrimEntries).Skip(1)).ToArray();
+            var infection = Util.RegexParse<Group>(parts[1].Split("\n", StringSplitOptions.TrimEntries).Skip(1)).ToArray();
             immune.WithIndex().ForEach(g => g.Value.Id = g.Index + 1);
             immune.ForEach(g => g.AttackDamage += boost);
             infection.WithIndex().ForEach(g => { g.Value.ImmuneSystem = false; g.Value.Id = g.Index + 1; });
@@ -183,8 +181,6 @@ namespace AoC.Advent2018
         {
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
-
-            // 1009 too low
         }
     }
 }

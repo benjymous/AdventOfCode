@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using AoC.Utils;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace AoC.Advent2016
@@ -9,23 +11,16 @@ namespace AoC.Advent2016
 
         private static string Step(string current)
         {
-            current = "." + current + ".";
-            var next = new StringBuilder();
+            current = $".{current}.";
+            var next = new StringBuilder(current.Length);
             for (var i = 0; i < current.Length - 2; ++i)
             {
-                if (current[i] == current[i + 2])
-                {
-                    next.Append('.');
-                }
-                else
-                {
-                    next.Append('^');
-                }
+                next.Append((current[i] == current[i + 2]) ? '.' : '^');
             }
             return next.ToString();
         }
 
-        static int Count(string line) => line.Where(x => x == '.').Count();
+        static int Count(IEnumerable<char> line) => line.Count(x => x == '.');
 
         public static int BuildMap(string input, int numLines)
         {
@@ -36,8 +31,7 @@ namespace AoC.Advent2016
             for (int i = 1; i < numLines; ++i)
             {
                 currentState = Step(currentState);
-                int score = Count(currentState);
-                count += score;
+                count += Count(currentState);
             }
 
             return count;

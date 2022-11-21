@@ -48,7 +48,7 @@ namespace AoC.Advent2017
         {
             var lines = Util.Split(input, '\n');
 
-            return lines.Where(line => ValidationRule1(line))
+            return lines.Where(ValidationRule1)
                         .Count();
         }
 
@@ -56,8 +56,8 @@ namespace AoC.Advent2017
         {
             var lines = Util.Split(input, '\n');
 
-            return lines.Where(line => ValidationRule1(line))
-                        .Where(line => ValidationRule2(line))
+            return lines.Where(ValidationRule1)
+                        .Where(ValidationRule2)
                         .Count();
         }
 

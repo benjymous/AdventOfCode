@@ -70,7 +70,7 @@ namespace AoC.Advent2021
                 data = newBoxes;
             }
 
-            return data.Sum(box => Volume(box));
+            return data.Sum(Volume);
         }
 
         public static IEnumerable<Instruction> ParseData(string input) => Util.RegexParse<Instruction>(input);

@@ -20,9 +20,9 @@ namespace AoC.Advent2016
                 val = val.Replace("]", "");
                 var bits = val.Split('[');
 
-                RoomName = bits[0].Where(c => nameValid.Contains(c)).AsString();
+                RoomName = bits[0].Where(nameValid.Contains).AsString();
 
-                SectionID = int.Parse(bits[0].Where(c => numberValid.Contains(c)).AsString());
+                SectionID = int.Parse(bits[0].Where(numberValid.Contains).AsString());
 
                 Checksum = bits[1];
             }

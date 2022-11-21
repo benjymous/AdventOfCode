@@ -53,7 +53,7 @@ namespace AoC.Advent2017
 
         public static int Part2(string input)
         {
-            IEnumerable<Particle> particles = Util.RegexParse<Particle>(input);
+            IEnumerable<Particle> particles = Util.RegexParse<Particle>(input).ToList(); ;
 
             int lastCol = 0;
 

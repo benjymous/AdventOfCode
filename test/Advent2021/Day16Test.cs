@@ -40,7 +40,7 @@ namespace AoC.Advent2021.Test
             else
             {
                 res.Append('{');
-                res.Append(string.Join(", ", packet.Children.Select(c => ToString(c))));
+                res.Append(string.Join(", ", packet.Children.Select(ToString)));
                 res.Append('}');
             }
 

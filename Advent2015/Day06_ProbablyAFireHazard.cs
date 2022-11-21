@@ -1,4 +1,5 @@
-﻿using AoC.Utils.Vectors;
+﻿using AoC.Utils;
+using AoC.Utils.Vectors;
 using System;
 using System.Linq;
 
@@ -15,11 +16,14 @@ namespace AoC.Advent2015
             toggle
         }
 
-        public class Instruction
+        public struct Instruction
         {
             public Mode mode;
-            public ManhattanVector2 bl;
-            public ManhattanVector2 tr;
+            public (int x, int y) bl;
+            public (int x, int y) tr;
+
+            public Accumulator XRange;
+            public Accumulator YRange;
 
             public Instruction(string line)
             {
@@ -35,52 +39,46 @@ namespace AoC.Advent2015
                     case "F": mode = Mode.off; break;
                 }
 
-                bl = new ManhattanVector2(bits[1]);
-                tr = new ManhattanVector2(bits[3]);
+                bl = new ManhattanVector2(bits[1]).AsSimple();
+                tr = new ManhattanVector2(bits[3]).AsSimple();
 
                 if (bits[2] != "through") throw new Exception("Malformed instruction");
             }
 
-            bool Apply(bool val)
+            void Apply(ref bool val) => val = mode switch
             {
-                return mode switch
-                {
-                    Mode.on => true,
-                    Mode.off => false,
-                    Mode.toggle => !val,
-                    _ => throw new Exception("Unexpected light mode"),
-                };
-            }
+                Mode.on => true,
+                Mode.off => false,
+                Mode.toggle => !val,
+                _ => throw new Exception("Unexpected light mode"),
+            };
 
-            int Apply(int val)
+            void Apply(ref int val) => val = mode switch
             {
-                return mode switch
-                {
-                    Mode.on => val + 1,
-                    Mode.off => Math.Max(0, val - 1),
-                    Mode.toggle => val + 2,
-                    _ => throw new Exception("Unexpected light mode"),
-                };
-            }
+                Mode.on => val + 1,
+                Mode.off => Math.Max(0, val - 1),
+                Mode.toggle => val + 2,
+                _ => throw new Exception("Unexpected light mode"),
+            };
 
             public void Apply(bool[,] grid)
             {
-                for (var y = bl.Y; y <= tr.Y; ++y)
+                for (var y = bl.y; y <= tr.y; ++y)
                 {
-                    for (var x = bl.X; x <= tr.X; ++x)
+                    for (var x = bl.x; x <= tr.x; ++x)
                     {
-                        grid[x, y] = Apply(grid[x, y]);
+                        Apply(ref grid[x, y]);
                     }
                 }
             }
 
             public void Apply(int[,] grid)
             {
-                for (var y = bl.Y; y <= tr.Y; ++y)
+                for (var y = bl.y; y <= tr.y; ++y)
                 {
-                    for (var x = bl.X; x <= tr.X; ++x)
+                    for (var x = bl.x; x <= tr.x; ++x)
                     {
-                        grid[x, y] = Apply(grid[x, y]);
+                        Apply(ref grid[x, y]);
                     }
                 }
             }
@@ -110,11 +108,7 @@ namespace AoC.Advent2015
                 instr.Apply(grid);
             }
 
-            var query = from bool item in grid
-                        where item
-                        select item;
-
-            return query.Count();
+            return grid.Values().Count(i => i);
         }
 
         public static int Part2(string input)
@@ -135,10 +129,7 @@ namespace AoC.Advent2015
                 instr.Apply(grid);
             }
 
-            var query = from int item in grid
-                        select item;
-
-            return query.Sum();
+            return grid.Values().Sum();
         }
 
         public void Run(string input, ILogger logger)

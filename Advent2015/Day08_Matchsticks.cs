@@ -64,7 +64,7 @@ namespace AoC.Advent2015
 
         public static string Escape(string input)
         {
-            return '\"' + String.Join("", input.Select(c => Encode(c))) + '\"';
+            return '\"' + String.Join("", input.Select(Encode)) + '\"';
         }
 
         public static int Part1(string input)

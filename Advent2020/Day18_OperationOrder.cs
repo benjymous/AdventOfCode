@@ -95,10 +95,10 @@ namespace AoC.Advent2020
 
 
         public static Int64 Part1(string input)
-            => input.Split("\n").Select(line => Solve1(line)).Sum();
+            => input.Split("\n").Select(Solve1).Sum();
 
         public static Int64 Part2(string input)
-            => input.Split("\n").Select(line => Solve2(line)).Sum();
+            => input.Split("\n").Select(Solve2).Sum();
 
 
         public void Run(string input, ILogger logger)

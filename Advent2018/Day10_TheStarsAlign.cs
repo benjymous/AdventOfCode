@@ -1,5 +1,6 @@
 ﻿using AoC.Utils.Vectors;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace AoC.Advent2018
@@ -28,7 +29,7 @@ namespace AoC.Advent2018
 
         public static (int steps, string message) Solve(string input)
         {
-            var drones = Util.RegexParse<Drone>(input);
+            var drones = Util.RegexParse<Drone>(input).ToArray();
 
             int steps = 0;
             while (true)
@@ -43,38 +44,32 @@ namespace AoC.Advent2018
                 foreach (var drone in drones)
                 {
                     drone.Step();
-
-                    minx = Math.Min(minx, drone.position.X);
-                    maxx = Math.Max(maxx, drone.position.X);
-
                     miny = Math.Min(miny, drone.position.Y);
                     maxy = Math.Max(maxy, drone.position.Y);
                 }
 
                 if (maxy - miny < 10)
                 {
+                    foreach (var drone in drones)
+                    {
+                        minx = Math.Min(minx, drone.position.X);
+                        maxx = Math.Max(maxx, drone.position.X);
+                    }
+
                     var sb = new StringBuilder();
                     for (var y = miny; y <= maxy; ++y)
                     {
                         for (var x = minx; x <= maxx; ++x)
                         {
-                            var hit = false;
-                            foreach (var drone in drones)
-                            {
-                                if (drone.position.X == x && drone.position.Y == y)
-                                {
-                                    hit = true; break;
-                                }
-                            }
+                            var hit = drones.Any(d => d.position.X == x && d.position.Y == y);
                             sb.Append(hit ? "#" : " ");
                         }
                         sb.Append('\n');
                     }
+                    Console.WriteLine(sb.ToString());
                     return (steps, sb.ToString());
                 }
-
             }
-
         }
 
         public static string Part1(string input)

@@ -52,7 +52,7 @@ namespace AoC.Advent2016
         {
             var key = $"{passcode}{state.path}";
             var possible = availableDoors[state.position.X, state.position.Y].directions;
-            var unlocked = key.GetMD5Chars().Take(4).Select(c => opens.Contains(c)).ToArray();
+            var unlocked = key.GetMD5Chars().Take(4).Select(opens.Contains).ToArray();
             for (int i = 0; i < 4; ++i)
             {
                 if (possible[i] && unlocked[i]) yield return i;

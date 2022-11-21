@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AoC.Advent2018
 {
@@ -6,9 +8,9 @@ namespace AoC.Advent2018
     {
         public string Name => "2018-05";
 
-        static int Reduce(string inp)
+        static int Reduce(IEnumerable<char> inp)
         {
-            var input = inp.Trim().ToCharArray();
+            var input = inp.ToArray();
             bool replaced = true;
             do
             {
@@ -32,18 +34,18 @@ namespace AoC.Advent2018
 
         public static int Part1(string input)
         {
-            return Reduce(input);
+            return Reduce(input.Trim());
         }
 
-        public static int ShrinkReduce(char c, string input)
+        public static int ShrinkReduce(char c, IEnumerable<char> input)
         {
-            var shrunk = input.Replace(c.ToString(), "").Replace(c.ToString().ToUpper(), "");
+            var shrunk = input.Where(ch => ch != c && ch != char.ToUpper(c));
             return Reduce(shrunk);
         }
 
         public static int Part2(string input)
         {
-            return ParallelEnumerable.Range('a', 26).Select(alpha => ShrinkReduce((char)alpha, input)).Min();
+            return ParallelEnumerable.Range('a', 26).Select(alpha => ShrinkReduce((char)alpha, input.Trim())).Min();
         }
 
         public void Run(string input, ILogger logger)

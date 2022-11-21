@@ -1,6 +1,7 @@
 ﻿using AoC.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 
 namespace AoC.Advent2016
@@ -8,6 +9,30 @@ namespace AoC.Advent2016
     public class Day21 : IPuzzle
     {
         public string Name => "2016-21";
+
+        class InstructionFactory
+        {
+            [Regex(@"rotate right (\d+) step")]
+            public static Func<IEnumerable<char>, IEnumerable<char>> RotRight(int count) => pwd => RotateRight(pwd, count);
+
+            [Regex(@"rotate left (\d+) step")]
+            public static Func<IEnumerable<char>, IEnumerable<char>> RotLeft(int count) => pwd => RotateLeft(pwd, count);
+
+            [Regex(@"swap letter (.) with letter (.)")]
+            public static Func<IEnumerable<char>, IEnumerable<char>> SwapL(char from, char to) => pwd => SwapLetter(pwd, from, to);
+
+            [Regex(@"swap position (.) with position (.)")]
+            public Func<IEnumerable<char>, IEnumerable<char>> SwapP(int from, int to) => pwd => SwapPosition(pwd, from, to);
+
+            [Regex(@"reverse positions (.) through (.)")]
+            public static Func<IEnumerable<char>, IEnumerable<char>> Rev(int start, int end) => pwd => Reverse(pwd, start, end);
+
+            [Regex(@"move position (.) to position (.)")]
+            public static Func<IEnumerable<char>, IEnumerable<char>> Mov(int from, int to) => pwd => Move(pwd, from, to);
+
+            [Regex(@"rotate based on position of letter (.)")]
+            public static Func<IEnumerable<char>, IEnumerable<char>> RotBased(char letter) => pwd => RotateRightBasedOnLetter(pwd, letter);
+        }
 
         public static char Switch(char c, char from, char to)
         {
@@ -21,172 +46,6 @@ namespace AoC.Advent2016
             }
             return c;
         }
-
-
-
-        private static string Scramble(IEnumerable<string> instructions, IEnumerable<char> input)
-        {
-            var length = input.Count();
-
-            IEnumerable<char> password = input;
-
-            foreach (var instr in instructions)
-            {
-                password = password.ToArray();
-                //Console.WriteLine($"[{password.AsString()}] - {instr}");
-                var bits = instr.Split(" ");
-                if (instr.StartsWith("rotate"))
-                {
-
-                    if (bits[1] == "right")
-                    {
-                        var dist = int.Parse(bits[2]);
-                        password = RotateRight(password, length, dist);
-                    }
-                    else if (bits[1] == "left")
-                    {
-                        var dist = int.Parse(bits[2]);
-                        password = RotateLeft(password, dist);
-                    }
-                    else if (bits[1] == "based")
-                    {
-                        var letter = bits[6][0];
-                        password = RotateRightBasedOnLetter(password, length, letter);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Unknown rotate " + bits[1]);
-                    }
-
-                }
-                else if (instr.StartsWith("swap"))
-                {
-                    if (bits[1] == "letter")
-                    {
-                        var from = bits[2][0];
-                        var to = bits[5][0];
-                        password = SwapLetter(password, from, to);
-                    }
-                    else if (bits[1] == "position")
-                    {
-                        var from = int.Parse(bits[2]);
-                        var to = int.Parse(bits[5]);
-                        password = SwapPosition(password, from, to);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Unknown swap " + bits[1]);
-                    }
-                }
-                else if (instr.StartsWith("reverse"))
-                {
-                    var start = int.Parse(bits[2]);
-                    var end = int.Parse(bits[4]);
-
-                    password = Reverse(password, start, end);
-                }
-                else if (instr.StartsWith("move"))
-                {
-                    var from = int.Parse(bits[2]);
-                    var to = int.Parse(bits[5]);
-
-                    password = Move(password, from, to);
-                }
-                else
-                {
-
-                    Console.WriteLine("Unknown instruction " + instr);
-                }
-
-            }
-
-            //Console.WriteLine(password.AsString());
-            //Console.WriteLine("----");
-            return password.AsString();
-        }
-
-
-        // private static string Unscramble(IEnumerable<string> instructions, IEnumerable<char> input)
-        // {
-        //     instructions = instructions.Reverse();
-        //     var length = input.Count();
-
-        //     IEnumerable<char>password = input;
-
-        //     foreach (var instr in instructions)
-        //     {
-        //         password = password.ToArray();
-        //         Console.WriteLine($"[{password.AsString()}] - {instr}");
-        //         var bits = instr.Split(" ");
-        //         if (instr.StartsWith("rotate"))
-        //         {
-
-        //             if (bits[1] == "right")
-        //             {
-        //                 var dist = int.Parse(bits[2]);
-        //                 password = RotateLeft(password, dist);
-        //             }
-        //             else if (bits[1] == "left")
-        //             {
-        //                 var dist = int.Parse(bits[2]);
-        //                 password = RotateRight(password, length, dist);
-        //             }
-        //             else if (bits[1] == "based")
-        //             {
-        //                 var letter = bits[6][0];
-        //                 password = RotateLeftBasedOnLetter(password, length, letter);
-        //             }
-        //             else
-        //             {
-        //                 Console.WriteLine("Unknown rotate " + bits[1]);
-        //             }
-
-        //         }
-        //         else if (instr.StartsWith("swap"))
-        //         {
-        //             if (bits[1] == "letter")
-        //             {
-        //                 var from = bits[5][0];
-        //                 var to = bits[2][0];
-        //                 password = SwapLetter(password, from, to);
-        //             }
-        //             else if (bits[1] == "position")
-        //             {
-        //                 var from = int.Parse(bits[5]);
-        //                 var to = int.Parse(bits[2]);
-        //                 password = SwapPosition(password, from, to);
-        //             }
-        //             else
-        //             {
-        //                 Console.WriteLine("Unknown swap " + bits[1]);
-        //             }
-        //         }
-        //         else if (instr.StartsWith("reverse"))
-        //         {
-        //             var start = int.Parse(bits[2]);
-        //             var end = int.Parse(bits[4]);
-
-        //             password = Reverse(password, start, end);
-        //         }
-        //         else if (instr.StartsWith("move"))
-        //         {
-        //             var from = int.Parse(bits[5]);
-        //             var to = int.Parse(bits[2]);
-
-        //             password = Move(password, from, to);
-        //         }
-        //         else
-        //         {
-
-        //             Console.WriteLine("Unknown instruction " + instr);
-        //         }
-
-        //     }
-        //     Console.WriteLine(password.AsString());
-        //     Console.WriteLine("----");
-        //     return password.AsString();
-        // }
-
 
         private static IEnumerable<char> SwapLetter(IEnumerable<char> password, char from, char to)
         {
@@ -207,10 +66,10 @@ namespace AoC.Advent2016
             return rest.Concat(first);
         }
 
-        private static IEnumerable<char> RotateRight(IEnumerable<char> password, int length, int dist)
+        private static IEnumerable<char> RotateRight(IEnumerable<char> password, int dist)
         {
-            var last = password.Skip(length - dist).Take(dist);
-            var rest = password.Take(length - dist);
+            var last = password.Skip(8 - dist).Take(dist);
+            var rest = password.Take(8 - dist);
             return last.Concat(rest);
         }
 
@@ -226,37 +85,12 @@ namespace AoC.Advent2016
             {7,9},
         };
 
-        //static readonly Dictionary<int, int> RotateLetterBackward = new()
-        //{
-        //    {0,1},
-        //    {1,1},
-        //    {2,6},
-        //    {3,2},
-        //    {4,7},
-        //    {5,3},
-        //    {6,0},
-        //    {7,4},
-        //};
-
-        private static IEnumerable<char> RotateRightBasedOnLetter(IEnumerable<char> password, int length, char letter)
+        private static IEnumerable<char> RotateRightBasedOnLetter(IEnumerable<char> password, char letter)
         {
-            var pos = password.AsString().IndexOf(letter);
-            //var dist1 = 1 + pos + ((pos >= 4) ? 1 : 0);
+            var pos = password.IndexOf(letter);
             var dist = RotateLetterForward[pos];
-            //Util.Test(dist, dist1);
-            return RotateRight(password, length, dist);
+            return RotateRight(password, dist);
         }
-
-        // 
-
-        //private static IEnumerable<char> RotateLeftBasedOnLetter(IEnumerable<char> password, int length, char letter)
-        //{
-        //    var pos = password.AsString().IndexOf(letter);
-        //    var dist = (-pos / 2 + (pos % 2 == 1 || pos == 0 ? 1 : 5)) + 8;
-        //    //var dist1 = RotateLetterBackward[pos];
-        //    //Util.Test(dist, dist1);
-        //    return RotateRight(password, length, dist);
-        //}
 
         private static IEnumerable<char> Reverse(IEnumerable<char> password, int start, int end)
         {
@@ -270,58 +104,36 @@ namespace AoC.Advent2016
             return filtered.Take(to).Concat($"{fromChar}").Concat(filtered.Skip(to));
         }
 
+        private static string Scramble(IEnumerable<Func<IEnumerable<char>, IEnumerable<char>>> instructions, IEnumerable<char> password)
+        {
+            foreach (var instr in instructions)
+            {
+                password = instr(password).ToList();
+            }
+
+            return password.AsString();
+        }
+
         public static string Part1(string input)
         {
-            var instructions = Util.Split(input);
+            var instructions = Util.RegexFactory<Func<IEnumerable<char>, IEnumerable<char>>>(input, new InstructionFactory()).ToArray();
+
             return Scramble(instructions, "abcdefgh");
         }
 
         public static string Part2(string input)
         {
-            var instructions = Util.Split(input);
+            var instructions = Util.RegexFactory<Func<IEnumerable<char>, IEnumerable<char>>>(input, new InstructionFactory()).ToArray();
 
             var scrambled = "fbgdceah";
 
-            var perms = "abcdefgh".Permutations();
+            var perms = scrambled.Permutations();
 
             return perms.AsParallel().Where(p => Scramble(instructions, p) == scrambled).First().AsString();
         }
 
-        // public static string _Part2(string input)
-        // {
-        //     var instructions = Util.Split(input);
-        //     return Unscramble(instructions, "fbgdceah");
-        // }
-
         public void Run(string input, ILogger logger)
         {
-            // Util.Test(SwapPosition("abcde", 1, 3).AsString(), "adcbe");
-            // Util.Test(SwapLetter("abcde", 'a', 'c').AsString(), "cbade");
-
-            // Util.Test(RotateLeft("abcde",2).AsString(), "cdeab");
-            // Util.Test(RotateRight("abcde",5, 2).AsString(), "deabc");
-
-            //Util.Test(RotateRightBasedOnLetter("abcdefgh", 8, 'c').AsString(), "fghabcde");
-
-            // Util.Test(Reverse("abcdefgh", 2, 5).AsString(), "abfedcgh");
-
-            // Util.Test(Move("abcdef", 2, 4).AsString(), "abdecf");
-
-            // var instructions = Util.Split(input);
-
-            // var start = "abcdefgh";
-            // var pwd = Scramble(instructions, start);
-            // var back = Unscramble(instructions, pwd);
-            // Util.Test(back, start);
-
-            // var start = "e-------";
-            // var rot = RotateRightBasedOnLetter(start, start.Length, 'e');
-            // var rev = RotateLeftBasedOnLetter(rot, start.Length, 'e');
-
-            // Util.Test(rev.AsString(), start);
-
-            // Util.Test(Part1(input), "dbfgaehc");
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

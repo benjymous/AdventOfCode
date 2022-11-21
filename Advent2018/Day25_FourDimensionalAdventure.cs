@@ -1,4 +1,5 @@
-﻿using AoC.Utils.Vectors;
+﻿using AoC.Utils;
+using AoC.Utils.Vectors;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,26 +11,21 @@ namespace AoC.Advent2018
 
         class Graph
         {
-            readonly Dictionary<string, Node> index = new();
+            readonly Dictionary<(int x, int y, int z, int w), Node> index = new();
 
-            public IEnumerable<string> GetIndex() => index.Keys;
             public IEnumerable<Node> GetNodes() => index.Values;
 
-            public Node GetNode(ManhattanVector4 p)
+            public Node GetNode((int x, int y, int z, int w) p)
             {
-                var key = p.ToString();
-                if (!index.ContainsKey(key))
-                {
-                    index[key] = new Node
+                return index.GetOrCalculate(p, p =>
+                    new Node
                     {
-                        position = p
-                    };
-                }
-
-                return index[key];
+                        position = p,
+                        Index = index.Count
+                    });
             }
 
-            public void AddLink(ManhattanVector4 p1, ManhattanVector4 p2)
+            public void AddLink((int x, int y, int z, int w) p1, (int x, int y, int z, int w) p2)
             {
                 var node1 = GetNode(p1);
                 var node2 = GetNode(p2);
@@ -40,41 +36,38 @@ namespace AoC.Advent2018
 
             public int CountGroups()
             {
-                return GetNodes().
-                       Select(
-                            node => string.Join(":",
-                                node.FindAllLinks().
-                                Select(n => n.position.ToString()).
-                                OrderBy(a => a)).
-                            GetHashCode()
-                       ).Distinct().Count();
+                return GetNodes().Select( node => node.FindAllLinks().OrderBy(a => a).GetCombinedHashCode())
+                                 .Distinct().Count();
             }
         }
 
         class Node
         {
-            public ManhattanVector4 position;
+            public (int x, int y, int z, int w) position;
             public HashSet<Node> links = new();
+            public int Index;
 
-            public HashSet<Node> FindAllLinks(HashSet<Node> seen = null)
+            public HashSet<int> FindAllLinks(HashSet<int> seen = null)
             {
-                seen ??= new HashSet<Node>();
+                seen ??= new HashSet<int>() { Index };
                 foreach (var node in links)
                 {
-                    if (!seen.Contains(node))
+                    if (!seen.Contains(node.Index))
                     {
-                        seen.Add(node);
+                        seen.Add(node.Index);
                         seen = node.FindAllLinks(seen);
                     }
                 }
 
                 return seen;
             }
+
+            public override int GetHashCode() => Index;
         }
 
         public static int Part1(string input)
         {
-            var data = Util.Parse<ManhattanVector4>(input);
+            var data = Util.Parse<ManhattanVector4>(input).Select(v => v.AsSimple());
 
             var Graph = new Graph();
 
@@ -83,7 +76,7 @@ namespace AoC.Advent2018
                 Graph.GetNode(item1);
                 foreach (var item2 in data)
                 {
-                    if (item1.Distance(item2) <= 3)
+                    if (item1 != item2 && item1.Distance(item2) <= 3)
                     {
                         Graph.AddLink(item1, item2);
                     }

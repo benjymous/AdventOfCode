@@ -14,10 +14,10 @@ namespace AoC.Advent2019
         public class RepairDrone : NPSA.ICPUInterrupt
         {
             readonly NPSA.IntCPU cpu;
-            ManhattanVector2 position = new(0, 0);
+            (int x, int y) position = (0, 0);
 
-            ManhattanVector2 tryState = null;
-            (ManhattanVector2, ManhattanVector2) target = (null, null);
+            (int x, int y) tryState;
+            ((int x, int y), (int x, int y)) target;
             bool hasTarget = false;
 
             public int Steps { get; private set; } = 0;
@@ -39,12 +39,12 @@ namespace AoC.Advent2019
 
             public GridMap<int> map = new(new Walkable());
 
-            public string FindCell(int num)
+            public (int x, int y) FindCell(int num)
             {
                 return map.FindCell(num);
             }
 
-            readonly Stack<(ManhattanVector2, ManhattanVector2)> unknowns = new();
+            readonly Stack<((int x, int y), (int x, int y))> unknowns = new();
 
             public enum Mode
             {
@@ -69,9 +69,9 @@ namespace AoC.Advent2019
                 Console.WriteLine(cpu.Speed());
             }
 
-            public void AddIfUnknown(ManhattanVector2 current, ManhattanVector2 neighbour)
+            public void AddIfUnknown((int x, int y) current, (int x, int y) neighbour)
             {
-                if (!map.Data.ContainsKey(neighbour.ToString()))
+                if (!map.Data.ContainsKey(neighbour))
                 {
                     unknowns.Push((current, neighbour));
                 }
@@ -79,10 +79,10 @@ namespace AoC.Advent2019
 
             public void AddUnknowns()
             {
-                AddIfUnknown(position, new ManhattanVector2(position.X - 1, position.Y));
-                AddIfUnknown(position, new ManhattanVector2(position.X + 1, position.Y));
-                AddIfUnknown(position, new ManhattanVector2(position.X, position.Y - 1));
-                AddIfUnknown(position, new ManhattanVector2(position.X, position.Y + 1));
+                AddIfUnknown(position, (position.x - 1, position.y));
+                AddIfUnknown(position, (position.x + 1, position.y));
+                AddIfUnknown(position, (position.x, position.y - 1));
+                AddIfUnknown(position, (position.x, position.y + 1));
             }
 
             public void HasPutOutput()
@@ -95,44 +95,44 @@ namespace AoC.Advent2019
                         {
                             if (mode == Mode.Interactive) Console.WriteLine("Wall!");
 
-                            map.Data.PutObjKey(tryState, WALL);
+                            map.Data[tryState] = WALL;
                         }
                         break;
                     case 1:
                         {
                             if (mode == Mode.Interactive) Console.WriteLine("Ok");
-                            map.Data.PutObjKey(tryState, OPEN);
+                            map.Data[tryState] = OPEN;
                             position = tryState;
                         }
                         break;
                     case 2:
                         {
                             if (mode == Mode.Interactive) Console.WriteLine("Found Oxygen system");
-                            map.Data.PutObjKey(tryState, OXYGEN);
+                            map.Data[tryState] = OXYGEN;
                             position = tryState;
                         }
                         break;
                     default:
                         {
                             if (mode == Mode.Interactive) Console.WriteLine("??? {val}");
-                            map.Data.PutObjKey(tryState, (int)val);
+                            map.Data[tryState] = (int)val;
                             position = tryState;
                         }
                         break;
                 }
-                minx = Math.Min(minx, tryState.X);
-                maxx = Math.Max(maxx, tryState.X);
+                minx = Math.Min(minx, tryState.x);
+                maxx = Math.Max(maxx, tryState.x);
 
-                miny = Math.Min(miny, tryState.Y);
-                maxy = Math.Max(maxy, tryState.Y);
+                miny = Math.Min(miny, tryState.y);
+                maxy = Math.Max(maxy, tryState.y);
             }
 
             public int GetMapData(int x, int y)
             {
-                var key = $"{x},{y}";
-                if (map.Data.ContainsKey(key))
+                var key = (x,y);
+                if (map.Data.TryGetValue(key, out int value))
                 {
-                    return map.Data.GetStrKey(key);
+                    return value;
                 }
                 else return 0;
             }
@@ -147,7 +147,7 @@ namespace AoC.Advent2019
                     for (int x = minx; x <= maxx; ++x)
                     {
 
-                        if (x == position.X && y == position.Y)
+                        if (x == position.x && y == position.y)
                         {
                             line += "@";
                         }
@@ -193,10 +193,10 @@ namespace AoC.Advent2019
 
                             switch (code)
                             {
-                                case 1: tryState = new ManhattanVector2(position.X, position.Y - 1); break;
-                                case 2: tryState = new ManhattanVector2(position.X, position.Y + 1); break;
-                                case 3: tryState = new ManhattanVector2(position.X - 1, position.Y); break;
-                                case 4: tryState = new ManhattanVector2(position.X + 1, position.Y); break;
+                                case 1: tryState = (position.x, position.y - 1); break;
+                                case 2: tryState = (position.x, position.y + 1); break;
+                                case 3: tryState = (position.x - 1, position.y); break;
+                                case 4: tryState = (position.x + 1, position.y); break;
                             }
                         }
                         catch
@@ -245,18 +245,18 @@ namespace AoC.Advent2019
 
                     int code = 0;
 
-                    if (tryState.Y < position.Y) code = 1; // up
-                    else if (tryState.Y > position.Y) code = 2; // down
-                    else if (tryState.X < position.X) code = 3; // left
-                    else if (tryState.X > position.X) code = 4; // right
+                    if (tryState.y < position.y) code = 1; // up
+                    else if (tryState.y > position.y) code = 2; // down
+                    else if (tryState.x < position.x) code = 3; // left
+                    else if (tryState.x > position.x) code = 4; // right
 
                     cpu.Input.Enqueue(code); // stop
                 }
             }
 
-            public IEnumerable<ManhattanVector2> FindPath(ManhattanVector2 start, ManhattanVector2 end)
+            public IEnumerable<(int x, int y)> FindPath((int x, int y) start, (int x, int y) end)
             {
-                return AStar<ManhattanVector2>.FindPath(map, start, end);
+                return AStar<(int x, int y)>.FindPath(map, start, end);
             }
 
         }
@@ -272,7 +272,7 @@ namespace AoC.Advent2019
 
             var oxygenSystemPosition = droid.FindCell(RepairDrone.OXYGEN);
 
-            var path = droid.FindPath(new ManhattanVector2(0, 0), new ManhattanVector2(oxygenSystemPosition));
+            var path = droid.FindPath((0, 0), oxygenSystemPosition);
 
             return path.Count();
         }
@@ -281,7 +281,7 @@ namespace AoC.Advent2019
         {
             var droid = new RepairDrone(input);
             droid.Run();
-            var oxygenSystemPosition = new ManhattanVector2(droid.FindCell(2));
+            var oxygenSystemPosition = droid.FindCell(2);
 
             var dist = 0;
             for (int y = droid.miny + 1; y < droid.maxy; ++y)
@@ -298,22 +298,12 @@ namespace AoC.Advent2019
                         if (score == 3)
                         {
                             // dead end
-                            var path = droid.FindPath(oxygenSystemPosition, new ManhattanVector2(x, y));
+                            var path = droid.FindPath(oxygenSystemPosition, (x, y));
                             dist = Math.Max(dist, path.Count());
                         }
                     }
                 }
             }
-
-
-            // foreach (var kvp in droid.map)
-            // {
-            //     if (kvp.Value.Data()==0)
-            //     {
-            //         var path = droid.FindPath(oxygenSystemPosition, new ManhattanVector2(kvp.Key));
-            //         dist = Math.Max(dist, path.Count());
-            //     }
-            // }
 
             return dist;
         }

@@ -51,8 +51,8 @@ namespace AoC.Advent2019
 
             public int Energy()
             {
-                var pot = position.Component.Select(n => Math.Abs(n)).Sum();
-                var kin = velocity.Component.Select(n => Math.Abs(n)).Sum();
+                var pot = position.Component.Select(Math.Abs).Sum();
+                var kin = velocity.Component.Select(Math.Abs).Sum();
                 return pot * kin;
             }
         }

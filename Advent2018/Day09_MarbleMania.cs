@@ -1,7 +1,5 @@
-﻿using AoC.Utils;
-using AoC.Utils.Collections;
+﻿using AoC.Utils.Collections;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2018
@@ -12,12 +10,11 @@ namespace AoC.Advent2018
 
         public static UInt64 MarbleGame(int players, int marbles)
         {
-
             uint nextMarble = 1;
             int player = -1;
 
             var circle = new Circle<uint>(0);
-            var scores = new Dictionary<int, UInt64>();
+            var scores = new UInt64[players];
 
             var current = circle;
 
@@ -28,7 +25,7 @@ namespace AoC.Advent2018
                     var removed = current.Back(7);
                     current = removed.Remove();
 
-                    scores.IncrementAtIndex(player, nextMarble + removed.Value);
+                    scores[player] += nextMarble + removed.Value;
                 }
                 else
                 {
@@ -37,11 +34,9 @@ namespace AoC.Advent2018
 
                 nextMarble++;
                 player = (player + 1) % players;
-
-                //if ((nextMarble % 5000) == 0) std::cout << nextMarble << " " << ((nextMarble / marbles) * 100).toFixed(2) + "%" << std::endl;
             }
 
-            var score = scores.Select(kvp => kvp.Value).Max();
+            var score = scores.Max();
             return score;
         }
 

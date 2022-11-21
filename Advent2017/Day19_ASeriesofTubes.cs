@@ -8,14 +8,12 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-19";
 
-
-
         private static (string word, int length) FollowPath(string input)
         {
             var lines = Util.Split(input);
             //var grid = new char[lines[0].Length, lines.Length];
 
-            var grid = new Dictionary<string, char>();
+            var grid = new Dictionary<(int x, int y), char>();
 
             ManhattanVector2 pos = null;
 
@@ -25,9 +23,9 @@ namespace AoC.Advent2017
                 int x = 0;
                 foreach (var cell in line)
                 {
-                    grid[$"{x},{y}"] = cell;
+                    grid[(x,y)] = cell;
 
-                    if (y == 0 && cell != ' ') pos = new ManhattanVector2(x, y);
+                    if (y == 0 && cell != ' ') pos = (x, y);
 
                     ++x;
                 }
@@ -44,7 +42,7 @@ namespace AoC.Advent2017
                 var next = pos + dir;
                 count++;
 
-                var nextCh = grid[next.ToString()];
+                var nextCh = grid[next];
 
                 switch (nextCh)
                 {
@@ -59,11 +57,11 @@ namespace AoC.Advent2017
                         // turn a corner
                         var d1 = new Direction2(dir); d1.TurnRight();
                         var d2 = new Direction2(dir); d2.TurnLeft();
-                        if (grid[(next + d1).ToString()] != ' ')
+                        if (grid[(next + d1)] != ' ')
                         {
                             dir = d1;
                         }
-                        else if (grid[(next + d2).ToString()] != ' ')
+                        else if (grid[(next + d2)] != ' ')
                         {
                             dir = d2;
                         }

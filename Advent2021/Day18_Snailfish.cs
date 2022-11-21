@@ -79,7 +79,7 @@ namespace AoC.Advent2021
 
         public static long Part1(string input)
         {
-            return Util.Split(input, '\n').Select(line => Val.Parse(line.ToQueue())).Aggregate((lhs, rhs) => Val.Add(lhs, rhs)).Magnitude;
+            return Util.Split(input, '\n').Select(line => Val.Parse(line.ToQueue())).Aggregate(Val.Add).Magnitude;
         }
 
         public static long Part2(string input)

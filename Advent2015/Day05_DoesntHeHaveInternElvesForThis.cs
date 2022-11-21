@@ -17,11 +17,7 @@ namespace AoC.Advent2015
 
         public static bool HasRun(string line)
         {
-            for (int i = 0; i < line.Length - 1; ++i)
-            {
-                if (line[i] == line[i + 1]) return true;
-            }
-            return false;
+            return line.OverlappingPairs().Where(pair => pair.first == pair.second).Any();
         }
 
         static readonly string[] bads = new string[]
@@ -29,15 +25,9 @@ namespace AoC.Advent2015
             "ab", "cd", "pq", "xy"
         };
 
-
         public static bool NoBads(string line)
         {
-            foreach (var bad in bads)
-            {
-                if (line.Contains(bad)) return false;
-            }
-
-            return true;
+            return !bads.Any(bad => line.Contains(bad));
         }
 
         public static bool IsNice1(string line)
@@ -79,13 +69,13 @@ namespace AoC.Advent2015
         public static int Part1(string input)
         {
             var lines = Util.Split(input);
-            return lines.Where(line => IsNice1(line)).Count();
+            return lines.Where(IsNice1).Count();
         }
 
         public static int Part2(string input)
         {
             var lines = Util.Split(input);
-            return lines.Where(line => IsNice2(line)).Count();
+            return lines.Where(IsNice2).Count();
         }
 
         public void Run(string input, ILogger logger)
