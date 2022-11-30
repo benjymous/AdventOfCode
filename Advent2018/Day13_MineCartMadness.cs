@@ -15,21 +15,12 @@ namespace AoC.Advent2018
             public Direction2 direction = new(0, 0);
             public int turn;
             public bool crash;
-
-
-            public char GetTrainCh()
-            {
-                if (crash) return 'X';
-
-                return direction.AsChar();
-            }
         }
 
         public class TrainSim
-        {
-            readonly List<string> map = new();
-
+        {     
             List<Train> trains = new();
+            Dictionary<(int x, int y), char> map;
 
             public bool Debug { get; set; } = false;
 
@@ -44,6 +35,8 @@ namespace AoC.Advent2018
 
             public TrainSim(string[] tracks)
             {
+                List<string> rawMap = new();
+
                 foreach (var line in tracks)
                 {
                     string outLine = "";
@@ -54,19 +47,19 @@ namespace AoC.Advent2018
                         switch (c)
                         {
                             case '>':
-                                AddTrain(i, map.Count, 1, 0);
+                                AddTrain(i, rawMap.Count, 1, 0);
                                 c = '-';
                                 break;
                             case '<':
-                                AddTrain(i, map.Count, -1, 0);
+                                AddTrain(i, rawMap.Count, -1, 0);
                                 c = '-';
                                 break;
                             case '^':
-                                AddTrain(i, map.Count, 0, -1);
+                                AddTrain(i, rawMap.Count, 0, -1);
                                 c = '|';
                                 break;
                             case 'v':
-                                AddTrain(i, map.Count, 0, 1);
+                                AddTrain(i, rawMap.Count, 0, 1);
                                 c = '|';
                                 break;
                         }
@@ -74,35 +67,24 @@ namespace AoC.Advent2018
                         outLine += c;
                     }
 
-                    map.Add(outLine);
+                    rawMap.Add(outLine);
                 }
+
+                map = Util.ParseSparseMatrix<char>(rawMap);
             }
 
             public string Run()
             {
                 bool running = true;
                 string result = null;
-
+               
                 while (running)
                 {
-
-                    var blank = map.Select(x => x.ToCharArray().ToList()).ToList();
-                    var turn = map.Select(x => x.ToCharArray().ToList()).ToList();
-
                     foreach (var t in trains)
                     {
-                        turn[t.position.Y][t.position.X] = t.GetTrainCh();
-                    }
-
-                    for (var i = 0; i < trains.Count; ++i)
-                    {
-                        var t = trains[i];
-
-                        turn[t.position.Y][t.position.X] = blank[t.position.Y][t.position.X];
-
                         t.position.Offset(t.direction);
 
-                        var newTrack = turn[t.position.Y][t.position.X];
+                        var newTrack = map[t.position];
 
                         switch (newTrack)
                         {
@@ -132,57 +114,29 @@ namespace AoC.Advent2018
                                 }
                                 break;
                         }
-                        turn[t.position.Y][t.position.X] = t.GetTrainCh();
 
-                        foreach (var other in trains)
+                        foreach (var other in trains.Where(o => o != t && o.position == t.position))
                         {
-                            if (other != t)
+                            if (StopOnCrash)
                             {
-                                if (other.position == t.position)
-                                {
-                                    if (StopOnCrash)
-                                    {
-                                        running = false;
-                                    }
-                                    t.crash = true;
-                                    other.crash = true;
-
-                                    result = "Crash at " + t.position.X + "," + t.position.Y;
-                                    if (Debug) Console.WriteLine(result);
-                                }
+                                running = false;
                             }
+                            t.crash = true;
+                            other.crash = true;
+
+                            result = $"Crash at {t.position}";
+                            if (Debug) Console.WriteLine(result);
                         }
                     }
 
-                    // sort trains from top to bottom
-                    trains.Sort((a, b) =>
-                    {
-                        if (a.position.Y != b.position.Y) return a.position.Y - b.position.Y;
-                        return a.position.X - b.position.X;
-                    });
-
-
-
-                    // if (Debug)
-                    // {
-                    //     Console.WriteLine(trains.Where(t => t.crash).Count()+ " crashed");
-
-                    //     foreach (var line in turn)
-                    //     {
-                    //         Console.WriteLine(string.Join("", line));
-                    //     }
-                    //     Console.WriteLine();
-                    // }
-
-                    // remove crashed trains
-
-                    trains = trains.Where(t => !t.crash).ToList();
-
                     if (running)
                     {
+                        // remove crashed trains, and sort top to bottom
+                        trains = trains.Where(t => !t.crash).OrderBy(t => (t.position.Y,t.position.X)).ToList();
+
                         if (trains.Count < 2)
                         {
-                            result = "Last train at " + trains.First().position;
+                            result = $"Last train at {trains.First().position}";
                             running = false;
                         }
                     }

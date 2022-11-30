@@ -400,6 +400,19 @@ namespace AoC.Utils
             }
         }
 
+        public static int GetCombinedHashCode(this IEnumerable<byte> collection)
+        {
+            unchecked
+            {
+                int hash = 17;
+                foreach (var v in collection)
+                {
+                    hash = hash * 31 + v;
+                }
+                return hash;
+            }
+        }
+
         public static int IndexOf<T>(this IEnumerable<T> collection, T item) where T : IComparable<T>
         {
             int count = 0;

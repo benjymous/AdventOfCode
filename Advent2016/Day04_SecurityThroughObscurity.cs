@@ -51,7 +51,7 @@ namespace AoC.Advent2016
                         }
                     }
 
-                    var data = counts.OrderBy(kvp => -kvp.Value).ThenBy(kvp => kvp.Key);
+                    var data = counts.OrderByDescending(kvp => kvp.Value).ThenBy(kvp => kvp.Key);
 
                     var test = String.Join("", data.Take(5).Select(kvp => kvp.Key));
 

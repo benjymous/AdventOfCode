@@ -32,11 +32,10 @@ namespace AoC.Advent2018
             var drones = Util.RegexParse<Drone>(input).ToArray();
 
             int steps = 0;
+
             while (true)
             {
                 steps++;
-                int minx = int.MaxValue;
-                int maxx = int.MinValue;
 
                 int miny = int.MaxValue;
                 int maxy = int.MinValue;
@@ -50,6 +49,8 @@ namespace AoC.Advent2018
 
                 if (maxy - miny < 10)
                 {
+                    int minx = int.MaxValue;
+                    int maxx = int.MinValue;
                     foreach (var drone in drones)
                     {
                         minx = Math.Min(minx, drone.position.X);
@@ -61,8 +62,7 @@ namespace AoC.Advent2018
                     {
                         for (var x = minx; x <= maxx; ++x)
                         {
-                            var hit = drones.Any(d => d.position.X == x && d.position.Y == y);
-                            sb.Append(hit ? "#" : " ");
+                            sb.Append(drones.Any(d => d.position == (x, y)) ? "#" : " ");
                         }
                         sb.Append('\n');
                     }

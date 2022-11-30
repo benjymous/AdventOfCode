@@ -41,7 +41,7 @@ namespace AoC.Advent2019
                 }
             }
 
-            return pairs.Values.Where(v => v == true).Any();
+            return pairs.Values.Any(v => v);
         }
 
         public static int Part1(string input)

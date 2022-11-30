@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Advent.Utils.Vectors
+namespace AoC.Utils.Vectors
 {
     // https://www.redblobgames.com/grids/hexagons/
     public class HexVector

@@ -187,6 +187,16 @@ namespace AoC.Utils.Vectors
         public static implicit operator ValueTuple<int, int>(ManhattanVector2 v) => v.AsSimple();
         public static implicit operator ManhattanVector2(ValueTuple<int, int> v) => new(v);
 
+        public static bool operator ==(ManhattanVector2 v1, (int x, int y) v2)
+        {
+            return v1.X == v2.x && v1.Y == v2.y;
+        }
+
+        public static bool operator !=(ManhattanVector2 v1, (int x, int y) v2)
+        {
+            return v1.X != v2.x || v1.Y != v2.y;
+        }
+
         public void Offset(Direction2 dir, int multiple = 1)
         {
             Offset(dir.DX * multiple, dir.DY * multiple);
@@ -256,6 +266,16 @@ namespace AoC.Utils.Vectors
 
 
         public static readonly ManhattanVector2 Zero = new(0, 0);
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
     [TypeConverter(typeof(ManhattanVector3TypeConverter))]

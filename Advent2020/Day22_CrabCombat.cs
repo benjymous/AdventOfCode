@@ -25,14 +25,11 @@ namespace AoC.Advent2020
             return decks.ToArray();
         }
 
-        static string GetKey(Queue<byte>[] decks)
-        {
-            return Encoding.Default.GetString(decks[0].ToArray());
-        }
+        static int GetKey(Queue<byte>[] decks) => decks[0].GetCombinedHashCode();
 
         static int PlayRound(Queue<byte>[] decks, bool recursive = false, bool subgame = false)
         {
-            var seen = new HashSet<string>();
+            var seen = new HashSet<int>();
 
             while (decks.Where(d => d.Count > 0).Count() == 2)
             {
@@ -61,7 +58,7 @@ namespace AoC.Advent2020
                 }
                 else
                 {
-                    decks[taken[0] > taken[1] ? 0 : 1].EnqueueRange(taken.OrderByDescending(x => x));
+                    decks[taken[0] > taken[1] ? 0 : 1].EnqueueRange(taken.OrderDescending());
                 }
             }
 

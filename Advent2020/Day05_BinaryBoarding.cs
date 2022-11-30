@@ -18,7 +18,7 @@ namespace AoC.Advent2020
             public int Min;
             public int Max;
 
-            int Range { get { return Max - Min + 1; } }
+            int Range => Max - Min + 1;
 
             public void Lower()
             {
@@ -74,13 +74,13 @@ namespace AoC.Advent2020
         public static int Part1(string input)
         {
             var passes = Util.Parse<BoardingPass>(input);
-            return passes.Select(p => p.ID).Max();
+            return passes.Max(p => p.ID);
         }
 
         public static int Part2(string input)
         {
             var passes = Util.Parse<BoardingPass>(input);
-            var ids = passes.Select(p => p.ID).OrderBy(p => p).ToArray();
+            var ids = passes.Select(p => p.ID).Order().ToArray();
 
             for (int i = 0; i < ids.Length - 1; ++i)
             {

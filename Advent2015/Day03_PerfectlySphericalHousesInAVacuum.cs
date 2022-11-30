@@ -13,7 +13,7 @@ namespace AoC.Advent2015
         {
             public ManhattanVector2 Position { get; set; } = new ManhattanVector2(0, 0);
 
-            public void Step(char c)
+            public ManhattanVector2 Step(char c)
             {
                 switch (c)
                 {
@@ -32,20 +32,19 @@ namespace AoC.Advent2015
                     default:
                         throw new Exception("unexpected char!");
                 }
+                return Position;
             }
         }
 
         public static int Part1(string input)
         {
-            Dictionary<string, int> visited = new();
+            HashSet<(int x, int y)> visited = new() { (0, 0) };
 
             var santa = new SantaStepper();
 
-            visited.IncrementAtIndex(santa.Position.ToString());
             foreach (var c in input)
-            {
-                santa.Step(c);
-                visited.IncrementAtIndex(santa.Position.ToString());
+            {                
+                visited.Add(santa.Step(c));
             }
 
             return visited.Count;
@@ -53,22 +52,14 @@ namespace AoC.Advent2015
 
         public static int Part2(string input)
         {
-            Dictionary<string, int> visited = new();
+            HashSet<(int x, int y)> visited = new() { (0, 0) };
 
-            var santas = new Queue<SantaStepper>();
-            santas.Enqueue(new SantaStepper());
-            santas.Enqueue(new SantaStepper());
-
-            foreach (var santa in santas)
-            {
-                visited.IncrementAtIndex(santa.Position.ToString());
-            }
+            Queue<SantaStepper> santas = new() { new SantaStepper(), new SantaStepper() };
 
             foreach (var c in input)
             {
                 var santa = santas.Dequeue();
-                santa.Step(c);
-                visited.IncrementAtIndex(santa.Position.ToString());
+                visited.Add(santa.Step(c));
                 santas.Enqueue(santa);
             }
 

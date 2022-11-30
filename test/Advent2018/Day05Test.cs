@@ -14,7 +14,8 @@ namespace AoC.Advent2018.Test
         [DataRow("abAB", 4)]
         [DataRow("aabAAB", 6)]
         [DataRow("dabAcCaCBAcCcaDA", 10)]
-        public static void Polymer01Test(string input, int expected)
+        [DataTestMethod]
+        public void Polymer01Test(string input, int expected)
         {
             Assert.AreEqual(expected, Advent2018.Day05.Part1(input));
         }

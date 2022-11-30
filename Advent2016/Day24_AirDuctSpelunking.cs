@@ -11,15 +11,15 @@ namespace AoC.Advent2016
     {
         public string Name => "2016-24";
 
-        static int LocationCode(char c) => (1 << char.ToLower(c) - '0');
-        static Int64 GetKey(int location, int visited) => (Int64)location << 32 | (Int64)(uint)visited;
+        static uint LocationCode(char c) => (1U << char.ToLower(c) - '0');
+        static long GetKey(uint location, uint visited) => (long)location << 32 | visited;
 
         public class MapData : GridMap<char>
         {
-            public Dictionary<int, ManhattanVector2> Locations = new();
-            public Dictionary<int, int> paths = new();
+            public Dictionary<uint, (int x, int y)> Locations = new();
+            public Dictionary<uint, int> paths = new();
 
-            public int AllLocations = 0;
+            public uint AllLocations = 0;
 
             public MapData(string input) : base(new Walkable())
             {
@@ -36,7 +36,7 @@ namespace AoC.Advent2016
                         {
                             // location to visit
                             var code = LocationCode(c);
-                            Locations[code] = new ManhattanVector2(x, y);
+                            Locations[code] = (x, y);
                             AllLocations += code;
                         }
                         Data[(x,y)] = c;
@@ -55,17 +55,14 @@ namespace AoC.Advent2016
                         if (loc1.Key != loc2.Key)
                         {
                             var path = AStar<(int x, int y)>.FindPath(this, loc1.Value, loc2.Value);
-                            _ = Data[loc1.Value.AsSimple()];
-                            _ = Data[loc2.Value.AsSimple()];
-
                             paths[loc1.Key + loc2.Key] = path.Count();
                         }
                     }
                 }
             }
 
-            readonly Dictionary<int, IEnumerable<int>> BitCache = new();
-            public IEnumerable<int> Bits(int input)
+            readonly Dictionary<uint, IEnumerable<uint>> BitCache = new();
+            public IEnumerable<uint> Bits(uint input)
             {
                 if (BitCache.TryGetValue(input, out var output))
                 {
@@ -88,19 +85,19 @@ namespace AoC.Advent2016
 
         public static int Solve(MapData map, bool returnHome)
         {
-            var queue = new Queue<(int location, int visited, int distance)>();
-            queue.Enqueue((LocationCode('0'), LocationCode('0'), 0));
+            var queue = new PriorityQueue<(uint location, uint visited, int distance), uint>();
+            queue.Enqueue((LocationCode('0'), LocationCode('0'), 0), map.AllLocations);
 
-            var cache = new Dictionary<Int64, int>() { { GetKey(LocationCode('0'), LocationCode('0')), 0 } };
+            var cache = new Dictionary<long, int>() { { GetKey(LocationCode('0'), LocationCode('0')), 0 } };
 
             int currentBest = int.MaxValue;
 
-            while (queue.Any())
+            while (queue.Count > 0)
             {
                 // take an item from the job queue
                 var item = queue.Dequeue();
 
-                int tryLocations = map.AllLocations - item.visited;
+                uint tryLocations = map.AllLocations - item.visited;
 
                 if (tryLocations > 0)
                 {
@@ -110,9 +107,11 @@ namespace AoC.Advent2016
                         if (map.paths.TryGetValue(item.location | location, out var pathDistance))
                         {
                             // create new state, at next location 
-                            int visited = item.visited + location;
+                            uint visited = item.visited + location;
                             int distance = item.distance + pathDistance;
                             var next = (location, visited, distance);
+
+                            if (currentBest != int.MaxValue && distance > currentBest) continue;
 
                             // check if we've visited this position with this set of keys before
                             var cacheId = GetKey(next.location, next.visited);
@@ -126,11 +125,10 @@ namespace AoC.Advent2016
                             {
                                 // cache the new shorter distance, and add the new state to our job queue
                                 cache[cacheId] = next.distance;
-                                queue.Enqueue(next);
+                                queue.Enqueue(next, map.AllLocations - next.visited);
                             }
                         }
                     }
-
                 }
                 else
                 {
@@ -138,7 +136,7 @@ namespace AoC.Advent2016
                     int distance = item.distance;
                     if (returnHome)
                     {
-                        distance += +map.paths[item.location + LocationCode('0')];
+                        distance += map.paths[item.location + LocationCode('0')];
                     }
                     currentBest = Math.Min(currentBest, distance);
                 }

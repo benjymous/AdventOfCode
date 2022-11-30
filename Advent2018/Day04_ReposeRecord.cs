@@ -8,24 +8,20 @@ namespace AoC.Advent2018
     {
         public string Name => "2018-04";
 
-        struct Data
+        class Data
         {
-            public Dictionary<string, Dictionary<int, int>> guards;
-            public Dictionary<string, int> durations;
+            public Dictionary<int, Dictionary<int, int>> guards = new();
+            public Dictionary<int, int> durations = new();
         }
 
         static Data Parse(string input)
         {
-            string id = null;
+            int id = -1;
             string sleep = null;
 
-            Data d = new()
-            {
-                guards = new Dictionary<string, Dictionary<int, int>>(),
-                durations = new Dictionary<string, int>()
-            };
+            Data d = new();
 
-            var lines = Util.Split(input).OrderBy(x => x);
+            var lines = Util.Split(input).Order();
 
             foreach (var l in lines)
             {
@@ -33,7 +29,7 @@ namespace AoC.Advent2018
                 var bits = line.Split(" ");
                 if (line.Contains("Guard"))
                 {
-                    id = bits[3];
+                    id = int.Parse(bits[3].Replace("#",""));
 
                     if (!d.guards.ContainsKey(id))
                     {
@@ -63,7 +59,7 @@ namespace AoC.Advent2018
         {
             var data = Parse(input);
 
-            string sleepiest = null;
+            int sleepiest = -1;
             var v = 0;
 
             foreach (var id in data.durations.Keys)
@@ -87,7 +83,7 @@ namespace AoC.Advent2018
                 }
             }
 
-            return int.Parse(sleepiest.Replace("#", "")) * m;
+            return sleepiest * m;
         }
 
         public static int Part2(string input)
@@ -96,7 +92,7 @@ namespace AoC.Advent2018
 
             var m = -1;
             var mv = -1;
-            string sleepiest = null;
+            int sleepiest = -1;
 
             foreach (var id in data.guards.Keys)
             {
@@ -111,7 +107,7 @@ namespace AoC.Advent2018
                 }
             }
 
-            return int.Parse(sleepiest.Replace("#", "")) * m;
+            return sleepiest * m;
         }
 
         public void Run(string input, ILogger logger)

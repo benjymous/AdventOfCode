@@ -22,9 +22,6 @@ namespace AoC.Advent2015
             public (int x, int y) bl;
             public (int x, int y) tr;
 
-            public Accumulator XRange;
-            public Accumulator YRange;
-
             public Instruction(string line)
             {
                 line = line.Replace("toggle", "T")

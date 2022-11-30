@@ -9,14 +9,7 @@ namespace AoC.Advent2016
 
         public static bool TriangleValid(params int[] row)
         {
-            if (row[0] + row[1] <= row[2] || row[0] + row[2] <= row[1] || row[1] + row[2] <= row[0])
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return row[0] + row[1] > row[2] && row[0] + row[2] > row[1] && row[1] + row[2] > row[0];
         }
 
         public static int Part1(string input)
@@ -24,9 +17,7 @@ namespace AoC.Advent2016
             var lines = Util.Split(input);
             var data = lines.Select(line => Util.Parse32(line, ' '));
 
-            var valid = data.Where(TriangleValid);
-
-            return valid.Count();
+            return data.Count(TriangleValid);
         }
 
         public static int Part2(string input)

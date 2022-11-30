@@ -10,11 +10,10 @@ namespace AoC.Advent2017
 
         struct Conditional
         {
-            public int Write { get; set; }
+            public bool Write { get; set; }
             public int Move { get; set; }
             public char Next { get; set; }
         }
-
 
         class State
         {
@@ -43,7 +42,7 @@ namespace AoC.Advent2017
                 switch (nextLine[1])
                 {
                     case "Write":
-                        Conditions[Parsing].Write = int.Parse(nextLine[4].Replace(".", ""));
+                        Conditions[Parsing].Write = int.Parse(nextLine[4].Replace(".", "")) == 1;
                         return;
                     case "Move":
                         Conditions[Parsing].Move = nextLine[6][0] == 'r' ? 1 : -1;
@@ -112,36 +111,35 @@ namespace AoC.Advent2017
 
             public void Run()
             {
-                State = States[Start];
+                State state = States[Start];
                 for (int cycle = 0; cycle < Diagnostic; ++cycle)
                 {
-                    var condition = State.Conditions[ReadTape()];
+                    var condition = state.Conditions[ReadTape()];
 
                     WriteTape(condition.Write);
                     Position += condition.Move;
-                    State = States[condition.Next];
+                    state = States[condition.Next];
                 }
             }
 
             public int ReadTape()
             {
-                if (Tape.TryGetValue(Position, out var value))
-                {
-                    return value;
-                }
-                return 0;
+                return Tape.Contains(Position) ? 1 : 0;
             }
 
-            public void WriteTape(int val) => Tape[Position] = val;
+            public void WriteTape(bool val)
+            {
+                if (val) Tape.Add(Position);
+                else Tape.Remove(Position);
+            }
 
             public int Checksum()
             {
-                return Tape.Values.Sum();
+                return Tape.Count;
             }
 
-            readonly Dictionary<int, int> Tape = new();
+            readonly HashSet<int> Tape = new();
 
-            State State;
             readonly char Start = '?';
             int Position = 0;
             readonly int Diagnostic = 0;

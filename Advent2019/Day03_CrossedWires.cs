@@ -20,7 +20,7 @@ namespace AoC.Advent2019
 
             var minDist = int.MaxValue;
 
-            Dictionary<string, int> seen = new();
+            Dictionary<(int x, int y), int> seen = new();
 
             foreach (var line in lines)
             {
@@ -29,7 +29,7 @@ namespace AoC.Advent2019
 
                 var position = new ManhattanVector2(0, 0);
                 int steps = 0;
-                Dictionary<string, int> current = new();
+                Dictionary<(int x, int y), int> current = new();
 
                 foreach (var i in instructions)
                 {
@@ -59,8 +59,7 @@ namespace AoC.Advent2019
 
                         steps++;
 
-                        var searchKey = position.ToString();
-                        if (seen.ContainsKey(searchKey))
+                        if (seen.ContainsKey(position))
                         {
                             int dist = int.MaxValue;
                             if (mode == SearchMode.Closest)
@@ -69,14 +68,13 @@ namespace AoC.Advent2019
                             }
                             else
                             {
-                                dist = steps + seen[searchKey];
-                                //Console.WriteLine($"Intersection at {position} Distances {steps}, {seen[searchKey]} = {dist}");                        
+                                dist = steps + seen[position];
                             }
                             minDist = Math.Min(minDist, dist);
                         }
                         else
                         {
-                            current[searchKey] = steps;
+                            current[position] = steps;
                         }
                     }
                 }

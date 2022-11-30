@@ -26,7 +26,7 @@ namespace AoC.Advent2015
                     {
                         if (child.Count() <= shortest)
                         {
-                            var key = string.Join(",", child.OrderByDescending(x => x));
+                            var key = string.Join(",", child.OrderDescending());
                             if (seen.Contains(key)) continue;
 
                             seen.Add(key);
@@ -59,7 +59,7 @@ namespace AoC.Advent2015
 
         public static Int64 Solve(string input, int numGroups)
         {
-            var parcels = Util.Parse32(input).OrderByDescending(x => x);
+            var parcels = Util.Parse32(input).OrderDescending();
 
             int totalSize = parcels.Sum();
             int groupSize = totalSize / numGroups;
@@ -75,7 +75,7 @@ namespace AoC.Advent2015
             {
                 if (smallestGroup < int.MaxValue && g.Count() > smallestGroup) break;
 
-                var key = string.Join(",", g.OrderByDescending(x => x));
+                var key = string.Join(",", g.OrderDescending());
                 if (seen.Contains(key)) continue;
 
                 seen.Add(key);

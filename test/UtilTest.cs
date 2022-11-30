@@ -2,6 +2,7 @@
 using AoC.Utils.Collections;
 using AoC.Utils.Vectors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -197,6 +198,16 @@ namespace AoC.Test
             Assert.AreEqual(new ManhattanVector2(10, 10), obj.A);
             Assert.AreEqual(new ManhattanVector3(20, 20, 5), obj.B);
             Assert.AreEqual(32, obj.C);
+        }
+
+        class RegexCreationTest2
+        { }
+
+        [TestMethod]
+        [TestCategory("RegexParse")]
+        public void RegexCreateFailTest()
+        {
+            Assert.ThrowsException<Exception>(() => Util.RegexCreate<RegexCreationTest2>("blah"));
         }
 
         [TestMethod]

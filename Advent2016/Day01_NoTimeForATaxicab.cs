@@ -38,7 +38,7 @@ namespace AoC.Advent2016
             var position = new ManhattanVector2(0, 0);
             var direction = new Direction2(0, -1);
 
-            var seen = new HashSet<string>();
+            var seen = new HashSet<(int x, int y)>();
 
             foreach (var instruction in lines)
             {
@@ -54,11 +54,11 @@ namespace AoC.Advent2016
                 {
                     position.Offset(direction);
 
-                    if (seen.Contains(position.ToString()))
+                    if (seen.Contains(position))
                     {
                         return position.Distance(ManhattanVector2.Zero);
                     }
-                    seen.Add(position.ToString());
+                    seen.Add(position);
                 }
             }
 

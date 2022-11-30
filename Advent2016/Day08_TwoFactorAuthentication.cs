@@ -109,7 +109,7 @@ namespace AoC.Advent2016
                 }
             }
 
-            public int NumPixelsOn() => pixels.Values().Where(x => x == true).Count();
+            public int NumPixelsOn() => pixels.Values().Count(x => x == true);
 
             public override string ToString()
             {

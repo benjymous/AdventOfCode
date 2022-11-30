@@ -82,8 +82,6 @@ namespace AoC.Advent2020
         {
             var rules = Util.Parse<BagRule>(input).ToDictionary(r => r.BagType, r => r);
 
-
-
             return Count("shiny gold", rules) - 1;
         }
 

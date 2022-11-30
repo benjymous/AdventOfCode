@@ -44,6 +44,12 @@ namespace AoC.Utils.Collections
             return index[key];
         }
 
+        public TreeNode<TKeyType, TDataType> AddNode(TKeyType key, TDataType value)
+        {
+            var node = GetNode(key);
+            node.Value = value; return node;
+        }
+
         public void AddPair(TKeyType parent, TKeyType child)
         {
             var p = GetNode(parent);

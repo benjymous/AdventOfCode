@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AoC.Utils;
+using System;
 using System.Linq;
 
 namespace AoC.Advent2017
@@ -11,45 +12,21 @@ namespace AoC.Advent2017
         {
             var words = passphrase.Split(" ");
             return !words.GroupBy(w => w)
-                        .Where(group => group.Count() > 1)
-                        .Select(group => group.Key).Any();
+                         .Any(group => group.Count() > 1);
         }
 
         public static bool ValidationRule2(string passphrase)
         {
-            var words = passphrase.Split(" ").Select(x => String.Join("", x.ToCharArray().OrderBy(y => y)));
+            var words = passphrase.Split(" ").Select(x => x.Order().AsString());
             return !words.GroupBy(w => w)
-                        .Where(group => group.Count() > 1)
-                        .Select(group => group.Key).Any();
+                         .Any(group => group.Count() > 1);
         }
-
-        // public static bool ValidationRule2(string passphrase)
-        // {
-        //     var words = passphrase.Split(" ");
-
-        //     foreach (var word1 in words)
-        //     {
-        //         var perms1 = Permutations.Get(word1.ToCharArray()).Select(x => string.Join("",x));
-        //         foreach (var word2 in words)
-        //         {
-        //             if (word1 != word2)
-        //             {
-        //                 var perms2 = Permutations.Get(word2.ToCharArray()).Select(x => string.Join("",x));
-
-        //                 if (perms1.Intersect<string>(perms2).Any()) return false; // match found
-        //             }
-        //         }
-        //     }
-
-        //     return true;
-        // }
 
         public static int Part1(string input)
         {
             var lines = Util.Split(input, '\n');
 
-            return lines.Where(ValidationRule1)
-                        .Count();
+            return lines.Count(ValidationRule1);
         }
 
         public static int Part2(string input)
@@ -57,8 +34,7 @@ namespace AoC.Advent2017
             var lines = Util.Split(input, '\n');
 
             return lines.Where(ValidationRule1)
-                        .Where(ValidationRule2)
-                        .Count();
+                        .Count(ValidationRule2);
         }
 
         public void Run(string input, ILogger logger)

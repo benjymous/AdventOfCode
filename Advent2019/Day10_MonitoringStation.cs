@@ -37,34 +37,6 @@ namespace AoC.Advent2019
             return angle;
         }
 
-        // static int GCD(int[] numbers)
-        // {
-        //     return numbers.Aggregate(GCD);
-        // }
-
-        // static int GCD(int a, int b)
-        // {
-        //     return b == 0 ? a : GCD(b, a % b);
-        // }
-
-        // public static ManhattanVector2 IntNormalize(ManhattanVector2 input)
-        // {
-        //     var gcd = GCD(Math.Abs(input.X), Math.Abs(input.Y));
-
-        //     if (gcd == 0) return input;
-
-        //     return new ManhattanVector2(input.X / gcd, input.Y / gcd);
-        // }
-
-        // public static ManhattanVector2 ManhattanAngleBetween(ManhattanVector2 vector1, ManhattanVector2 vector2)
-        // {
-        //     var t = new ManhattanVector2((vector1.X-vector2.X),(vector1.Y-vector2.Y));
-
-        //     var n = IntNormalize(t);
-
-        //     return n;
-        // }
-
         public static IEnumerable<IEnumerable<IGrouping<double, (ManhattanVector2, ManhattanVector2)>>> BuildGroups(string input)
         {
             var data = Parse(input);

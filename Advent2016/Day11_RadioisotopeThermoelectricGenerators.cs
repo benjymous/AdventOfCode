@@ -252,29 +252,3 @@ namespace AoC.Advent2016
         }
     }
 }
-public static class Extension
-{
-    public static IEnumerable<byte> Sequence(this byte num)
-    {
-        byte i = 0;
-        while (num > 0)
-        {
-            if ((num & 1) == 1)
-            {
-                yield return i;
-            }
-            num >>= 1; i++;
-        }
-    }
-
-    public static int CountBits(this byte num)
-    {
-        int i = 0;
-        while (num > 0)
-        {
-            if ((num & 1) == 1) { i++; }
-            num >>= 1;
-        }
-        return i;
-    }
-}

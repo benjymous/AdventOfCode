@@ -26,14 +26,7 @@ namespace AoC.Advent2016
             }
         }
 
-        private static bool CheckDiscs(Disc[] discs, int i)
-        {
-            foreach (var disc in discs)
-            {
-                if (!disc.CheckStep(i)) return false;
-            }
-            return true;
-        }
+        private static bool CheckDiscs(Disc[] discs, int i) => discs.All(disc => disc.CheckStep(i));
 
         public static int Part1(string input)
         {

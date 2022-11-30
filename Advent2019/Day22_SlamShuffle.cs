@@ -83,8 +83,6 @@ namespace AoC.Advent2019
             }
         }
 
-        static readonly HashSet<string> seen = new();
-
         private static Deck Shuffle(Deck deck, string input)
         {
             var lines = Util.Split(input);
@@ -108,18 +106,7 @@ namespace AoC.Advent2019
                 {
                     throw new Exception("Unexpected line");
                 }
-
-                var str = string.Join(", ", current.cards.Take(20));
-                //if (seen.Contains(str))
-                //{
-                //    Console.WriteLine();
-                //}
-                seen.Add(str);
-
-
             }
-
-
 
             return current;
         }

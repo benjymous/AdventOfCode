@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using AoC.Utils;
+using System.Linq;
 
 namespace AoC.Advent2020
 {
@@ -8,25 +9,16 @@ namespace AoC.Advent2020
 
         public static int Part1(string input)
         {
-            var numbers = Util.Parse32(input).OrderByDescending(x => x).ToArray();
-
-            for (var i = 0; i < numbers.Length; ++i)
-            {
-                for (var j = numbers.Length - 1; j >= 0; --j)
-                {
-                    if (numbers[i] + numbers[j] == 2020)
-                    {
-                        return numbers[i] * numbers[j];
-                    }
-                }
-            }
-
-            return 0;
+            return Util.Parse32(input)
+                       .Pairs()
+                       .Where(x => x.Item1 + x.Item2 == 2020)
+                       .Select(x => x.Item1 * x.Item2)
+                       .First();
         }
 
         public static int Part2(string input)
         {
-            var numbers = Util.Parse32(input).OrderByDescending(x => x).ToArray();
+            var numbers = Util.Parse32(input).OrderDescending().ToArray();
 
             for (var i = 0; i < numbers.Length; ++i)
             {

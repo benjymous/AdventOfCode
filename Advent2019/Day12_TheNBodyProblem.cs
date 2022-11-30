@@ -11,7 +11,6 @@ namespace AoC.Advent2019
     {
         public string Name => "2019-12";
 
-
         public class Body
         {
             public ManhattanVector3 position;

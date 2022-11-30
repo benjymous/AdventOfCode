@@ -40,7 +40,7 @@ namespace AoC.Advent2017.Test
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Checksum_Part2_Regression()
+        public void Spiral_Part2_Regression()
         {
             Assert.AreEqual(363010, Advent2017.Day03.Part2(input));
         }

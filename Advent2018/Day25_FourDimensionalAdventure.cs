@@ -36,7 +36,7 @@ namespace AoC.Advent2018
 
             public int CountGroups()
             {
-                return GetNodes().Select( node => node.FindAllLinks().OrderBy(a => a).GetCombinedHashCode())
+                return GetNodes().Select( node => node.FindAllLinks().Order().GetCombinedHashCode())
                                  .Distinct().Count();
             }
         }

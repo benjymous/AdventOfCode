@@ -45,7 +45,7 @@ namespace AoC.Advent2018
                     }
                 }
 
-                var next = ready.OrderBy(a => a).First();
+                var next = ready.Order().First();
                 result.Add(next);
                 steps.Remove(next);
                 ready.Remove(next);
@@ -103,7 +103,7 @@ namespace AoC.Advent2018
                     {
                         if (ready.Count > 0)
                         {
-                            var next = ready.OrderBy(a => a).First();
+                            var next = ready.Order().First();
                             ready.Remove(next);
                             steps.Remove(next);
                             worker.step = next;

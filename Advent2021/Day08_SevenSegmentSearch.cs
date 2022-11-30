@@ -13,8 +13,8 @@ namespace AoC.Advent2021
             public DataRow(string input)
             {
                 var bits = input.Split(" | ");
-                diagnostic = bits[0].Split(" ").Select(v => v.OrderBy(c => (int)c).ToArray().AsString());
-                output = bits[1].Split(" ").Select(v => v.OrderBy(c => (int)c).ToArray().AsString());
+                diagnostic = bits[0].Split(" ").Select(v => v.Order().AsString());
+                output = bits[1].Split(" ").Select(v => v.Order().AsString());
             }
 
             readonly IEnumerable<string> diagnostic, output;
@@ -52,19 +52,19 @@ namespace AoC.Advent2021
                 segments[7].Remove(eight = segments[7].First());
 
                 // three is the only 5 segmenter with both segments from 1
-                segments[5].Remove(three = segments[5].Where(v => v.Intersect(one).Count() == one.Length).First());
+                segments[5].Remove(three = segments[5].First(v => v.Intersect(one).Count() == one.Length));
 
                 // six is the only 6 seg which doesn't contain both segs from 1
-                segments[6].Remove(six = segments[6].Where(v => v.Intersect(one).Count() != one.Length).First());
+                segments[6].Remove(six = segments[6].First(v => v.Intersect(one).Count() != one.Length));
 
                 // five shares 5 of 6's segs
-                segments[5].Remove(five = segments[5].Where(v => v.Intersect(six).Count() == 5).First());
+                segments[5].Remove(five = segments[5].First(v => v.Intersect(six).Count() == 5));
 
                 // two is the remaining 5 seg
                 segments[5].Remove(two = segments[5].First());
 
                 // nine shares all of 5's segs
-                segments[6].Remove(nine = segments[6].Where(v => v.Intersect(five).Count() == five.Length).First());
+                segments[6].Remove(nine = segments[6].First(v => v.Intersect(five).Count() == five.Length));
 
                 // zero is the remaining 6 seg
                 segments[6].Remove(zero = segments[6].First());
@@ -72,7 +72,7 @@ namespace AoC.Advent2021
                 var decoder = new Dictionary<string, char>
                 { { zero, '0' }, { one, '1' }, { two, '2' }, { three, '3' }, { four, '4' }, { five, '5' }, { six, '6' }, { seven, '7' }, { eight, '8' }, { nine, '9' } };
 
-                return int.Parse(output.Select(v => decoder[v]).ToArray().AsString());
+                return int.Parse(output.Select(v => decoder[v]).AsString());
             }
         }
 

@@ -27,11 +27,11 @@ namespace AoC.Advent2017
         {
             var banks = Util.Parse32(input, '\t');
 
-            HashSet<string> seen = new();
+            HashSet<int> seen = new();
 
             while (true)
             {
-                string key = string.Join(" ", banks);
+                var key = banks.GetCombinedHashCode();
 
                 if (seen.Contains(key)) return seen.Count;
 
@@ -45,14 +45,14 @@ namespace AoC.Advent2017
         {
             var banks = Util.Parse32(input, '\t');
 
-            Dictionary<string, int> seen = new();
+            Dictionary<int, int> seen = new();
 
             int iteration = 0;
             while (true)
             {
-                string key = string.Join(" ", banks);
+                var key = banks.GetCombinedHashCode();
 
-                if (seen.ContainsKey(key)) return iteration - seen[key];
+                if (seen.TryGetValue(key, out int value)) return iteration - value;
 
                 seen[key] = iteration++;
 

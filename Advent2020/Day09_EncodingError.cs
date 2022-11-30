@@ -10,7 +10,7 @@ namespace AoC.Advent2020
 
         static bool ValidateNumber(int index, int preamble, Int64[] numbers) =>
             numbers.Skip(index - preamble).Take(preamble)
-                .Pairs().Where(p => p.Item1 + p.Item2 == numbers[index]).Any();
+                .Pairs().Any(p => p.Item1 + p.Item2 == numbers[index]);
 
         static Int64 FindInvalid(Int64[] numbers, int preamble) =>
             Enumerable.Range(preamble, numbers.Length)

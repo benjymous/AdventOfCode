@@ -21,9 +21,8 @@ namespace AoC.Advent2020
         }
 
         private static int CalculatePrivateKey(int publicKey)
-            => (int)LoopVals(7)
-               .Where(v => v.val == publicKey)
-               .First()
+            => LoopVals(7)
+               .First(v => v.val == publicKey)
                .loop;
 
         private static int CalculateEncryptionKey(int publicKey, int privateKey)

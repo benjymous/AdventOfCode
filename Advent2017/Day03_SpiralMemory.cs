@@ -44,7 +44,7 @@ namespace AoC.Advent2017
             return Spiralize().Skip(steps - 1).First();
         }
 
-        public static IEnumerable<ManhattanVector2> Spiralize()
+        public static IEnumerable<(int x, int y)> Spiralize()
         {
             ManhattanVector2 position = new(0, 0);
 
@@ -79,9 +79,9 @@ namespace AoC.Advent2017
         public static int Part2(string input) => Part2(int.Parse(input));
         public static int Part2(int input)
         {
-            var cells = new Dictionary<string, int>
+            var cells = new Dictionary<(int x, int y), int>
             {
-                {"0,0", 1}
+                {(0,0), 1}
             };
 
             var spiral = Spiralize();
@@ -93,10 +93,10 @@ namespace AoC.Advent2017
                 {
                     for (int x = -1; x <= 1; ++x)
                     {
-                        sum += cells.GetStrKey($"{pos.X + x},{pos.Y + y}");
+                        sum += cells.GetOrDefault((pos.x + x, pos.y + y));
                     }
                 }
-                cells[pos.ToString()] = sum;
+                cells[pos] = sum;
 
                 if (sum > input) return sum;
             }

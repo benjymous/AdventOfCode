@@ -1,5 +1,5 @@
-﻿using Advent.Utils.Vectors;
-using AoC.Utils;
+﻿using AoC.Utils;
+using AoC.Utils.Vectors;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -39,14 +39,11 @@ namespace AoC.Advent2020
 
         public class State
         {
-            public State()
-            {
-            }
+            public State() {}
 
             public State(HashSet<HexVector> initialState)
             {
-
-                foreach (var v in initialState) Set(v, true);
+                foreach (var v in initialState) Set(v);
             }
 
             public void Reset()
@@ -71,14 +68,11 @@ namespace AoC.Advent2020
                 }
             }
 
-            public void Set(HexVector pos, bool v)
+            public void Set(HexVector pos)
             {
-                if (v)
-                {
-                    XRange.Add(pos.X);
-                    YRange.Add(pos.Y);
-                    Cells.Add(pos);
-                }
+                XRange.Add(pos.X);
+                YRange.Add(pos.Y);
+                Cells.Add(pos);
             }
 
             public bool Get(HexVector pos)
@@ -106,7 +100,7 @@ namespace AoC.Advent2020
                     if (neighbours == 2) cellstate = true;
                 }
 
-                Set(pos, cellstate);
+                if (cellstate) Set(pos);
             }
         }
 

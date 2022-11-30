@@ -23,7 +23,7 @@ namespace AoC.Advent2021
             public (int minX, int maxX, int minY, int maxY, int minZ, int maxZ) Box;
         }
 
-        static IEnumerable<int> GetDivisions(int a1, int a2, int b1, int b2) => new HashSet<int> { a1, a2, b1, b2 }.OrderBy(v => v);
+        static IEnumerable<int> GetDivisions(int a1, int a2, int b1, int b2) => new HashSet<int> { a1, a2, b1, b2 }.Order();
 
         static IEnumerable<(int minX, int maxX, int minY, int maxY, int minZ, int maxZ)> Subtract((int minX, int maxX, int minY, int maxY, int minZ, int maxZ) b1, (int minX, int maxX, int minY, int maxY, int minZ, int maxZ) b2)
         {

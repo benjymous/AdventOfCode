@@ -15,7 +15,6 @@ namespace AoC.Advent2015
             const int WIDTH = 1;
             const int HEIGHT = 2;
 
-
             var side1 = bits[LENGTH] * bits[WIDTH];
             var side2 = bits[WIDTH] * bits[HEIGHT];
             var side3 = bits[HEIGHT] * bits[LENGTH];
@@ -27,7 +26,7 @@ namespace AoC.Advent2015
 
         public static int Ribbon(string line)
         {
-            var bits = Util.Parse32(line, 'x').OrderBy(x => x).ToList();
+            var bits = Util.Parse32(line, 'x').Order().ToList();
 
             return (bits[0] * 2) + (bits[1] * 2) + (bits[0] * bits[1] * bits[2]);
         }

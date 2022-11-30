@@ -30,7 +30,7 @@ namespace AoC.Advent2017
 
                     var (parentKey, parentValue) = ExtractParent(bits[0]);
 
-                    tree.GetNode(parentKey).Value = parentValue;
+                    tree.AddNode(parentKey, parentValue);
 
                     var children = Util.Split(bits[1], ',');
                     foreach (var child in children)
@@ -41,12 +41,9 @@ namespace AoC.Advent2017
                 else
                 {
                     // parent only
-
                     var (parentKey, parentValue) = ExtractParent(line);
-                    tree.GetNode(parentKey).Value = parentValue;
+                    tree.AddNode(parentKey, parentValue);
                 }
-
-
             }
             return tree;
         }
@@ -55,46 +52,32 @@ namespace AoC.Advent2017
 
         static int GetChildScore(TreeNode<string, int> node)
         {
-            int score = node.Value;
-            foreach (var child in node.Children)
-            {
-                score += GetChildScore(child);
-            }
-            return score;
+            return node.Value + node.Children.Sum(GetChildScore);
         }
 
         public static int Part2(string input)
         {
             var tree = ParseTree(input);
 
-            var leaves = new HashSet<TreeNode<string, int>>();
-            var currentParents = new HashSet<TreeNode<string, int>>();
-
-            foreach (var node in tree.GetNodes())
-            {
-                if (node.Children.Count == 0)
-                {
-                    leaves.Add(node);
-                    currentParents.Add(node.Parent);
-                }
-            }
+            var currentParents = tree.GetNodes().Where(node => node.Children.Count == 0)
+                                                .Select(node => node.Parent)
+                                                .ToHashSet();
 
             // Find any leaves that have a missmatched weight
-
             while (currentParents.Any())
             {
                 var newParents = new HashSet<TreeNode<string, int>>();
                 foreach (var node in currentParents)
                 {
-                    var childWeights = node.Children.Select(child => (GetChildScore(child), child)).GroupBy(x => x.Item1).OrderBy(g => g.Count());
+                    var childWeights = node.Children.Select(child => (score: GetChildScore(child), child)).GroupBy(x => x.score).OrderBy(g => g.Count());
 
                     if (childWeights.Count() > 1)
                     {
                         // children weights are mismatched
 
-                        int wrongScore = childWeights.First().First().Item1;
+                        int wrongScore = childWeights.First().First().score;
                         var wrongNode = childWeights.First().First().child;
-                        int rightScore = childWeights.Last().First().Item1;
+                        int rightScore = childWeights.Last().First().score;
 
                         int scoreChange = rightScore - wrongScore;
 

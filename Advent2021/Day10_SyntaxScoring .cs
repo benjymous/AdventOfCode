@@ -55,7 +55,7 @@ namespace AoC.Advent2021
 
             return lines.Select(line => line.stack.Select(line => Score(ExpectedClose(line)).part2)
                                                   .Aggregate(0L, (total, val) => (total * 5) + val))
-                        .OrderBy(v => v)
+                        .Order()
                         .ElementAt(lines.Count() / 2);
         }
 

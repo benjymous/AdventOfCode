@@ -10,7 +10,7 @@ namespace AoC.Advent2015
         private static Dictionary<string, int> Noggify(string input)
         {
             int i = 0;
-            var sizes = Util.Parse32(input).OrderBy(x => -x).ToDictionary(x => i++, x => x);
+            var sizes = Util.Parse32(input).OrderDescending().ToDictionary(x => i++, x => x);
 
             var jobqueue = new Queue<(HashSet<int>, int)>();
             jobqueue.Enqueue((new HashSet<int>(), 0));
@@ -33,7 +33,7 @@ namespace AoC.Advent2015
 
                         var newValues = new HashSet<int>(entry.Item1) { other.Key };
 
-                        var key = string.Join(",", newValues.OrderBy(x => x));
+                        var key = string.Join(",", newValues.Order());
                         if (!cache.ContainsKey(key))
                         {
                             cache[key] = newScore;

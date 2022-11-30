@@ -10,75 +10,62 @@ namespace AoC.Advent2016
     {
         public string Name => "2016-13";
 
-        static bool IsOpen(int x, int y, int seed)
+        public class CubicleMap : IMap<(int x, int y)>
         {
-            int v = (seed) + (x * x) + (3 * x) + (2 * x * y) + (y) + (y * y);
-            var b = v.BitSequence();
-            var c = b.Count();
-            return (c % 2 == 0);
-        }
-
-        public class CubicleMap : IMap<ManhattanVector2>
-        {
-            public Dictionary<string, bool> data = new();
+            readonly Dictionary<(int x, int y), bool> data = new();
             readonly int Seed = 0;
 
-            public CubicleMap(int seed)
+            public CubicleMap(int seed) => Seed = seed;
+
+            public virtual IEnumerable<(int x, int y)> GetNeighbours((int x, int y) center)
             {
-                Seed = seed;
+                (int x, int y) pt = (center.x - 1, center.y);
+                if (IsValidNeighbour(pt))
+                    yield return pt;
+
+                pt = (center.x + 1, center.y);
+                if (IsValidNeighbour(pt))
+                    yield return pt;
+
+                pt = (center.x, center.y + 1);
+                if (IsValidNeighbour(pt))
+                    yield return pt;
+
+                pt = (center.x, center.y - 1);
+                if (IsValidNeighbour(pt))
+                    yield return pt;
             }
 
-            public virtual IEnumerable<ManhattanVector2> GetNeighbours(ManhattanVector2 center)
+            public bool IsValidNeighbour((int x, int y) pt)
             {
-                ManhattanVector2 pt;
-                pt = new ManhattanVector2(center.X - 1, center.Y);
-                if (IsValidNeighbour(pt))
-                    yield return pt;
-
-                pt = new ManhattanVector2(center.X + 1, center.Y);
-                if (IsValidNeighbour(pt))
-                    yield return pt;
-
-                pt = new ManhattanVector2(center.X, center.Y + 1);
-                if (IsValidNeighbour(pt))
-                    yield return pt;
-
-                pt = new ManhattanVector2(center.X, center.Y - 1);
-                if (IsValidNeighbour(pt))
-                    yield return pt;
-
-            }
-
-            public bool IsValidNeighbour(ManhattanVector2 pt)
-            {
-                if (pt.X < 0 || pt.Y < 0)
+                if (pt.x < 0 || pt.y < 0)
                 {
                     return false;
                 }
 
-                lock (data)
+                if (!data.TryGetValue(pt, out var isOpen))
                 {
-                    if (!data.TryGetValue(pt.ToString(), out var isOpen))
-                    {
-                        isOpen = IsOpen(pt.X, pt.Y, Seed);
-                        data[pt.ToString()] = isOpen;
-                    }
-
-                    return isOpen;
+                    isOpen = IsOpen(pt.x, pt.y);
+                    data[pt] = isOpen;
                 }
+
+                return isOpen;
             }
 
-            public int Heuristic(ManhattanVector2 location1, ManhattanVector2 location2)
+            bool IsOpen(int x, int y)
             {
-                return location1.Distance(location2);
+                int c = (Seed + (x * x) + (3 * x) + (2 * x * y) + (y) + (y * y)).BitSequence().Count();
+                return (c % 2 == 0);
             }
+
+            public int Heuristic((int x, int y) location1, (int x, int y) location2) => location1.Distance(location2);
         }
 
         public static int Part1(string input)
         {
             int seed = int.Parse(input);
             var map = new CubicleMap(seed);
-            var route = AStar<ManhattanVector2>.FindPath(map, new ManhattanVector2(1, 1), new ManhattanVector2(31, 39));
+            var route = AStar<(int x, int y)>.FindPath(map, (1, 1), (31, 39));
             return route.Count();
         }
 
@@ -87,9 +74,6 @@ namespace AoC.Advent2016
             int seed = int.Parse(input);
             var map = new CubicleMap(seed);
 
-            var start = new ManhattanVector2(1, 1);
-            var dest = new ManhattanVector2(0, 0);
-
             const int MaxDistance = 50;
 
             int count = 0;
@@ -97,42 +81,19 @@ namespace AoC.Advent2016
             {
                 for (int x = 0; x < MaxDistance - y; ++x)
                 {
-                    if (!map.IsValidNeighbour(new ManhattanVector2(x, y)))
+                    if (!map.IsValidNeighbour((x, y)))
                     {
-                        //Console.Write('#');
                         continue;
                     }
-                    if (x == 1 && y == 1)
-                    {
+                    var route = AStar<(int x, int y)>.FindPath(map, (1,1), (x, y));
+                    if (route.Any() && route.Count() <= MaxDistance)
+                    { 
                         count++;
-                        //Console.Write('o');
-                    }
-                    else
-                    {
-                        dest.Set(x, y);
-                        var route = AStar<ManhattanVector2>.FindPath(map, start, dest);
-                        if (route.Any())
-                        {
-                            if (route.Count() <= MaxDistance)
-                            {
-                                count++;
-                                //Console.Write(" ");
-                            }
-                            // else
-                            // {
-                            //     Console.Write("-");
-                            // }    
-                        }
-                        // else
-                        // {
-                        //     Console.Write("X");
-                        // }                
                     }
                 }
-                //Console.WriteLine();
             }
 
-            return count;
+            return count+1;
         }
 
         public void Run(string input, ILogger logger)

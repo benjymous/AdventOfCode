@@ -33,7 +33,7 @@ namespace AoC.Advent2016
         public static string Part1(string input)
         {
             var storage = BuildDataMaps(input);
-            var processed = storage.Select(row => row.Select(kvp => (kvp.Value, kvp.Key)).OrderBy(t => -t.Value).First().Key);
+            var processed = storage.Select(row => row.Select(kvp => (kvp.Value, kvp.Key)).OrderByDescending(t => t.Value).First().Key);
 
             return processed.AsString();
         }

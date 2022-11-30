@@ -29,6 +29,17 @@ namespace AoC.Utils
                 yield return ((v & k) > T.Zero) ? T.One : T.Zero;
         }
 
+        public static int CountBits<T>(this T num) where T : IBinaryInteger<T>
+        {
+            int i = 0;
+            while (num > T.Zero)
+            {
+                if ((num & T.One) == T.One) { i++; }
+                num >>= 1;
+            }
+            return i;
+        }
+
         public static IEnumerable<T> BinarySequenceBigEndian<T>(this T v, T start) where T : IBinaryInteger<T>
         {
             for (T i = start; i > T.Zero; i >>= 1)

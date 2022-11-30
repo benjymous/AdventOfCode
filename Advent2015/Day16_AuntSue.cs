@@ -31,7 +31,7 @@ namespace AoC.Advent2015
                 int score = 0;
                 foreach (var clue in clues)
                 {
-                    if (clue.Value > 0 && inventory.ContainsKey(clue.Key) && clue.Value == inventory[clue.Key])
+                    if (clue.Value > 0 && inventory.TryGetValue(clue.Key, out int value) && clue.Value == value)
                     {
                         score++;
                     }
@@ -48,7 +48,7 @@ namespace AoC.Advent2015
                     {
                         // In particular, the cats and trees readings indicates that there are greater than that many 
                         // (due to the unpredictable nuclear decay of cat dander and tree pollen)
-                        if (inventory.ContainsKey(clue.Key) && clue.Value < inventory[clue.Key])
+                        if (inventory.TryGetValue(clue.Key, out int value) && clue.Value < value)
                         {
                             score++;
                         }
@@ -57,7 +57,7 @@ namespace AoC.Advent2015
                     {
                         // the pomeranians and goldfish readings indicate that there are fewer than that many
                         // (due to the modial interaction of magnetoreluctance)
-                        if (inventory.ContainsKey(clue.Key) && clue.Value > inventory[clue.Key])
+                        if (inventory.TryGetValue(clue.Key, out int value) && clue.Value > value)
                         {
                             score++;
                         }
@@ -66,7 +66,7 @@ namespace AoC.Advent2015
                             score++;
                         }
                     }
-                    else if (clue.Value > 0 && inventory.ContainsKey(clue.Key) && clue.Value == inventory[clue.Key])
+                    else if (clue.Value > 0 && inventory.TryGetValue(clue.Key, out int value) && clue.Value == value)
                     {
                         score++;
                     }
@@ -81,7 +81,7 @@ namespace AoC.Advent2015
 
             var clues = ParseClues("children: 3, cats: 7, samoyeds: 2, pomeranians: 3, akitas: 0, vizslas: 0, goldfish: 5, trees: 3, cars: 2, perfumes: 1");
 
-            var data = aunts.Select(a => (a.ScorePart1(clues), a)).OrderBy(t => -t.Item1);
+            var data = aunts.Select(a => (a.ScorePart1(clues), a)).OrderByDescending(t => t.Item1);
 
             return data.First().a.Id;
         }
@@ -92,7 +92,7 @@ namespace AoC.Advent2015
 
             var clues = ParseClues("children: 3, cats: 7, samoyeds: 2, pomeranians: 3, akitas: 0, vizslas: 0, goldfish: 5, trees: 3, cars: 2, perfumes: 1");
 
-            var data = aunts.Select(a => (a.ScorePart2(clues), a)).OrderBy(t => -t.Item1);
+            var data = aunts.Select(a => (a.ScorePart2(clues), a)).OrderByDescending(t => t.Item1);
 
             return data.First().a.Id;
         }

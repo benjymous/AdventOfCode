@@ -12,7 +12,7 @@ namespace AoC.Advent2020
         {
             var values = Util.Parse32(input).ToList();
             values.Add(0);
-            values = values.OrderBy(x => x).ToList();
+            values = values.Order().ToList();
             values.Add(values.Last() + 3);
             return values;
         }

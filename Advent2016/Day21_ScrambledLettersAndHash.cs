@@ -4,34 +4,37 @@ using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
 
+using CharFunc = System.Func<System.Collections.Generic.IEnumerable<char>, System.Collections.Generic.IEnumerable<char>>;
+
 namespace AoC.Advent2016
 {
     public class Day21 : IPuzzle
     {
         public string Name => "2016-21";
 
+
         class InstructionFactory
         {
             [Regex(@"rotate right (\d+) step")]
-            public static Func<IEnumerable<char>, IEnumerable<char>> RotRight(int count) => pwd => RotateRight(pwd, count);
+            public static CharFunc RotRight(int count) => pwd => RotateRight(pwd, count);
 
             [Regex(@"rotate left (\d+) step")]
-            public static Func<IEnumerable<char>, IEnumerable<char>> RotLeft(int count) => pwd => RotateLeft(pwd, count);
+            public static CharFunc RotLeft(int count) => pwd => RotateLeft(pwd, count);
 
             [Regex(@"swap letter (.) with letter (.)")]
-            public static Func<IEnumerable<char>, IEnumerable<char>> SwapL(char from, char to) => pwd => SwapLetter(pwd, from, to);
+            public static CharFunc SwapL(char from, char to) => pwd => SwapLetter(pwd, from, to);
 
             [Regex(@"swap position (.) with position (.)")]
-            public Func<IEnumerable<char>, IEnumerable<char>> SwapP(int from, int to) => pwd => SwapPosition(pwd, from, to);
+            public CharFunc SwapP(int from, int to) => pwd => SwapPosition(pwd, from, to);
 
             [Regex(@"reverse positions (.) through (.)")]
-            public static Func<IEnumerable<char>, IEnumerable<char>> Rev(int start, int end) => pwd => Reverse(pwd, start, end);
+            public static CharFunc Rev(int start, int end) => pwd => Reverse(pwd, start, end);
 
             [Regex(@"move position (.) to position (.)")]
-            public static Func<IEnumerable<char>, IEnumerable<char>> Mov(int from, int to) => pwd => Move(pwd, from, to);
+            public static CharFunc Mov(int from, int to) => pwd => Move(pwd, from, to);
 
             [Regex(@"rotate based on position of letter (.)")]
-            public static Func<IEnumerable<char>, IEnumerable<char>> RotBased(char letter) => pwd => RotateRightBasedOnLetter(pwd, letter);
+            public static CharFunc RotBased(char letter) => pwd => RotateRightBasedOnLetter(pwd, letter);
         }
 
         public static char Switch(char c, char from, char to)
@@ -104,7 +107,7 @@ namespace AoC.Advent2016
             return filtered.Take(to).Concat($"{fromChar}").Concat(filtered.Skip(to));
         }
 
-        private static string Scramble(IEnumerable<Func<IEnumerable<char>, IEnumerable<char>>> instructions, IEnumerable<char> password)
+        private static string Scramble(IEnumerable<CharFunc> instructions, IEnumerable<char> password)
         {
             foreach (var instr in instructions)
             {
@@ -116,14 +119,14 @@ namespace AoC.Advent2016
 
         public static string Part1(string input)
         {
-            var instructions = Util.RegexFactory<Func<IEnumerable<char>, IEnumerable<char>>>(input, new InstructionFactory()).ToArray();
+            var instructions = Util.RegexFactory<CharFunc>(input, new InstructionFactory()).ToArray();
 
             return Scramble(instructions, "abcdefgh");
         }
 
         public static string Part2(string input)
         {
-            var instructions = Util.RegexFactory<Func<IEnumerable<char>, IEnumerable<char>>>(input, new InstructionFactory()).ToArray();
+            var instructions = Util.RegexFactory<CharFunc>(input, new InstructionFactory()).ToArray();
 
             var scrambled = "fbgdceah";
 

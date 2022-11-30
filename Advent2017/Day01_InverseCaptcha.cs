@@ -1,4 +1,6 @@
-﻿namespace AoC.Advent2017
+﻿using System.Linq;
+
+namespace AoC.Advent2017
 {
     public class Day01 : IPuzzle
     {
@@ -6,14 +8,14 @@
 
         public static int Captcha(string input, int offset)
         {
-            input = input.Trim();
+            var data = input.Trim().Select(c => c - '0').ToArray();
 
             int count = 0;
-            for (int i = 0; i < input.Length; ++i)
+            for (int i = 0; i < data.Length; ++i)
             {
-                if (input[i] == input[(i + offset) % input.Length])
+                if (data[i] == data[(i + offset) % data.Length])
                 {
-                    count += int.Parse($"{input[i]}");
+                    count += data[i];
                 }
             }
 

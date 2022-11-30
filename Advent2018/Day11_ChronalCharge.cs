@@ -1,4 +1,5 @@
 ﻿using AoC.Utils.Vectors;
+using System;
 
 namespace AoC.Advent2018
 {
@@ -81,7 +82,7 @@ namespace AoC.Advent2018
             for (var size = 1; size < 300; ++size)
             {
                 int sizeBest = 0;
-                //Console.WriteLine($"{size} {max}");
+                
                 for (var y = 1; y < 300 - size; ++y)
                 {
                     for (var x = 1; x < 300 - size; ++x)
@@ -118,9 +119,6 @@ namespace AoC.Advent2018
 
         public void Run(string input, ILogger logger)
         {
-
-
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

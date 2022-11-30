@@ -11,23 +11,23 @@ namespace AoC.Advent2016
 
         public static bool[] pad = new bool[] { false };
 
-        public static IEnumerable<bool> Iterate(IEnumerable<bool> input)
+        public static bool[] Iterate(bool[] input)
         {
             return input.Concat(pad).Concat(input.Reverse().Select(c => !c)).ToArray();
         }
 
-        public static IEnumerable<bool> Fill(IEnumerable<bool> input, int size)
+        public static IEnumerable<bool> Fill(bool[] input, int size)
         {
-            while (input.Count() < size)
+            while (input.Length < size)
             {
                 input = Iterate(input);
             }
             return input.Take(size);
         }
 
-        public static IEnumerable<bool> Input(IEnumerable<char> input)
+        public static bool[] Input(IEnumerable<char> input)
         {
-            return input.Select(c => c == '1');
+            return input.Select(c => c == '1').ToArray();
         }
 
         public static string Output(IEnumerable<bool> output)

@@ -74,14 +74,10 @@ namespace AoC.Advent2017
 
         public static string KnotHash(string input)
         {
-            var instructions = input.Trim().ToList().Select(x => (int)x).ToList();
-            instructions.AddRange(new int[] { 17, 31, 73, 47, 23 });
+            var instructions = input.Trim().Select(x => (int)x).Concat(new int[] { 17, 31, 73, 47, 23 });
 
             return RunHash(256, instructions, 64).KnotHash();
         }
-
-
-
 
         public static int Part1(string input)
         {

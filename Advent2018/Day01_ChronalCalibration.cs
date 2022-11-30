@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AoC.Advent2018
 {
@@ -9,44 +10,28 @@ namespace AoC.Advent2018
 
         public static int Part1(string input)
         {
-            var parts = Util.Split(input);
-
-            int sum = 0;
-
-            foreach (var part in parts)
-            {
-                if (!string.IsNullOrWhiteSpace(part))
-                {
-                    sum += Int32.Parse(part.Trim());
-                }
-            }
-
-            return sum;
+            return Util.Parse32(input).Sum();
         }
 
         public static int Part2(string input)
         {
             var seen = new HashSet<int>();
 
-            var parts = Util.Split(input);
+            var nums = Util.Parse32(input);
 
             int freq = 0;
 
             while (true)
-            {
-
-                foreach (var part in parts)
+            { 
+                foreach (var num in nums)
                 {
-                    if (!string.IsNullOrWhiteSpace(part))
+                    seen.Add(freq);
+
+                    freq += num;
+
+                    if (seen.Contains(freq))
                     {
-                        seen.Add(freq);
-
-                        freq += Int32.Parse(part.Trim());
-
-                        if (seen.Contains(freq))
-                        {
-                            return freq;
-                        }
+                        return freq;
                     }
                 }
             }

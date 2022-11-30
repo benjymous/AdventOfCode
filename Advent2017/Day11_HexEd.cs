@@ -1,4 +1,4 @@
-﻿using Advent.Utils.Vectors;
+﻿using AoC.Utils.Vectors;
 using System;
 
 namespace AoC.Advent2017

@@ -1,5 +1,6 @@
 ﻿using AoC.Utils.Vectors;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace AoC.Advent2016
@@ -18,9 +19,9 @@ namespace AoC.Advent2016
                                 " ABC  \n" +
                                 "  D   \n";
 
-        static Dictionary<string, string> ParseKeypad(string kp)
+        static Dictionary<(int x, int y), char> ParseKeypad(string kp)
         {
-            var result = new Dictionary<string, string>();
+            var result = new Dictionary<(int x, int y), char>();
             var lines = Util.Split(kp);
             int y = 0;
 
@@ -31,7 +32,7 @@ namespace AoC.Advent2016
                 {
                     if (c != ' ')
                     {
-                        result[$"{x},{y}"] = c.ToString();
+                        result[(x, y)] = c;
                     }
                     x++;
                 }
@@ -42,17 +43,9 @@ namespace AoC.Advent2016
 
         public static string SimulateKeypad(string input, string keypadLayout)
         {
-            Dictionary<string, string> keypad = ParseKeypad(keypadLayout);
+            Dictionary<(int x, int y), char> keypad = ParseKeypad(keypadLayout);
 
-            ManhattanVector2 position = null;
-
-            foreach (var kvp in keypad)
-            {
-                if (kvp.Value == "5")
-                {
-                    position = new ManhattanVector2(kvp.Key);
-                }
-            }
+            ManhattanVector2 position = keypad.First(kvp => kvp.Value == '5').Key;
 
             var lines = Util.Split(input);
             StringBuilder code = new();
@@ -71,12 +64,12 @@ namespace AoC.Advent2016
                         case 'U': newPos.Offset(0, -1); break;
                         case 'D': newPos.Offset(0, 1); break;
                     }
-                    if (keypad.ContainsKey(newPos.ToString()))
+                    if (keypad.ContainsKey(newPos))
                     {
                         position.Set(newPos.X, newPos.Y);
                     }
                 }
-                code.Append(keypad[position.ToString()]);
+                code.Append(keypad[position]);
             }
 
             return code.ToString();

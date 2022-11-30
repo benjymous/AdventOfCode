@@ -15,19 +15,11 @@ namespace AoC.Advent2018
             int doubles = 0;
             int triples = 0;
 
-            foreach (var id in keys)
+            foreach(var id in keys)
             {
-                var chars = new Dictionary<char, int>();
-                for (var i = 0; i < id.Length; ++i)
-                {
-                    chars.IncrementAtIndex(id[i]);
-                }
-
-                bool hasDouble = chars.Any(kvp => kvp.Value == 2);
-                bool hasTriple = chars.Any(kvp => kvp.Value == 3);
-
-                if (hasDouble) doubles++;
-                if (hasTriple) triples++;
+                var grp = id.GroupBy(c => c);
+                doubles += grp.Any(g => g.Count() == 2) ? 1 : 0;
+                triples += grp.Any(g => g.Count() == 3) ? 1 : 0;
             }
 
             return doubles * triples;

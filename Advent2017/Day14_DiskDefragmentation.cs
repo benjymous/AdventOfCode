@@ -8,46 +8,45 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-14";
 
-        public static IEnumerable<IEnumerable<bool>> BitMatrix(string input)
+        public static IEnumerable<(int x, int y)> BuildBits(string input)
         {
-            for (int i = 0; i < 128; ++i)
+            for (int y = 0; y < 128; ++y)
             {
-                var hash = Day10.KnotHash($"{input}-{i}");
-                yield return hash.BitSequenceFromHex();
+                var hash = Day10.KnotHash($"{input}-{y}");
+                var row = hash.BitSequenceFromHex().ToArray();
+                for (int x = 0; x < 128; ++x)
+                {
+                    if (row[x]) yield return (x, y);
+                }
             }
         }
 
         public static int Part1(string input)
         {
-            return BitMatrix(input).Sum(row => row.Count(i => i));
+            return BuildBits(input).Count();
         }
 
-        static void FloodFill(int x, int y, bool[][] matrix)
+        static void FloodFill((int x, int y) pos, HashSet<(int x, int y)> matrix)
         {
-            if ((x < 0) || (y < 0) || x > 127 || y > 127 || matrix[y][x] == false) return;
-            matrix[y][x] = false;
-            FloodFill(x, y + 1, matrix);
-            FloodFill(x, y - 1, matrix);
-            FloodFill(x + 1, y, matrix);
-            FloodFill(x - 1, y, matrix);
+            if (!matrix.Contains(pos)) return;
+            matrix.Remove(pos);
+            FloodFill((pos.x, pos.y + 1), matrix);
+            FloodFill((pos.x, pos.y - 1), matrix);
+            FloodFill((pos.x + 1, pos.y), matrix);
+            FloodFill((pos.x - 1, pos.y), matrix);
         }
 
         public static int Part2(string input)
         {
-            var matrix = BitMatrix(input).Select(row => row.ToArray()).ToArray();
+            var matrix = BuildBits(input).ToHashSet();
 
             int groups = 0;
 
-            for (int y = 0; y < 128; ++y)
+            while (matrix.Any())
             {
-                for (int x = 0; x < 128; ++x)
-                {
-                    if (matrix[y][x])
-                    {
-                        FloodFill(x, y, matrix);
-                        groups++;
-                    }
-                }
+                var pos = matrix.First();
+                FloodFill(pos, matrix);
+                groups++;
             }
 
             return groups;

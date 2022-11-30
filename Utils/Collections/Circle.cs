@@ -142,10 +142,7 @@ namespace AoC.Utils.Collections
             return current;
         }
 
-        public void Set(T val)
-        {
-            this.Value = val;
-        }
+        public void Set(T val) => Value = val;
 
         public int Count() => index.Count;
 

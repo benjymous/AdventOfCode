@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 
 namespace AoC.Advent2015
 {
@@ -10,50 +11,36 @@ namespace AoC.Advent2015
 
         public class Component
         {
-            public Component(string line)
+            [Regex(@"(\S+) (\S+) (\S+) -> (\S+)")]
+            public Component(string in1, string op, string in2, string outName)
             {
-                var split1 = line.Split("->");
-                OutName = split1[1].Trim();
+                Input1 = in1;
+                Operator = op;
+                Input2 = in2;
+                OutName = outName;
+            }
 
-                var split2 = split1[0].Trim().Split(" ");
+            [Regex(@"(\S+) (\S+) -> (\S+)")]
+            public Component(string op, string in1, string outName)
+            {
+                Input1 = in1;
+                Operator = op;
+                OutName = outName;
+            }
 
-                switch (split2.Length)
+            [Regex(@"(\S+) -> (\S+)")]
+            public Component(string in1, string outName)
+            {
+                if (int.TryParse(in1, out int v))
                 {
-                    case 1:
-                        {
-                            if (int.TryParse(split2[0], out int _))
-                            {
-                                Value = int.Parse(split2[0]);
-                                HasValue = true;
-                            }
-                            else
-                            {
-                                Input1 = split2[0];
-                            }
-                        }
-                        break;
-
-                    case 2:
-                        {
-                            Operator = split2[0];
-                            Input1 = split2[1];
-                        }
-                        break;
-                    case 3:
-                        {
-
-                            Input1 = split2[0];
-                            Operator = split2[1];
-                            Input2 = split2[2];
-                        }
-                        break;
-
-                    default:
-                        throw new Exception("malformed circuit!");
+                    Value = v;
+                    HasValue = true;
                 }
-
-
-
+                else
+                {
+                    Input1 = in1;
+                }
+                OutName = outName;
             }
 
             public bool HasValue { get; set; } = false;
@@ -72,7 +59,7 @@ namespace AoC.Advent2015
 
             public Circuit(string input)
             {
-                var components = Util.Parse<Component>(input);
+                var components = Util.RegexParse<Component>(input);
 
                 index = components.ToDictionary(c => c.OutName, c => c);
             }

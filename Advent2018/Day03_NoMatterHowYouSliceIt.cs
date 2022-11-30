@@ -1,4 +1,5 @@
 ﻿using AoC.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,6 +28,17 @@ namespace AoC.Advent2018
                 W = w;
                 H = h;
             }
+
+            public IEnumerable<int> Squares()
+            {
+                for (var y = Top; y < Top + H; ++y)
+                {
+                    for (var x = Left; x < Left + W; ++x)
+                    {
+                        yield return GetKey(x, y);
+                    }
+                }
+            }
         }
 
         static int GetKey(int x, int y)
@@ -34,58 +46,32 @@ namespace AoC.Advent2018
             return x + (y * FabricSize);
         }
 
-        static Dictionary<int, int> FindOverlaps(IEnumerable<Shape> shapes)
+        static HashSet<int> FindOverlaps(IEnumerable<Shape> shapes)
         {
             Dictionary<int, int> square = new();
             foreach (var shape in shapes)
             {
-                for (var y = shape.Top; y < shape.Top + shape.H; ++y)
+                foreach (var squareId in shape.Squares())
                 {
-                    for (var x = shape.Left; x < shape.Left + shape.W; ++x)
-                    {
-                        square.IncrementAtIndex(GetKey(x, y));
-                    }
+                    square.IncrementAtIndex(squareId);
                 }
             }
 
-            return square;
+            return square.Where(kvp => kvp.Value > 1).Select(kvp => kvp.Key).ToHashSet();
         }
 
         public static int Part1(string input)
         {
             var shapes = Util.RegexParse<Shape>(input);
-            var square = FindOverlaps(shapes);
-
-            var count = square.Select(i => i.Value > 1 ? 1 : 0).Sum();
-
-            return count;
+            return FindOverlaps(shapes).Count();
         }
 
         public static string Part2(string input)
         {
             var shapes = Util.RegexParse<Shape>(input);
-            var square = FindOverlaps(shapes);
+            var overlaps = FindOverlaps(shapes);
 
-            foreach (var shape in shapes)
-            {
-                bool fail = false;
-                for (var y = shape.Top; y < shape.Top + shape.H; ++y)
-                {
-                    for (var x = shape.Left; x < shape.Left + shape.W; ++x)
-                    {
-                        if (square[GetKey(x, y)] > 1)
-                        {
-                            fail = true;
-                        }
-                    }
-                }
-                if (!fail)
-                {
-                    return shape.ID;
-                }
-            }
-
-            return "";
+            return shapes.First(shape => !shape.Squares().Intersect(overlaps).Any()).ID;
         }
 
         public void Run(string input, ILogger logger)

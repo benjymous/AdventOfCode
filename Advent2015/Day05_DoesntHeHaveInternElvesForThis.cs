@@ -10,7 +10,7 @@ namespace AoC.Advent2015
 
         public static bool HasVowels(string line, int count)
         {
-            int vowelCount = line.Where(c => c.IsVowel()).Count();
+            int vowelCount = line.Count(c => c.IsVowel());
 
             return vowelCount >= count;
         }
@@ -27,7 +27,7 @@ namespace AoC.Advent2015
 
         public static bool NoBads(string line)
         {
-            return !bads.Any(bad => line.Contains(bad));
+            return !bads.Any(line.Contains);
         }
 
         public static bool IsNice1(string line)
@@ -69,13 +69,13 @@ namespace AoC.Advent2015
         public static int Part1(string input)
         {
             var lines = Util.Split(input);
-            return lines.Where(IsNice1).Count();
+            return lines.Count(IsNice1);
         }
 
         public static int Part2(string input)
         {
             var lines = Util.Split(input);
-            return lines.Where(IsNice2).Count();
+            return lines.Count(IsNice2);
         }
 
         public void Run(string input, ILogger logger)

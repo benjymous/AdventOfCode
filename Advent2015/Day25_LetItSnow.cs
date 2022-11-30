@@ -8,11 +8,11 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-25";
 
-        static IEnumerable<(int x, int y, UInt64 code)> NumberSequence()
+        static IEnumerable<(int x, int y, ulong code)> NumberSequence()
         {
             int x = 1;
             int y = 1;
-            UInt64 code = 20151125;
+            ulong code = 20151125;
             yield return (x, y, code);
 
             while (true)
@@ -37,7 +37,7 @@ namespace AoC.Advent2015
             var row = numbers[0];
             var col = numbers[1];
 
-            var code = NumberSequence().Where(val => val.x == col && val.y == row).First().code;
+            var code = NumberSequence().First(val => val.x == col && val.y == row).code;
 
             return (int)code;
         }

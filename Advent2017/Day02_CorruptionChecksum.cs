@@ -35,13 +35,13 @@ namespace AoC.Advent2017
         public static int Part1(string input)
         {
             var lines = Util.Split(input);
-            return lines.Select(RowDifference).Sum();
+            return lines.Sum(RowDifference);
         }
 
         public static int Part2(string input)
         {
             var lines = Util.Split(input);
-            return lines.Select(RowMultiple).Sum();
+            return lines.Sum(RowMultiple);
         }
 
         public void Run(string input, ILogger logger)

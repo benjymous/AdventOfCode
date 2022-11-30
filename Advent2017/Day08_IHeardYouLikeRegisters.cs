@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OperatorFunc = System.Func<int, int, bool>;
 
 namespace AoC.Advent2017
 {
@@ -8,31 +9,16 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-08";
 
-        enum Operator
+        static OperatorFunc ParseOperator(string op) => op switch
         {
-            Eq,
-            Neq,
-            Lt,
-            Gt,
-            Leq,
-            Geq
-        }
-
-        static Operator Parse(string op)
-        {
-            return op switch
-            {
-                "==" => Operator.Eq,
-                "!=" => Operator.Neq,
-                "<" => Operator.Lt,
-                ">" => Operator.Gt,
-                "<=" => Operator.Leq,
-                ">=" => Operator.Geq,
-                //case ""
-                //    return val1  val2;
-                _ => throw new Exception("Unknown operator"),
-            };
-        }
+            "==" => (int lhs, int rhs) => lhs == rhs,
+            "!=" => (int lhs, int rhs) => lhs != rhs,
+            "<" => (int lhs, int rhs) => lhs < rhs,
+            ">" => (int lhs, int rhs) => lhs > rhs,
+            "<=" => (int lhs, int rhs) => lhs <= rhs,
+            ">=" => (int lhs, int rhs) => lhs >= rhs,
+            _ => throw new Exception("Unknown operator"),
+        };
 
         class Instruction
         {
@@ -53,48 +39,30 @@ namespace AoC.Advent2017
                 return RegLookup[name];
             }
 
-            //int MaxRegs => RegLookup.Count;
-
-            // b inc 5 if a > 1
-            private (int RegToChange, int Amount, int RegToCheck, Operator Operator, int CheckValue) Decode(string line)
+            private (int RegToChange, int Amount, int RegToCheck, OperatorFunc Operator, int CheckValue) Decode(string line)
             {
                 var bits = line.Split(" ");
                 int val = int.Parse(bits[2]);
                 if (bits[1] == "dec") val = -val;
-                return (RegIndex(bits[0]), val, RegIndex(bits[4]), Parse(bits[5]), int.Parse(bits[6]));
-            }
-
-            private static bool Perform(int val1, Operator op, int val2)
-            {
-                return op switch
-                {
-                    Operator.Eq => val1 == val2,
-                    Operator.Neq => val1 != val2,
-                    Operator.Lt => val1 < val2,
-                    Operator.Gt => val1 > val2,
-                    Operator.Leq => val1 <= val2,
-                    Operator.Geq => val1 >= val2,
-                    _ => throw new Exception("Unknown operator"),
-                };
+                return (RegIndex(bits[0]), val, RegIndex(bits[4]), ParseOperator(bits[5]), int.Parse(bits[6]));
             }
 
             public void Act(int[] regs)
             {
-                int checkVal = regs[Instr.RegToCheck];
-                if (Perform(checkVal, Instr.Operator, Instr.CheckValue))
+                if (Instr.Operator(regs[Instr.RegToCheck], Instr.CheckValue))
                 {
                     regs[Instr.RegToChange] += Instr.Amount;
                 }
             }
 
-            private (int RegToChange, int Amount, int RegToCheck, Operator Operator, int CheckValue) Instr;
+            private (int RegToChange, int Amount, int RegToCheck, OperatorFunc Operator, int CheckValue) Instr;
         }
 
         public static (int largestEnd, int largestRecord) Run(string input)
         {
             Dictionary<string, int> regLookup = new();
             var instructions = Util.Parse<Instruction, Dictionary<string, int>>(input, regLookup);
-            var values = new int[1000];
+            var values = new int[regLookup.Count];
 
             int runningMax = 0;
 

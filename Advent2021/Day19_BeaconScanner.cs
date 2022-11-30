@@ -20,7 +20,7 @@ namespace AoC.Advent2021
                 Origin = new ManhattanVector3(origin);
                 Points = input.Select(p => p.AsSimple());
                 input.ForEach(point => Offsets[point.AsSimple()] = input.Select(other => (point - other).AsSimple()).ToHashSet());
-                Fingerprint = input.Select(p1 => input.Where(p2 => p2 != p1).Select(p2 => p1.Distance(p2)).OrderBy(v => v).Take(2).ToArray()).Select(a => (a[0], a[1])).ToHashSet();
+                Fingerprint = input.Select(p1 => input.Where(p2 => p2 != p1).Select(p2 => p1.Distance(p2)).Order().Take(2).ToArray()).Select(a => (a[0], a[1])).ToHashSet();
             }
 
             public (bool isOverlap, int transformIdx, ManhattanVector3 offset) TestOverlap(Group other)
