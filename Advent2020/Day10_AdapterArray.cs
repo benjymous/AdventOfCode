@@ -10,7 +10,7 @@ namespace AoC.Advent2020
 
         static List<int> GetValues(string input)
         {
-            var values = Util.Parse32(input).ToList();
+            var values = Util.ParseNumbers<int>(input).ToList();
             values.Add(0);
             values = values.Order().ToList();
             values.Add(values.Last() + 3);

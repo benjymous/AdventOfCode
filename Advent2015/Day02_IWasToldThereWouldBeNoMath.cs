@@ -9,7 +9,7 @@ namespace AoC.Advent2015
 
         public static int Wrap(string line)
         {
-            var bits = Util.Parse32(line, 'x');
+            var bits = Util.ParseNumbers<int>(line, 'x');
 
             const int LENGTH = 0;
             const int WIDTH = 1;
@@ -26,7 +26,7 @@ namespace AoC.Advent2015
 
         public static int Ribbon(string line)
         {
-            var bits = Util.Parse32(line, 'x').Order().ToList();
+            var bits = Util.ParseNumbers<int>(line, 'x').Order().ToList();
 
             return (bits[0] * 2) + (bits[1] * 2) + (bits[0] * bits[1] * bits[2]);
         }

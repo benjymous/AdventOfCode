@@ -20,14 +20,7 @@ namespace AoC.Utils.Collections
 
         public Circle(T v, Circle<T> p = null, Circle<T> n = null)
         {
-            if (p == null)
-            {
-                index = new Dictionary<T, Circle<T>>();
-            }
-            else
-            {
-                index = p.index;
-            }
+            index = p == null ? new Dictionary<T, Circle<T>>() : p.index;
 
             index[v] = this;
 

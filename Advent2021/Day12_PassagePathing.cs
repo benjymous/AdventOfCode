@@ -27,9 +27,9 @@ namespace AoC.Advent2021
         public static bool Contains(uint seen, int nodeId) => (seen & (1U << nodeId)) != 0;
 
         public static int Solve(Tree<string> map, bool revisit = false)
-        {
-            var startNode = map.GetNode("start");
-            var endNode = map.GetNode("end");
+        { 
+            var startNode = map["start"];
+            var endNode = map["end"];
 
             var queue = new Queue<(TreeNode<string, object> location, ulong key, uint seen, bool canRevisit)>
                 { (startNode, (ulong)startNode.Id, SetSeen(startNode.Id), revisit) };

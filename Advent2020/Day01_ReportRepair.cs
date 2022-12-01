@@ -9,7 +9,7 @@ namespace AoC.Advent2020
 
         public static int Part1(string input)
         {
-            return Util.Parse32(input)
+            return Util.ParseNumbers<int>(input)
                        .Pairs()
                        .Where(x => x.Item1 + x.Item2 == 2020)
                        .Select(x => x.Item1 * x.Item2)
@@ -18,7 +18,7 @@ namespace AoC.Advent2020
 
         public static int Part2(string input)
         {
-            var numbers = Util.Parse32(input).OrderDescending().ToArray();
+            var numbers = Util.ParseNumbers<int>(input).OrderDescending().ToArray();
 
             for (var i = 0; i < numbers.Length; ++i)
             {

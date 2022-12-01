@@ -10,7 +10,7 @@ namespace AoC.Advent2015
         private static Dictionary<string, int> Noggify(string input)
         {
             int i = 0;
-            var sizes = Util.Parse32(input).OrderDescending().ToDictionary(x => i++, x => x);
+            var sizes = Util.ParseNumbers<int>(input).OrderDescending().ToDictionary(x => i++, x => x);
 
             var jobqueue = new Queue<(HashSet<int>, int)>();
             jobqueue.Enqueue((new HashSet<int>(), 0));

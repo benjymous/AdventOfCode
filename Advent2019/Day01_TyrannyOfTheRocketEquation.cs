@@ -22,8 +22,8 @@ namespace AoC.Advent2019
             return fuel;
         }
 
-        public static int Part1(string input) => Util.Parse32(input).Sum(GetFuelRequirement);
-        public static int Part2(string input) => Util.Parse32(input).Sum(GetFullFuelRequirement);
+        public static int Part1(string input) => Util.ParseNumbers<int>(input).Sum(GetFuelRequirement);
+        public static int Part2(string input) => Util.ParseNumbers<int>(input).Sum(GetFullFuelRequirement);
 
         public void Run(string input, ILogger logger)
         {

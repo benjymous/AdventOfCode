@@ -14,7 +14,7 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void KnotHash01Test(string input, int listSize, int expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day10.RunHash(listSize, Util.Parse32(input), 1).CheckSum());
+            Assert.AreEqual(expected, Advent2017.Day10.RunHash(listSize, Util.ParseNumbers<int>(input), 1).CheckSum());
         }
 
         [TestCategory("Test")]

@@ -53,8 +53,8 @@ namespace AoC.Advent2020
                 YRange.Reset();
             }
 
-            readonly Accumulator XRange = new();
-            readonly Accumulator YRange = new();
+            readonly Accumulator<int> XRange = new();
+            readonly Accumulator<int> YRange = new();
             public HashSet<HexVector> Cells { get; private set; } = new HashSet<HexVector>();
 
             public IEnumerable<HexVector> Range()
@@ -63,7 +63,7 @@ namespace AoC.Advent2020
                 {
                     foreach (var x in XRange.RangeBuffered(1))
                     {
-                        yield return new HexVector((int)x, (int)y, (int)(-x - y));
+                        yield return new HexVector(x, y, -x - y);
                     }
                 }
             }

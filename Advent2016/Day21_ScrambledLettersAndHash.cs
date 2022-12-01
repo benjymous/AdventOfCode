@@ -89,7 +89,7 @@ namespace AoC.Advent2016
         };
 
         private static IEnumerable<char> RotateRightBasedOnLetter(IEnumerable<char> password, char letter)
-        {
+        {            
             var pos = password.IndexOf(letter);
             var dist = RotateLetterForward[pos];
             return RotateRight(password, dist);

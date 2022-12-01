@@ -31,8 +31,7 @@ namespace AoC.Utils.Collections
         TreeNode<TKeyType, TDataType> root = null;
         public TreeNode<TKeyType, TDataType> GetRoot()
         {
-            root ??= TraverseToRoot(index.Keys.First()).Last();
-            return root;
+            return root ??= TraverseToRoot(index.Keys.First()).Last();
         }
 
         public TreeNode<TKeyType, TDataType> GetNode(TKeyType key)
@@ -43,6 +42,8 @@ namespace AoC.Utils.Collections
             }
             return index[key];
         }
+
+        public TreeNode<TKeyType, TDataType> this[TKeyType key] => GetNode(key);
 
         public TreeNode<TKeyType, TDataType> AddNode(TKeyType key, TDataType value)
         {

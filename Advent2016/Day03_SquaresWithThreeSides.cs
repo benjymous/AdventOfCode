@@ -15,14 +15,14 @@ namespace AoC.Advent2016
         public static int Part1(string input)
         {
             var lines = Util.Split(input);
-            var data = lines.Select(line => Util.Parse32(line, ' '));
+            var data = lines.Select(line => Util.ParseNumbers<int>(line, ' '));
 
             return data.Count(TriangleValid);
         }
 
         public static int Part2(string input)
         {
-            var numbers = Util.Parse32(input.Replace("\n", " "), ' ');
+            var numbers = Util.ParseNumbers<int>(input.Replace("\n", " "), ' ');
 
             var triangles = new Queue<List<int>>();
 

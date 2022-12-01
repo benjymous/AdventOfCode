@@ -100,7 +100,7 @@ namespace AoC.Advent2019.NPSA
 
     public class ASCIIBuffer
     {
-        readonly Dictionary<string, char> screenBuffer = new();
+        readonly Dictionary<(int x, int y), char> screenBuffer = new();
 
         public ManhattanVector2 Cursor { get; } = new ManhattanVector2(0, 0);
 
@@ -145,7 +145,7 @@ namespace AoC.Advent2019.NPSA
 
                 default:
                     sb.Append(c);
-                    screenBuffer.PutObjKey(Cursor, c);
+                    screenBuffer[Cursor] = c;
                     Cursor.X++;
                     break;
             }
@@ -154,17 +154,14 @@ namespace AoC.Advent2019.NPSA
             Max.Y = Math.Max(Max.Y, Cursor.Y);
         }
 
-        public char GetAt(int x, int y)
-        {
-            return screenBuffer.GetStrKey($"{x},{y}");
-        }
+        public char GetAt(int x, int y) => screenBuffer.GetOrDefault((x, y));
 
         public ManhattanVector2 FindCharacter(char c)
         {
             var res = screenBuffer.Where(kvp => kvp.Value == c);
             if (res.Any())
             {
-                return new ManhattanVector2(res.First().Key);
+                return res.First().Key;
             }
 
             throw new Exception("Not found");

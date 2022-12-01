@@ -15,7 +15,7 @@ namespace AoC.Advent2021
                 Util.Split(input)
                     .WithIndex()
                     .ForEach(line =>
-                        Util.Parse32(line.Value, ' ')
+                        Util.ParseNumbers<int>(line.Value, ' ')
                              .WithIndex()
                              .ForEach(row =>
                                 Put(row.Index, line.Index, row.Value)
@@ -56,7 +56,7 @@ namespace AoC.Advent2021
         static int RunGame(string input, QuestionPart part)
         {
             var chunks = input.Split("\n\n");
-            var rnd = Util.Parse32(chunks[0]);
+            var rnd = Util.ParseNumbers<int>(chunks[0]);
 
             var boards = Util.Parse<Board>(chunks.Skip(1));
 

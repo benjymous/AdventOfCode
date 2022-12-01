@@ -12,7 +12,7 @@ namespace AoC.Advent2022
         public static int Part1(string input)
         {
             var groups = input.Split("\n\n");
-            var elves = groups.Select(group => Util.Parse32(group));
+            var elves = groups.Select(group => Util.ParseNumbers<int>(group));
             var max = elves.Select(cals => cals.Sum()).Max();
             return max;
         }
@@ -20,7 +20,7 @@ namespace AoC.Advent2022
         public static int Part2(string input)
         {
             var groups = input.Split("\n\n");
-            var elves = groups.Select(group => Util.Parse32(group));
+            var elves = groups.Select(group => Util.ParseNumbers<int>(group));
             var totalthree = elves.Select(cals => cals.Sum()).OrderDescending().Take(3).Sum();
             return totalthree;
         }

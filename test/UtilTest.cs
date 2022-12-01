@@ -216,5 +216,14 @@ namespace AoC.Test
             var obj = (ManhattanVector2)TypeDescriptor.GetConverter(typeof(ManhattanVector2)).ConvertFromString("1,2");
             Assert.AreEqual(new ManhattanVector2(1, 2), obj);
         }
+
+
+        [TestMethod]
+        public void ArrayDimensionTest()
+        {
+            var arr = new int[10, 5];
+            Assert.AreEqual(10, arr.Width());
+            Assert.AreEqual(5, arr.Height());
+        }
     }
 }

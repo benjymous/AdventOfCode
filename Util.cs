@@ -55,21 +55,11 @@ namespace AoC
             }
         }
 
-        internal static int WrapIndex(int v, int length)
-        {
-            return v % length;
-        }
+        internal static int WrapIndex(int v, int length) => v % length;
 
-        public static T Create<T>(string line)
-        {
-            return (T)Activator.CreateInstance(typeof(T), new object[] { line });
-        }
+        public static T Create<T>(string line) => (T)Activator.CreateInstance(typeof(T), new object[] { line });
 
-        public static List<T> Parse<T>(IEnumerable<string> input)
-        {
-            return input.Select(Create<T>)
-                        .ToList();
-        }
+        public static List<T> Parse<T>(IEnumerable<string> input) => input.Select(Create<T>).ToList();
 
         public static List<T> Parse<T, C>(string input, C cache, string splitter = "\n")
         {
@@ -161,15 +151,12 @@ namespace AoC
             RegexFactory<T>(input.Split(splitter), factory);
 
 
-        public static int[] Parse32(string input, char splitChar = '\0') => Parse32(Split(input, splitChar));
-        public static uint[] ParseU32(string input, char splitChar = '\0') => ParseU32(Split(input, splitChar));
-        public static Int64[] Parse64(string input, char splitChar = '\0') => Parse64(Split(input, splitChar));
-        public static UInt64[] ParseU64(string input, char splitChar = '\0') => ParseU64(Split(input, splitChar));
+        public static T[] ParseNumbers<T>(string input, char splitChar = '\0', System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Any) where T : INumberBase<T>
+            => ParseNumbers<T>(Split(input, splitChar), style);
 
-        public static int[] Parse32(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(Int32.Parse).ToArray();
-        public static uint[] ParseU32(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(UInt32.Parse).ToArray();
-        public static Int64[] Parse64(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(Int64.Parse).ToArray();
-        public static UInt64[] ParseU64(IEnumerable<string> input) => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(UInt64.Parse).ToArray();
+        public static T[] ParseNumbers<T>(IEnumerable<string> input, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Any) where T : INumberBase<T>
+            => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(line => T.Parse(line, style, null)).ToArray();
+
 
         interface IConvertomatic
         {
@@ -250,13 +237,7 @@ namespace AoC
 
         public static IEnumerable<(T1 item1, T2 item2)> Matrix<T1, T2>(IEnumerable<T1> set1, IEnumerable<T2> set2)
         {
-            foreach (T1 x in set1)
-            {
-                foreach (T2 y in set2)
-                {
-                    yield return (x, y);
-                }
-            }
+            return set1.SelectMany(x => set2.Select(y => (x, y)));
         }
 
         public static IEnumerable<(int x, int y)> Range2DInclusive((int minY, int maxY, int minX, int maxX) range)
@@ -284,17 +265,11 @@ namespace AoC
             }
         }
 
-        public static IEnumerable<int> RangeBetween(int start, int end)
-        {
-            for (int i = start; i < end; i++) yield return i;
-        }
+        public static IEnumerable<int> RangeBetween(int start, int end) => Enumerable.Range(start, end - start);
 
-        public static IEnumerable<int> RangeInclusive(int start, int end)
-        {
-            for (int i = start; i <= end; i++) yield return i;
-        }
+        public static IEnumerable<int> RangeInclusive(int start, int end) => Enumerable.Range(start, end - start + 1);
 
-        public static IEnumerable<(int x, int y)> Matrix(int maxX, int maxY) => Matrix<int, int>(Enumerable.Range(0, maxX), Enumerable.Range(0, maxY));
+        public static IEnumerable<(int x, int y)> Matrix(int maxX, int maxY) => Matrix(Enumerable.Range(0, maxX), Enumerable.Range(0, maxY));
 
         public static string GetInput(IPuzzle puzzle) => System.IO.File.ReadAllText(System.IO.Path.Combine("Data", puzzle.Name + ".txt")).Replace("\r", "");
 
@@ -340,10 +315,7 @@ namespace AoC
             }
         }
 
-        public static IEnumerable<T> Values<T>(params T[] input)
-        {
-            return input;
-        }
+        public static IEnumerable<T> Values<T>(params T[] input) => input;
 
         public static void Test<T>(T actual, T expected)
         {
@@ -359,15 +331,9 @@ namespace AoC
         public static long[] ExtractLongNumbers(IEnumerable<char> input) => input.Where(c => (c == ' ' || c == '-' || (c >= '0' && c <= '9'))).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(long.Parse).ToArray();
 
 
-        public static void SetBit(ref Int64 value, int i)
-        {
-            value |= (1L) << i;
-        }
+        public static void SetBit(ref long value, int i) => value |= (1L) << i;
 
-        public static void ClearBit(ref Int64 value, int i)
-        {
-            value &= ~(1L << i);
-        }
+        public static void ClearBit(ref long value, int i) => value &= ~(1L << i);
 
         public static (TInput input, TResult result) BinarySearch<TInput, TResult>(TInput start, Func<TInput, (bool success, TResult res)> test) where TInput : IBinaryInteger<TInput>
             => BinarySearch(start, TInput.Zero, test);
@@ -641,50 +607,44 @@ namespace AoC
         }
     }
 
-    public class Accumulator
+    public class Accumulator<T> where T : INumber<T>, IMinMaxValue<T>
     {
-        public Accumulator(Int64 initial)
+        public Accumulator(T initial)
         {
             Min = initial;
             Max = initial;
             Sum = initial;
         }
 
-        public Accumulator()
-        {
-            Min = Int64.MaxValue;
-            Max = Int64.MinValue;
-            Sum = 0;
-        }
+        public Accumulator() => Reset();
 
         public void Reset()
         {
-            Min = Int64.MaxValue;
-            Max = Int64.MinValue;
-            Sum = 0;
+            Min = T.MaxValue;
+            Max = T.MinValue;
+            Sum = T.Zero;
         }
 
-        public void Add(Int64 val)
+        public void Add(T val)
         {
             Sum += val;
-            Min = Math.Min(Min, val);
-            Max = Math.Max(Max, val);
+            Min = T.Min(Min, val);
+            Max = T.Max(Max, val);
         }
 
-        public IEnumerable<Int64> RangeInclusive()
+        public IEnumerable<T> RangeInclusive()
         {
             for (var i = Min; i <= Max; ++i) yield return i;
         }
 
-        public IEnumerable<Int64> RangeBuffered(Int64 buffer)
+        public IEnumerable<T> RangeBuffered(T buffer)
         {
             for (var i = Min - buffer; i <= Max + buffer; ++i) yield return i;
         }
 
-
-        public Int64 Min { get; private set; }
-        public Int64 Max { get; private set; }
-        public Int64 Sum { get; private set; }
+        public T Min { get; private set; }
+        public T Max { get; private set; }
+        public T Sum { get; private set; }
     }
 
     [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method)]

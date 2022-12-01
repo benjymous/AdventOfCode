@@ -59,7 +59,7 @@ namespace AoC.Advent2015
 
         public static Int64 Solve(string input, int numGroups)
         {
-            var parcels = Util.Parse32(input).OrderDescending();
+            var parcels = Util.ParseNumbers<int>(input).OrderDescending();
 
             int totalSize = parcels.Sum();
             int groupSize = totalSize / numGroups;

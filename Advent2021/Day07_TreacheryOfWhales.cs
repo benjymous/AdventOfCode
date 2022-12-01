@@ -9,7 +9,7 @@ namespace AoC.Advent2021
 
         public static int Solve(string input, Func<int, int> FuelCost)
         {
-            var positions = Util.Parse32(input).Order().ToArray();
+            var positions = Util.ParseNumbers<int>(input).Order().ToArray();
 
             return Enumerable.Range(positions.First(), positions.Last())
                              .Select(x => positions.Select(crab => FuelCost(Math.Abs(crab - x))).Sum())

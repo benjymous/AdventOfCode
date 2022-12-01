@@ -74,7 +74,7 @@ namespace AoC.Advent2019.NPSA
 
         public IntCPU(string program)
         {
-            initialState = Util.Parse64(program);
+            initialState = Util.ParseNumbers<long>(program);
             Reset();
 
             lock (paramCache)

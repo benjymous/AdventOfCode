@@ -13,7 +13,7 @@ namespace AoC.Advent2019
         public class NPVGS : NPSA.ICPUInterrupt
         {
             readonly NPSA.IntCPU cpu;
-            readonly Dictionary<string, int> screen = new();
+            readonly Dictionary<(int x, int y), int> screen = new();
 
             // 0 is an empty tile. No game object appears in this tile.
             // 1 is a wall tile. Walls are indestructible barriers.
@@ -44,7 +44,7 @@ namespace AoC.Advent2019
 
             public int Score()
             {
-                return screen.GetStrKey("-1,0");
+                return screen.GetOrDefault((-1,0));
             }
 
             ManhattanVector2 FindCell(int tile)
@@ -73,7 +73,7 @@ namespace AoC.Advent2019
                     int yPos = (int)cpu.Output.Dequeue();
                     int tile = (int)cpu.Output.Dequeue();
 
-                    screen[$"{xPos},{yPos}"] = tile;
+                    screen[(xPos,yPos)] = tile;
 
                     // if (tile == 4)
                     // {
@@ -91,7 +91,7 @@ namespace AoC.Advent2019
                     var str = "";
                     for (int x = 0; x <= 40; ++x)
                     {
-                        str += tiles[screen.GetStrKey($"{x},{y}")] + " ";
+                        str += tiles[screen.GetOrDefault((x,y))] + " ";
                     }
                     Console.WriteLine(str);
                 }

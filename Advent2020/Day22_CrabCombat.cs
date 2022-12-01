@@ -18,7 +18,7 @@ namespace AoC.Advent2020
             foreach (var group in groups)
             {
                 var data = group.Split("\n");
-                var deck = Util.Parse32(data.Skip(1)).Select(i => (byte)i).ToQueue();
+                var deck = Util.ParseNumbers<int>(data.Skip(1)).Select(i => (byte)i).ToQueue();
                 decks.Add(deck);
             }
 

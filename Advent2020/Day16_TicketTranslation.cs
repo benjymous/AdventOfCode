@@ -13,7 +13,7 @@ namespace AoC.Advent2020
         {
             public Range(string input)
             {
-                var values = Util.Parse32(input, '-');
+                var values = Util.ParseNumbers<int>(input, '-');
                 Min = values[0];
                 Max = values[1];
             }
@@ -42,7 +42,7 @@ namespace AoC.Advent2020
         {
             public Ticket(string input)
             {
-                Values = Util.Parse32(input);
+                Values = Util.ParseNumbers<int>(input);
             }
 
             public bool Valid = true;

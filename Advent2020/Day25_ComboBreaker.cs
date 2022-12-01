@@ -32,7 +32,7 @@ namespace AoC.Advent2020
 
         public static int Part1(string input)
         {
-            var inputs = Util.Parse32(input);
+            var inputs = Util.ParseNumbers<int>(input);
             var doorPublicKey = inputs[0];
             var cardPublicKey = inputs[1];
 

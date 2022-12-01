@@ -13,7 +13,7 @@ namespace AoC.Advent2019
         {
             readonly NPSA.IntCPU cpu;
             readonly ManhattanVector2 position = new(0, 0);
-            readonly Dictionary<string, int> hullColours = new();
+            readonly Dictionary<(int x, int y), int> hullColours = new();
             readonly Direction2 direction = new(0, -1);
 
             int minx = 0;
@@ -46,11 +46,11 @@ namespace AoC.Advent2019
             public void PaintHull(int colour)
             {
                 if (colour < 0 || colour > 1) throw new Exception("Unexpected hull colour!");
-                hullColours.PutObjKey(position, colour);
+                hullColours[position] = colour;
             }
             int ReadCamera()
             {
-                return hullColours.GetObjKey(position);
+                return hullColours.GetOrDefault(position);
             }
 
             public int GetPaintedTileCount()
@@ -100,7 +100,7 @@ namespace AoC.Advent2019
                 {
                     for (var x = minx; x <= maxx; ++x)
                     {
-                        if (hullColours.GetStrKey($"{x},{y}") == 0) outStr += " ";
+                        if (hullColours.GetOrDefault((x,y)) == 0) outStr += " ";
                         else outStr += "#";
 
                     }

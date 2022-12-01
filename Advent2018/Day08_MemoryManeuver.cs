@@ -15,7 +15,7 @@ namespace AoC.Advent2018
 
         static Node BuildTree(string input, ref int metaTotal)
         {
-            var data = new Queue<int>(Util.Parse32(input, ' '));
+            var data = new Queue<int>(Util.ParseNumbers<int>(input, ' '));
 
             return Read(data, ref metaTotal);
         }

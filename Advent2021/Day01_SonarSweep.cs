@@ -18,13 +18,13 @@ namespace AoC.Advent2021
 
         public static int Part1(string input)
         {
-            var depths = Util.Parse32(input);
+            var depths = Util.ParseNumbers<int>(input);
             return AscendingDepths(depths);
         }
 
         public static int Part2(string input)
         {
-            var depths = Sliding3s(Util.Parse32(input)).ToArray();
+            var depths = Sliding3s(Util.ParseNumbers<int>(input)).ToArray();
             return AscendingDepths(depths);
         }
 

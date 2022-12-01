@@ -11,7 +11,7 @@ namespace AoC.Advent2016
         {
             public Rule(string input)
             {
-                var vals = Util.ParseU64(input, '-');
+                var vals = Util.ParseNumbers<ulong>(input, '-');
                 min = vals[0];
                 max = vals[1];
             }

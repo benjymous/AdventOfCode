@@ -81,7 +81,7 @@ namespace AoC.Advent2017
 
         public static int Part1(string input)
         {
-            var instructions = Util.Parse32(input);
+            var instructions = Util.ParseNumbers<int>(input);
 
             return RunHash(256, instructions, 1).CheckSum();
         }

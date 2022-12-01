@@ -8,7 +8,7 @@ namespace AoC.Advent2021
 
         private static long Simulate(string input, int days)
         {
-            var data = Util.Parse32(input);
+            var data = Util.ParseNumbers<int>(input);
             var v = Enumerable.Range(0, 9).Select(i => (long)data.Count(v => v == i)).ToArray();
 
             while ((days--) > 0)

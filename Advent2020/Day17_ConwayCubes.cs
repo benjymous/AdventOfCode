@@ -42,10 +42,10 @@ namespace AoC.Advent2020
             }
 
             readonly int Dimensions;
-            readonly Accumulator XRange = new();
-            readonly Accumulator YRange = new();
-            readonly Accumulator ZRange = new();
-            readonly Accumulator WRange = new();
+            readonly Accumulator<long> XRange = new();
+            readonly Accumulator<long> YRange = new();
+            readonly Accumulator<long> ZRange = new();
+            readonly Accumulator<long> WRange = new();
             public HashSet<(Int64 x, Int64 y, Int64 z, Int64 w)> Cells { get; private set; } = new HashSet<(Int64 x, Int64 y, Int64 z, Int64 w)>();
 
             readonly Int64[] BlankDim = new Int64[] { 0 };

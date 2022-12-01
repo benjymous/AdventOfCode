@@ -19,7 +19,7 @@ namespace AoC.Advent2019.Test
         public void DescendentsTest(string input, string root, int expected)
         {
             var t = Day06.ParseTree(input);
-            var count = t.GetNode(root).GetDescendantCount();
+            var count = t[root].GetDescendantCount();
             Assert.AreEqual(expected, count);
         }
 

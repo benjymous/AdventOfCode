@@ -6,7 +6,7 @@
 
         public static int Run(string input, bool mode2)
         {
-            var instructions = Util.Parse32(input);
+            var instructions = Util.ParseNumbers<int>(input);
 
             int position = 0;
             int steps = 0;

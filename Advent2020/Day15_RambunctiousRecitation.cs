@@ -29,7 +29,7 @@ namespace AoC.Advent2020
         {
             public Storage(string input)
             {
-                var numbers = Util.Parse32(input);
+                var numbers = Util.ParseNumbers<int>(input);
                 foreach (var n in numbers)
                 {
                     LastNum = n;

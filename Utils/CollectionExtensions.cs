@@ -23,33 +23,7 @@ namespace AoC.Utils
             }
         }
 
-        public static void PutObjKey<T>(this Dictionary<string, T> dict, object key, T value)
-        {
-            PutStrKey(dict, key.ToString(), value);
-        }
-
-        public static void PutStrKey<T>(this Dictionary<string, T> dict, string key, T value)
-        {
-            dict[key] = value;
-        }
-
-        public static T GetStrKey<T>(this Dictionary<string, T> dict, string key)
-        {
-            if (dict.TryGetValue(key, out T val)) return val;
-            return default;
-        }
-
-        public static T GetObjKey<T>(this Dictionary<string, T> dict, object key)
-        {
-            var k = key.ToString();
-            return GetStrKey(dict, k);
-        }
-
-        public static T2 GetOrDefault<T1, T2>(this Dictionary<T1, T2> dict, T1 key)
-        {
-            if (dict.TryGetValue(key, out T2 val)) return val;
-            return default;
-        }
+        public static T2 GetOrDefault<T1, T2>(this Dictionary<T1, T2> dict, T1 key) => dict.TryGetValue(key, out T2 val) ? val : default;
 
 
         public static T GetOrCalculate<K, T>(this Dictionary<K, T> dict, K key, Func<K, T> predicate)
@@ -61,10 +35,7 @@ namespace AoC.Utils
             return val;
         }
 
-        public static string AsString(this IEnumerable<char> input)
-        {
-            return string.Concat(input);
-        }
+        public static string AsString(this IEnumerable<char> input) => string.Concat(input);
 
         public static IEnumerable<byte> AsNybbles(this IEnumerable<byte> bytes)
         {
@@ -188,15 +159,12 @@ namespace AoC.Utils
             }
         }
 
+
         public static IEnumerable<T> Values<T>(this T[,] array2d)
         {
-            for (int row = 0; row < array2d.GetLength(0); row++)
-            {
-                for (int col = 0; col < array2d.GetLength(1); col++)
-                {
-                    yield return array2d[row, col];
-                }
-            }
+            for (int y = 0; y < array2d.Height(); ++y)
+                for (int x = 0; x < array2d.Width(); ++x)
+                    yield return array2d[x, y];
         }
 
         public static IEnumerable<(int x, int y)> Keys<T>(this T[,] array2d)
@@ -216,17 +184,13 @@ namespace AoC.Utils
         public static IEnumerable<T> Row<T>(this T[,] array2d, int row)
         {
             for (int col = 0; col < array2d.GetLength(1); col++)
-            {
                 yield return array2d[row, col];
-            }
         }
 
         public static IEnumerable<T> Column<T>(this T[,] array2d, int col)
         {
             for (int row = 0; row < array2d.GetLength(0); row++)
-            {
                 yield return array2d[row, col];
-            }
         }
 
         public static bool TrySet<T>(this T[,] array2d, (int col, int row) pos, T val) => TrySet(array2d, pos.col, pos.row, val);
@@ -260,12 +224,7 @@ namespace AoC.Utils
 
         public static T GetOrDefault<T>(this T[,] array2d, int col, int row)
         {
-            if (row >= array2d.Height() || col >= array2d.Width() || row < 0 || col < 0)
-            {
-                return default;
-            }
-
-            return array2d[col, row];
+            return row >= array2d.Height() || col >= array2d.Width() || row < 0 || col < 0 ? default : array2d[col, row];
         }
 
         public static Dictionary<TKey, TValue> Minus<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key)
@@ -297,17 +256,17 @@ namespace AoC.Utils
             return dict;
         }
 
-        public static int Height<T>(this T[,] array2d) => array2d.GetLength(0);
-        public static int Width<T>(this T[,] array2d) => array2d.GetLength(1);
+        public static int Height<T>(this T[,] array2d) => array2d.GetLength(1);
+        public static int Width<T>(this T[,] array2d) => array2d.GetLength(0);
 
-        public static Int64 Product(this IEnumerable<int> vals)
+        public static long Product(this IEnumerable<int> vals)
         {
-            return vals.Aggregate((Int64)1, (total, val) => total * val);
+            return vals.Aggregate((long)1, (total, val) => total * val);
         }
 
-        public static Int64 Product(this IEnumerable<Int64> vals)
+        public static long Product(this IEnumerable<long> vals)
         {
-            return vals.Aggregate((Int64)1, (total, val) => total * val);
+            return vals.Aggregate((long)1, (total, val) => total * val);
         }
 
         public static int Xor(this IEnumerable<int> vals)
@@ -354,8 +313,7 @@ namespace AoC.Utils
         public static IEnumerable<(int Index, T Value)> WithIndex<T>(this IEnumerable<T> sequence)
         {
             int i = 0;
-            return from v in sequence
-                   select (i++, v);
+            return sequence.Select(v => (i++, v));
         }
 
         public static void Add<T>(this Queue<T> queue, T item) => queue.Enqueue(item);

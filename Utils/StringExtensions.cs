@@ -8,11 +8,7 @@ namespace AoC.Utils
 {
     public static class StringExtensions
     {
-        public static byte[] GetSHA256(this string inputString)
-        {
-            HashAlgorithm algorithm = SHA256.Create();
-            return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
-        }
+        public static byte[] GetSHA256(this string inputString) => SHA256.HashData(Encoding.UTF8.GetBytes(inputString));
 
         public static string GetSHA256String(this string inputString)
         {
@@ -23,11 +19,7 @@ namespace AoC.Utils
             return sb.ToString();
         }
 
-        public static byte[] GetMD5(this string inputString)
-        {
-            HashAlgorithm algorithm = MD5.Create();
-            return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
-        }
+        public static byte[] GetMD5(this string inputString) => MD5.HashData(Encoding.UTF8.GetBytes(inputString));
 
         public static string GetMD5String(this string inputString, bool lowerCase = false)
         {
@@ -48,10 +40,7 @@ namespace AoC.Utils
 
         private static readonly string vowels = "aeiouAEIOU";
 
-        public static bool IsVowel(this char c)
-        {
-            return vowels.Contains(c);
-        }
+        public static bool IsVowel(this char c) => vowels.Contains(c);
 
         public static IEnumerable<int> AllIndexesOf(this string str, string value)
         {
@@ -132,15 +121,9 @@ namespace AoC.Utils
             return d[n, m];
         }
 
-        public static string MultipleWithS(this int value, string str)
-        {
-            return value == 1 ? str : $"{value} {str}s";
-        }
+        public static string MultipleWithS(this int value, string str) => value == 1 ? str : $"{value} {str}s";
 
-        public static string Reversed(this string str)
-        {
-            return new string(str.Reverse().ToArray());
-        }
+        public static string Reversed(this string str) => new string(str.Reverse().ToArray());
 
         public static IEnumerable<bool> BitSequenceFromHex(this string str)
         {

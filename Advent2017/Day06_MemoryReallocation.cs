@@ -25,7 +25,7 @@ namespace AoC.Advent2017
 
         public static int Part1(string input)
         {
-            var banks = Util.Parse32(input, '\t');
+            var banks = Util.ParseNumbers<int>(input, '\t');
 
             HashSet<int> seen = new();
 
@@ -43,7 +43,7 @@ namespace AoC.Advent2017
 
         public static int Part2(string input)
         {
-            var banks = Util.Parse32(input, '\t');
+            var banks = Util.ParseNumbers<int>(input, '\t');
 
             Dictionary<int, int> seen = new();
 

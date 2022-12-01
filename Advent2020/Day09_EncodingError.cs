@@ -20,20 +20,20 @@ namespace AoC.Advent2020
 
         public static Int64 Part1(string input, int preamble = 25)
         {
-            var numbers = Util.Parse64(input);
+            var numbers = Util.ParseNumbers<long>(input);
 
             return FindInvalid(numbers, preamble);
         }
 
         public static Int64 Part2(string input, int preamble = 25)
         {
-            var numbers = Util.Parse64(input);
+            var numbers = Util.ParseNumbers<long>(input);
 
             Int64 invalid = FindInvalid(numbers, preamble);
 
             for (var i = 0; i < numbers.Length; ++i)
             {
-                var accumulator = new Accumulator(numbers[i]);
+                var accumulator = new Accumulator<long>(numbers[i]);
                 foreach (var n in numbers.Skip(i + 1))
                 {
                     accumulator.Add(n);

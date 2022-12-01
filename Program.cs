@@ -27,7 +27,7 @@ namespace AoC
             {
                 var timing = puzzles.First().TimeRun(new ConsoleOut());
                 Console.WriteLine();
-                Console.WriteLine($"{Util.FormatMs(timing)}");
+                Console.WriteLine(Util.FormatMs(timing));
             }
             else
             {
@@ -41,7 +41,7 @@ namespace AoC
                         var timing = puzzle.TimeRun(new ConsoleOut());
                         timings[puzzle.Name] = timing;
                         Console.WriteLine();
-                        Console.WriteLine($"{Util.FormatMs(timing)}");
+                        Console.WriteLine(Util.FormatMs(timing));
                         Console.WriteLine($"[{finished++}/{total} {((finished) * 100 / total)}%]");
                     }
                 }

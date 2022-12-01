@@ -8,7 +8,7 @@ namespace AoC.Advent2016
 
         static (int numChars, int numRepeats) Parse32(string cmd)
         {
-            var bits = Util.Parse32(cmd, 'x');
+            var bits = Util.ParseNumbers<int>(cmd, 'x');
             return (bits[0], bits[1]);
         }
 

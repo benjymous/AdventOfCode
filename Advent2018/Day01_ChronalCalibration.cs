@@ -10,14 +10,14 @@ namespace AoC.Advent2018
 
         public static int Part1(string input)
         {
-            return Util.Parse32(input).Sum();
+            return Util.ParseNumbers<int>(input).Sum();
         }
 
         public static int Part2(string input)
         {
             var seen = new HashSet<int>();
 
-            var nums = Util.Parse32(input);
+            var nums = Util.ParseNumbers<int>(input);
 
             int freq = 0;
 
