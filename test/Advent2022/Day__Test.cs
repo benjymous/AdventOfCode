@@ -5,7 +5,7 @@ namespace AoC.Advent2022.Test
     //public class Day--Test
     //{
 
-    //    string input = Util.GetInput<Day-->();
+    //    readonly string input = Util.GetInput<Day-->();
 
     //    [TestCategory("Test")]
     //    [DataRow("???", 0)]
