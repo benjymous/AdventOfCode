@@ -28,14 +28,14 @@ namespace AoC.Advent2022.Test
         [DataTestMethod]
         public void Calories01Test()
         {
-            Assert.AreEqual(24000, Advent2022.Day01.Part1(test.Replace("\r", "")));
+            Assert.AreEqual(24000, Day01.Part1(test.Replace("\r", "")));
         }
 
         [TestCategory("Test")]
         [DataTestMethod]
         public void Calories02Test()
         {
-            Assert.AreEqual(45000, Advent2022.Day01.Part2(test.Replace("\r", "")));
+            Assert.AreEqual(45000, Day01.Part2(test.Replace("\r", "")));
         }
 
         [TestCategory("Regression")]

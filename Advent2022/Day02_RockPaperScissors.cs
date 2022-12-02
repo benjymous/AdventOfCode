@@ -11,76 +11,81 @@ namespace AoC.Advent2022
 
         enum RPS
         {
-            Rock = 1,
-            Paper = 2,
-            Scissors = 3
+            Rock,
+            Paper,
+            Scissors
         }
 
-        public class RulePt1
+        enum Result
         {
-            [Regex(@"(.) (.)")]
-            public RulePt1(char first, char second)
+            Win,
+            Lose,
+            Draw,
+        }
+
+        readonly struct Rule
+        {
+            [Regex("(.) (.)")]
+            public Rule(char first, char second) => (Theirs, YoursEncoded) = (DecodeMove(first), second);
+
+            readonly RPS Theirs;
+            readonly char YoursEncoded;
+
+            static RPS DecodeMove(char c) => c switch
             {
-                First = first;
-                Second = second; 
-            }
-
-            public char First;
-            public char Second;
-
-            RPS Decode(char c)
-            {
-                switch (c){
-                    case 'A':
-                    case 'X':
-                        return RPS.Rock;
-                    case 'B':
-                    case 'Y':
-                        return RPS.Paper;
-                    case 'C':
-                    case 'Z':
-                        return RPS.Scissors;
-                    default:
-                        throw new ArgumentException("Unexpected char");          
-                }
-            }
-
-            Dictionary<(RPS, RPS), int> scores = new()
-            {
-                {(RPS.Rock, RPS.Rock), 3},
-                {(RPS.Rock, RPS.Paper), 0},
-                {(RPS.Rock, RPS.Scissors), 6},
-
-                {(RPS.Paper, RPS.Rock), 6},
-                {(RPS.Paper, RPS.Paper), 3},
-                {(RPS.Paper, RPS.Scissors), 0},
-
-                {(RPS.Scissors, RPS.Rock), 0},
-                {(RPS.Scissors, RPS.Paper), 6},
-                {(RPS.Scissors, RPS.Scissors), 3},
+                'A' or 'X' => RPS.Rock,
+                'B' or 'Y' => RPS.Paper,
+                'C' or 'Z' => RPS.Scissors,
+                _ => throw new ArgumentException("Unexpected char"),
             };
 
-            public int Score()
+            static Result DecodeResult(char c) => c switch
             {
-                var theirs = Decode(First);
-                var yours = Decode(Second);
+                'X' => Result.Lose,
+                'Y' => Result.Draw,
+                'Z' => Result.Win,
+                _ => throw new ArgumentException("Unexpected char"),
+            };
 
-                return (int)yours + scores[(yours,theirs)];
-            }
+            readonly static Dictionary<(RPS, RPS), int> scores = new()
+            {
+                {(RPS.Rock, RPS.Rock), 3 + 1},
+                {(RPS.Rock, RPS.Paper), 0 + 1},
+                {(RPS.Rock, RPS.Scissors), 6 + 1 },
+
+                {(RPS.Paper, RPS.Rock), 6 + 2},
+                {(RPS.Paper, RPS.Paper), 3 + 2},
+                {(RPS.Paper, RPS.Scissors), 0 + 2},
+
+                {(RPS.Scissors, RPS.Rock), 0 + 3 },
+                {(RPS.Scissors, RPS.Paper), 6 + 3},
+                {(RPS.Scissors, RPS.Scissors), 3 + 3},
+            };
+            readonly static Dictionary<(RPS, Result), RPS> neededMove = new()
+            {
+                {(RPS.Rock, Result.Lose), RPS.Scissors},
+                {(RPS.Rock, Result.Draw), RPS.Rock},
+                {(RPS.Rock, Result.Win), RPS.Paper},
+
+                {(RPS.Paper, Result.Lose), RPS.Rock},
+                {(RPS.Paper, Result.Draw), RPS.Paper},
+                {(RPS.Paper, Result.Win), RPS.Scissors},
+
+                {(RPS.Scissors, Result.Lose), RPS.Paper},
+                {(RPS.Scissors, Result.Draw), RPS.Scissors},
+                {(RPS.Scissors, Result.Win), RPS.Rock},
+            };
+
+            private int CalcScore(RPS yours) => scores[(yours, Theirs)];
+
+            public int ScorePt1() => CalcScore(DecodeMove(YoursEncoded));
+
+            public int ScorePt2() => CalcScore(neededMove[(Theirs, DecodeResult(YoursEncoded))]);
         }
 
+        public static int Part1(string input) => Util.RegexParse<Rule>(input).Sum(r => r.ScorePt1());
 
-
-        public static int Part1(string input)
-        {
-            var rules = Util.RegexParse<RulePt1>(input);
-            return rules.Sum(r => r.Score());
-        }
-
-        public static int Part2(string input)
-        {
-            return 0;
-        }
+        public static int Part2(string input) => Util.RegexParse<Rule>(input).Sum(r => r.ScorePt2());
 
         public void Run(string input, ILogger logger)
         {

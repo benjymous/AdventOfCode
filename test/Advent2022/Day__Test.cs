@@ -1,3 +1,5 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 namespace AoC.Advent2022.Test
 {
     //[TestCategory("2022")]
@@ -12,7 +14,7 @@ namespace AoC.Advent2022.Test
     //    [DataTestMethod]
     //    public void XXX01Test(string input, int expected)
     //    {
-    //        Assert.IsTrue(Advent2021.Day--.Part1(input) == expected);
+    //        Assert.IsTrue(Day--.Part1(input) == expected);
     //    }
 
     //    [TestCategory("Test")]
@@ -20,7 +22,7 @@ namespace AoC.Advent2022.Test
     //    [DataTestMethod]
     //    public void XXX02Test(string input, int expected)
     //    {
-    //        Assert.IsTrue(Advent2021.Day--.Part2(input) == expected);
+    //        Assert.IsTrue(Day--.Part2(input) == expected);
     //    }
 
     //    [TestCategory("Regression")]
