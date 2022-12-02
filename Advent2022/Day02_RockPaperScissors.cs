@@ -1,6 +1,5 @@
 ﻿using AoC.Utils;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2022
@@ -9,78 +8,65 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-02";
 
-        enum RPS
+        struct MoveP1
         {
-            Rock,
-            Paper,
-            Scissors
+            internal const char Rock = 'A', Paper = 'B', Scissors = 'C';
+        }
+        struct MoveP2
+        {
+            internal const char Rock = 'X', Paper = 'Y', Scissors = 'Z';
         }
 
-        enum Result
+        struct Result
         {
-            Win,
-            Lose,
-            Draw,
+            internal const char Lose = 'X', Draw = 'Y', Win = 'Z';
         }
 
-        readonly struct Rule
+        readonly struct Rule 
         {
             [Regex("(.) (.)")]
-            public Rule(char first, char second) => (Theirs, YoursEncoded) = (DecodeMove(first), second);
+            public Rule(char theirs, char yours) => (Theirs, Yours) = (theirs, yours);
 
-            readonly RPS Theirs;
-            readonly char YoursEncoded;
+            readonly char Theirs;
+            readonly char Yours;
 
-            static RPS DecodeMove(char c) => c switch
+            static int Score(char theirs, char yours ) => (theirs, yours) switch
             {
-                'A' or 'X' => RPS.Rock,
-                'B' or 'Y' => RPS.Paper,
-                'C' or 'Z' => RPS.Scissors,
-                _ => throw new ArgumentException("Unexpected char"),
+                (MoveP1.Rock, MoveP2.Rock ) => 3 + 1,
+                (MoveP1.Paper, MoveP2.Rock ) => 0 + 1,
+                (MoveP1.Scissors, MoveP2.Rock ) => 6 + 1,
+
+                (MoveP1.Rock, MoveP2.Paper ) => 6 + 2,
+                (MoveP1.Paper, MoveP2.Paper ) => 3 + 2,
+                (MoveP1.Scissors, MoveP2.Paper ) => 0 + 2,
+
+                (MoveP1.Rock, MoveP2.Scissors ) => 0 + 3,
+                (MoveP1.Paper, MoveP2.Scissors ) => 6 + 3,
+                (MoveP1.Scissors, MoveP2.Scissors ) => 3 + 3,
+
+                _ => throw new ArgumentException("Invalid combination")
             };
 
-            static Result DecodeResult(char c) => c switch
+            static char GetMove(char theirs, char neededResult) => (theirs, neededResult) switch
             {
-                'X' => Result.Lose,
-                'Y' => Result.Draw,
-                'Z' => Result.Win,
-                _ => throw new ArgumentException("Unexpected char"),
+                (MoveP1.Rock, Result.Lose) => MoveP2.Scissors,
+                (MoveP1.Rock, Result.Draw) => MoveP2.Rock,
+                (MoveP1.Rock, Result.Win) => MoveP2.Paper,
+
+                (MoveP1.Paper, Result.Lose) => MoveP2.Rock,
+                (MoveP1.Paper, Result.Draw) => MoveP2.Paper,
+                (MoveP1.Paper, Result.Win) => MoveP2.Scissors,
+
+                (MoveP1.Scissors, Result.Lose) => MoveP2.Paper,
+                (MoveP1.Scissors, Result.Draw) => MoveP2.Scissors,
+                (MoveP1.Scissors, Result.Win) => MoveP2.Rock,
+
+                _ => throw new ArgumentException("Invalid combination")
             };
 
-            readonly static Dictionary<(RPS, RPS), int> scores = new()
-            {
-                {(RPS.Rock, RPS.Rock), 3 + 1},
-                {(RPS.Rock, RPS.Paper), 0 + 1},
-                {(RPS.Rock, RPS.Scissors), 6 + 1 },
+            public int ScorePt1() => Score(Theirs, Yours);
 
-                {(RPS.Paper, RPS.Rock), 6 + 2},
-                {(RPS.Paper, RPS.Paper), 3 + 2},
-                {(RPS.Paper, RPS.Scissors), 0 + 2},
-
-                {(RPS.Scissors, RPS.Rock), 0 + 3 },
-                {(RPS.Scissors, RPS.Paper), 6 + 3},
-                {(RPS.Scissors, RPS.Scissors), 3 + 3},
-            };
-            readonly static Dictionary<(RPS, Result), RPS> neededMove = new()
-            {
-                {(RPS.Rock, Result.Lose), RPS.Scissors},
-                {(RPS.Rock, Result.Draw), RPS.Rock},
-                {(RPS.Rock, Result.Win), RPS.Paper},
-
-                {(RPS.Paper, Result.Lose), RPS.Rock},
-                {(RPS.Paper, Result.Draw), RPS.Paper},
-                {(RPS.Paper, Result.Win), RPS.Scissors},
-
-                {(RPS.Scissors, Result.Lose), RPS.Paper},
-                {(RPS.Scissors, Result.Draw), RPS.Scissors},
-                {(RPS.Scissors, Result.Win), RPS.Rock},
-            };
-
-            private int CalcScore(RPS yours) => scores[(yours, Theirs)];
-
-            public int ScorePt1() => CalcScore(DecodeMove(YoursEncoded));
-
-            public int ScorePt2() => CalcScore(neededMove[(Theirs, DecodeResult(YoursEncoded))]);
+            public int ScorePt2() => Score(Theirs, GetMove(Theirs, Yours));
         }
 
         public static int Part1(string input) => Util.RegexParse<Rule>(input).Sum(r => r.ScorePt1());
