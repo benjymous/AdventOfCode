@@ -312,8 +312,7 @@ namespace AoC.Utils
 
         public static IEnumerable<(int Index, T Value)> WithIndex<T>(this IEnumerable<T> sequence)
         {
-            int i = 0;
-            return sequence.Select(v => (i++, v));
+            return sequence.Select((v, i) => (i, v));
         }
 
         public static void Add<T>(this Queue<T> queue, T item) => queue.Enqueue(item);
@@ -381,6 +380,12 @@ namespace AoC.Utils
             }
             return -1;
         }
+
+        public static IEnumerable<IEnumerable<T>> Split<T>(this IEnumerable<T> source, int chunkSize)
+        {
+            return source.Where((x, i) => i % chunkSize == 0).Select((x, i) => source.Skip(i * chunkSize).Take(chunkSize));
+        }
+
     }
    
 }
