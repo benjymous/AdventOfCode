@@ -2,8 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using static System.Formats.Asn1.AsnWriter;
+
 
 namespace AoC.Advent2022
 {
@@ -11,29 +10,28 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-03";
 
-        class Rucksack
+        readonly struct Rucksack
         {
             public Rucksack(string line)
             {
-                var len = line.Length;
-                var size = len / 2;
-                All = line.ToHashSet();
-                Set1 = line.Take(size).ToHashSet();
-                Set2 = line.Skip(size).ToHashSet();
+                All = line;
+                var size = line.Length / 2;
+                Set1 = line.Take(size);
+                Set2 = line.Skip(size);
             }
 
             public IEnumerable<char> Overlap => Set1.Intersect(Set2);
             public int Priority => Priority(Overlap.First());
 
-            public HashSet<char> All, Set1, Set2;
+            public readonly IEnumerable<char> All, Set1, Set2;
         }
 
-        static int Priority(char c)
+        static int Priority(char c) => c switch
         {
-            if (c >= 'a' && c <= 'z') return (c - 'a' + 1);
-            if (c >= 'A' && c <= 'Z') return (c - 'A' + 27);
-            throw new Exception("unexpected char");
-        }
+            >= 'a' and <= 'z' => c - 'a' + 1,
+            >= 'A' and <= 'Z' => c - 'A' + 27,
+            _ => throw new Exception("unexpected char"),
+        };
 
         public static int Part1(string input)
         {
@@ -45,10 +43,9 @@ namespace AoC.Advent2022
         public static int Part2(string input)
         {
             var lines = Util.Parse<Rucksack>(input);
+            var groups = lines.Split(3).Select(g => g.Select(r => r.All).ToArray());
 
-            var groups = lines.Split(3).Select(g => g.ToArray());
-
-            return groups.Sum(group => Priority(group[0].All.Intersect(group[1].All).Intersect(group[2].All).First()));
+            return groups.Sum(group => Priority(group[0].Intersect(group[1]).Intersect(group[2]).First()));
         }
 
         public void Run(string input, ILogger logger)
