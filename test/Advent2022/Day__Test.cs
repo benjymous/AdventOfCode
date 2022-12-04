@@ -14,7 +14,7 @@ namespace AoC.Advent2022.Test
     //    [DataTestMethod]
     //    public void XXX01Test(string input, int expected)
     //    {
-    //        Assert.IsTrue(Day--.Part1(input) == expected);
+    //        Assert.AreEqual(expected, Day--.Part1(input));
     //    }
 
     //    [TestCategory("Test")]
@@ -22,7 +22,7 @@ namespace AoC.Advent2022.Test
     //    [DataTestMethod]
     //    public void XXX02Test(string input, int expected)
     //    {
-    //        Assert.IsTrue(Day--.Part2(input) == expected);
+    //        Assert.AreEqual(expected, Day--.Part2(input));
     //    }
 
     //    [TestCategory("Regression")]
