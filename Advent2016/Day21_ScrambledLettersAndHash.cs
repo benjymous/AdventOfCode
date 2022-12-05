@@ -1,7 +1,6 @@
 ﻿using AoC.Utils;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
 using System.Linq;
 
 using CharFunc = System.Func<System.Collections.Generic.IEnumerable<char>, System.Collections.Generic.IEnumerable<char>>;

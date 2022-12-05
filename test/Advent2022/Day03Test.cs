@@ -6,7 +6,6 @@ namespace AoC.Advent2022.Test
     [TestClass]
     public class Day03Test
     {
-
         readonly string input = Util.GetInput<Day03>();
 
         //[TestCategory("Test")]

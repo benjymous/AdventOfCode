@@ -6,7 +6,6 @@ namespace AoC.Advent2022.Test
     [TestClass]
     public class Day01Test
     {
-
         readonly string input = Util.GetInput<Day01>();
 
         readonly string test = @"1000
