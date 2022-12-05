@@ -183,14 +183,14 @@ namespace AoC.Utils
 
         public static IEnumerable<T> Row<T>(this T[,] array2d, int row)
         {
-            for (int col = 0; col < array2d.GetLength(1); col++)
-                yield return array2d[row, col];
+            for (int col = 0; col < array2d.Width(); col++)
+                yield return array2d[col, row];
         }
 
         public static IEnumerable<T> Column<T>(this T[,] array2d, int col)
         {
-            for (int row = 0; row < array2d.GetLength(0); row++)
-                yield return array2d[row, col];
+            for (int row = 0; row < array2d.Height(); row++)
+                yield return array2d[col, row];
         }
 
         public static bool TrySet<T>(this T[,] array2d, (int col, int row) pos, T val) => TrySet(array2d, pos.col, pos.row, val);
@@ -318,6 +318,7 @@ namespace AoC.Utils
         public static void Add<T>(this Queue<T> queue, T item) => queue.Enqueue(item);
 
         public static Queue<T> ToQueue<T>(this IEnumerable<T> sequence) => new(sequence);
+        public static Stack<T> ToStack<T>(this IEnumerable<T> sequence) => new(sequence);
 
         public static void EnqueueRange<T>(this Queue<T> queue, IEnumerable<T> sequence)
         {

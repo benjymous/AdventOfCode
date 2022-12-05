@@ -25,7 +25,7 @@ namespace AoC.Advent2021
 
             void Put(int x, int y, int num)
             {
-                numbers[y, x] = num;
+                numbers[x, y] = num;
                 index[num] = (x, y);
             }
 
@@ -36,7 +36,7 @@ namespace AoC.Advent2021
             {
                 if (index.TryGetValue(num, out var pos))
                 {
-                    numbers[pos.y, pos.x] = -1;
+                    numbers[pos.x, pos.y] = -1;
 
                     Complete = CheckRow(pos.y) || CheckCol(pos.x);
                 }

@@ -40,22 +40,16 @@ namespace AoC.Advent2022
         static (IEnumerable<Instruction>, Stack<char>[]) ParseData(string input)
         {
             var data = input.Split("\n\n");
-            var layout = Util.Split(data[0]);
+
             var instructions = Util.RegexParse<Instruction>(data[1]);
 
+            var layout = Util.Split(data[0]);
             var stackCount = Util.ParseNumbers<int>(layout.Last(), ' ').Last();
+            var grid = Util.ParseMatrix<char>(layout.Reverse().Skip(1));
+            var stacks = Enumerable.Range(0, stackCount)
+                                   .Select(i => grid.Column(i * 4 + 1).Where(c => c != ' ').ToStack())
+                                   .ToArray();
 
-            var stacks = new Stack<char>[stackCount];
-            for (int i = 0; i < stackCount; ++i) stacks[i] = new();
-
-            foreach (var line in layout.Reverse().Skip(1))
-            {
-                for (var i = 0; i < stackCount; ++i)
-                {
-                    var ch = line[i * 4 + 1];
-                    if (ch != ' ') stacks[i].Push(ch);
-                }
-            }
             return (instructions, stacks);
         }
 
