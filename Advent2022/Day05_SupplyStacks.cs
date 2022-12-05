@@ -9,64 +9,72 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-05";
 
-        public struct Instruction
+        public record struct Instruction
         {
             [Regex(@"move (\d+) from (\d+) to (\d+)")]
-            public Instruction(int count, int from, int to)
-            {
-                (Count, From, To) = (count, from-1, to-1);
-            }
+            public Instruction(int count, int from, int to) => (Count, From, To) = (count, from - 1, to - 1);
 
-            int Count, From, To;
+            readonly int Count, From, To;
 
-            public void Apply(Stack<char>[] stacks)
+            public void ApplyV1(Stack<char>[] stacks)
             {
                 for (int i=0; i<Count; ++i)
                 {
-                    var box = stacks[From].Pop();
-                    stacks[To].Push(box);
+                    stacks[To].Push(stacks[From].Pop());
                 }
+            }
+
+            public void ApplyV2(Stack<char>[] stacks)
+            {
+                Stack<char> grab = new();
+
+                for (int i = 0; i < Count; ++i)
+                {
+                    grab.Push(stacks[From].Pop());
+                }
+
+                while (grab.Any()) stacks[To].Push(grab.Pop());
             }
         }
 
-        public static int Part1(string input)
+        static (IEnumerable<Instruction>, Stack<char>[]) ParseData(string input)
         {
             var data = input.Split("\n\n");
             var layout = Util.Split(data[0]);
             var instructions = Util.RegexParse<Instruction>(data[1]);
 
-            var counts = Util.ParseNumbers<int>(layout.Last(), ' ').Max();
+            var stackCount = Util.ParseNumbers<int>(layout.Last(), ' ').Last();
 
-            var stacks = new Stack<char>[counts];
-            for (int i = 0; i < counts; ++i) stacks[i] = new();
+            var stacks = new Stack<char>[stackCount];
+            for (int i = 0; i < stackCount; ++i) stacks[i] = new();
 
-            foreach (var line in layout.Take(layout.Count() - 1).Reverse())
+            foreach (var line in layout.Reverse().Skip(1))
             {
-                for (var i=0; i<counts; ++i)
+                for (var i = 0; i < stackCount; ++i)
                 {
                     var ch = line[i * 4 + 1];
                     if (ch != ' ') stacks[i].Push(ch);
-                    
                 }
             }
-
-            foreach (var instr in instructions)
-            {
-                instr.Apply(stacks);
-            }
-
-
-            foreach (var stack in stacks)
-            {
-                Console.Write(stack.Peek());
-            }
-
-            return 0;
+            return (instructions, stacks);
         }
 
-        public static int Part2(string input)
+        public static string Part1(string input)
         {
-            return 0;
+            var (instructions, stacks) = ParseData(input);
+
+            instructions.ForEach(i => i.ApplyV1(stacks));
+
+            return stacks.Select(s => s.Peek()).AsString();
+        }
+
+        public static string Part2(string input)
+        {
+            var (instructions, stacks) = ParseData(input);
+
+            instructions.ForEach(i => i.ApplyV2(stacks));
+
+            return stacks.Select(s => s.Peek()).AsString();
         }
 
         public void Run(string input, ILogger logger)
