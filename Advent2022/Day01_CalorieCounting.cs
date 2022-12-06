@@ -12,7 +12,7 @@ namespace AoC.Advent2022
         {
             var groups = input.Split("\n\n");
             var elves = groups.Select(group => Util.ParseNumbers<int>(group));
-            var max = elves.Select(cals => cals.Sum()).Max();
+            var max = elves.Max(cals => cals.Sum());
             return max;
         }
 

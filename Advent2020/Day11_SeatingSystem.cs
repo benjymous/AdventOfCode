@@ -82,7 +82,7 @@ namespace AoC.Advent2020
             };
 
             public int Neighbours(int xs, int ys) =>
-                directions.Select(d => CheckDirection(xs, ys, d.dx, d.dy)).Where(d => d == '#').Count();
+                directions.Select(d => CheckDirection(xs, ys, d.dx, d.dy)).Count(d => d == '#');
 
             public bool Tick(State oldState, int x, int y)
             {
@@ -158,7 +158,7 @@ namespace AoC.Advent2020
                 current = 1 - current;
             }
 
-            return states[current].Cells.Values().Where(v => v == '#').Count();
+            return states[current].Cells.Values().Count(v => v == '#');
         }
 
         public static int TestNeighbours(string input, int tx, int ty)

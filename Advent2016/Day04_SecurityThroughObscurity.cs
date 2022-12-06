@@ -86,7 +86,7 @@ namespace AoC.Advent2016
         {
             var rooms = Util.Parse<Room>(input);
 
-            return rooms.Where(r => r.IsReal).Select(r => r.SectionID).Sum();
+            return rooms.Where(r => r.IsReal).Sum(r => r.SectionID);
         }
 
         public static int Part2(string input)

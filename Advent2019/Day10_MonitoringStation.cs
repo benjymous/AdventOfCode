@@ -50,7 +50,7 @@ namespace AoC.Advent2019
         {
             var grouped = BuildGroups(input);
 
-            var counts = grouped.Select(group => group.Count()).Max();
+            var counts = grouped.Max(group => group.Count());
 
             return counts;
         }

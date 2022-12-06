@@ -260,7 +260,7 @@ namespace AoC.Advent2017.NorthCloud
             var isets = instructionSet.Split(",");
             return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
                 .Where(x => typeof(IInstr).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
-                .Where(x => isets.Where(n => x.Namespace.EndsWith(n)).Any())
+                .Where(x => isets.Any(n => x.Namespace.EndsWith(n)))
                 .Select(x => (IInstr)Activator.CreateInstance(x));
         }
 

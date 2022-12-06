@@ -59,7 +59,7 @@ namespace AoC.Advent2016
             var nodes = Parse(input);
 
             var grid = nodes.ToDictionary(el => el.position.AsSimple(), el => el);
-            var sourceX = nodes.Where(n => n.position.Y == 0).Select(n => n.position.X).Max();
+            var sourceX = nodes.Where(n => n.position.Y == 0).Max(n => n.position.X);
 
             var empty = nodes.Where(n => n.Used == 0).First();
 

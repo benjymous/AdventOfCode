@@ -25,7 +25,7 @@ namespace AoC.Advent2015
 
         static int NumPresents(int doorNumber)
         {
-            return GetFactors(doorNumber).Select(f => f * 10).Sum();
+            return GetFactors(doorNumber).Sum(f => f * 10);
         }
 
         static int NumPresents2(int doorNumber, Dictionary<int, int> elfCount)

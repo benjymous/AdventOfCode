@@ -83,7 +83,7 @@ namespace AoC.Advent2015
                 }
             }
 
-            return scores.Select(kvp => kvp.Value).Max();
+            return scores.Max(kvp => kvp.Value);
         }
 
         public static int Part2(string input)

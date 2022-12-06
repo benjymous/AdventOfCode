@@ -87,7 +87,7 @@ namespace AoC.Advent2018
 
             int time = 0;
 
-            while (steps.Count > 0 || workers.Where(w => w.step != null).Any())
+            while (steps.Count > 0 || workers.Any(w => w.step != null))
             {
                 foreach (var step in steps)
                 {

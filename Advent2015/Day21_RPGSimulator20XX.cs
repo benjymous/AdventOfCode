@@ -91,8 +91,8 @@ namespace AoC.Advent2015
 
             void UpdateStats()
             {
-                damage = BaseDamage + items.Select(x => x.Dam).Sum();
-                armour = BaseArmour + items.Select(x => x.Armour).Sum();
+                damage = BaseDamage + items.Sum(x => x.Dam);
+                armour = BaseArmour + items.Sum(x => x.Armour);
             }
 
             public void Hit(int damage)
@@ -209,11 +209,11 @@ namespace AoC.Advent2015
         {
             var vals = Util.ExtractNumbers(input);
 
-            int maxgold = Weapons().Select(w => w.Cost).Max() + Armour().Select(a => a.Cost).Max() + (2 * Rings().Select(r => r.Cost).Max());
+            int maxgold = Weapons().Max(w => w.Cost) + Armour().Max(a => a.Cost) + (2 * Rings().Max(r => r.Cost));
 
             HashSet<string> triedCombos = new();
 
-            var itemCombos = GetInventoryCombinations(maxgold).Select(combo => (combo, combo.Select(i => i.Cost).Sum())).OrderByDescending(tup => tup.Item2);
+            var itemCombos = GetInventoryCombinations(maxgold).Select(combo => (combo, combo.Sum(i => i.Cost))).OrderByDescending(tup => tup.Item2);
 
             foreach (var combo in itemCombos)
             {

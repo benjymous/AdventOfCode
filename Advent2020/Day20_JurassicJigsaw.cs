@@ -153,7 +153,7 @@ namespace AoC.Advent2020
                 // Find the tiles that exist on a border of the picture
                 foreach (var tile in Tiles)
                 {
-                    tile.Borders = tile.Edges.Where(e => Map[e].Count == 1).Count();
+                    tile.Borders = tile.Edges.Count(e => Map[e].Count == 1);
                 }
             }
 
@@ -360,7 +360,7 @@ namespace AoC.Advent2020
                     //bmp.Save(@"nessie.png");       
 
                     // return remaining waves
-                    return bitmap.Values().Where(c => c == '#').Count();
+                    return bitmap.Values().Count(c => c == '#');
                 };
                 tryCorner++;
             }

@@ -82,7 +82,7 @@ namespace AoC.Advent2020
                 Get(new HexVector(pos.X + dir.x, pos.Y + dir.y, pos.Z + dir.z));
 
             public int Neighbours(HexVector pos) =>
-                pos.Directions.Values.Where(d => CheckDirection(pos, d)).Count();
+                pos.Directions.Values.Count(d => CheckDirection(pos, d));
 
             public void Tick(State oldState, HexVector pos)
             {

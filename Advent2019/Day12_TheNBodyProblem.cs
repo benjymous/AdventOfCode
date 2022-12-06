@@ -50,8 +50,8 @@ namespace AoC.Advent2019
 
             public int Energy()
             {
-                var pot = position.Component.Select(Math.Abs).Sum();
-                var kin = velocity.Component.Select(Math.Abs).Sum();
+                var pot = position.Component.Sum(Math.Abs);
+                var kin = velocity.Component.Sum(Math.Abs);
                 return pot * kin;
             }
         }
@@ -107,7 +107,7 @@ namespace AoC.Advent2019
 
             public int Energy()
             {
-                return bodies.Select(b => b.Energy()).Sum();
+                return bodies.Sum(b => b.Energy());
             }
 
             void UpdateGravity(int component)

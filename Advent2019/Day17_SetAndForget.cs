@@ -244,7 +244,7 @@ namespace AoC.Advent2019
 
             var intersections = robot.FindIntersections();
 
-            return intersections.Select(v => v.X * v.Y).Sum();
+            return intersections.Sum(v => v.X * v.Y);
         }
 
         public static Int64 Part2(string input)

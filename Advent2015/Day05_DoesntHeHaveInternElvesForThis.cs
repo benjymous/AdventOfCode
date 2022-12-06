@@ -17,7 +17,7 @@ namespace AoC.Advent2015
 
         public static bool HasRun(string line)
         {
-            return line.OverlappingPairs().Where(pair => pair.first == pair.second).Any();
+            return line.OverlappingPairs().Any(pair => pair.first == pair.second);
         }
 
         static readonly string[] bads = new string[]

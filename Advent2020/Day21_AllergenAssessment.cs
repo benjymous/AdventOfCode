@@ -95,7 +95,7 @@ namespace AoC.Advent2020
                 ingredients.Remove(kvp.Value);
             }
 
-            return ingredients.Values.Select(h => h.Count).Sum();
+            return ingredients.Values.Sum(h => h.Count);
         }
 
         public static string Part2(string input)

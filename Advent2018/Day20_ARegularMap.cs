@@ -223,7 +223,7 @@ namespace AoC.Advent2018
         {
             map ??= BuildMap(input);
 
-            return map.Values.Where(c => c.DoorDistance >= 1000).Count();
+            return map.Values.Count(c => c.DoorDistance >= 1000);
         }
 
         public void Run(string input, ILogger logger)

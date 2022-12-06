@@ -87,7 +87,7 @@ namespace AoC.Advent2021
         {
             var data = Util.Parse<DataRow>(input);
 
-            return data.Select(line => line.Decode()).Sum();
+            return data.Sum(line => line.Decode());
         }
 
         public void Run(string input, ILogger logger)

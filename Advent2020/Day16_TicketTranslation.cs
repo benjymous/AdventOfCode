@@ -35,7 +35,7 @@ namespace AoC.Advent2020
             public string Class;
             public List<Range> Ranges;
 
-            public bool Validate(int input) => Ranges.Where(r => r.InRange(input)).Any();
+            public bool Validate(int input) => Ranges.Any(r => r.InRange(input));
         }
 
         class Ticket
@@ -70,7 +70,7 @@ namespace AoC.Advent2020
                 {
                     foreach (var val in ticket.Values)
                     {
-                        if (!Rules.Where(r => r.Validate(val)).Any())
+                        if (!Rules.Any(r => r.Validate(val)))
                         {
                             ticket.Valid = false;
                             errorRate += val;
@@ -91,7 +91,7 @@ namespace AoC.Advent2020
                     classMatrix[rule.Class] = new HashSet<int>();
                     for (var i = 0; i < Rules.Count; ++i)
                     {
-                        bool anyInvalid = validTickets.Where(t => rule.Validate(t.Values[i]) == false).Any();
+                        bool anyInvalid = validTickets.Any(t => rule.Validate(t.Values[i]) == false);
                         if (!anyInvalid)
                         {
                             classMatrix[rule.Class].Add(i);

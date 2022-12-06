@@ -134,24 +134,7 @@ namespace AoC.Utils
 
         public static IEnumerable<(T first, T second)> OverlappingPairs<T>(this IEnumerable<T> input)
         {
-            int i = 0;
-            while (true)
-            {
-                var vals = input.Skip(i++).Take(2).ToArray();
-                if (vals.Length < 2) break;
-                yield return (vals[0], vals[1]);
-            }
-        }
-
-        public static IEnumerable<(T first, T second, T third)> OverlappingTriplets<T>(this IEnumerable<T> input)
-        {
-            int i = 0;
-            while (true)
-            {
-                var vals = input.Skip(i++).Take(3).ToArray();
-                if (vals.Length < 3) break;
-                yield return (vals[0], vals[1], vals[2]);
-            }
+            return input.Windows(2).Select(win => (win.First(), win.Skip(1).First()));
         }
 
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items)

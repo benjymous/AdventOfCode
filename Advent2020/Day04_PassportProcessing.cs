@@ -106,7 +106,7 @@ namespace AoC.Advent2020
 
         private static int CountValid(IEnumerable<Dictionary<string, string>> records)
         {
-            return records.Where(r => r.Keys.Intersect(expectedFields).Count() == expectedFields.Length).Count();
+            return records.Count(r => r.Keys.Intersect(expectedFields).Count() == expectedFields.Length);
         }
 
         public static int Part1(string input)

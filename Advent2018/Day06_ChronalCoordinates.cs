@@ -104,11 +104,7 @@ namespace AoC.Advent2018
             var width = data.Max(pos => pos.X);
             var height = data.Max(pos => pos.Y);
 
-            return ParallelEnumerable.Range(0, height).Select(
-                y => ParallelEnumerable.Range(0, width).Where(
-                    x => data.Select(e => e.Distance(x, y)).Sum() < safeDistance
-                ).Count()
-            ).Sum();
+            return ParallelEnumerable.Range(0, height).Sum(y => ParallelEnumerable.Range(0, width).Where(x => data.Select(e => e.Distance(x, y)).Sum() < safeDistance).Count());
         }
 
         public static int Part2(string input) => Part2(input, 10000);

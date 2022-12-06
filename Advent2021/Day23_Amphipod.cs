@@ -13,7 +13,7 @@ namespace AoC.Advent2021
         static readonly int[] destinationCol = new int[] { 3, 5, 7, 9 };
         static readonly int[] moveCosts = new int[] { 1, 10, 100, 1000 };
 
-        static bool IsClear(int x1, int x2, State state) => !Util.RangeInclusive(Math.Min(x1, x2), Math.Max(x1, x2)).Where(x => !state.CellOpen(Convert(x, 1))).Any();
+        static bool IsClear(int x1, int x2, State state) => !Util.RangeInclusive(Math.Min(x1, x2), Math.Max(x1, x2)).Any(x => !state.CellOpen(Convert(x, 1)));
         static byte Convert(int x, int y) => (byte)(x - 1 + (y - 1) * 11);
         static (int x, int y) Convert(byte pos) => (pos % 11 + 1, pos / 11 + 1);
 

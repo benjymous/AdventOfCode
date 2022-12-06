@@ -73,14 +73,14 @@ namespace AoC.Advent2019
         {
             var permutations = Enumerable.Range(0, 5).Permutations();
 
-            return permutations.Select(set => RunAmplifiers01(input, set)).Max();
+            return permutations.Max(set => RunAmplifiers01(input, set));
         }
 
         public static Int64 Part2(string input)
         {
             var permutations = Enumerable.Range(5, 5).Permutations();
 
-            return permutations.Select(set => RunAmplifiers02(input, set)).Max();
+            return permutations.Max(set => RunAmplifiers02(input, set));
         }
 
         public void Run(string input, ILogger logger)

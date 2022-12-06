@@ -41,7 +41,7 @@ namespace AoC.Advent2018
             readonly HashSet<(int x, int y)> Walls;
             readonly SortedDictionary<(int x, int y), Creature> Creatures;
 
-            public int ElfCount() => Creatures.Values.Where(c => c.type == CreatureType.Elf).Count();
+            public int ElfCount() => Creatures.Values.Count(c => c.type == CreatureType.Elf);
 
             bool IsClear((int x, int y) pos)
             {

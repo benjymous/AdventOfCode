@@ -14,7 +14,7 @@ namespace AoC.Utils.Collections
 
         public List<TreeNode<TKeyType, TDataType>> Children { get; set; } = new List<TreeNode<TKeyType, TDataType>>();
 
-        public int GetDescendantCount() => Children.Count + Children.Select(c => c.GetDescendantCount()).Sum();
+        public int GetDescendantCount() => Children.Count + Children.Sum(c => c.GetDescendantCount());
 
         public override string ToString() => Key.ToString();
     }

@@ -67,7 +67,7 @@ namespace AoC.Advent2017
 
         public static int Part1(IEnumerable<IEnumerable<Component>> chains)
         {
-            return chains.Select(chain => chain.Select(comp => comp.Strength()).Sum()).Max();
+            return chains.Max(chain => chain.Sum(comp => comp.Strength()));
         }
 
         public static int Part2(string input)
@@ -82,11 +82,11 @@ namespace AoC.Advent2017
         {
             var groups = chains.GroupBy(chain => chain.Count());
 
-            var longest = groups.Select(x => x.Key).Max();
+            var longest = groups.Max(x => x.Key);
 
             var longestGroup = groups.Where(x => x.Key == longest).SelectMany(x => x);
 
-            var longestStrongest = longestGroup.Select(chain => chain.Select(component => component.Strength()).Sum()).Max();
+            var longestStrongest = longestGroup.Max(chain => chain.Sum(component => component.Strength()));
 
             return longestStrongest;
         }

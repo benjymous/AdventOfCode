@@ -22,14 +22,14 @@ namespace AoC.Advent2018
                     // An open acre will become filled with trees if three or more adjacent acres
                     // contained trees. 
                     // Otherwise, nothing happens.
-                    if (neighbours.Where(n => n == TREES).Count() >= 3) return TREES;
+                    if (neighbours.Count(n => n == TREES) >= 3) return TREES;
                     break;
 
                 case TREES:
                     // An acre filled with trees will become a lumberyard if three or more adjacent
                     // acres were lumberyards. 
                     // Otherwise, nothing happens.
-                    if (neighbours.Where(n => n == LUMBERYARD).Count() >= 3) return LUMBERYARD;
+                    if (neighbours.Count(n => n == LUMBERYARD) >= 3) return LUMBERYARD;
                     break;
 
                 case LUMBERYARD:
@@ -59,7 +59,7 @@ namespace AoC.Advent2018
         static int Count(char type, char[][] state)
         {
             var all = Flat(state);
-            return all.Where(c => c == type).Count();
+            return all.Count(c => c == type);
         }
 
         static char GetAt(char[][] input, int x, int y)

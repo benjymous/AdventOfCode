@@ -26,7 +26,7 @@ namespace AoC.Advent2018
 
             var strongest = data.OrderBy(e => e.radius).LastOrDefault();
 
-            return data.Where(e => e.position.Distance(strongest.position) <= strongest.radius).Count();
+            return data.Count(e => e.position.Distance(strongest.position) <= strongest.radius);
         }
 
         public static int Part2(string input)
@@ -69,7 +69,7 @@ namespace AoC.Advent2018
                     {
                         for (pos.Z = minz; pos.Z <= maxz; pos.Z += step)
                         {
-                            var count = data.Where(e => pos.Distance(e.position) <= e.radius).Count();
+                            var count = data.Count(e => pos.Distance(e.position) <= e.radius);
 
                             if (count > bestScore)
                             {

@@ -46,7 +46,7 @@ namespace AoC.Advent2021
         {
             var state = new State(input);
 
-            return Enumerable.Range(1, 100).Select(_ => state.Step()).Sum();
+            return Enumerable.Range(1, 100).Sum(_ => state.Step());
         }
 
         public static int Part2(string input)

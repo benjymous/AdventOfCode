@@ -31,7 +31,7 @@ namespace AoC.Advent2020
         {
             var seen = new HashSet<int>();
 
-            while (decks.Where(d => d.Count > 0).Count() == 2)
+            while (decks.Count(d => d.Count > 0) == 2)
             {
                 if (subgame)
                 {

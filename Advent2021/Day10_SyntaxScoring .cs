@@ -43,8 +43,7 @@ namespace AoC.Advent2021
         {
             var lines = Util.Split(input);
 
-            return lines.Select(line => Score(CheckLine(line).found).part1)
-                        .Sum();
+            return lines.Sum(line => Score(CheckLine(line).found).part1);
         }
 
         public static long Part2(string input)

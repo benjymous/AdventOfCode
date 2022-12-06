@@ -169,7 +169,7 @@ namespace AoC.Advent2019
                 }
             }
 
-            public int Neighbours(int x, int y, int level = 0) => GetNeighbours(x, y, level).Select(n => Get(n.x, n.y, n.level)).Sum();
+            public int Neighbours(int x, int y, int level = 0) => GetNeighbours(x, y, level).Sum(n => Get(n.x, n.y, n.level));
 
             public void Tick(State oldState, int x, int y, int level)
             {

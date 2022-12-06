@@ -98,7 +98,7 @@ namespace AoC.Advent2019
                     lastPacket = packet;
                 }
 
-                var idle = IdleCount.Where(v => v.Value > 2).Count();
+                var idle = IdleCount.Count(v => v.Value > 2);
 
                 if (idle == 50)
                 {

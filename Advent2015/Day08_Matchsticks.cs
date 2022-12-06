@@ -78,7 +78,7 @@ namespace AoC.Advent2015
             //     Console.WriteLine($"{r.Item1} - >{r.Item2}<");
             // }
 
-            return result.Select(x => x.line.Length - x.Item2.Length).Sum();
+            return result.Sum(x => x.line.Length - x.Item2.Length);
         }
 
         public static int Part2(string input)
@@ -92,7 +92,7 @@ namespace AoC.Advent2015
             //     Console.WriteLine($"{r.Item1} - >{r.Item2}<");
             // }
 
-            return result.Select(x => x.Item2.Length - x.line.Length).Sum();
+            return result.Sum(x => x.Item2.Length - x.line.Length);
         }
 
         public void Run(string input, ILogger logger)

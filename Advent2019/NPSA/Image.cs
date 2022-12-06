@@ -52,7 +52,7 @@ namespace AoC.Advent2019.NPSA
                 if (zeroes < leastZeros)
                 {
                     leastZeros = zeroes;
-                    onesByTwos = g.Where(i => i == '1').Count() * g.Where(i => i == '2').Count();
+                    onesByTwos = g.Count(i => i == '1') * g.Count(i => i == '2');
                 }
             }
 

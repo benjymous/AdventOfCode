@@ -52,7 +52,7 @@ namespace AoC.Advent2020
 
             var r = new Regex("^" + Resolve("0", rules) + "$");
 
-            return messages.Where(m => r.Match(m).Success).Count();
+            return messages.Count(m => r.Match(m).Success);
         }
 
         public static int Part1(string input)

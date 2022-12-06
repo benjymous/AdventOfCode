@@ -23,7 +23,7 @@ namespace AoC.Advent2019
         public static int Part1(string input)
         {
             var tree = ParseTree(input);
-            return tree.GetNodes().Select(n => n.GetDescendantCount()).Sum();
+            return tree.GetNodes().Sum(n => n.GetDescendantCount());
         }
 
         public static int Part2(string input)
