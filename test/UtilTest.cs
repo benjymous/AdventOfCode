@@ -225,5 +225,50 @@ namespace AoC.Test
             Assert.AreEqual(10, arr.Width());
             Assert.AreEqual(5, arr.Height());
         }
+
+        [TestMethod]
+        public void ArrayColumnsTest()
+        {
+            var arr = new int[10, 5];
+            for (int x = 0; x < arr.Width(); ++x)
+                for (int y = 0; y < arr.Height(); ++y)
+                    arr[x, y] = x + y * 100;
+
+            var col = arr.Column(1).ToArray();
+            Assert.AreEqual(5, col.Length);
+            for (int i = 0; i < col.Length; ++i)
+            {
+                Assert.AreEqual(i * 100 + 1, col[i]);
+            }
+        }
+
+        [TestMethod]
+        public void ArrayRowsTest()
+        {
+            var arr = new int[10, 5];
+            for (int x = 0; x < arr.Width(); ++x)
+                for (int y = 0; y < arr.Height(); ++y)
+                    arr[x, y] = x * 100 + y;
+
+            var row = arr.Row(1).ToArray();
+            Assert.AreEqual(10, row.Length);
+            for (int i = 0; i < row.Length; ++i)
+            {
+                Assert.AreEqual(i * 100 + 1, row[i]);
+            }
+        }
+
+        [TestMethod]
+        public void WindowsTest()
+        {
+            var input = "abcdefghijklmnopqrstuvwxyz";
+            var windows = input.Windows(4).Select(w => w.AsString()).ToArray();
+            Assert.AreEqual(23, windows.Length);
+            Assert.AreEqual("abcd", windows[0]);
+            Assert.AreEqual("fghi", windows[5]);
+            Assert.AreEqual("uvwx", windows[20]);
+            Assert.AreEqual("wxyz", windows[22]);
+            Assert.AreEqual("wxyz", windows.Last());
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace AoC.Advent2022
 
         private static int FindSignal(string input, int size)
         {
-            return input.Windows(size).WithIndex().Where(kvp => kvp.Value.Distinct().Count() == size).First().Index + size;
+            return input.Windows(size).WithIndex().First(kvp => kvp.Value.Distinct().Count() == size).Index + size;
         }
 
         public static int Part1(string input)

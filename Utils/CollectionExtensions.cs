@@ -114,12 +114,21 @@ namespace AoC.Utils
 
         public static IEnumerable<IEnumerable<T>> Windows<T>(this IEnumerable<T> input, int count)
         {
-            int i = 0;
-            while (true)
+            Queue<T> queue = new();
+            var iter = input.GetEnumerator();
+            var hasData = iter.MoveNext();
+            while (queue.Count < count && hasData)
             {
-                var vals = input.Skip(i++).Take(count);
-                if (vals.Count() < count) break;
-                yield return vals;
+                queue.Add(iter.Current);
+                hasData = iter.MoveNext();
+            }
+            yield return queue.ToArray();
+            while (hasData)
+            {
+                queue.Dequeue();
+                queue.Add(iter.Current);
+                hasData = iter.MoveNext();
+                yield return queue.ToArray();
             }
         }
 
