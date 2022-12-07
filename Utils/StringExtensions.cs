@@ -42,6 +42,10 @@ namespace AoC.Utils
 
         public static bool IsVowel(this char c) => vowels.Contains(c);
 
+        private static readonly string digits = "0123456789";
+
+        public static bool IsDigit(this char c) => digits.Contains(c);
+
         public static IEnumerable<int> AllIndexesOf(this string str, string value)
         {
             if (String.IsNullOrEmpty(value))
