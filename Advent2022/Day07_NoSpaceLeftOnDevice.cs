@@ -11,133 +11,70 @@ namespace AoC.Advent2022
 
         class DirNode
         {
-       
-            public Dictionary<string, DirNode> ChildDirs = new();
-            public Dictionary<string, int> ChildFiles = new();
+            public DirNode Parent = null;
+            public List<DirNode> ChildDirs = new();
+            public int FileSize = 0;
 
-            public void Tree(int indent = 0)
+            int? _size = null;
+            public int Size => _size ??= FileSize + ChildDirs.Sum(child => child.Size);
+        }
+
+        private static IEnumerable<DirNode> BuildTree(string input)
+        {
+            DirNode current = new();
+            List<DirNode> index = new() { current };
+            
+            foreach (var tokens in Util.Split(input).Select(line => line.Split(' ')))
             {
-                if (indent == 0) Console.WriteLine("- / (dir)");
-                foreach (var dir in ChildDirs)
+                if (tokens[0] == "$" && tokens[1] == "cd")
                 {
-                    for (int i = 0; i < indent; ++i) Console.Write(" ");
-                    Console.WriteLine($"- {dir.Key} (dir)");
-                    dir.Value.Tree(indent + 2);
+                    var newPath = tokens[2];
+                    if (newPath == "/")
+                    {
+                        current = index.First();
+                    }
+                    else if (newPath == "..")
+                    {
+                        current = current.Parent;
+                    }
+                    else
+                    {
+                        DirNode child = new() { Parent = current };
+                        current.ChildDirs.Add(child);
+                        index.Add(child);
+                        current = child;
+                    }
                 }
-                foreach (var file in ChildFiles)
+                else if (int.TryParse(tokens[0], out var fileSize))
                 {
-                    for (int i = 0; i < indent; ++i) Console.Write(" ");
-                    Console.WriteLine($"- {file.Key} (file size={file.Value})");
+                    current.FileSize += fileSize;
                 }
             }
-
+            return index;
         }
 
         public static int Part1(string input)
         {
-            var lines = Util.Split(input);
-            Dictionary<string, DirNode> index = new();
-            DirNode current = new();
-            string path = "";
-            index.Add(path, current);
+            var index = BuildTree(input).Select(d => d.Size);
 
-            foreach (var line in lines)
-            {
-                var tokens = line.Split(" ");
-                if (tokens[0] == "$")
-                {
-                    var command = tokens[1];
-                    if (command == "cd")
-                    {
-                        var newPath = tokens[2];
-                        if (newPath == "/")
-                        {
-                            path = "";
-                            current = index[path];
-                        }
-                        else if (newPath == "..")
-                        {
-                            path = path.Substring(0, path.LastIndexOf("/"));
-                            current = index[path];
-                        }
-                        else
-                        {
-                            path += "/" + newPath;
-                            current.ChildDirs[newPath] = new();
-                            index.Add(path, current);
-                        }
-                    }
-                }
-                else if (tokens[0][0].IsDigit())
-                {
-                    var filesize = int.Parse(tokens[0]);
-                    var filename = tokens[1];
-                    if (!current.ChildFiles.ContainsKey(filename))
-                    {
-                        current.ChildFiles.Add(filename, filesize);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Duplicate file!");
-                    }
-                }
-                else if (tokens[0] == "dir")
-                {
-                    var dirname = tokens[1];
-                    if (!current.ChildDirs.ContainsKey(dirname))
-                    {
-                        current.ChildDirs.Add(dirname, new());
-                    }
-                    else
-                    {
-                        Console.WriteLine("Duplicate dir!");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Unexpected command!");
-                }
-            }
-
-            index[""].Tree();
-
-            return 0;
+            return index.Where(size => size <= 100000).Sum();
         }
 
         public static int Part2(string input)
         {
-            return 0;
+            var index = BuildTree(input).Select(d => d.Size);
+
+            const int driveSize = 70000000;
+            const int updateSize = 30000000;
+            int rootSize = index.First();
+            int availableSpace = driveSize - rootSize;
+            int requiredSpace = updateSize - availableSpace;
+
+            return index.Where(size => size >= requiredSpace).Order().First();
         }
 
         public void Run(string input, ILogger logger)
         {
-            string test = @"$ cd /
-$ ls
-dir a
-14848514 b.txt
-8504156 c.dat
-dir d
-$ cd a
-$ ls
-dir e
-29116 f
-2557 g
-62596 h.lst
-$ cd e
-$ ls
-584 i
-$ cd ..
-$ cd ..
-$ cd d
-$ ls
-4060174 j
-8033020 d.log
-5626152 d.ext
-7214296 k".Replace("\r", "");
-
-            Part1(test);
-
-
             Console.WriteLine("- Pt1 - " + Part1(input));
             Console.WriteLine("- Pt2 - " + Part2(input));
         }
