@@ -9,55 +9,60 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-08";
 
-        public static bool TreeVisible(IEnumerable<int> values, int index)
+        static bool VisibleFromEdge(char[,] grid, (int x, int y) pos) 
+            => VisibleFromEdge(grid.Row(pos.y), pos.x) || VisibleFromEdge(grid.Column(pos.x), pos.y);
+
+        static bool VisibleFromEdge(IEnumerable<char> values, int index)
         {
             var row = values.ToArray();
             if (index == 0 || index == row.Length - 1) return true;
             var tree = row[index];
 
-            var left = values.Take(index).ToArray();
-            var right = values.Skip(index + 1).ToArray();
-
-            var visibleLeft = values.Take(index).All(v => v < tree);
-            var visibleRight = values.Skip(index + 1).All(v => v < tree);
+            var visibleLeft = row.Take(index).All(v => v < tree);
+            var visibleRight = row.Skip(index + 1).All(v => v < tree);
             return visibleLeft || visibleRight;
+        }
+
+        static int CountVisible(IEnumerable<char> values, int compare)
+        {
+            int seen = 0;
+            foreach (var v in values)
+            {
+                seen++;
+                if (v >= compare) break;
+            }
+            return seen;
+        }
+
+        static int ScenicScore(char[,] grid, (int x, int y) pos)
+        {
+            var tree = grid[pos.x, pos.y];
+
+            var row = grid.Row(pos.y);
+            var col = grid.Column(pos.x);
+
+            return CountVisible(row.Take(pos.x).Reverse(), tree)
+                 * CountVisible(row.Skip(pos.x + 1), tree)
+                 * CountVisible(col.Take(pos.y).Reverse(), tree)
+                 * CountVisible(col.Skip(pos.y + 1), tree);
         }
 
         public static int Part1(string input)
         {
-            var grid = Util.ParseMatrix<int>(input);
+            var grid = Util.ParseMatrix<char>(input);
 
-            int count = 0;
-            for (int y = 0; y < grid.Height(); ++y)
-            {
-                for (int x = 0; x < grid.Width(); ++x)
-                {
-                    if (TreeVisible(grid.Row(y), y) || TreeVisible(grid.Column(x), x))
-                    {
-                        count++;
-                    }
-                }
-            }
-
-            return count;
+            return grid.Keys().Count(pos => VisibleFromEdge(grid, pos));
         }
 
         public static int Part2(string input)
         {
-            return 0;
+            var grid = Util.ParseMatrix<char>(input);
+
+            return grid.Keys().Max(pos => ScenicScore(grid, pos));
         }
 
         public void Run(string input, ILogger logger)
         {
-
-            string test = @"30373
-25512
-65332
-33549
-35390".Replace("\r", "");
-
-            Console.WriteLine(Part1(test));
-
             Console.WriteLine("- Pt1 - " + Part1(input));
             Console.WriteLine("- Pt2 - " + Part2(input));
         }
