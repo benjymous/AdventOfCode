@@ -10,58 +10,77 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-09";
 
-        struct Instruction
+        public readonly struct Instruction
         {
             [Regex(@"(.) (.+)")]
-            public Instruction(char d, int s)
-            {
-                Direction = Decode(d), Steps = s;
-            }
+            public Instruction(char d, int s) => (Direction, Steps) = (Decode(d), s);
+
             public readonly (int x, int y) Direction;
             public readonly int Steps;
 
-            (int x, int y) Decode(char dir)
+            static (int x, int y) Decode(char dir) => dir switch
             {
-                switch (dir)
+                'U' => (0, 1),
+                'D' => (0, -1),
+                'R' => (1, 0),
+                'L' => (-1, 0),
+                _ => throw new Exception("Unexpected direction"),
+            };
+        }
+
+        public static bool UpdateTail(ManhattanVector2 head, ManhattanVector2 tail)
+        {
+            var distance = tail.Distance(head);
+            if (distance > 1 && (distance != 2 || tail.X == head.X || tail.Y == head.Y))
+            {
+                tail.Offset((Math.Sign(head.X - tail.X), Math.Sign(head.Y - tail.Y)));
+                return true;
+            }
+            return false;
+        }
+
+        private static int SimulateRope(string input, int numSegments)
+        {
+            var instructions = Util.RegexParse<Instruction>(input);
+
+            ManhattanVector2[] rope = new ManhattanVector2[numSegments];
+            for (int i = 0; i < numSegments; ++i) rope[i] = new(0, 0);
+
+            var head = rope.First();
+            var tail = rope.Last();
+
+            HashSet<(int x, int y)> tailPositions = new();
+
+            foreach (var instr in instructions)
+            {
+                for (int i = 0; i < instr.Steps; i++)
                 {
-                    case 'U': return (0, -1);
-                    case 'D': return (0, 1);
-                    case 'R': return (1, 0);
-                    case 'L': return (-1, 0);
-                    default: throw new Exception("Unexpected direction");
+                    head.Offset(instr.Direction);
+
+                    for (int j = 0; j < numSegments - 1; ++j)
+                        if (!UpdateTail(rope[j], rope[j + 1])) break;
+
+                    tailPositions.Add(tail);
                 }
             }
+
+            return tailPositions.Count;
         }
 
         public static int Part1(string input)
         {
-            var instructions = Util.Parse<Instruction>(input);
-
-            ManhattanVector2 head = (0, 0);
-            ManhattanVector2 tail = (0, 0);
-
-            foreach (var instr in instructions)
-            {
-                for (int i=0; i<instr.Steps; i++)
-                {
-                    head += instr.Direction;
-
-                    
-                }
-            }
-
-            return 0;
+            return SimulateRope(input, 2);
         }
 
         public static int Part2(string input)
         {
-            return 0;
+            return SimulateRope(input, 10);
         }
 
         public void Run(string input, ILogger logger)
         {
-            Console.WriteLine("- Pt1 - " + Part1(input));
-            Console.WriteLine("- Pt2 - " + Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }
