@@ -1,6 +1,7 @@
 ﻿using AoC.Utils;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace AoC
                 .Where(x => typeof(IPuzzle).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
                 .Select(x => (IPuzzle)Activator.CreateInstance(x))
                 .Where(p => p.ShouldRun())
-                .OrderBy(x => x.Name);
+                .OrderBy(x => x.Name).ToArray();
         }
 
         public static string[] Split(string input, char splitChar = '\0')
@@ -86,14 +87,13 @@ namespace AoC
                 if (typeConstructor?.GetCustomAttributes(typeof(RegexAttribute), true)
                     .FirstOrDefault() is not RegexAttribute attribute) continue; // skip constructor if it doesn't have attr
 
-                var matches = Regex.Matches(line, attribute.Pattern); // match this constructor against the input line
+                var matches = attribute.Regex.Matches(line); // match this constructor against the input line
 
                 if (!matches.Any()) continue; // Try other constructors to see if they match
 
                 var paramInfo = typeConstructor.GetParameters();
 
                 object[] convertedParams = ConstructParams(matches, paramInfo);
-
                 return (T)Activator.CreateInstance(typeof(T), convertedParams);
             }
             throw new Exception("RegexParse failed to find suitable constructor for " + typeof(T).Name);
@@ -103,15 +103,14 @@ namespace AoC
         {
             var regexValues = matches[0]
                 .Groups.Values.Where(v => !string.IsNullOrWhiteSpace(v.Value))
-                .Skip(1).Select(g => g.Value);
+                .Skip(1).Select(g => g.Value).ToArray();
 
-            if (regexValues.Count() != paramInfo.Length) throw new Exception("RegexParse couldn't match constructor param count");
+            if (regexValues.Length != paramInfo.Length) throw new Exception("RegexParse couldn't match constructor param count");
 
             var instanceParams = Enumerable.Zip(paramInfo, regexValues); // collate parameter types and matched substrings
 
-            var convertedParams = instanceParams
+            return instanceParams
                 .Select(kvp => TypeDescriptor.GetConverter(kvp.First.ParameterType).ConvertFromString(kvp.Second)).ToArray(); // convert substrings to match constructor input
-            return convertedParams;
         }
 
         public static IEnumerable<T> RegexParse<T>(IEnumerable<string> input) =>
@@ -129,7 +128,7 @@ namespace AoC
                 if (func.GetCustomAttributes(typeof(RegexAttribute), true)
                     .FirstOrDefault() is not RegexAttribute attribute) continue; // skip function if it doesn't have attr
 
-                var matches = Regex.Matches(line, attribute.Pattern); // match this constructor against the input line
+                var matches = attribute.Regex.Matches(line); // match this constructor against the input line
 
                 if (!matches.Any()) continue; // Try other constructors to see if they match
 
@@ -652,9 +651,17 @@ namespace AoC
     {
         public RegexAttribute(string pattern)
         {
-            Pattern = pattern;
+            if (cache.TryGetValue(pattern, out var regex)) Regex = regex;
+            else
+            {
+                Regex = new Regex(pattern);
+                cache.TryAdd(pattern, Regex);
+            }
         }
-        public string Pattern { get; private set; }
+        public Regex Regex { get; private set; }
+
+        static readonly ConcurrentDictionary<string, Regex> cache = new();
+
     }
 
     public class Boxed<T>

@@ -207,6 +207,12 @@ namespace AoC.Utils.Vectors
             Offset(dir.X * multiple, dir.Y * multiple);
         }
 
+        public void Offset(ManhattanVector2 dir)
+        {
+            X += dir.X;
+            Y += dir.Y;
+        }
+
         public void TurnLeft()
         {
             // up :  0,-1 ->  -1,0;
