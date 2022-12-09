@@ -30,10 +30,10 @@ namespace AoC.Advent2022
 
         public static bool UpdateTail(ManhattanVector2 head, ManhattanVector2 tail)
         {
-            var distance = tail.Distance(head);
-            if (distance > 1 && (distance != 2 || tail.X == head.X || tail.Y == head.Y))
+            var (dx, dy) = (head.X - tail.X, head.Y - tail.Y);
+            if (Math.Abs(dx) > 1 || Math.Abs(dy) > 1)
             {
-                tail.Offset((Math.Sign(head.X - tail.X), Math.Sign(head.Y - tail.Y)));
+                tail.Offset(Math.Sign(dx), Math.Sign(dy));
                 return true;
             }
             return false;

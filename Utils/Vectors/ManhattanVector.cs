@@ -213,6 +213,12 @@ namespace AoC.Utils.Vectors
             Y += dir.Y;
         }
 
+        public void Offset(int x, int y)
+        {
+            X += x;
+            Y += y;
+        }
+
         public void TurnLeft()
         {
             // up :  0,-1 ->  -1,0;
