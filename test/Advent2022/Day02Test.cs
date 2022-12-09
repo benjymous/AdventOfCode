@@ -3,6 +3,7 @@
 namespace AoC.Advent2022.Test
 {
     [TestCategory("2022")]
+    [TestCategory("RegexParse")]
     [TestClass]
     public class Day02Test
     {

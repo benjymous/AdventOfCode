@@ -25,8 +25,8 @@ namespace AoC.Advent2022
 
         public void Run(string input, ILogger logger)
         {
-            Console.WriteLine("- Pt1 - " + Part1(input));
-            Console.WriteLine("- Pt2 - " + Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }
