@@ -118,14 +118,14 @@ namespace AoC.Advent2016
 
         public static string Part1(string input)
         {
-            var instructions = Util.RegexFactory<CharFunc>(input, new InstructionFactory()).ToArray();
+            var instructions = Util.RegexFactory<CharFunc, InstructionFactory>(input).ToArray();
 
             return Scramble(instructions, "abcdefgh");
         }
 
         public static string Part2(string input)
         {
-            var instructions = Util.RegexFactory<CharFunc>(input, new InstructionFactory()).ToArray();
+            var instructions = Util.RegexFactory<CharFunc, InstructionFactory>(input).ToArray();
 
             var scrambled = "fbgdceah";
 

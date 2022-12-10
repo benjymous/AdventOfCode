@@ -166,7 +166,7 @@ noop".Replace("\r", "");
         [DataTestMethod]
         public void CRT02Test()
         {
-            Assert.AreEqual("45F50A605DB9F4AAA8D87734B565FAD9", Day10.Part2(test, new ConsoleOut()));
+            Assert.AreEqual("2D0BCC7FCD47CA9D3FD41258A122AA53", Day10.Part2(test, new ConsoleOut()));
         }
 
         [TestCategory("Regression")]
@@ -180,7 +180,7 @@ noop".Replace("\r", "");
         [DataTestMethod]
         public void CRT_Part2_Regression()
         {
-            Assert.AreEqual("43510CF3264B016CAD42DFE6E410FB1A", Day10.Part2(input, new ConsoleOut() ));
+            Assert.AreEqual("9CDE2F6AEB3EAFB3D07D016A477F1C7F", Day10.Part2(input, new ConsoleOut() ));
         }
     }
 }

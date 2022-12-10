@@ -121,9 +121,9 @@ namespace AoC
             RegexParse<T>(input.Split(splitter));
 
 
-        public static T RegexFactoryCreate<T>(string line, object factory)
+        public static T RegexFactoryCreate<T, FT>(string line)
         {
-            foreach (var func in factory.GetType().GetMethods())
+            foreach (var func in typeof(FT).GetMethods())
             {
                 if (func.GetCustomAttributes(typeof(RegexAttribute), true)
                     .FirstOrDefault() is not RegexAttribute attribute) continue; // skip function if it doesn't have attr
@@ -136,18 +136,18 @@ namespace AoC
 
                 object[] convertedParams = ConstructParams(matches, paramInfo);
 
-                return (T)func.Invoke(factory, convertedParams);
+                return (T)func.Invoke(null, convertedParams);
 
             }
             throw new Exception($"RegexFactory failed to find suitable factory function for {line}");
         }
 
-        public static IEnumerable<T> RegexFactory<T>(IEnumerable<string> input, object factory) => 
+        public static IEnumerable<T> RegexFactory<T, FT>(IEnumerable<string> input) => 
             input.Where(x => !string.IsNullOrWhiteSpace(x))
-                 .Select(line => RegexFactoryCreate<T>(line, factory));
+                 .Select(line => RegexFactoryCreate<T, FT>(line));
 
-        public static IEnumerable<T> RegexFactory<T>(string input, object factory, string splitter = "\n") =>
-            RegexFactory<T>(input.Split(splitter), factory);
+        public static IEnumerable<T> RegexFactory<T, FT>(string input, string splitter = "\n") =>
+            RegexFactory<T, FT>(input.Split(splitter));
 
 
         public static T[] ParseNumbers<T>(string input, char splitChar = '\0', System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Any) where T : INumberBase<T>
