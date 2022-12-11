@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AoC.Utils
 {
-    public static class StringExtensions
+    public static partial class StringExtensions
     {
         public static byte[] GetSHA256(this string inputString) => SHA256.HashData(Encoding.UTF8.GetBytes(inputString));
 
         public static string GetSHA256String(this string inputString)
         {
             StringBuilder sb = new();
-            foreach (byte b in GetSHA256(inputString))
+            foreach (byte b in inputString.GetSHA256())
                 sb.Append(b.ToString("X2"));
 
             return sb.ToString();
@@ -23,13 +24,13 @@ namespace AoC.Utils
 
         public static string GetMD5String(this string inputString, bool lowerCase = false)
         {
-            return string.Concat(Array.ConvertAll(GetMD5(inputString),
+            return string.Concat(Array.ConvertAll(inputString.GetMD5(),
                                        h => h.ToString(lowerCase ? "x2" : "X2")));
         }
 
         public static IEnumerable<char> GetMD5Chars(this string inputString)
         {
-            foreach (byte b in GetMD5(inputString))
+            foreach (byte b in inputString.GetMD5())
             {
                 foreach (var c in b.ToString("X2"))
                 {
@@ -48,7 +49,7 @@ namespace AoC.Utils
 
         public static IEnumerable<int> AllIndexesOf(this string str, string value)
         {
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
                 throw new ArgumentException("the string to find may not be empty", nameof(value));
             for (int index = 0; ; index += value.Length)
             {
@@ -74,7 +75,7 @@ namespace AoC.Utils
             {
                 return str;
             }
-            return ReplaceAtIndex(str, pos, from, replacement);
+            return str.ReplaceAtIndex(pos, from, replacement);
         }
 
         public static string ReplaceLast(this string str, string from, string replacement)
@@ -84,8 +85,16 @@ namespace AoC.Utils
             {
                 return str;
             }
-            return ReplaceAtIndex(str, pos, from, replacement);
+            return str.ReplaceAtIndex(pos, from, replacement);
         }
+
+        public static string WithoutMultipleSpaces(this string str)
+        {
+            return MultipleSpaces().Replace(str, " ");
+        }
+
+        [GeneratedRegex("\\s+")]
+        private static partial Regex MultipleSpaces();
 
 
         // returns how similar two strings are - smaller = more similar
@@ -115,7 +124,7 @@ namespace AoC.Utils
             {
                 for (int j = 1; j <= m; j++)
                 {
-                    int cost = (t[j - 1] == s[i - 1]) ? 0 : 1;
+                    int cost = t[j - 1] == s[i - 1] ? 0 : 1;
                     int min1 = d[i - 1, j] + 1;
                     int min2 = d[i, j - 1] + 1;
                     int min3 = d[i - 1, j - 1] + cost;
@@ -140,6 +149,5 @@ namespace AoC.Utils
                 }
             }
         }
-
     }
 }
