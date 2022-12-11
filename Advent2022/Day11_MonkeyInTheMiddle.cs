@@ -13,18 +13,18 @@ namespace AoC.Advent2022
         public class Monkey
         {
             [Regex(@"Monkey (.+): Starting items: (.+) Operation: new = old (.) (.+) Test: divisible by (.+) If true: throw to monkey (.) If false: throw to monkey (.)")]
-            public Monkey(int id, string items, char op, string opBy, int test, int ifTrue, int ifFalse)
+            public Monkey(int id, long[] items, char op, string opBy, int test, int ifTrue, int ifFalse)
             {
                 Id = id;
-                Items = Util.ParseNumbers<long>(items).ToList();
-                if (op == '+')
+                Items = items.ToList();
+
+                Operation = op switch
                 {
-                    Operation = old => old + int.Parse(opBy);
-                }
-                else if (op == '*')
-                {
-                    Operation = old => old * (opBy == "old" ? old : int.Parse(opBy));
-                }
+                    '+' => old => old + int.Parse(opBy),
+                    '*' => old => old * (opBy == "old" ? old : int.Parse(opBy)),
+                    _ => throw new Exception("unexpected op"),
+                };
+
                 Divisor = test;
                 IfTrue = ifTrue;
                 IfFalse = ifFalse;
@@ -50,20 +50,20 @@ namespace AoC.Advent2022
 
         private static long RunRounds(string input, int numRounds, bool lessWorry)
         {
-            var data = Util.RegexParse<Monkey>(input.Split("\n\n").Select(line => line.Replace("\n", "").WithoutMultipleSpaces())).ToArray();
+            var monkeys = Util.RegexParse<Monkey>(input.Split("\n\n").Select(line => line.Replace("\n", "").WithoutMultipleSpaces())).ToArray();
 
-            var filter = data.Select(m => m.Divisor).Product();
+            var filter = monkeys.Product(m => m.Divisor);
 
             Dictionary<int, int> monkeyScores = new();
             for (int round = 0; round < numRounds; ++round)
             {
-                foreach (var monkey in data)
+                foreach (var monkey in monkeys)
                 {
                     var actions = monkey.DoRound(lessWorry).ToArray();
                     monkeyScores.IncrementAtIndex(monkey.Id, actions.Length);
                     foreach (var (worry, target) in actions)
                     {
-                        data[target].AddItem(worry % filter);
+                        monkeys[target].AddItem(worry % filter);
                     }
                 }
             }

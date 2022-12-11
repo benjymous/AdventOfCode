@@ -201,13 +201,50 @@ namespace AoC.Test
         }
 
         class RegexCreationTest2
+        {
+            [Regex(@"(.+) (.+) (.+)")]
+            public RegexCreationTest2(int[] a1, long[] a2, string[] a3)
+            {
+                A1 = a1;
+                A2 = a2;
+                A3 = a3;
+            }
+
+            public int[] A1;
+            public long[] A2;
+            public string[] A3;
+        }
+
+
+        [TestMethod]
+        [TestCategory("RegexParse")]
+        public void RegexCreateTest2()
+        {
+            var obj = Util.RegexCreate<RegexCreationTest2>("1,2,3 100,200,300 tom,dick,harry");
+            Assert.AreEqual(3, obj.A1.Length);
+            Assert.AreEqual(1, obj.A1[0]);
+            Assert.AreEqual(2, obj.A1[1]);
+            Assert.AreEqual(3, obj.A1[2]);
+
+            Assert.AreEqual(3, obj.A2.Length);
+            Assert.AreEqual(100L, obj.A2[0]);
+            Assert.AreEqual(200L, obj.A2[1]);
+            Assert.AreEqual(300L, obj.A2[2]);
+
+            Assert.AreEqual(3, obj.A3.Length);
+            Assert.AreEqual("tom", obj.A3[0]);
+            Assert.AreEqual("dick", obj.A3[1]);
+            Assert.AreEqual("harry", obj.A3[2]);
+        }
+
+        class RegexCreationTestNoConstructor
         { }
 
         [TestMethod]
         [TestCategory("RegexParse")]
         public void RegexCreateFailTest()
         {
-            Assert.ThrowsException<Exception>(() => Util.RegexCreate<RegexCreationTest2>("blah"));
+            Assert.ThrowsException<Exception>(() => Util.RegexCreate<RegexCreationTestNoConstructor>("blah"));
         }
 
         [TestMethod]

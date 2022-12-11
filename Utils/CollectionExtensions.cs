@@ -256,9 +256,19 @@ namespace AoC.Utils
             return vals.Aggregate((long)1, (total, val) => total * val);
         }
 
+        public static long Product<TSource>(this IEnumerable<TSource> source, Func<TSource, int> selector)
+        {
+            return source.Aggregate((long)1, (total, el) => total * selector(el));
+        }
+
         public static long Product(this IEnumerable<long> vals)
         {
             return vals.Aggregate((long)1, (total, val) => total * val);
+        }
+
+        public static long Product<TSource>(this IEnumerable<TSource> source, Func<TSource, long> selector)
+        {
+            return source.Aggregate((long)1, (total, el) => total * selector(el));
         }
 
         public static int Xor(this IEnumerable<int> vals)

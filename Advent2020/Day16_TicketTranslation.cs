@@ -159,8 +159,7 @@ namespace AoC.Advent2020
 
             return scanner.DecodedTicket()
                 .Where(kvp => kvp.Item1.StartsWith("departure"))
-                .Select(kvp => kvp.Item2)
-                .Product();
+                .Product(kvp => kvp.Item2);
         }
 
         public void Run(string input, ILogger logger)

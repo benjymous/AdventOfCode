@@ -222,7 +222,7 @@ namespace AoC.Advent2020
         {
             var solver = new JigsawSolver(input);
 
-            return solver.Corners.Select(t => t.ID).Product();
+            return solver.Corners.Product(t => t.ID);
         }
 
         public static Int64 Part2(string input)

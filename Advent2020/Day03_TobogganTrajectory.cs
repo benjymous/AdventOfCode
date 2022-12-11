@@ -42,8 +42,7 @@ namespace AoC.Advent2020
                 ( 5, 1 ),   //Right 5, down 1.
                 ( 7, 1 ),   //Right 7, down 1.
                 ( 1, 2 )    //Right 1, down 2.
-            }.Select(dir => CountTrees(map, dir.dx, dir.dy))
-             .Product();
+            }.Product(dir => CountTrees(map, dir.dx, dir.dy));
         }
 
         public void Run(string input, ILogger logger)

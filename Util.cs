@@ -99,6 +99,24 @@ namespace AoC
             throw new Exception("RegexParse failed to find suitable constructor for " + typeof(T).Name);
         }
 
+        private static object ConvertFromString(Type type, string input)
+        {
+            if (type.IsArray)
+            {
+                var elementType = type.GetElementType();
+
+                if (elementType == typeof(string)) return Util.Split(input);
+                if (elementType == typeof(int)) return Util.ParseNumbers<int>(input).ToArray();
+                if (elementType == typeof(long)) return Util.ParseNumbers<long>(input).ToArray();
+
+                throw new Exception("Can't convert array type " + type);
+            }
+            else
+            {
+                return TypeDescriptor.GetConverter(type).ConvertFromString(input);
+            }
+        }
+
         private static object[] ConstructParams(MatchCollection matches, ParameterInfo[] paramInfo)
         {
             var regexValues = matches[0]
@@ -110,7 +128,7 @@ namespace AoC
             var instanceParams = Enumerable.Zip(paramInfo, regexValues); // collate parameter types and matched substrings
 
             return instanceParams
-                .Select(kvp => TypeDescriptor.GetConverter(kvp.First.ParameterType).ConvertFromString(kvp.Second)).ToArray(); // convert substrings to match constructor input
+                .Select(kvp => ConvertFromString(kvp.First.ParameterType, kvp.Second)).ToArray(); // convert substrings to match constructor input
         }
 
         public static IEnumerable<T> RegexParse<T>(IEnumerable<string> input) =>
