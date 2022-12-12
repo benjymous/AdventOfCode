@@ -67,7 +67,7 @@ namespace AoC.Utils.Pathfinding
 
     public static class AStar<TCoordinateType>
     {
-        public static IEnumerable<TCoordinateType> FindPath(IMap<TCoordinateType> map, TCoordinateType start, TCoordinateType goal)
+        public static TCoordinateType[] FindPath(IMap<TCoordinateType> map, TCoordinateType start, TCoordinateType goal)
         {
             var state = new State();
 
@@ -106,10 +106,10 @@ namespace AoC.Utils.Pathfinding
                 }
             }
 
-            return Enumerable.Empty<TCoordinateType>();
+            return Array.Empty<TCoordinateType>();
         }
 
-        class State
+        public class State
         {
             public HashSet<TCoordinateType> closedSet = new();
 
@@ -124,7 +124,7 @@ namespace AoC.Utils.Pathfinding
 
             internal int GetGScore(TCoordinateType pt) => gScore[pt];
 
-            internal IEnumerable<TCoordinateType> Reconstruct(TCoordinateType current)
+            internal TCoordinateType[] Reconstruct(TCoordinateType current)
             {
                 List<TCoordinateType> path = new();
                 while (nodeLinks.ContainsKey(current))

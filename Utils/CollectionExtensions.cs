@@ -342,6 +342,24 @@ namespace AoC.Utils
             }
         }
 
+        public static void Operate<TElement>(this Queue<TElement> queue, Action<TElement> action)
+        {
+            while (queue.TryDequeue(out var element))
+            {
+                action(element);
+            }
+        }
+
+        public static void Operate<TElement>(this HashSet<TElement> set, Action<TElement> action)
+        {
+            while (set.Any())
+            {
+                var element = set.First();
+                set.Remove(element);
+                action(element);
+            }
+        }
+
         public static IEnumerable<T> InsertRangeAt<T>(this IEnumerable<T> into, IEnumerable<T> elements, int pos)
         {
             return into.Take(pos).Union(elements).Union(into.Skip(pos));
@@ -387,6 +405,11 @@ namespace AoC.Utils
         public static IEnumerable<IEnumerable<T>> Split<T>(this IEnumerable<T> source, int chunkSize)
         {
             return source.Where((x, i) => i % chunkSize == 0).Select((x, i) => source.Skip(i * chunkSize).Take(chunkSize));
+        }
+
+        public static Dictionary<TVal, IEnumerable<TKey>> Invert<TKey, TVal>(this Dictionary<TKey, TVal> dict)
+        {
+            return dict.GroupBy(kvp => kvp.Value).ToDictionary(g => g.Key, g => g.Select(kvp => kvp.Key));
         }
 
     }
