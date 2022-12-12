@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,6 +23,8 @@ namespace AoC
 
             int total = puzzles.Count();
             int finished = 0;
+
+            Regex.CacheSize = 100;
 
             if (puzzles.Count() == 1)
             {

@@ -11,7 +11,6 @@ namespace AoC.Advent2016
     {
         public string Name => "2016-21";
 
-
         class InstructionFactory
         {
             [Regex(@"rotate right (\d+) step")]
@@ -24,7 +23,7 @@ namespace AoC.Advent2016
             public static CharFunc SwapL(char from, char to) => pwd => SwapLetter(pwd, from, to);
 
             [Regex(@"swap position (.) with position (.)")]
-            public CharFunc SwapP(int from, int to) => pwd => SwapPosition(pwd, from, to);
+            public static CharFunc SwapP(int from, int to) => pwd => SwapPosition(pwd, from, to);
 
             [Regex(@"reverse positions (.) through (.)")]
             public static CharFunc Rev(int start, int end) => pwd => Reverse(pwd, start, end);
