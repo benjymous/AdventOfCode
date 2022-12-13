@@ -149,5 +149,12 @@ namespace AoC.Utils
                 }
             }
         }
+
+        public static string Pop(this StringBuilder sb)
+        {
+            var res = sb.ToString();
+            sb.Clear();
+            return res;
+        }
     }
 }

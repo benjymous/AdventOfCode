@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace AoC.Advent2022
 {
@@ -9,35 +10,79 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-13";
 
-        class Element
+        class Element : IComparable<Element>
         {
             public Element(string data)
             {
-                Data = data;
+                if (!int.TryParse(data, out Value))
+                    Children = Tokenize(data).ToArray();
             }
-            public string Data;
-        }
 
-        class Pair
-        {
-            [Regex(@"(.+)\n(.+)")]
-            public Pair(string left, string right)
+            readonly int Value;
+            readonly Element[] Children;
+
+            bool IsList => Children != null;
+            public bool IsMarker { get; init; }
+
+            static IEnumerable<Element> Tokenize(string data)
             {
-                Left = new(left);
-                Right = new(right);
+                StringBuilder token = new(data.Length);
+                int depth = 0;
+                foreach (var c in data[1..^1]) // strip outer []s
+                {
+                    if (c == '[') // open bracket, so we're a level deeper
+                        depth++; 
+                    else if (c == ']') // close bracket, so back up a level
+                        depth--; 
+
+                    if (c == ',' && depth == 0) // comma at the top level, so return next element
+                        yield return new(token.Pop());
+                    else // append to our current token
+                        token.Append(c); 
+                }
+                if (token.Length > 0) yield return new(token.Pop());
             }
-            public Element Left, Right;
+
+            public Element Promote() => new($"[{Value}]");
+
+            public int CompareTo(Element other) => (IsList, other.IsList) switch
+            {
+                (true,  true)  => CompareList(other),         // both lists
+                (false, false) => Value - other.Value,        // both numbers
+                (true,  false) => CompareTo(other.Promote()), // list, non-list
+                (false, true)  => Promote().CompareTo(other), // non-list, list
+            };
+
+            int CompareList(Element other)
+            {
+                for (int i = 0; true; ++i)
+                {
+                    if (Children.Length == i && other.Children.Length == i) return 0;  // both ran out => must be equal
+                    if (Children.Length == i && other.Children.Length  > i) return -1; // left ran out 
+                    if (Children.Length  > i && other.Children.Length == i) return 1;  // right ran out
+                    var compare = Children[i].CompareTo(other.Children[i]);
+                    if (compare != 0) return compare;
+                }
+            }
         }
 
         public static int Part1(string input)
         {
-            var data = Util.RegexParse<Pair>(input.Split("\n\n")).ToArray();
-            return 0;
+            return input.Split("\n\n")
+                        .Select(group => Util.Parse<Element>(group).TakePair())
+                        .WithIndex(1)
+                        .Where(e => e.Value.Item1.CompareTo(e.Value.Item2) < 0)
+                        .Sum(e => e.Index);
         }
 
         public static int Part2(string input)
         {
-            return 0;
+            return (int)Util.Parse<Element>(input.Replace("\n\n", "\n"))
+                            .AppendMultiple(new ("[[2]]") { IsMarker = true }, new ("[[6]]") { IsMarker = true })
+                            .Order()
+                            .WithIndex(1)
+                            .Where(e => e.Value.IsMarker)
+                            .Product(e => e.Index);
         }
 
         public void Run(string input, ILogger logger)

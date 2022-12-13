@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Numerics;
 
 namespace AoC.Utils
@@ -73,6 +74,11 @@ namespace AoC.Utils
                     }
                 }
             }
+        }
+
+        public static (T, T) TakePair<T>(this IEnumerable<T> set)
+        {
+            return set.Pairs().First();
         }
 
         public static IEnumerable<T> Prepend<T>(this IEnumerable<T> items, T first)
@@ -312,9 +318,9 @@ namespace AoC.Utils
             return maxIndex;
         }
 
-        public static IEnumerable<(int Index, T Value)> WithIndex<T>(this IEnumerable<T> sequence)
+        public static IEnumerable<(int Index, T Value)> WithIndex<T>(this IEnumerable<T> sequence, int startFrom = 0)
         {
-            return sequence.Select((v, i) => (i, v));
+            return sequence.Select((v, i) => (i + startFrom, v));
         }
 
         public static void Add<T>(this Queue<T> queue, T item) => queue.Enqueue(item);
@@ -412,6 +418,26 @@ namespace AoC.Utils
             return dict.GroupBy(kvp => kvp.Value).ToDictionary(g => g.Key, g => g.Select(kvp => kvp.Key));
         }
 
+        public static Dictionary<TVal, IEnumerable<(int x, int y)>> Invert<TVal>(this TVal[,] dict)
+        {
+            return dict.Entries().GroupBy(kvp => kvp.value).ToDictionary(g => g.Key, g => g.Select(kvp => kvp.key));
+        }
+
+        public static bool TryGetValue<TVal>(this TVal[,] dict, (int x, int y) key, out TVal val)
+        {
+            if (key.x < 0 || key.y < 0 || key.x >= dict.Width() || key.y >= dict.Height())
+            {
+                val = default;
+                return false;
+            }
+
+            val = dict[key.x, key.y];
+            return true;
+        }
+
+        public static IEnumerable<TSource> AppendMultiple<TSource>(this IEnumerable<TSource> source, params TSource[] elements)
+        {
+            return source.Concat(elements);
+        }        
     }
-   
 }
