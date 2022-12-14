@@ -1,17 +1,20 @@
 ﻿using System;
+using AoC.Advent2019.NPSA;
 
 namespace IntCpuCmd
 {
     class Program
     {
 
-        class Runner : Advent.MMXIX.NPSA.ICPUInterrupt
+        class Runner : ICPUInterrupt
         {
-            Advent.MMXIX.NPSA.IntCPU cpu;
+            readonly IntCPU cpu;
             public Runner(string program)
             {
-                cpu = new Advent.MMXIX.NPSA.IntCPU(program);
-                cpu.Interrupt = this;
+                cpu = new(program)
+                {
+                    Interrupt = this
+                };
             }
 
             public void Run() => cpu.Run();
