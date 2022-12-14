@@ -10,13 +10,32 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-14";
 
+        private static IEnumerable<(int x, int y)> BuildMap(string input)
+        {
+            var pairs = Util.Split(input, '\n')
+                .Distinct()
+                .Select(line =>
+                    Util.Parse<ManhattanVector2>(line.Split(" -> "))
+                    .OverlappingPairs())
+                .SelectMany(x => x);
+
+            foreach (var (first, second) in pairs)
+            {
+                var delta = (Math.Sign(second.X - first.X), Math.Sign(second.Y - first.Y));
+
+                for (var pos = first; pos != second; pos += delta)
+                {
+                    yield return pos;
+                }
+                yield return second;
+            }
+        }
+
         static readonly (int dx, int dy)[] moves = new[] { (0, 1), (-1, 1), (1, 1) };
         static (bool blocked, (int x, int y) pos) FindStep(HashSet<(int x, int y)> map, (int x, int y) pos, int floor)
         {
             if (pos.y + 1 < floor)
             {
-                //return moves.Select(delta => (false, (pos.x + delta.dx, pos.y + delta.dy))).Where(next => !map.Contains(next.Item2)).FirstOrDefault((true,pos));
-
                 foreach (var (dx, dy) in moves)
                 {
                     var next = (pos.x + dx, pos.y + dy);
@@ -28,25 +47,8 @@ namespace AoC.Advent2022
 
         private static int Simulate(string input, QuestionPart part)
         {
-            HashSet<(int x, int y)> map = new();
-            var pairs = Util.Split(input, '\n')
-                            .Select(line => 
-                                Util.Parse<ManhattanVector2>(line.Split(" -> "))
-                                .Select(v => v.AsSimple())
-                                .OverlappingPairs())
-                            .SelectMany(x => x);
+            var map = BuildMap(input).ToHashSet();
 
-            foreach (var (first, second) in pairs)
-            {
-                var (dx, dy) = (Math.Sign(second.x - first.x), Math.Sign(second.y - first.y));
-
-                for (var pos = first; pos != second; pos.x += dx, pos.y += dy)
-                {
-                    map.Add(pos);
-                }
-                map.Add(second);
-            }
-           
             int maxY = map.Max(kvp => kvp.y) + 2;
             int floor = part.Two() ? maxY : int.MaxValue;
 

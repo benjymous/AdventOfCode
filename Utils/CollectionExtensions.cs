@@ -118,7 +118,7 @@ namespace AoC.Utils
             }
         }
 
-        public static IEnumerable<IEnumerable<T>> Windows<T>(this IEnumerable<T> input, int count)
+        public static IEnumerable<T[]> Windows<T>(this IEnumerable<T> input, int count)
         {
             Queue<T> queue = new();
             var iter = input.GetEnumerator();
@@ -140,7 +140,7 @@ namespace AoC.Utils
 
         public static IEnumerable<(T first, T second)> OverlappingPairs<T>(this IEnumerable<T> input)
         {
-            return input.Windows(2).Select(win => (win.First(), win.Skip(1).First()));
+            return input.Windows(2).Select(win => (win[0], win[1]));
         }
 
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items)
