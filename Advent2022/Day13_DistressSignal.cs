@@ -14,14 +14,17 @@ namespace AoC.Advent2022
         {
             public Element(string data)
             {
-                if (!int.TryParse(data, out Value))
-                    Children = Tokenize(data).ToArray();
+                Data = data;
+                if (int.TryParse(data, out var v)) Value = v;
             }
 
-            readonly int Value;
-            readonly Element[] Children;
+            readonly string Data;
+            readonly int Value = -1;
 
-            bool IsList => Children != null;
+            Element[] _children;
+            Element[] Children => _children ??= Tokenize(Data).ToArray();
+
+            bool IsList => Value == -1;
             public bool IsMarker { get; init; }
 
             static IEnumerable<Element> Tokenize(string data)
