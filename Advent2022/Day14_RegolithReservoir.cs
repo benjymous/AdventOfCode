@@ -10,84 +10,76 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-14";
 
-        (int dx, int dy)[] moves = new[] { (0, 1), (-1, 1), (1, 1)};
-
-        static (bool canMove, (int x, int y) pos) FindStep(Dictionary<(int x, int y), char> map, (int x, int y) pos)
+        static readonly (int dx, int dy)[] moves = new[] { (0, 1), (-1, 1), (1, 1) };
+        static (bool blocked, (int x, int y) pos) FindStep(HashSet<(int x, int y)> map, (int x, int y) pos, int floor)
         {
-            foreach (var move in moves)
+            if (pos.y + 1 < floor)
             {
-                var next = (pos.x + move.dx, pos.y + move.dy);
-                if (CanMove(map, next)) return (true, next);
+                //return moves.Select(delta => (false, (pos.x + delta.dx, pos.y + delta.dy))).Where(next => !map.Contains(next.Item2)).FirstOrDefault((true,pos));
+
+                foreach (var (dx, dy) in moves)
+                {
+                    var next = (pos.x + dx, pos.y + dy);
+                    if (!map.Contains(next)) return (false, next);
+                }
             }
-            return (false, (0, 0));
+            return (true, pos);
         }
 
-        static bool CanMove(Dictionary<(int x, int y), char> map, (int x, int y) pos)
+        private static int Simulate(string input, QuestionPart part)
         {
-            return !map.ContainsKey(pos);
+            HashSet<(int x, int y)> map = new();
+            var pairs = Util.Split(input, '\n')
+                            .Select(line => 
+                                Util.Parse<ManhattanVector2>(line.Split(" -> "))
+                                .Select(v => v.AsSimple())
+                                .OverlappingPairs())
+                            .SelectMany(x => x);
+
+            foreach (var (first, second) in pairs)
+            {
+                var (dx, dy) = (Math.Sign(second.x - first.x), Math.Sign(second.y - first.y));
+
+                for (var pos = first; pos != second; pos.x += dx, pos.y += dy)
+                {
+                    map.Add(pos);
+                }
+                map.Add(second);
+            }
+           
+            int maxY = map.Max(kvp => kvp.y) + 2;
+            int floor = part.Two() ? maxY : int.MaxValue;
+
+            int count = 0;
+            (int x, int y) source = (500, 0), sandPos = source;
+
+            while (sandPos.y < maxY)
+            {
+                (var blocked, sandPos) = FindStep(map, sandPos, floor);
+                if (blocked)
+                {
+                    map.Add(sandPos);
+                    count++;
+                    if (sandPos == source) break;
+                    sandPos = source;
+                }
+            }
+
+            return count;
         }
 
         public static int Part1(string input)
         {
-            Dictionary<(int x, int y), char> map = new();
-            var lines = Util.Split(input, '\n');
-            foreach (var line in lines)
-            {
-                var pairs = Util.Parse<ManhattanVector2>(line.Split(" -> ")).OverlappingPairs();
-                foreach (var pair in pairs) 
-                {
-                    var dx = Math.Sign(pair.second.X - pair.first.X);
-                    var dy = Math.Sign(pair.second.Y - pair.first.Y);
-
-                    var pos = pair.first.AsSimple();
-                    var end = pair.second.AsSimple();
-
-                    while (pos != end)
-                    {
-                        map[pos] = '#';
-                        pos.x += dx;
-                        pos.y += dy;
-                    }
-                    map[pos] = '#';
-                }
-            }
-
-            int maxY = map.Max(kvp => kvp.Key.y);
-
-            (int x, int y) sandPos = (500, 0);
-            while (true)
-            {
-                while (true)
-                {
-                    var move = FindStep(map, sandPos);
-                    if (!move.canMove)
-                    {
-                        map[sandPos] = 'o';
-                        break;
-                    }
-
-
-                }
-
-                if (sandPos.y >= maxY) break;
-                
-            }
-
-            return 0;
+            return Simulate(input, QuestionPart.Part1);
         }
 
         public static int Part2(string input)
         {
-            return 0;
+            return Simulate(input, QuestionPart.Part2);
         }
 
         public void Run(string input, ILogger logger)
         {
-
-            string test = "498,4 -> 498,6 -> 496,6\n503,4 -> 502,4 -> 502,9 -> 494,9";
-
-            Console.WriteLine(Part1(test));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }
