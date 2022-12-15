@@ -25,13 +25,13 @@ Sensor at x=20, y=1: closest beacon is at x=15, y=3".Replace("\r", "");
         [DataTestMethod]
         public void Beacons01Test()
         {
-            Assert.AreEqual(26, Day15.SolvePart1(test, 10));
+            Assert.AreEqual(26, Day15.Part1(test, 10));
         }
 
         [DataTestMethod]
         public void Beacons02Test()
         {
-            Assert.AreEqual("56000011", Day15.SolvePart2(test, 20).ToString());
+            Assert.AreEqual("56000011", Day15.Part2(test, 20).ToString());
         }
 
         [TestCategory("Regression")]

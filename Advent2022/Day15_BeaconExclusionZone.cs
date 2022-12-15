@@ -1,5 +1,5 @@
 ﻿using AoC.Utils;
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
@@ -12,7 +12,7 @@ namespace AoC.Advent2022
         public class Sensor
         {
             [Regex(@"Sensor at x=(.+), y=(.+): closest beacon is at x=(.+), y=(.+)")]
-            public Sensor (int x, int y, int bx, int by)
+            public Sensor(int x, int y, int bx, int by)
             {
                 Pos = (x, y);
                 Beacon = (bx, by);
@@ -23,68 +23,47 @@ namespace AoC.Advent2022
 
             public bool InRange((int x, int y) test) => test.Distance(Pos) <= Range;
 
-            public (int minX, int maxX) GetRowRange(int row)
+            public bool WithinRow(int row) => row >= Pos.y - Range && row <= Pos.y + Range;
+
+            public IEnumerable<(int x, int y)> OuterBoundary()
             {
-                var dy = Math.Abs(Pos.y - row);
-                if (dy > Range) return (-1, -1);
-                return (Pos.x - (Range-dy), Pos.x + (Range-dy));
-            }
-        }
-
-        public static int SolvePart1(string input, int line)
-        {
-            var sensors = Util.RegexParse<Sensor>(input).ToArray();
-            var beacons = sensors.Select(s => s.Beacon).ToHashSet();
-
-            var minX = sensors.Min(s => s.Pos.x);
-            var maxX = sensors.Max(s => s.Pos.x);
-            var maxRange = sensors.Max(s => s.Range);
-
-            int count = 0;
-            for (int x = minX-maxRange; x <= maxX+maxRange; ++x)
-            {
-                var test = (x, line);
-                if (!beacons.Contains(test) && sensors.Any(s => s.InRange(test))) count++;
-            }
-
-            return count;
-        }
-
-        public static BigInteger SolvePart2(string input, int max)
-        {
-            var sensors = Util.RegexParse<Sensor>(input).ToArray();
-
-            for (int y = 0; y <= max; ++y)
-            {
-                var ranges = sensors.Select(s => s.GetRowRange(y)).OrderBy(v => v.maxX);
-                for (int x = 0; x <= max; ++x)
+                for (int y = 0; y <= Range + 1; ++y)
                 {
-                    foreach (var limit in ranges)
+                    int size = (Range - y) + 1;
+                    yield return (Pos.x - size, Pos.y + y);
+                    if (size > 0) yield return (Pos.x + size, Pos.y + y);
+                    if (y != 0)
                     {
-                        if (x >= limit.minX && x <= limit.maxX) x = limit.maxX+1;
-                        if (x > max) break;
-                    }
-                    if (x <= max)
-                    {
-                        if (!sensors.Any(s => s.InRange((x, y))))
-                        {
-                            return ((BigInteger)x * 4000000) + y;
-                        }
+                        yield return (Pos.x - size, Pos.y - y);
+                        if (size > 0) yield return (Pos.x + size, Pos.y - y);
                     }
                 }
             }
-
-            return 0;
         }
 
-        public static int Part1(string input)
-        {         
-            return SolvePart1(input, 2000000);
-        }
-
-        public static BigInteger Part2(string input)
+        public static int Part1(string input, int line = 2000000)
         {
-            return SolvePart2(input, 4000000);
+            var sensors = Util.RegexParse<Sensor>(input).Where(s => s.WithinRow(line)).ToArray();
+            var beacons = sensors.Select(s => s.Beacon).Where(p => p.y == line).Distinct();
+
+            var minX = sensors.Min(s => s.Pos.x - s.Range);
+            var maxX = sensors.Max(s => s.Pos.x + s.Range);
+
+            return Enumerable.Range(minX, maxX - minX)
+                             .Where(x => sensors.Any(s => s.InRange((x, line))))
+                             .Count() - beacons.Count();
+        }
+
+        public static BigInteger Part2(string input, int max = 4000000)
+        {
+            var sensors = Util.RegexParse<Sensor>(input).ToArray();
+
+            var (x, y) = sensors.SelectMany(s => s.OuterBoundary())
+                               .Where(p => p.x >= 0 && p.x <= max && p.y >= 0 && p.y <= max)
+                               .Where(p => !sensors.Any(s => s.InRange(p)))
+                               .First();
+
+            return (new BigInteger(4000000) * x) + y;
         }
 
         public void Run(string input, ILogger logger)
