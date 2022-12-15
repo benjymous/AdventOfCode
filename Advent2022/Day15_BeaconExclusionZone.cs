@@ -1,8 +1,7 @@
 ﻿using AoC.Utils;
-using AoC.Utils.Vectors;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace AoC.Advent2022
 {
@@ -22,9 +21,13 @@ namespace AoC.Advent2022
             public readonly (int x, int y) Pos, Beacon;
             public readonly int Range;
 
-            public bool InRange((int x, int y) test)
+            public bool InRange((int x, int y) test) => test.Distance(Pos) <= Range;
+
+            public (int minX, int maxX) GetRowRange(int row)
             {
-                return test.Distance(Pos) <= Range;
+                var dy = Math.Abs(Pos.y - row);
+                if (dy > Range) return (-1, -1);
+                return (Pos.x - (Range-dy), Pos.x + (Range-dy));
             }
         }
 
@@ -32,8 +35,6 @@ namespace AoC.Advent2022
         {
             var sensors = Util.RegexParse<Sensor>(input).ToArray();
             var beacons = sensors.Select(s => s.Beacon).ToHashSet();
-
-
 
             var minX = sensors.Min(s => s.Pos.x);
             var maxX = sensors.Max(s => s.Pos.x);
@@ -49,36 +50,45 @@ namespace AoC.Advent2022
             return count;
         }
 
-        public static int Part1(string input)
+        public static BigInteger SolvePart2(string input, int max)
         {
-            
+            var sensors = Util.RegexParse<Sensor>(input).ToArray();
+
+            for (int y = 0; y <= max; ++y)
+            {
+                var ranges = sensors.Select(s => s.GetRowRange(y)).OrderBy(v => v.maxX);
+                for (int x = 0; x <= max; ++x)
+                {
+                    foreach (var limit in ranges)
+                    {
+                        if (x >= limit.minX && x <= limit.maxX) x = limit.maxX+1;
+                        if (x > max) break;
+                    }
+                    if (x <= max)
+                    {
+                        if (!sensors.Any(s => s.InRange((x, y))))
+                        {
+                            return ((BigInteger)x * 4000000) + y;
+                        }
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        public static int Part1(string input)
+        {         
             return SolvePart1(input, 2000000);
         }
 
-        public static int Part2(string input)
+        public static BigInteger Part2(string input)
         {
-            return 0;
+            return SolvePart2(input, 4000000);
         }
 
         public void Run(string input, ILogger logger)
         {
-            string test = @"Sensor at x=2, y=18: closest beacon is at x=-2, y=15
-Sensor at x=9, y=16: closest beacon is at x=10, y=16
-Sensor at x=13, y=2: closest beacon is at x=15, y=3
-Sensor at x=12, y=14: closest beacon is at x=10, y=16
-Sensor at x=10, y=20: closest beacon is at x=10, y=16
-Sensor at x=14, y=17: closest beacon is at x=10, y=16
-Sensor at x=8, y=7: closest beacon is at x=2, y=10
-Sensor at x=2, y=0: closest beacon is at x=2, y=10
-Sensor at x=0, y=11: closest beacon is at x=2, y=10
-Sensor at x=20, y=14: closest beacon is at x=25, y=17
-Sensor at x=17, y=20: closest beacon is at x=21, y=22
-Sensor at x=16, y=7: closest beacon is at x=15, y=3
-Sensor at x=14, y=3: closest beacon is at x=15, y=3
-Sensor at x=20, y=1: closest beacon is at x=15, y=3".Replace("\r", "");
-
-            Console.WriteLine(SolvePart1(test, 10));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }
