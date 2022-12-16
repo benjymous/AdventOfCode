@@ -1,108 +1,84 @@
 ﻿using AoC.Utils;
-using AoC.Utils.Collections;
 using AoC.Utils.Pathfinding;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using static AoC.Advent2021.Day18;
 
 namespace AoC.Advent2022
 {
     public class Day16 : IPuzzle
     {
         public string Name => "2022-16";
+        static readonly int AA = MakeId("AA");
+
+        static int MakeId(string name) => name[0] + (name[1] << 8);
 
         class Valve
         {
             [Regex("Valve (..) has flow rate=(.+); tunnels? leads? to valves? (.+)")]
             public Valve(string id, int rate, string[] neighbours)
             {
-                Id = id;
+                Id = MakeId(id);
                 Rate = rate;
-                Neighbours = neighbours.Select(n => n.Trim()).ToArray();
+                Neighbours = neighbours.Select(n => MakeId(n.Trim())).ToArray();
             }
 
-            public string Id;
+            public int Id;
             public uint IntId;
             public int Rate;
-            public string[] Neighbours;
+            public int[] Neighbours;
         }
 
-        class MapData : IMap<string>
+        record MapData(Dictionary<int, int[]> Data) : IMap<int>
         {
-            public MapData(Dictionary<string, Valve> data)
-            {
-                Data = data;
-            }
-
-            Dictionary<string, Valve> Data;
-
-            public IEnumerable<string> GetNeighbours(string location)
-            {
-                return Data[location].Neighbours;
-            }
+            public IEnumerable<int> GetNeighbours(int location) => Data[location];
         }
 
-        public static int Part1(string input)
+        public static int Part1(string input, ILogger logger)
         {
-            var data = Util.RegexParse<Valve>(input);
+            logger.WriteLine("start");
+            var data = Util.RegexParse<Valve>(input).ToArray();
+            var valves = data.Where(val => val.Rate > 0);
 
-            var valves = data.Where(val => val.Rate > 0).ToArray();
+            foreach (var v in valves.WithIndex(1)) v.Value.IntId = (1U << v.Index);
+        
+            var mapAdaptor = new MapData(data.ToDictionary(val => val.Id, val => val.Neighbours));
 
-            uint id = 1 << 1;
-            foreach (var v in valves)
-            {
-                v.IntId = id <<= 1;
-            }
-
-            var map = data.ToDictionary(val => val.Id, val => val);
-            map["AA"] = data.Where(val => val.Id == "AA").First();
+            logger.WriteLine("parsed");
 
             Dictionary<uint, int> routes = new();
-            var mapAdaptor = new MapData(map);
-
-            var lookup = valves.ToDictionary(val => val.IntId, val => val.Rate);
-            
             foreach (var v1 in valves)
             {
-                routes[1 | v1.IntId] = AStar<string>.FindPath(mapAdaptor, "AA", v1.Id).Length;
-                foreach (var v2 in valves)
+                routes.Add(1 | v1.IntId, AStar<int>.FindPath(mapAdaptor, AA, v1.Id).Length);
+                foreach (var v2 in valves.Where(v => v.IntId < v1.IntId))
                 {
-                    if (v1.IntId < v2.IntId)
-                    {
-                        routes[v1.IntId | v2.IntId] = AStar<string>.FindPath(mapAdaptor, v1.Id, v2.Id).Length;
-                    }
+                    routes.Add(v1.IntId | v2.IntId, AStar<int>.FindPath(mapAdaptor, v1.Id, v2.Id).Length);
                 }
             }
 
-            var queue = new Queue<(uint location, int mins, int open, int released, uint toVisit)>();
-            queue.Enqueue((1, 0, 0, 0, (uint)valves.Sum(v => v.IntId)));
+            logger.WriteLine("mapped");
 
+            var lookup = valves.ToDictionary(val => val.IntId, val => val.Rate);
+
+            var queue = new Queue<(uint location, int mins, int open, int released, uint toVisit)>(Util.Values((1U, 30, 0, 0, (uint)valves.Sum(v => v.IntId))));
             Dictionary<uint, int> seen = new();
-
             int best = int.MinValue;
 
             queue.Operate(entry =>
             {               
-                if (entry.mins < 30)
+                if (entry.mins > 0)
                 {
-                    entry.released += entry.open;
-
-                    var potential = entry.released + (entry.open * (29 - entry.mins));                  
+                    var potential = entry.released + (entry.open * (entry.mins));
                     best = Math.Max(best, potential);
-
                     var key = entry.location + entry.toVisit << 16;
-                    if (seen.TryGetValue(key, out var val) && val > potential) return;
-                    seen[key] = potential;
-
-                    foreach (var next in entry.toVisit.BitSequence())
+                    if (!seen.TryGetValue(key, out var val) || val <= potential)
                     {
-                        var distance = routes[entry.location | next];
-
-                        var nextState = (location: next, mins: entry.mins + distance + 1, open: entry.open + lookup[next], released: entry.released + (entry.open * distance), toVisit: entry.toVisit - next);
-
-                        queue.Enqueue(nextState);
+                        seen[key] = potential;
+                        foreach (var next in entry.toVisit.BitSequence())
+                        {
+                            var distance = routes[entry.location | next];
+                            queue.Enqueue((location: next, mins: entry.mins - (distance + 1), open: entry.open + lookup[next], released: entry.released + (entry.open * (distance + 1)), toVisit: entry.toVisit - next));
+                        }
                     }
                 }
             });
@@ -214,7 +190,7 @@ namespace AoC.Advent2022
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt1 - " + Part1(input, logger));
             //logger.WriteLine("- Pt2 - " + Part2(input, logger));
         }
     }
