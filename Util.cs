@@ -494,6 +494,13 @@ namespace AoC
                 }
             }
         }
+
+        public static IEnumerable<(T1, T2)> Combinations<T1,T2>(IEnumerable<T1> set1, IEnumerable<T2> set2)
+        {
+            foreach (var item1 in set1)
+                foreach (var item2 in set2)
+                    yield return (item1, item2);
+        }
     }
 
 
