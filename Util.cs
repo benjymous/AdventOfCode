@@ -294,16 +294,6 @@ namespace AoC
 
         public static IEnumerable<int> Forever(int start = 0) => Enumerable.Range(start, int.MaxValue - start);
 
-        public static IEnumerable<int> RepeatForever(IEnumerable<int> input)
-        {
-            while (true)
-            {
-                foreach (var i in input)
-                {
-                    yield return i;
-                }
-            }
-        }
 
         public static IEnumerable<T> Repeat<T>(Func<T> generator, int count)
         {

@@ -438,6 +438,17 @@ namespace AoC.Utils
         public static IEnumerable<TSource> AppendMultiple<TSource>(this IEnumerable<TSource> source, params TSource[] elements)
         {
             return source.Concat(elements);
-        }        
+        }
+
+        public static IEnumerable<T> Forever<T>(this IEnumerable<T> input)
+        {
+            while (true)
+            {
+                foreach (var i in input)
+                {
+                    yield return i;
+                }
+            }
+        }
     }
 }
