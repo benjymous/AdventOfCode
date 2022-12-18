@@ -20,7 +20,7 @@ namespace AoC.Advent2022.Test
         [DataTestMethod]
         public void Rocktris02Test()
         {
-            Assert.AreEqual(1514285714288, Day17.Part2(test));
+            Assert.AreEqual(1514285714288UL, Day17.Part2(test));
         }
 
         [TestCategory("Regression")]

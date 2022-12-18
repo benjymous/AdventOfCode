@@ -17,6 +17,7 @@ namespace AoC.Advent2022
         class State
         {
             public int MaxY = 0;
+            public int LastMax = 0;
             Dictionary<int, byte> map = new() { [0] = 255 };
 
             public bool Blocked((int x, int y) pos)
@@ -54,9 +55,17 @@ namespace AoC.Advent2022
                 }
             }
 
+            public IEnumerable<byte> Checksum(int currentShape)
+            {
+                yield return (byte)currentShape;
+                //yield return (byte)(MaxY - LastMax);
+                LastMax = MaxY;
+                for (int i = MaxY; i>0 && i > MaxY - 7; i--) 
+                    yield return map[i];
+            }
         }
 
-        private static int RunRocktris(string input, ulong rounds)
+        private static ulong RunRocktris(string input, ulong rounds)
         {
             var wind = WindSequence(input).GetEnumerator();
             wind.MoveNext();
@@ -66,6 +75,10 @@ namespace AoC.Advent2022
             int currentShape = 0;
 
             var state = new State();
+            Dictionary<ulong, ulong> seen = new();
+            Dictionary<int, int> cycles = new();
+            Dictionary<ulong, int> counts = new();
+            ulong extra = 0;
 
             for (ulong i = 0; i < rounds; ++i)
             {
@@ -90,31 +103,61 @@ namespace AoC.Advent2022
 
                 state.Cull();
 
-                //if (i % 100000 == 0)
-                //{
-                //    Console.WriteLine($"{i} / {rounds}");
-                //}
+                if (rounds > 2022)// && extra==0)
+                {
+                    counts[i] = state.MaxY;
+                    var blah = state.Checksum(currentShape).ToArray();
+                    if (blah.Length == 8)
+                    {
+                        var check = BitConverter.ToUInt64(blah, 0);
+                        if (seen.TryGetValue(check, out ulong value))
+                        {
+                            int cycle = (int)(i - value);
+                            //if (cycle > 1500)
+                            {
+                                //Console.WriteLine($"{i} => {value} -- {cycle}");
+                                cycles.IncrementAtIndex(cycle);
+                                var maxValueKey = cycles.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+                                if (cycles[maxValueKey] > 1000)
+                                {
+                                    Console.WriteLine($"  {maxValueKey} : {cycles[maxValueKey]}");
+
+                                    var deltaScore = state.MaxY - counts[i -(ulong)maxValueKey];
+                                    Console.WriteLine($"  => {deltaScore}");
+
+                                    var remaining = Math.DivRem((rounds - i), (ulong)maxValueKey);
+
+                                    rounds = i + remaining.Remainder;
+                                    extra = (ulong)deltaScore * remaining.Quotient;
+
+                                }
+                            }
+                        }
+                        seen[check] = i;
+                    }
+                }
             }
 
-            return state.MaxY;
+            return (ulong)state.MaxY + extra;
         }
 
         public static int Part1(string input)
         {
-            return RunRocktris(input, 2022);
+            return (int)RunRocktris(input, 2022);
         }
 
-        public static long Part2(string input)
+        public static ulong Part2(string input)
         {
             return RunRocktris(input, 1000000000000);
         }
 
         public void Run(string input, ILogger logger)
         {
-            //Console.WriteLine(Part1(test));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
-            //logger.WriteLine("- Pt2 - " + Part2(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }
+// 1500874635626 << high
+// 1500874635588 << high
+// 1511111111112 << high
