@@ -1,7 +1,4 @@
-﻿using AoC.Utils;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2022
@@ -10,146 +7,89 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-17";
 
-        readonly static string shapeData = "####|.#.,###,.#.|###,..#,..#|#,#,#,#|##,##";
-
-        static IEnumerable<int> WindSequence(string input) => input.Trim().Forever().Select(c => c == '<' ? -1 : 1);
+        readonly static (int x, int y)[][] Shapes = Util.Values("####",".#.,###,.#.","###,..#,..#","#,#,#,#","##,##").Select(part => Util.ParseSparseMatrix<bool>(part).Keys.ToArray()).ToArray();
 
         class State
         {
-            public int MaxY = 0;
-            public int LastMax = 0;
-            Dictionary<int, byte> map = new() { [0] = 255 };
+            public State(string input) => windData = input.Trim();
 
-            public bool Blocked((int x, int y) pos)
+            readonly List<byte> map = new() { 255 };
+            readonly string windData;
+            public int windIdx = 0;
+
+            public int MaxHeight => map.Count-1;
+
+            public int WindDirection()
             {
-                return pos.y <= 0 || pos.x <= 0 || pos.x >= 8 || map.TryGetValue(pos.y, out var row) && ((row & 1 << pos.x) != 0);
+                int res = windData[windIdx] == '<' ? -1 : 1;
+                windIdx = (windIdx + 1) % windData.Length;
+                return res;
             }
 
-            public bool CheckBlocked(IEnumerable<(int x, int y)> shape, int dx, int dy)
-            {
-                foreach (var (x, y) in shape)
-                {
-                    if (Blocked((x + dx, y + dy)))
-                    {
-                        return true;
-                    }
-                }
-                return false;
-            }
+            bool Blocked((int x, int y) pos) => pos.y <= 0 || pos.x <= 0 || pos.x >= 8 || map.Count>pos.y && ((map[pos.y] & 1 << pos.x) != 0);
+            public bool CheckBlocked(IEnumerable<(int x, int y)> shape, int dx, int dy) => shape.Any((pos) => Blocked((pos.x + dx, pos.y + dy)));
 
             public void FinishBlock(IEnumerable<(int x, int y)> shape, (int x, int y) pos)
             {
                 foreach (var (x, y) in shape.Select(p => (p.x + pos.x, p.y + pos.y)))
                 {
-                    if (!map.ContainsKey(y)) map[y] = 0;
-                    MaxY = Math.Max(y, MaxY);
+                    while (map.Count < y + 1) map.Add(0);
                     map[y] |= (byte)(1 << x);
                 }
-            }
-
-            public void Cull()
-            {
-                if (MaxY % 100 == 0)
-                {
-                    map = map.Where(kvp => kvp.Key >= MaxY - 20).ToDictionary();
-                }
-            }
-
-            public IEnumerable<byte> Checksum(int currentShape)
-            {
-                yield return (byte)currentShape;
-                //yield return (byte)(MaxY - LastMax);
-                LastMax = MaxY;
-                for (int i = MaxY; i>0 && i > MaxY - 7; i--) 
-                    yield return map[i];
             }
         }
 
         private static ulong RunRocktris(string input, ulong rounds)
         {
-            var wind = WindSequence(input).GetEnumerator();
-            wind.MoveNext();
+            var state = new State(input);
+            HashSet<int> seen = new();
 
-            var shapes = Util.Split(shapeData, '|').Select(part => Util.ParseSparseMatrix<bool>(part).Keys.ToArray()).ToArray();
-
-            int currentShape = 0;
-
-            var state = new State();
-            Dictionary<ulong, ulong> seen = new();
-            Dictionary<int, int> cycles = new();
-            Dictionary<ulong, int> counts = new();
-            ulong extra = 0;
-
-            for (ulong i = 0; i < rounds; ++i)
+            int currentShape = 0, findWindIndex = -1;
+            ulong benchmarkHeight = 0, firstRepeatIndex = 0, repeatHeight = 0, secondRepeatIndex = 0, targetRound = rounds;
+            for (ulong i = 0; i < targetRound; ++i)
             {
-                (int x, int y) rockPos = (3, 4 + state.MaxY);
-                while (true)
+                var shape = Shapes[currentShape];
+                for ((int x, int y) rockPos = (3, 4 + state.MaxHeight); true; rockPos.y--)
                 {
-                    var shape = shapes[currentShape];
-                    var dx = wind.Pop();
-                    if (!state.CheckBlocked(shape, rockPos.x + dx, rockPos.y))
-                    {
-                        rockPos.x += dx;
-                    }
-
+                    var windDir = state.WindDirection();                  
+                    if (!state.CheckBlocked(shape, rockPos.x + windDir, rockPos.y)) rockPos.x += windDir;                  
                     if (state.CheckBlocked(shape, rockPos.x, rockPos.y - 1))
                     {
                         state.FinishBlock(shape, rockPos);
                         break;
                     }
-                    rockPos.y--;
-                }
+                }               
                 currentShape = (currentShape + 1) % 5;
 
-                state.Cull();
-
-                if (rounds > 2022)// && extra==0)
+                if (currentShape == 0)
                 {
-                    counts[i] = state.MaxY;
-                    var blah = state.Checksum(currentShape).ToArray();
-                    if (blah.Length == 8)
+                    if (findWindIndex == -1)
                     {
-                        var check = BitConverter.ToUInt64(blah, 0);
-                        if (seen.TryGetValue(check, out ulong value))
+                        if (seen.Contains(state.windIdx))
                         {
-                            int cycle = (int)(i - value);
-                            //if (cycle > 1500)
-                            {
-                                //Console.WriteLine($"{i} => {value} -- {cycle}");
-                                cycles.IncrementAtIndex(cycle);
-                                var maxValueKey = cycles.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
-                                if (cycles[maxValueKey] > 1000)
-                                {
-                                    Console.WriteLine($"  {maxValueKey} : {cycles[maxValueKey]}");
-
-                                    var deltaScore = state.MaxY - counts[i -(ulong)maxValueKey];
-                                    Console.WriteLine($"  => {deltaScore}");
-
-                                    var remaining = Math.DivRem((rounds - i), (ulong)maxValueKey);
-
-                                    rounds = i + remaining.Remainder;
-                                    extra = (ulong)deltaScore * remaining.Quotient;
-
-                                }
-                            }
+                            findWindIndex = state.windIdx;
+                            benchmarkHeight = (uint)state.MaxHeight;
+                            firstRepeatIndex = i;
                         }
-                        seen[check] = i;
+                        else seen.Add(state.windIdx);
                     }
+                    else if (state.windIdx == findWindIndex)
+                    {
+                        repeatHeight = (ulong)state.MaxHeight - benchmarkHeight;
+                        secondRepeatIndex = i - firstRepeatIndex;
+                        targetRound = i + (rounds - firstRepeatIndex) % secondRepeatIndex;
+                    }                        
                 }
             }
 
-            return (ulong)state.MaxY + extra;
+            return secondRepeatIndex == 0
+                ? (ulong)state.MaxHeight
+                : benchmarkHeight + ((rounds - firstRepeatIndex) / secondRepeatIndex * repeatHeight) + ((ulong)state.MaxHeight - benchmarkHeight - repeatHeight);
         }
 
-        public static int Part1(string input)
-        {
-            return (int)RunRocktris(input, 2022);
-        }
+        public static int Part1(string input) => (int)RunRocktris(input, 2022);
 
-        public static ulong Part2(string input)
-        {
-            return RunRocktris(input, 1000000000000);
-        }
+        public static ulong Part2(string input) => RunRocktris(input, 1000000000000);
 
         public void Run(string input, ILogger logger)
         {
@@ -158,6 +98,3 @@ namespace AoC.Advent2022
         }
     }
 }
-// 1500874635626 << high
-// 1500874635588 << high
-// 1511111111112 << high
