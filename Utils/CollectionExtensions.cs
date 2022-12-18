@@ -450,5 +450,23 @@ namespace AoC.Utils
                 }
             }
         }
+
+        public static IEnumerable<T> GetUniqueItems<T>(this IEnumerable<T> array)
+        {
+            var uniques = new HashSet<T>();
+            var duplicates = new HashSet<T>();
+            foreach (var item in array)
+            {
+                if (duplicates.Contains(item)) continue;
+                if (uniques.Contains(item))
+                {
+                    duplicates.Add(item);
+                    uniques.Remove(item);
+                    continue;
+                }
+                uniques.Add(item);
+            }
+            return uniques;
+        }
     }
 }
