@@ -48,7 +48,7 @@ namespace AoC.Advent2022.Test
         {
             var bp = Util.RegexCreate<Day19.Blueprint>(input);
             
-            Assert.AreEqual(expected, Day19.RunBlueprint(bp, 25, new ConsoleOut()).score);
+            Assert.AreEqual(expected, Day19.RunBlueprint(bp, 24).score);
         }
 
         [TestCategory("Test")]
@@ -59,21 +59,21 @@ namespace AoC.Advent2022.Test
         {
             var bp = Util.RegexCreate<Day19.Blueprint>(input);
 
-            Assert.AreEqual(expected, Day19.RunBlueprint(bp, 33, new ConsoleOut()).geodes);
+            Assert.AreEqual(expected, Day19.RunBlueprint(bp, 32).geodes);
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Minerals_Part1_Regression()
         {
-            Assert.AreEqual(1653, Day19.Part1(input, new ConsoleOut()));
+            Assert.AreEqual(1653, Day19.Part1(input));
         }
 
-        //[TestCategory("Regression")]
-        //[DataTestMethod]
-        //public void Minerals_Part2_Regression()
-        //{
-        //    Assert.AreEqual(0, Day19.Part2(input));
-        //}
+        [TestCategory("Regression")]
+        [DataTestMethod]
+        public void Minerals_Part2_Regression()
+        {
+            Assert.AreEqual(4212, Day19.Part2(input));
+        }
     }
 }
