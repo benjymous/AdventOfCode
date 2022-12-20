@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -135,6 +136,22 @@ namespace AoC.Utils.Collections
             return current;
         }
 
+        public void Move(int delta)
+        {
+            if (delta == 0) return;
+            Circle<T> newPos = null;
+            if (delta > 0)
+            {
+                newPos = Forward(delta);
+            }
+            else if (delta < 0)
+            {
+                newPos = Back(Math.Abs(delta));
+            }
+            Remove();
+            newPos.Insert(this);
+        }
+
         public void Set(T val) => Value = val;
 
         public int Count() => index.Count;
@@ -172,6 +189,17 @@ namespace AoC.Utils.Collections
             while (current != this)
             {
                 yield return current.Value;
+                current = current.Next();
+            }
+        }
+
+        public IEnumerable<Circle<T>> Elements()
+        {
+            yield return this;
+            var current = next;
+            while (current != this)
+            {
+                yield return current;
                 current = current.Next();
             }
         }
