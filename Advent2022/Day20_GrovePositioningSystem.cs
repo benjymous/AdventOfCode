@@ -1,7 +1,4 @@
-﻿using AoC.Utils;
-using AoC.Utils.Collections;
-using System;
-using System.Collections.Generic;
+﻿using AoC.Utils.Collections;
 using System.Linq;
 
 namespace AoC.Advent2022
@@ -10,37 +7,40 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-20";
 
-        public static int Part1(string input)
+        private static long Shuffle(string input, long key=1, int repeats=1)
         {
-            var numbers = Util.ParseNumbers<int>(input);
-
-            var circle = Circle<int>.Create(numbers);
+            var circle = Circle<Boxed<long>>.Create(Util.ParseNumbers<int>(input).Select(i => new Boxed<long>(key * i)));
             var elements = circle.Elements().ToArray();
+            var zero = elements.First(e => e.Value == 0);
 
-            foreach (var el in elements)
+            for (int i = 0; i < repeats; ++i)
             {
-                el.Move(el.Value);
+                foreach (var el in elements)
+                {
+                    el.Move(el.Value);
+                }
             }
 
-            var v = circle.Find(1);
+            var e1 = zero.Forward(1000);
+            var e2 = zero.Forward(2000);
+            var e3 = zero.Forward(3000);
 
-            Console.WriteLine(string.Join(", ", v.Values()));
-
-
-            return 0;
+            return e1.Value + e2.Value + e3.Value;
         }
 
-        public static int Part2(string input)
+        public static int Part1(string input)
         {
-            return 0;
+            return (int)Shuffle(input);
+        }
+
+
+        public static long Part2(string input)
+        {
+            return Shuffle(input, 811589153L, 10);
         }
 
         public void Run(string input, ILogger logger)
         {
-            string test = "1\n2\n-3\n3\n-2\n0\n4";
-
-            Console.WriteLine(Part1(test));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

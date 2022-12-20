@@ -58,6 +58,8 @@ namespace AoC.Utils.Collections
         public Circle<T> Next() => next;
         public Circle<T> Prev() => prev;
 
+        public bool Orphaned => orphaned;
+
         public Circle<T> Back(int distance)
         {
             var node = this;
@@ -70,6 +72,8 @@ namespace AoC.Utils.Collections
 
         public Circle<T> Forward(int distance)
         {
+            if (distance > Count) distance %= Count;
+
             var node = this;
             for (int i = 0; i < distance; ++i)
             {
@@ -136,25 +140,31 @@ namespace AoC.Utils.Collections
             return current;
         }
 
-        public void Move(int delta)
+        public void Move(int delta) => Move((long)delta);
+
+        public void Move(long delta)
         {
             if (delta == 0) return;
             Circle<T> newPos = null;
+            int move = (int)(Math.Abs(delta) % (Count - 1));
             if (delta > 0)
             {
-                newPos = Forward(delta);
+                newPos = Prev();
+                Remove();
+                newPos = newPos.Forward(move);
             }
             else if (delta < 0)
             {
-                newPos = Back(Math.Abs(delta));
+                newPos = Next();
+                Remove();
+                newPos = newPos.Back(move+1);
             }
-            Remove();
-            newPos.Insert(this);
+            newPos.InsertNext(this);
         }
 
         public void Set(T val) => Value = val;
 
-        public int Count() => index.Count;
+        public int Count => index.Count;
 
         public Circle<T> Find(T v)
         {

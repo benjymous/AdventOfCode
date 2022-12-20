@@ -17,7 +17,7 @@ namespace AoC.Advent2020
 
             if (part2)
             {
-                node.InsertRange(Enumerable.Range(10, 1000000 - start.Count()));
+                node.InsertRange(Enumerable.Range(10, 1000000 - start.Count));
             }
 
             return start;
