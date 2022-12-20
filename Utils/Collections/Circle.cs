@@ -214,6 +214,8 @@ namespace AoC.Utils.Collections
             }
         }
 
+        public static implicit operator T(Circle<T> node) => node.Value;
+
         public override string ToString() => Value.ToString();
     }
 }

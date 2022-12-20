@@ -1,4 +1,5 @@
-﻿using AoC.Utils.Collections;
+﻿using AoC.Utils;
+using AoC.Utils.Collections;
 using System.Linq;
 
 namespace AoC.Advent2022
@@ -11,19 +12,12 @@ namespace AoC.Advent2022
         {
             var circle = Circle<Boxed<long>>.Create(Util.ParseNumbers<int>(input).Select(i => new Boxed<long>(key * i)));
             var elements = circle.Elements().ToArray();
-            var zero = elements.First(e => e.Value == 0);
 
-            for (int i = 0; i < repeats; ++i)
-            {
-                foreach (var el in elements)
-                {
-                    el.Move(el.Value);
-                }
-            }
+            Enumerable.Range(0, repeats).ForEach(_ => elements.ForEach(el => el.Move(el.Value)));
 
-            var e1 = zero.Forward(1000);
-            var e2 = zero.Forward(2000);
-            var e3 = zero.Forward(3000);
+            var e1 = elements.First(e => e.Value == 0).Forward(1000);
+            var e2 = e1.Forward(1000);
+            var e3 = e2.Forward(1000);
 
             return e1.Value + e2.Value + e3.Value;
         }
@@ -32,7 +26,6 @@ namespace AoC.Advent2022
         {
             return (int)Shuffle(input);
         }
-
 
         public static long Part2(string input)
         {
