@@ -685,6 +685,8 @@ namespace AoC
         public Boxed(T v) => value = v;
         public static implicit operator T(Boxed<T> boxed) => boxed.value;
         public static implicit operator Boxed<T>(T value) => new(value);
+
+        public override string ToString() => value.ToString();
     }
 
 }
