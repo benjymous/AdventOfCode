@@ -242,6 +242,11 @@ namespace AoC.Utils
             return enumerable.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
+        public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> enumerable)
+        {
+            return enumerable.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        }
+
         public static SortedDictionary<TKey, TValue> ToSortedDictionary<TKey,TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> enumerable, IComparer<TKey> comparer)
         {
             var dict = new SortedDictionary<TKey, TValue>(comparer);
@@ -354,6 +359,14 @@ namespace AoC.Utils
             while (queue.TryDequeue(out var element, out var _))
             {
                 action(element);
+            }
+        }
+
+        public static void Operate<TElement, TPriority>(this PriorityQueue<TElement, TPriority> queue, Action<TElement, TPriority> action)
+        {
+            while (queue.TryDequeue(out var element, out var priority))
+            {
+                action(element, priority);
             }
         }
 

@@ -22,28 +22,28 @@ Valve JJ has flow rate=21; tunnel leads to valve II".Replace("\r", "");
         [DataTestMethod]
         public void Plumbing01Test()
         {
-            Assert.AreEqual(1651, Day16.Part1(test, new ConsoleOut()));
+            Assert.AreEqual(1651, Day16.Part1(test));
         }
 
         [TestCategory("Test")]
         [DataTestMethod]
         public void Plumbing02Test()
         {
-            Assert.AreEqual(1707, Day16.Part2(test, new ConsoleOut()));
+            Assert.AreEqual(1707, Day16.Part2(test));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Plumbing_Part1_Regression()
         {
-            Assert.AreEqual(1741, Day16.Part1(input, new ConsoleOut()));
+            Assert.AreEqual(1741, Day16.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Plumbing_Part2_Regression()
         {
-            Assert.AreEqual(2316, Day16.Part2(input, new ConsoleOut()));
+            Assert.AreEqual(2316, Day16.Part2(input));
         }
     }
 }

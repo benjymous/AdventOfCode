@@ -300,6 +300,11 @@ namespace AoC
             for (int i = 0; i < count; ++i) yield return generator();
         }
 
+        public static IEnumerable<X> For<T,X>(T start, T end, T step, Func<T, X> action) where T : IBinaryInteger<T>
+        {
+            for (T i = start; i != end; i += step) yield return action(i);
+        }
+
         public static IEnumerable<T> RepeatWhile<T>(Func<T> generator, Func<T, bool> shouldContinue)
         {
             bool cont;
@@ -492,7 +497,14 @@ namespace AoC
                     yield return (item1, item2);
         }
 
-        public static uint MakeFourCC(string input) => input[0] + ((uint)input[1] << 8) + ((uint)input[2] << 16) + ((uint)input[3] << 24);
+        public static ushort MakeTwoCC(string name) => (ushort)(name[0] + (name[1] << 8));
+
+        public static uint MakeFourCC(string name) => name[0] + ((uint)name[1] << 8) + ((uint)name[2] << 16) + ((uint)name[3] << 24);
+
+        public static (T min, T max) MinMax<T>(params T[] input) where T: IBinaryInteger<T>
+        {
+            return (input.Min(), input.Max());
+        }
 
     }
 
