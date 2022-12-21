@@ -1,13 +1,8 @@
-﻿using AoC.Advent2016.BunniTek;
-using AoC.Utils;
+﻿using AoC.Utils;
 using AoC.Utils.Pathfinding;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Threading;
-using static AoC.Advent2022.Day04;
 
 namespace AoC.Advent2022
 {
@@ -43,7 +38,7 @@ namespace AoC.Advent2022
         {
             var data = Util.RegexParse<Valve>(input).ToArray();
             valves = data.Where(val => val.Rate > 0);
-            foreach (var v in valves.WithIndex(1)) v.Value.IntId = (1U << v.Index);
+            foreach (var v in valves.OrderByDescending(val => val.Rate).WithIndex(1)) v.Value.IntId = (1U << v.Index);
 
             var mapAdaptor = new MapData(data.ToDictionary(val => val.Id, val => val.Neighbours));
 
@@ -61,32 +56,32 @@ namespace AoC.Advent2022
         }
         private static int Solve(Dictionary<uint, int> routes, Dictionary<uint, int> lookup, uint availableNodes, int availableTime)
         {
-            var queue = new Queue<(uint location, int mins, int open, int released, uint toVisit)>(Util.Values((1U, availableTime, 0, 0, availableNodes)));
+            var queue = new PriorityQueue<(uint location, int mins, int open, int released, uint toVisit), int>();
+            queue.Enqueue((1U, availableTime, 0, 0, availableNodes), 0);
             Dictionary<uint, int> seen = new();
             int best = 0;
 
             queue.Operate(entry =>
             {
-                if (entry.mins > 0)
+                var potential = entry.released + (entry.open * entry.mins);
+                if (potential > best)
                 {
-                    var potential = entry.released + (entry.open * (entry.mins));
-                    if (potential > best)
+                    best = potential;
+                }
+                var key = entry.toVisit;
+                if (!seen.TryGetValue(key, out var val) || val <= potential)
+                {
+                    seen[key] = potential;
+                    foreach (var next in entry.toVisit.BitSequence())
                     {
-                        best = potential;
-                    }
-                    var key = entry.location + entry.toVisit;// << 16;
-                    if (!seen.TryGetValue(key, out var val) || val <= potential)
-                    {
-                        seen[key] = potential;
-                        var visited = availableNodes - entry.toVisit;
-                        foreach (var next in entry.toVisit.BitSequence())
-                        {
-                            var distance = routes[entry.location | next];
-                            queue.Enqueue((location: next, mins: entry.mins - (distance + 1), open: entry.open + lookup[next], released: entry.released + (entry.open * (distance + 1)), toVisit: entry.toVisit - next));
-                        }
+                        var distance = routes[entry.location | next];
+                        var nextState = (location: next, mins: entry.mins - (distance + 1), open: entry.open + lookup[next], released: entry.released + (entry.open * (distance + 1)), toVisit: entry.toVisit - next);
+                        if (nextState.mins > 0)
+                            queue.Enqueue(nextState, -(nextState.released + (nextState.open * nextState.mins)));
                     }
                 }
             });
+
             return best;
         }
 
@@ -94,9 +89,7 @@ namespace AoC.Advent2022
         {
             Init(input, out IEnumerable<Valve> valves, out Dictionary<uint, int> routes, out Dictionary<uint, int> lookup);
 
-            uint availableNodes = (uint)valves.Sum(v => v.IntId);
-
-            return Solve(routes, lookup, availableNodes, 30);
+            return Solve(routes, lookup, (uint)valves.Sum(v => v.IntId), 30);
         }
 
         public static int Part2(string input, ILogger logger)
@@ -106,29 +99,15 @@ namespace AoC.Advent2022
             uint availableNodes = (uint)valves.Sum(v => v.IntId);
 
             int best = 0;
-
-            Dictionary<uint, int> scores = new();
-
-            for (uint i = 0; i <= availableNodes; ++i)
+            Dictionary<uint, int> scores = new() { [0] = 0 };
+            for (uint i = 2; i <= availableNodes; i+=2)
             {
-                uint nodes = i & availableNodes;
-                if (nodes > 0 && !scores.ContainsKey(nodes))
-                {
-                    var route = Solve(routes, lookup, nodes, 26);
-                    if (route > 0) scores[nodes] = route;
-                }
+                uint nodes1 = i & availableNodes;
+                uint nodes2 = ~i & availableNodes;
+                if (!scores.TryGetValue(nodes1, out int score1)) scores[nodes1] = score1 = Solve(routes, lookup, nodes1, 26);    
+                if (!scores.TryGetValue(nodes2, out int score2)) scores[nodes2] = score2 = Solve(routes, lookup, nodes2, 26);
+                best = Math.Max(best, score1 + score2);
             }
-
-            for (uint i = 0; i <= availableNodes; ++i)
-            {
-                var nodes1 = i & availableNodes;
-                var nodes2 = ~i & availableNodes;
-                if (scores.TryGetValue(nodes1, out int value1) && scores.TryGetValue(nodes2, out int value2))
-                {
-                    best = Math.Max(best, value1 + value2);
-                }
-            }
-
             return best;
         }
 
