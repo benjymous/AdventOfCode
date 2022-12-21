@@ -1,5 +1,4 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,55 +8,70 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-21";
 
+        static readonly string HumanKey = "humn";
+        static readonly string RootKey = "root";
+
         public class Monkey
         {
             [Regex("(....): (....) (.) (....)")]
-            public Monkey(string name, string left, char op, string right)
-            {
-                Name = name;
-                Left = left;
-                Right = right;
-                Op = op;
-            }
+            public Monkey(string name, string left, char op, string right) => (Name, _Left, _Right, Op) = (name, left, right, op);
 
             [Regex(@"(....): (\d+)")]
-            public Monkey(string name, long value)
+            public Monkey(string name, long value) => (Name, _Value) = (name, value);
+
+            public readonly string Name;
+
+            readonly string _Left = null, _Right = null;
+            readonly char Op;
+
+            Monkey Left, Right;
+
+            public void ResolveChildren(Dictionary<string, Monkey> index) => (Left, Right) = (_Left != null) ? (index[_Left], index[_Right]) : (null, null);
+
+            public static implicit operator long(Monkey m) => m._Value ??= m.Op switch
             {
-                Name = name;
-                Value = value;
-            }
+                '+' => m.Left + m.Right,
+                '*' => m.Left * m.Right,
+                '-' => m.Left - m.Right,
+                '/' => m.Left / m.Right,
+                _ => throw new System.Exception("unexpected operator")
+            };
+            long? _Value = null;
 
-            public readonly string Name, Left, Right;
-            char Op;
-            long? Value;
-            public long GetValue(Dictionary<string, Monkey> index)
+            bool ContainsHuman => _ContainsHuman ??= (Name == HumanKey || Left != null && (Left.ContainsHuman || Right.ContainsHuman));
+            bool? _ContainsHuman = null;
+
+            public long CalculateHumanValue(long targetResult = 0)
             {
-                if (Value.HasValue) return Value.Value;
+                if (Name == HumanKey) return targetResult;
 
-                var left = index[Left].GetValue(index);
-                var right = index[Right].GetValue(index);
+                (Monkey humanSide, long resolvedBranch) = Left.ContainsHuman ? (Left, Right) : (Right, Left);
 
-                switch (Op)
+                return humanSide.CalculateHumanValue(((Name == RootKey) ? '=' : Op) switch
                 {
-                    case '+': Value = left + right; return Value.Value;
-                    case '-': Value = left - right; return Value.Value;
-                    case '*': Value = left * right; return Value.Value;
-                    case '/': Value = left / right; return Value.Value;
-                }
-
-                throw new Exception("unknown op");
+                    '=' => resolvedBranch,
+                    '+' => targetResult - resolvedBranch,
+                    '*' => targetResult / resolvedBranch,
+                    '-' => humanSide == Left ? targetResult + resolvedBranch : resolvedBranch - targetResult,
+                    '/' => humanSide == Left ? targetResult * resolvedBranch : resolvedBranch / targetResult,
+                    _ => throw new System.Exception("unexpected operator")
+                });
             }
         }
+
+        private static Monkey GetRootMonkey(string input) 
+            => Util.RegexParse<Monkey>(input)
+            .ToDictionary(m => m.Name)
+            .Resolve(entry => entry.Value.ResolveChildren(entry.Collection))[RootKey];
 
         public static long Part1(string input)
         {
-            var index = Util.RegexParse<Monkey>(input).ToDictionary(m => m.Name, m => m);
-            return index["root"].GetValue(index);
+            return GetRootMonkey(input);
         }
 
-        public static int Part2(string input)
+        public static long Part2(string input)
         {
-            return 0;
+            return GetRootMonkey(input).CalculateHumanValue();
         }
 
         public void Run(string input, ILogger logger)

@@ -491,6 +491,9 @@ namespace AoC
                 foreach (var item2 in set2)
                     yield return (item1, item2);
         }
+
+        public static uint MakeFourCC(string input) => input[0] + ((uint)input[1] << 8) + ((uint)input[2] << 16) + ((uint)input[3] << 24);
+
     }
 
 

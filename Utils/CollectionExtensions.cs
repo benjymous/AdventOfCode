@@ -300,6 +300,15 @@ namespace AoC.Utils
             }
         }
 
+        public static Dictionary<K,V> Resolve<K,V>(this Dictionary<K, V> source, Action<(K Key, V Value, Dictionary<K, V> Collection)> action)
+        {
+            foreach (var element in source)
+            {
+                action((element.Key, element.Value, source));
+            }
+            return source;
+        }
+
         public static int MaxIndex<T>(this IEnumerable<T> sequence) where T : IComparable<T>
         {
             int maxIndex = -1;
