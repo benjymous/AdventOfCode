@@ -48,11 +48,11 @@ namespace AoC.Advent2020
                         break;
 
                     case 'L':
-                        d.TurnLeftBy(val);
+                        d.TurnLeftByDegrees(val);
                         break;
 
                     case 'R':
-                        d.TurnRightBy(val);
+                        d.TurnRightByDegrees(val);
                         break;
 
                     case 'F':

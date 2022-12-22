@@ -434,7 +434,7 @@ namespace AoC.Utils.Vectors
         public void FaceEast() => SetDirection(1, 0);
         public void FaceWest() => SetDirection(-1, 0);
 
-        public void TurnLeft()
+        public Direction2 TurnLeft()
         {
             // up :  0,-1 ->  -1,0;
             // left: -1,0 -> 0,1
@@ -447,21 +447,27 @@ namespace AoC.Utils.Vectors
             else if (DX == 1 && DY == 0) SetDirection(0, -1);
 
             else throw new Exception("Unrecognised direction: " + DX + "," + DY);
+
+            return this;
         }
 
-        public void TurnLeftBy(int degrees)
+        public void TurnLeftByDegrees(int degrees)
         {
             if (degrees % 90 != 0) throw new Exception("expected multiple of 90 degrees: " + degrees);
 
             var steps = degrees / 90;
 
+            TurnLeftBySteps(steps);
+        }
+        public void TurnLeftBySteps(int steps)
+        {
             for (var i = 0; i < steps; ++i)
             {
                 TurnLeft();
             }
         }
 
-        public void TurnRight()
+        public Direction2 TurnRight()
         {
             // up :  0,-1 ->  1,0;
             // right: 1,0 -> 0,1
@@ -474,25 +480,71 @@ namespace AoC.Utils.Vectors
             else if (DX == -1 && DY == 0) SetDirection(0, -1);
 
             else throw new Exception("Unrecognised direction :" + DX + "," + DY);
+
+            return this;
         }
 
-        public void Turn180()
+        public Direction2 Turn180()
         {
             SetDirection(-DX, -DY);
+            return this;
         }
 
 
-        public void TurnRightBy(int degrees)
+        public void TurnRightByDegrees(int degrees)
         {
             if (degrees % 90 != 0) throw new Exception("expected multiple of 90 degrees: " + degrees);
 
             var steps = degrees / 90;
 
+            TurnRightBySteps(steps);
+        }
+
+        public void TurnRightBySteps(int steps)
+        {
             for (var i = 0; i < steps; ++i)
             {
                 TurnRight();
             }
         }
+
+        public static bool operator ==(Direction2 v1, Direction2 v2)
+        {
+            return v1.DX == v2.DX && v1.DY == v2.DY;
+        }
+
+        public static bool operator !=(Direction2 v1, Direction2 v2)
+        {
+            return v1.DX != v2.DX || v1.DY != v2.DY;
+        }
+
+        public static Direction2 operator +(Direction2 a, Direction2 b)
+        {
+            var t1 = new Direction2(a);
+            var t2 = new Direction2(b);
+
+            while (t1 != Up)
+            {
+                t1.TurnRight();
+                t2.TurnRight();
+            }
+            return t2;
+        }
+
+        public static int operator -(Direction2 a, Direction2 b)
+        {
+            if (a == b) return 0;
+            var t = new Direction2(a);
+            var i = 0;
+            while (t != b)
+            {
+                i++;
+                t.TurnRight();
+            }
+
+            return i;
+        }
+
 
         public char AsChar()
         {
@@ -501,17 +553,34 @@ namespace AoC.Utils.Vectors
             if (DY < 0) return '^';
             if (DY > 0) return 'v';
 
-            throw new Exception("Unknown direction state");
+            return '?';
         }
+
+        public static readonly Direction2 Null = new(0, 0);
 
         public static readonly Direction2 North = new(0, -1);
         public static readonly Direction2 South = new(0, 1);
         public static readonly Direction2 East = new(1, 0);
         public static readonly Direction2 West = new(-1, 0);
 
+        public static readonly Direction2 Up = new(0, -1);
+        public static readonly Direction2 Down = new(0, 1);
+        public static readonly Direction2 Right = new(1, 0);
+        public static readonly Direction2 Left = new(-1, 0);
+
         public override string ToString()
         {
             return $"{DX},{DY}";
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Direction2 && obj as Direction2 == this;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(DX, DY);
         }
     }
 }
