@@ -570,7 +570,7 @@ namespace AoC.Utils.Vectors
 
         public override string ToString()
         {
-            return $"{DX},{DY}";
+            return $"[{AsChar()}]{DX},{DY}";
         }
 
         public override bool Equals(object obj)
