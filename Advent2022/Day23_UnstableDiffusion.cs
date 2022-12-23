@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2022
 {
@@ -12,12 +10,9 @@ namespace AoC.Advent2022
         static bool HasNeighbour(HashSet<(int x, int y)> map, (int x, int y) pos)
         {
             for (int y = pos.y - 1; y <= pos.y + 1; ++y)
-            {
                 for (int x = pos.x - 1; x <= pos.x + 1; ++x)
-                {
                     if ((x != pos.x || y != pos.y) && map.Contains((x, y))) return true;
-                }
-            }
+ 
             return false;
         }
 
@@ -25,14 +20,13 @@ namespace AoC.Advent2022
         {
             for (int i=0; i<3; ++i)
             {
-                var check = CheckDirs[direction, i];
-                if (map.Contains((pos.x + check.x, pos.y + check.y))) return false;
+                var (dx, dy) = CheckDirs[direction, i];
+                if (map.Contains((pos.x + dx, pos.y + dy))) return false;
             }
             return true;
         }
 
-
-        static (int x, int y)[,] CheckDirs = new (int x, int y)[,]
+        static readonly (int x, int y)[,] CheckDirs = new (int x, int y)[,]
         {
             { (0,-1), (-1,-1), (1,-1) }, // check North
             { (0,1), (-1,1),(1,1) }, // check South
@@ -43,16 +37,11 @@ namespace AoC.Advent2022
         private static int RunSimulation(string input, int maxSteps)
         {
             var positions = Util.ParseSparseMatrix<bool>(input).Keys.ToHashSet();
-
             int moveIndex = 0;
 
             while (true)
             {
                 Dictionary<(int x, int y), List<(int x, int y)>> potentialMoves = new();
-
-                //Console.WriteLine(moveIndex);
-                //Console.WriteLine(Display(positions));
-                //Console.WriteLine();
 
                 foreach (var key in positions)
                 {
@@ -63,8 +52,8 @@ namespace AoC.Advent2022
                             int move = (moveIndex + i) % 4;
                             if (DirectionFree(positions, key, move))
                             {
-                                var delta = CheckDirs[move, 0];
-                                var proposal = (key.x + delta.x, key.y + delta.y);
+                                var (dx, dy) = CheckDirs[move, 0];
+                                var proposal = (key.x + dx, key.y + dy);
                                 if (!potentialMoves.ContainsKey(proposal)) potentialMoves[proposal] = new();
                                 potentialMoves[proposal].Add(key);
                                 break;
@@ -72,7 +61,6 @@ namespace AoC.Advent2022
                         }
                     }
                 }
-
                 moveIndex++;
 
                 foreach (var proposal in potentialMoves)
@@ -85,71 +73,18 @@ namespace AoC.Advent2022
                 }
                 if (!potentialMoves.Any()) break;
 
-                if (moveIndex == maxSteps)
-                {
-                    //Console.WriteLine(Display(positions));
-                    //Console.WriteLine();
-                    return CountEmpty(positions);
-                }
-
+                if (moveIndex == maxSteps) return CountEmpty(positions);
             }
-
-            //Console.WriteLine(Display(positions));
 
             return moveIndex;
         }
 
-        static string Display(HashSet<(int x, int y)> dots)
-        {
-            StringBuilder sb = new();
-            sb.AppendLine();
-
-            var minX = dots.Min(v => v.x);
-            var minY = dots.Min(v => v.y);
-
-            var maxX = dots.Max(v => v.x);
-            var maxY = dots.Max(v => v.y);
-
-            for (int y = minY-2; y <= maxY+2; ++y)
-            {
-                for (int x = minX-2; x <= maxX+2; ++x)
-                {
-                    sb.Append(dots.Contains((x, y)) ? "#" : ".");
-                }
-                sb.AppendLine();
-            }
-
-            return sb.ToString();
-        }
-
-
-        static int CountEmpty(HashSet<(int x, int y)> dots)
-        {
-
-            var minX = dots.Min(v => v.x);
-            var minY = dots.Min(v => v.y);
-
-            var maxX = dots.Max(v => v.x);
-            var maxY = dots.Max(v => v.y);
-
-            int empty = 0;
-
-            for (int y = minY ; y <= maxY ; ++y)
-            {
-                for (int x = minX; x <= maxX; ++x)
-                {
-                    if (!dots.Contains((x, y))) empty++;
-                }
-            }
-
-            return empty;
-        }
+        static int CountEmpty(HashSet<(int x, int y)> dots) => Util.Range2DInclusive(((int, int, int, int))(dots.Min(v => v.y), dots.Max(v => v.y), dots.Min(v => v.x), dots.Max(v => v.x))).Count(pos => !dots.Contains(pos));
 
         public static int Part1(string input)
         {
             return RunSimulation(input, 10);
         }
-
 
         public static int Part2(string input)
         {
@@ -158,6 +93,12 @@ namespace AoC.Advent2022
 
         public void Run(string input, ILogger logger)
         {
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
+        }
+    }
+}
+
 //            string test1 = ".....\r\n..##.\r\n..#..\r\n.....\r\n..##.\r\n.....";
 
 //            string test2 = @"..............
@@ -174,11 +115,3 @@ namespace AoC.Advent2022
 //..............".Replace("\r", "");
 
 //            Console.WriteLine(Part2(test2));
-
-            logger.WriteLine("- Pt1 - " + Part1(input));
-            logger.WriteLine("- Pt2 - " + Part2(input));
-        }
-    }
-}
-
-// 4414 too high
