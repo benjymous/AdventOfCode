@@ -47,7 +47,7 @@ namespace AoC.Advent2022.Test
         [DataTestMethod]
         public void CubeMap_Part2_Regression()
         {
-            Assert.AreEqual(0, Day22.Part2(input));
+            Assert.AreEqual(55267, Day22.Part2(input));
         }
     }
 }
