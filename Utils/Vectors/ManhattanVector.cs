@@ -545,6 +545,17 @@ namespace AoC.Utils.Vectors
             return i;
         }
 
+        public static Direction2 FromChar(char d)
+        {
+            switch (d)
+            {
+                case '>': return Direction2.East;
+                case '<': return Direction2.West;
+                case '^': return Direction2.North;
+                case 'v': return Direction2.South;
+                default: throw new Exception("invalid char direction");
+            }
+        }
 
         public char AsChar()
         {
