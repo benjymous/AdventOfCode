@@ -43,25 +43,23 @@ namespace AoC.Advent2022
             {
                 Dictionary<(int x, int y), List<(int x, int y)>> potentialMoves = new();
 
-                foreach (var key in positions)
+                foreach (var key in positions.Where(p => HasNeighbour(positions, p)))
                 {
-                    if (HasNeighbour(positions, key))
+                    for (int i = 0; i < 4; ++i)
                     {
-                        for (int i = 0; i < 4; ++i)
+                        int move = (moveIndex + i) % 4;
+                        if (DirectionFree(positions, key, move))
                         {
-                            int move = (moveIndex + i) % 4;
-                            if (DirectionFree(positions, key, move))
-                            {
-                                var (dx, dy) = CheckDirs[move, 0];
-                                var proposal = (key.x + dx, key.y + dy);
-                                if (!potentialMoves.ContainsKey(proposal)) potentialMoves[proposal] = new();
-                                potentialMoves[proposal].Add(key);
-                                break;
-                            }
+                            var (dx, dy) = CheckDirs[move, 0];
+                            var proposal = (key.x + dx, key.y + dy);
+                            if (!potentialMoves.ContainsKey(proposal)) potentialMoves[proposal] = new();
+                            potentialMoves[proposal].Add(key);
+                            break;
                         }
-                    }
+                    }       
                 }
                 moveIndex++;
+                if (!potentialMoves.Any()) break;
 
                 foreach (var proposal in potentialMoves)
                 {
@@ -71,7 +69,6 @@ namespace AoC.Advent2022
                         positions.Add(proposal.Key);
                     }
                 }
-                if (!potentialMoves.Any()) break;
 
                 if (moveIndex == maxSteps) return CountEmpty(positions);
             }
@@ -98,20 +95,3 @@ namespace AoC.Advent2022
         }
     }
 }
-
-//            string test1 = ".....\r\n..##.\r\n..#..\r\n.....\r\n..##.\r\n.....";
-
-//            string test2 = @"..............
-//..............
-//.......#......
-//.....###.#....
-//...#...#.#....
-//....#...##....
-//...#.###......
-//...##.#.##....
-//....#..#......
-//..............
-//..............
-//..............".Replace("\r", "");
-
-//            Console.WriteLine(Part2(test2));

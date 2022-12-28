@@ -13,9 +13,9 @@ namespace AoC.Advent2022
         static IEnumerable<string> GetInstructions(string tape)
         {
             var current = "";
-            foreach (var c in tape)
+            foreach (char c in tape)
             {
-                if (c >= '0' && c <='9') current += c;
+                if (c.IsDigit()) current += c;
                 else
                 {
                     if (current != "") yield return current;
@@ -36,13 +36,11 @@ namespace AoC.Advent2022
                 (maxX, maxY) = (Data.Max(kvp => kvp.Key.x), Data.Max(kvp => kvp.Key.y));
                 for (int y = 0; y <= maxY; ++y) (rowMin[y], rowMax[y]) = (Data.Where(kvp => kvp.Key.y == y).Min(kvp => kvp.Key.x), Data.Where(kvp => kvp.Key.y == y).Max(kvp => kvp.Key.x));
                 for (int x = 0; x <= maxX; ++x) (colMin[x], colMax[x]) = (Data.Where(kvp => kvp.Key.x == x).Min(kvp => kvp.Key.y), Data.Where(kvp => kvp.Key.x == x).Max(kvp => kvp.Key.y));
+                FaceSize = (int)Math.Sqrt(Data.Count / 6);
             }
 
             public ManhattanVector2 Start => new(rowMin[0], 0);
-            public int FaceSize => (int)Math.Sqrt(Data.Count / 6);
-
-            public char this[(int x, int y) key] => Data[key];
-            public bool ContainsKey((int x, int y) key) => Data.ContainsKey(key);
+            public readonly int FaceSize;
 
             public Face[,] faces = null;
             public Dictionary<char, Face> faceIndex = null;
@@ -57,27 +55,20 @@ namespace AoC.Advent2022
 
             public void OrientCubeFaces()
             {
-                int faceSize = FaceSize;
-                var (facesX, facesY) = ((maxX + 1) / faceSize, (maxY + 1) / faceSize);
+                var (facesX, facesY) = ((maxX + 1) / FaceSize, (maxY + 1) / FaceSize);
                 faces = new Face[facesX, facesY];
                 bool first = true;
                 Queue<(int x, int y)> unresolvedFaces = new();
-                for (int y = 0; y < facesY; ++y)
+
+                foreach (var k in Util.Range2DExclusive((0, facesX, 0, facesY)).Where(k => Data.ContainsKey((k.x * FaceSize, k.y * FaceSize))))
                 {
-                    for (int x = 0; x < facesX; ++x)
+                    if (first) faces[k.x, k.y] = new Face('f', Direction2.Up);
+                    else
                     {
-                        if (Data.ContainsKey((x * faceSize, y * faceSize)))
-                        {
-                            if (first) faces[x, y] = new Face('f', Direction2.Up);
-                            else
-                            {
-                                unresolvedFaces.Add((x, y));
-                                faces[x, y] = new Face('?', Direction2.Null);
-                            }
-                            first = false;
-                        }
-                        else faces[x, y] = null;
+                        unresolvedFaces.Add(k);
+                        faces[k.x, k.y] = new Face('?', Direction2.Null);
                     }
+                    first = false;
                 }
 
                 unresolvedFaces.Operate(face =>
@@ -90,7 +81,7 @@ namespace AoC.Advent2022
                 });
 
                 faceIndex = faces.Values().Where(v => v != null).ToDictionary(v => v.Name);
-                faceLocationIndex = faces.Entries().Where(v => v.value != null).ToDictionary(v => v.value.Name, v => (v.key.x * faceSize, v.key.y * faceSize));
+                faceLocationIndex = faces.Entries().Where(v => v.value != null).ToDictionary(v => v.value.Name, v => (v.key.x * FaceSize, v.key.y * FaceSize));
             }
         }
 
@@ -100,8 +91,7 @@ namespace AoC.Advent2022
             ManhattanVector2 pos = map.Start;
             Direction2 dir = new(1, 0);
 
-            var faceSize = map.FaceSize;
-            var wrapSize = faceSize - 1;
+            var wrapSize = map.FaceSize - 1;
 
             var neighbourMap = part.Two() ? MapNeighbours() : null;
 
@@ -114,8 +104,7 @@ namespace AoC.Advent2022
                     for (int i = 0; i < int.Parse(instr); ++i)
                     {
                         (var nextPos, var nextDir) = (pos + dir, new Direction2(dir));
-
-                        if (!map.ContainsKey(nextPos))
+                        if (!map.Data.ContainsKey(nextPos))
                         {
                             if (part.One())
                             {
@@ -132,39 +121,30 @@ namespace AoC.Advent2022
                             }
                             else
                             {
-                                var face = map.faces[pos.X / faceSize, pos.Y / faceSize];
+                                var face = map.faces[pos.X / map.FaceSize, pos.Y / map.FaceSize];
                                 var placedNeighbour = map.faceIndex[face.Neighbour(dir).Name];
-
-                                int localX = pos.X % faceSize;
-                                int localY = pos.Y % faceSize;
-
-                                var neighbourEntryVec = neighbourMap[(placedNeighbour.Name, face.Name)] + placedNeighbour.Orientation;
-
-                                (localX, localY, var rotate) = (dir.AsChar(), neighbourEntryVec.AsChar()) switch
+                                var (localX, localY) = (pos.X % map.FaceSize, pos.Y % map.FaceSize);
+                                (localX, localY, var rotate) = (dir.AsChar(), (neighbourMap[(placedNeighbour.Name, face.Name)] + placedNeighbour.Orientation).AsChar()) switch
                                 {
                                     ('>', '^') => (wrapSize - localY, wrapSize - localX, 1),
-                                    ('>', 'v') => (localY, localX, 3), 
-                                    ('>', '<') => (localX, wrapSize - localY, 2), 
-                                    ('<', '>') => (localX, wrapSize - localY, 2), 
+                                    ('>', 'v') => (localY, localX, 3),
+                                    ('>', '<') => (localX, wrapSize - localY, 2),
+                                    ('<', '>') => (localX, wrapSize - localY, 2),
                                     ('<', '^') => (localY, localX, 3),
-                                    ('v', 'v') => (wrapSize - localX, localY, 2), 
-                                    ('v', '>') => (localY, localX, 1), 
-                                    ('v', '<') => (localY, localX, 1), 
-                                    ('v', '^') => (localX, wrapSize - localY, 0), 
-                                    ('^', '>') => (localY, localX, 1),          
-                                    ('^', '^') => (localX, wrapSize-localY, 0), 
-                                    ('^', '<') => (localY, localX, 1), 
+                                    ('v', 'v') => (wrapSize - localX, localY, 2),
+                                    ('v', '>') => (localY, localX, 1),
+                                    ('v', '<') => (localY, localX, 1),
+                                    ('v', '^') => (localX, wrapSize - localY, 0),
+                                    ('^', '>') => (localY, localX, 1),
+                                    ('^', '^') => (localX, wrapSize - localY, 0),
+                                    ('^', '<') => (localY, localX, 1),
                                     _ => throw new Exception("unhandled case")
                                 };
                                 nextDir.TurnRightBySteps(rotate);
-
-                                var (x, y) = map.faceLocationIndex[face.Neighbour(dir).Name];
-
-                                nextPos.X = localX + x;
-                                nextPos.Y = localY + y;
+                                nextPos = new ManhattanVector2(localX, localY) + map.faceLocationIndex[face.Neighbour(dir).Name];
                             }
                         }
-                        if (map[nextPos] == '#') break;
+                        if (map.Data[nextPos] == '#') break;
                         (pos, dir) = (nextPos, nextDir);
                     }
                 }
@@ -182,14 +162,13 @@ namespace AoC.Advent2022
                 foreach (char d in "<>^v")
                 {
                     var dir = Direction2.FromChar(d);
-                    var neighbour = face.Neighbour(dir);
-                    neighbourMap[(c, neighbour.Name)] = dir;
+                    neighbourMap[(c, face.Neighbour(dir).Name)] = dir;
                 }
             }
             return neighbourMap;
         }
 
-        record Face(char Name, Direction2 Orientation) 
+        record Face(char Name, Direction2 Orientation)
         {
             public Face Neighbour(Direction2 delta) => (Name, (Orientation + delta).AsChar()) switch
             {
@@ -226,7 +205,6 @@ namespace AoC.Advent2022
                 _ => throw new Exception("unhandled case"),
             };
         }
-       
 
         public static int Part1(string input)
         {

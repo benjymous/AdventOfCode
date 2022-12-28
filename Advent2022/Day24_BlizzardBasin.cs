@@ -1,4 +1,5 @@
-﻿using AoC.Utils.Vectors;
+﻿using AoC.Utils;
+using AoC.Utils.Vectors;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,39 +18,33 @@ namespace AoC.Advent2022
             var blizzards = map.Where(kvp => !walls.Contains(kvp.Key) && kvp.Value != '.').Select(kvp => (pos: kvp.Key, dir: Direction2.FromChar(kvp.Value))).ToArray();
             (int maxX, int maxY) = (walls.Max(v => v.x), walls.Max(v => v.y));
 
-            var startPos = (x: 1, y: 0);
-            var endPos = (x:maxX - 1, y:maxY);
+            var (start, end) = ((pos: (x: 1, y: 0), 0),  (pos: (x: maxX - 1, y: maxY), part.One() ? 0 : 2));
+            int step = 0, maxScore = 0;
 
-            var start = (startPos.x, startPos.y, false, false);
-            var destination = part.One() ? (endPos.x, endPos.y, false, false) : (endPos.x, endPos.y, true, true);
-            int step = 0;
+            (int x, int y)[] destinations = new[] { end.pos, start.pos, end.pos };
 
-            IEnumerable<(int x, int y, bool reachedEnd, bool gotSnacks)> generation = new (int, int, bool, bool)[] { start };
-
+            IEnumerable<((int x, int y) pos, int score)> generation = new ((int, int), int)[] { start };
             while (true)
             {
                 HashSet<(int x, int y)> state = StepState(walls, blizzards, maxX, maxY);
-                HashSet<(int x, int y, bool reachedEnd, bool gotSnacks)> nextGen = new();
-                foreach (var pos in generation)
+                List<((int x, int y) pos, int score)> nextGen = new();
+                foreach (var entry in generation)
                 {
-                    if (pos == destination) 
-                        return step;
+                    if (entry == end) return step;
                     foreach (var (dx, dy) in Directions)
                     {
-                        var test = (x: pos.x + dx, y: pos.y + dy, pos.reachedEnd, pos.gotSnacks);
-                        var testPos = (test.x, test.y);
-                        if (part.Two())
+                        var test = (pos:(x: entry.pos.x + dx, y: entry.pos.y + dy), entry.score);
+
+                        if (!state.Contains(test.pos) && test.score == maxScore && test.pos.x >= 0 && test.pos.y >= 0 && test.pos.x <= maxX && test.pos.y <= maxY)
                         {
-                            if (testPos == endPos && pos.reachedEnd == false) test.reachedEnd = true;
-                            if (testPos == startPos && pos.reachedEnd) test.gotSnacks = true;
-                        }
-                        if (test.x >= 0 && test.y >= 0 && test.x <= maxX && test.y <= maxY && !state.Contains(testPos))
-                        {
+                            if (part.Two() && test.score < 2 && test.pos == destinations[test.score])
+                                maxScore = ++test.score;
+
                             nextGen.Add(test);
                         }
                     }
                 }
-                generation = nextGen;
+                generation = nextGen.Where(s => s.score == maxScore).Distinct().OrderBy(e => e.pos.Distance(destinations[maxScore])).Take(50);
                 step++;
             }
         }
@@ -65,10 +60,12 @@ namespace AoC.Advent2022
                 if (bliz.pos.y == maxY) bliz.pos.y = 1;
                 if (bliz.pos.x == 0) bliz.pos.x = maxX - 1;
                 if (bliz.pos.y == 0) bliz.pos.y = maxY - 1;
+
                 blizzards[b] = bliz;
             }
             return walls.Union(blizzards.Select(b => b.pos)).ToHashSet();
         }
+
 
         public static int Part1(string input)
         {

@@ -268,6 +268,17 @@ namespace AoC
             }
         }
 
+        public static IEnumerable<(int x, int y)> Range2DExclusive((int minY, int maxY, int minX, int maxX) range)
+        {
+            for (int y = range.minY; y <= range.maxY; ++y)
+            {
+                for (int x = range.minX; x <= range.maxX; ++x)
+                {
+                    yield return (x, y);
+                }
+            }
+        }
+
         public static IEnumerable<(int x, int y, int z)> Range3DInclusive((int minZ, int maxZ, int minY, int maxY, int minX, int maxX) range)
         {
             for (int z = range.minZ; z <= range.maxZ; ++z)

@@ -451,20 +451,22 @@ namespace AoC.Utils.Vectors
             return this;
         }
 
-        public void TurnLeftByDegrees(int degrees)
+        public Direction2 TurnLeftByDegrees(int degrees)
         {
             if (degrees % 90 != 0) throw new Exception("expected multiple of 90 degrees: " + degrees);
 
             var steps = degrees / 90;
 
-            TurnLeftBySteps(steps);
+            return TurnLeftBySteps(steps);
         }
-        public void TurnLeftBySteps(int steps)
+        public Direction2 TurnLeftBySteps(int steps)
         {
+            if (steps == 2) return Turn180();
             for (var i = 0; i < steps; ++i)
             {
                 TurnLeft();
             }
+            return this;
         }
 
         public Direction2 TurnRight()
@@ -491,21 +493,23 @@ namespace AoC.Utils.Vectors
         }
 
 
-        public void TurnRightByDegrees(int degrees)
+        public Direction2 TurnRightByDegrees(int degrees)
         {
             if (degrees % 90 != 0) throw new Exception("expected multiple of 90 degrees: " + degrees);
 
             var steps = degrees / 90;
 
-            TurnRightBySteps(steps);
+            return TurnRightBySteps(steps);
         }
 
-        public void TurnRightBySteps(int steps)
+        public Direction2 TurnRightBySteps(int steps)
         {
+            if (steps == 2) return Turn180();
             for (var i = 0; i < steps; ++i)
             {
                 TurnRight();
             }
+            return this;
         }
 
         public static bool operator ==(Direction2 v1, Direction2 v2)
