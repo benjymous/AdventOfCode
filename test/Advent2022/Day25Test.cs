@@ -25,9 +25,9 @@ namespace AoC.Advent2022.Test
         [DataRow(12345, "1-0---0")]
         [DataRow(314159265, "1121-1110-1=0")]
         [DataTestMethod]
-        public void IntToSnafuTest(int input, string expected)
+        public void DecimalToSnafuTest(int input, string expected)
         {
-            Assert.AreEqual(expected, Day25.IntToSnafu(input));
+            Assert.AreEqual(expected, Day25.DecimalToSnafu(input));
         }
 
         [TestCategory("Test")]
@@ -45,9 +45,9 @@ namespace AoC.Advent2022.Test
         [DataRow("1=", 3)]
         [DataRow("122", 37)]
         [DataTestMethod]
-        public void SnafuToIntTest(string input, int expected)
+        public void SnafuToDecimalTest(string input, int expected)
         {
-            Assert.AreEqual(expected, Day25.SnafuToLong(input));
+            Assert.AreEqual(expected, Day25.SnafuToDecimal(input));
         }
 
         [TestCategory("Regression")]

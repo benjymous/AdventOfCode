@@ -18,10 +18,12 @@ namespace AoC.Advent2022
                 Id = id;
                 Items = items.ToList();
 
+                bool byOld = !int.TryParse(opBy, out int opByVal);
+
                 Operation = op switch
                 {
-                    '+' => old => old + int.Parse(opBy),
-                    '*' => old => old * (opBy == "old" ? old : int.Parse(opBy)),
+                    '+' => old => old + opByVal,
+                    '*' => old => old * (byOld ? old : opByVal),
                     _ => throw new Exception("unexpected op"),
                 };
 
@@ -61,10 +63,7 @@ namespace AoC.Advent2022
                 {
                     var actions = monkey.DoRound(lessWorry).ToArray();
                     monkeyScores.IncrementAtIndex(monkey.Id, actions.Length);
-                    foreach (var (worry, target) in actions)
-                    {
-                        monkeys[target].AddItem(worry % filter);
-                    }
+                    actions.ForEach(val => monkeys[val.target].AddItem(val.worry % filter));
                 }
             }
 

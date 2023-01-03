@@ -9,7 +9,7 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-20";
 
-        class Particle
+        record class Particle
         {
             [Regex(@"[p]=<(-*\d+,-*\d+,-*\d+)>, [v]=<(-*\d+,-*\d+,-*\d+)>, [a]=<(-*\d+,-*\d+,-*\d+)>")]
             public Particle(ManhattanVector3 p, ManhattanVector3 v, ManhattanVector3 a)
@@ -23,13 +23,7 @@ namespace AoC.Advent2017
             public ManhattanVector3 vel;
             public ManhattanVector3 acc;
 
-            public int Distance
-            {
-                get
-                {
-                    return pos.Length;
-                }
-            }
+            public int Distance => pos.Length;
 
             public void Step()
             {

@@ -9,7 +9,7 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-05";
 
-        public record struct Instruction
+        record struct Instruction
         {
             [Regex(@"move (\d+) from (\d+) to (\d+)")]
             public Instruction(int count, int from, int to) => (Count, From, To) = (count, from - 1, to - 1);
@@ -39,11 +39,11 @@ namespace AoC.Advent2022
 
         static (IEnumerable<Instruction>, Stack<char>[]) ParseData(string input)
         {
-            var data = input.Split("\n\n");
+            var (stack, instr) = input.Split("\n\n").Decompose2();
 
-            var instructions = Util.RegexParse<Instruction>(data[1]);
+            var instructions = Util.RegexParse<Instruction>(instr);
 
-            var layout = Util.Split(data[0]);
+            var layout = Util.Split(stack);
             var stackCount = Util.ParseNumbers<int>(layout.Last(), ' ').Last();
             var grid = Util.ParseMatrix<char>(layout.Reverse().Skip(1));
             var stacks = Enumerable.Range(0, stackCount)

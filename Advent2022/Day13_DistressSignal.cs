@@ -50,20 +50,18 @@ namespace AoC.Advent2022
 
             public int CompareTo(Element other) => (IsList, other.IsList) switch
             {
-                (true,  true)  => CompareList(other),         // both lists
-                (false, false) => Value - other.Value,        // both numbers
-                (true,  false) => CompareTo(other.Promote()), // list, non-list
-                (false, true)  => Promote().CompareTo(other), // non-list, list
+                (true,  true)  => CompareList(Children, other.Children), // both lists
+                (false, false) => Value - other.Value,                   // both numbers
+                (true,  false) => CompareTo(other.Promote()),            // list, non-list
+                (false, true)  => Promote().CompareTo(other),            // non-list, list
             };
 
-            int CompareList(Element other)
+            static int CompareList(Element[] lhs, Element[] rhs)
             {
                 for (int i = 0; true; ++i)
                 {
-                    if (Children.Length == i && other.Children.Length == i) return 0;  // both ran out => must be equal
-                    if (Children.Length == i && other.Children.Length  > i) return -1; // left ran out 
-                    if (Children.Length  > i && other.Children.Length == i) return 1;  // right ran out
-                    var compare = Children[i].CompareTo(other.Children[i]);
+                    if (lhs.Length == i || rhs.Length == i) return lhs.Length - rhs.Length;
+                    var compare = lhs[i].CompareTo(rhs[i]);
                     if (compare != 0) return compare;
                 }
             }

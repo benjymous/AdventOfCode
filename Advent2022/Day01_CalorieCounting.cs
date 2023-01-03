@@ -1,5 +1,4 @@
 ﻿using AoC.Utils;
-using System;
 using System.Linq;
 
 namespace AoC.Advent2022
@@ -10,18 +9,19 @@ namespace AoC.Advent2022
 
         public static int Part1(string input)
         {
-            var groups = input.Split("\n\n");
-            var elves = groups.Select(group => Util.ParseNumbers<int>(group));
-            var max = elves.Max(cals => cals.Sum());
-            return max;
+            return input.Split("\n\n")
+                        .Select(group => Util.ParseNumbers<int>(group))
+                        .Max(cals => cals.Sum());
         }
 
         public static int Part2(string input)
         {
-            var groups = input.Split("\n\n");
-            var elves = groups.Select(group => Util.ParseNumbers<int>(group));
-            var totalthree = elves.Select(cals => cals.Sum()).OrderDescending().Take(3).Sum();
-            return totalthree;
+            return input.Split("\n\n")
+                        .Select(group => Util.ParseNumbers<int>(group))
+                        .Select(cals => cals.Sum())
+                        .OrderDescending()
+                        .Take(3)
+                        .Sum();
         }
 
         public void Run(string input, ILogger logger)

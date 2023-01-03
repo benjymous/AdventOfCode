@@ -2,6 +2,7 @@
 using AoC.Utils.Vectors;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace AoC.Advent2022
 {
@@ -14,8 +15,8 @@ namespace AoC.Advent2022
         private static int Solve(string input, QuestionPart part)
         {
             var map = Util.ParseSparseMatrix<char>(input);
-            var walls = map.Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key).ToHashSet();
-            var blizzards = map.Where(kvp => !walls.Contains(kvp.Key) && kvp.Value != '.').Select(kvp => (pos: kvp.Key, dir: Direction2.FromChar(kvp.Value))).ToArray();
+            var walls = map.Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key).ToArray();
+            var blizzards = map.Where(kvp => !walls.Contains(kvp.Key) && kvp.Value != '.').Select(kvp => (pos: kvp.Key, dir: new Direction2(kvp.Value))).ToArray();
             (int maxX, int maxY) = (walls.Max(v => v.x), walls.Max(v => v.y));
 
             var (start, end) = ((pos: (x: 1, y: 0), 0),  (pos: (x: maxX - 1, y: maxY), part.One() ? 0 : 2));
@@ -26,7 +27,8 @@ namespace AoC.Advent2022
             IEnumerable<((int x, int y) pos, int score)> generation = new ((int, int), int)[] { start };
             while (true)
             {
-                HashSet<(int x, int y)> state = StepState(walls, blizzards, maxX, maxY);
+                blizzards = StepBlizzards(blizzards, maxX, maxY);
+                var state = walls.Union(blizzards.Select(b => b.pos)).ToHashSet();
                 List<((int x, int y) pos, int score)> nextGen = new();
                 foreach (var entry in generation)
                 {
@@ -49,23 +51,7 @@ namespace AoC.Advent2022
             }
         }
 
-        private static HashSet<(int x, int y)> StepState(HashSet<(int x, int y)> walls, ((int x, int y) pos, Direction2 dir)[] blizzards, int maxX, int maxY)
-        {
-            for (int b = 0; b < blizzards.Length; ++b)
-            {
-                var bliz = blizzards[b];
-                bliz.pos.x += bliz.dir.DX;
-                bliz.pos.y += bliz.dir.DY;
-                if (bliz.pos.x == maxX) bliz.pos.x = 1;
-                if (bliz.pos.y == maxY) bliz.pos.y = 1;
-                if (bliz.pos.x == 0) bliz.pos.x = maxX - 1;
-                if (bliz.pos.y == 0) bliz.pos.y = maxY - 1;
-
-                blizzards[b] = bliz;
-            }
-            return walls.Union(blizzards.Select(b => b.pos)).ToHashSet();
-        }
-
+        private static ((int x, int y) pos, Direction2 dir)[] StepBlizzards(((int x, int y) pos, Direction2 dir)[] blizzards, int maxX, int maxY) => blizzards.Select(b => ((((b.pos.x + b.dir.DX + maxX - 2) % (maxX - 1)) + 1, ((b.pos.y + b.dir.DY + maxY - 2) % (maxY - 1)) + 1), b.dir)).ToArray();
 
         public static int Part1(string input)
         {

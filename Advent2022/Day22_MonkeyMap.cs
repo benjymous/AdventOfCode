@@ -30,9 +30,9 @@ namespace AoC.Advent2022
         {
             public Map(string input)
             {
-                var bits = input.Split("\n\n");
-                Data = Util.ParseSparseMatrix<char>(bits[0]).Where(kvp => kvp.Value != ' ').ToDictionary();
-                Tape = GetInstructions(bits[1].Trim()).ToList();
+                var (mapData, tapeData) = input.Split("\n\n").Decompose2();
+                Data = Util.ParseSparseMatrix<char>(mapData).Where(kvp => kvp.Value != ' ').ToDictionary();
+                Tape = GetInstructions(tapeData.Trim()).ToList();
                 (maxX, maxY) = (Data.Max(kvp => kvp.Key.x), Data.Max(kvp => kvp.Key.y));
                 for (int y = 0; y <= maxY; ++y) (rowMin[y], rowMax[y]) = (Data.Where(kvp => kvp.Key.y == y).Min(kvp => kvp.Key.x), Data.Where(kvp => kvp.Key.y == y).Max(kvp => kvp.Key.x));
                 for (int x = 0; x <= maxX; ++x) (colMin[x], colMax[x]) = (Data.Where(kvp => kvp.Key.x == x).Min(kvp => kvp.Key.y), Data.Where(kvp => kvp.Key.x == x).Max(kvp => kvp.Key.y));
@@ -57,26 +57,16 @@ namespace AoC.Advent2022
             {
                 var (facesX, facesY) = ((maxX + 1) / FaceSize, (maxY + 1) / FaceSize);
                 faces = new Face[facesX, facesY];
-                bool first = true;
-                Queue<(int x, int y)> unresolvedFaces = new();
 
-                foreach (var k in Util.Range2DExclusive((0, facesX, 0, facesY)).Where(k => Data.ContainsKey((k.x * FaceSize, k.y * FaceSize))))
-                {
-                    if (first) faces[k.x, k.y] = new Face('f', Direction2.Up);
-                    else
-                    {
-                        unresolvedFaces.Add(k);
-                        faces[k.x, k.y] = new Face('?', Direction2.Null);
-                    }
-                    first = false;
-                }
+                var unresolvedFaces = Util.Range2DExclusive((0, facesX, 0, facesY)).Where(k => Data.ContainsKey((k.x * FaceSize, k.y * FaceSize))).ToQueue();
+                faces[unresolvedFaces.Peek().x, unresolvedFaces.Peek().y] = new Face('f', Direction2.Up);
 
                 unresolvedFaces.Operate(face =>
                 {
-                    if (face.x > 0 && faces[face.x - 1, face.y] != null && faces[face.x - 1, face.y].Name != '?') faces[face.x, face.y] = faces[face.x - 1, face.y].Neighbour(Direction2.Right);
-                    else if (face.y > 0 && faces[face.x, face.y - 1] != null && faces[face.x, face.y - 1].Name != '?') faces[face.x, face.y] = faces[face.x, face.y - 1].Neighbour(Direction2.Down);
-                    else if (face.x < facesX - 1 && faces[face.x + 1, face.y] != null && faces[face.x + 1, face.y].Name != '?') faces[face.x, face.y] = faces[face.x + 1, face.y].Neighbour(Direction2.Left);
-                    else if (face.y < facesY - 1 && faces[face.x, face.y + 1] != null && faces[face.x, face.y + 1].Name != '?') faces[face.x, face.y] = faces[face.x, face.y + 1].Neighbour(Direction2.Up);
+                    if (face.x > 0 && faces[face.x - 1, face.y] != null) faces[face.x, face.y] = faces[face.x - 1, face.y].Neighbour(Direction2.Right);
+                    else if (face.y > 0 && faces[face.x, face.y - 1] != null) faces[face.x, face.y] = faces[face.x, face.y - 1].Neighbour(Direction2.Down);
+                    else if (face.x < facesX - 1 && faces[face.x + 1, face.y] != null) faces[face.x, face.y] = faces[face.x + 1, face.y].Neighbour(Direction2.Left);
+                    else if (face.y < facesY - 1 && faces[face.x, face.y + 1] != null) faces[face.x, face.y] = faces[face.x, face.y + 1].Neighbour(Direction2.Up);
                     else unresolvedFaces.Enqueue(face);
                 });
 
@@ -161,7 +151,7 @@ namespace AoC.Advent2022
                 var face = new Face(c, Direction2.North);
                 foreach (char d in "<>^v")
                 {
-                    var dir = Direction2.FromChar(d);
+                    var dir = new Direction2(d);
                     neighbourMap[(c, face.Neighbour(dir).Name)] = dir;
                 }
             }

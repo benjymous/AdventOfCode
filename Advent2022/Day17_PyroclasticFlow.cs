@@ -11,17 +11,17 @@ namespace AoC.Advent2022
 
         class State
         {
-            public State(string input) => windData = input.Trim();
+            public State(string input) => windData = input.Trim().Select(c => c == '<' ? -1:1).ToArray();
 
             readonly List<byte> map = new() { 255 };
-            readonly string windData;
+            readonly int[] windData;
             public int windIdx = 0;
 
             public int MaxHeight => map.Count-1;
 
             public int WindDirection()
             {
-                int res = windData[windIdx] == '<' ? -1 : 1;
+                int res = windData[windIdx];
                 windIdx = (windIdx + 1) % windData.Length;
                 return res;
             }
@@ -51,14 +51,14 @@ namespace AoC.Advent2022
                 var shape = Shapes[currentShape];
                 for ((int x, int y) rockPos = (3, 4 + state.MaxHeight); true; rockPos.y--)
                 {
-                    var windDir = state.WindDirection();                  
-                    if (!state.CheckBlocked(shape, rockPos.x + windDir, rockPos.y)) rockPos.x += windDir;                  
+                    var windDir = state.WindDirection();
+                    if (!state.CheckBlocked(shape, rockPos.x + windDir, rockPos.y)) rockPos.x += windDir;
                     if (state.CheckBlocked(shape, rockPos.x, rockPos.y - 1))
                     {
                         state.FinishBlock(shape, rockPos);
                         break;
                     }
-                }               
+                }
                 currentShape = (currentShape + 1) % 5;
 
                 if (currentShape == 0)
@@ -78,7 +78,7 @@ namespace AoC.Advent2022
                         repeatHeight = (ulong)state.MaxHeight - benchmarkHeight;
                         secondRepeatIndex = i - firstRepeatIndex;
                         targetRound = i + (rounds - firstRepeatIndex) % secondRepeatIndex;
-                    }                        
+                    }
                 }
             }
 

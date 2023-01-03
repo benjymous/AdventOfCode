@@ -10,23 +10,8 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-09";
 
-        public readonly struct Instruction
-        {
-            [Regex(@"(.) (.+)")]
-            public Instruction(char d, int s) => (Direction, Steps) = (Decode(d), s);
-
-            public readonly (int x, int y) Direction;
-            public readonly int Steps;
-
-            static (int x, int y) Decode(char dir) => dir switch
-            {
-                'U' => (0, 1),
-                'D' => (0, -1),
-                'R' => (1, 0),
-                'L' => (-1, 0),
-                _ => throw new Exception("Unexpected direction"),
-            };
-        }
+        [Regex(@"(.) (.+)")]
+        public readonly record struct Instruction(Direction2 Direction, int Steps) {}
 
         public static bool UpdateTail(ManhattanVector2 head, ManhattanVector2 tail)
         {

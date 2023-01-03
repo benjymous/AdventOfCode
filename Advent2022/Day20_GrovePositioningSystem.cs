@@ -13,7 +13,7 @@ namespace AoC.Advent2022
             var circle = Circle<Boxed<long>>.Create(Util.ParseNumbers<int>(input).Select(i => new Boxed<long>(key * i)));
             var elements = circle.Elements().ToArray();
 
-            Enumerable.Range(0, repeats).ForEach(_ => elements.ForEach(el => el.Move(el.Value)));
+            elements.Repeat(repeats).ForEach(el => el.Move(el.Value));
 
             var e1 = elements.First(e => e.Value == 0).Forward(1000);
             var e2 = e1.Forward(1000);

@@ -34,17 +34,16 @@ namespace AoC.Advent2022
 
         public static int Part1(string input)
         {
-            var lines = Util.Parse<Rucksack>(input);
-
-            return lines.Sum(line => line.Priority);
+            return Util.Parse<Rucksack>(input)
+                       .Sum(line => line.Priority);
         }
 
         public static int Part2(string input)
         {
-            var lines = Util.Parse<Rucksack>(input);
-            var groups = lines.Split(3).Select(g => g.Select(r => r.All).ToArray());
-
-            return groups.Sum(group => Priority(group[0].Intersect(group[1]).Intersect(group[2]).First()));
+            return Util.Parse<Rucksack>(input)
+                       .Split(3)
+                       .Select(g => g.Select(r => r.All).ToArray())
+                       .Sum(group => Priority(group[0].Intersect(group[1]).Intersect(group[2]).First()));
         }
 
         public void Run(string input, ILogger logger)

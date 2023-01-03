@@ -6,20 +6,9 @@ namespace AoC.Advent2020
     {
         public string Name => "2020-02";
 
-        public class Record
+        [Regex(@"(\d+)-(\d+) (.): (.+)")]
+        public record class Record(int LowCount, int HighCount, char TestChar, string Password)
         {
-            [Regex(@"(\d+)-(\d+) (.): (.+)")]
-            public Record(int low, int high, char testChar, string password)
-            {
-                (LowCount, HighCount) = (low, high);
-                TestChar = testChar;
-                Password = password;
-            }
-
-            readonly int LowCount, HighCount;
-            readonly char TestChar;
-            readonly string Password;
-
             public bool ValidPt1
             {
                 get

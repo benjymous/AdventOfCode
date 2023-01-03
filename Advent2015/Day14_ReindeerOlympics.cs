@@ -9,22 +9,9 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-14";
 
-        public class Reindeer
+        [Regex(@"(.+) can fly (.+) km\/s for (.+) seconds, but then must rest for (.+) seconds\.")]
+        public record struct Reindeer(string Name, int Speed, int Sprint, int Rest)
         {
-            readonly string Name;
-            readonly int Speed;
-            readonly int Sprint;
-            readonly int Rest;
-
-            [Regex(@"(.+) can fly (.+) km\/s for (.+) seconds, but then must rest for (.+) seconds\.")]
-            public Reindeer(string name, int speed, int sprint, int rest)
-            {
-                Name = name;
-                Speed = speed;
-                Sprint = sprint;
-                Rest = rest;
-            }
-
             public override string ToString()
             {
                 return $"{Name} - {Speed} m/s for {Sprint} s, rest {Rest} s";

@@ -23,16 +23,7 @@ namespace AoC.Advent2022
             return visibleLeft || visibleRight;
         }
 
-        static int CountVisible(IEnumerable<char> values, int compare)
-        {
-            int seen = 0;
-            foreach (var v in values)
-            {
-                seen++;
-                if (v >= compare) break;
-            }
-            return seen;
-        }
+        static int CountVisible(IEnumerable<char> values, int compare) => values.Any() ? values.WithIndex().Where(v => v.Value >= compare).Select(v => v.Index + 1).FirstOrDefault(values.Count()) : 0;
 
         static int ScenicScore(char[,] grid, (int x, int y) pos)
         {

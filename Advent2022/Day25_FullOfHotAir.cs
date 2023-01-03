@@ -9,55 +9,41 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-25";
 
-        static readonly Dictionary<char, int> DigitChars = new()
-        {
-            { '0', 0 },
-            { '1', 1 },
-            { '2', 2 },
-            { '-', -1 },
-            { '=', -2 }
-        };
+        static readonly IEnumerable<(char c, int v)> snafuCodex = "=-012".Select((c, i) => (c, i - 2));
+        static readonly Dictionary<char, int> CharToDecimal = snafuCodex.ToDictionary(v => v.c, v => v.v);
+        static readonly Dictionary<int, char> CharDigits = snafuCodex.ToDictionary(v => v.v, v => v.c);
 
-        static readonly Dictionary<long, char> CharDigits = new()
-        {
-            { 0, '0' },
-            { 1, '1' },
-            { 2, '2' },
-            { -1, '-' },
-            { -2, '=' }
-        };
-
-        public static long SnafuToLong(string snafu)
+        public static long SnafuToDecimal(string snafu)
         {
             long val = 0;
 
             for (long i = snafu.Length - 1, mult=1; i >= 0; i--, mult*=5)
             {
-                val += mult * DigitChars[snafu[(int)i]];
+                val += mult * CharToDecimal[snafu[(int)i]];
             }
             return val;
         }
 
-        public static string IntToSnafu(long val)
+        public static string DecimalToSnafu(long value)
         {
-            List<char> res = new();
-            while (val > 0)
+            Stack<char> res = new(25);
+            while (value > 0)
             {
-                val = Math.DivRem(val, 5, out var rem);
-                if (rem > 2)
+                value = Math.DivRem(value, 5, out var remainder);
+                if (remainder > 2)
                 {
-                    rem -= 5;
-                    val++;
+                    remainder -= 5;
+                    value++;
                 }
-                res.Add(CharDigits[rem]);               
+                res.Push(CharDigits[(int)remainder]);
             }
-            
-            return ((IEnumerable<char>)res).Reverse().AsString();
+
+            return res.AsString();
         }
 
         public static string Part1(string input)
         {
-            return IntToSnafu(Util.Split(input).Sum(SnafuToLong));
+            return DecimalToSnafu(Util.Split(input).Sum(SnafuToDecimal));
         }
 
         public void Run(string input, ILogger logger)

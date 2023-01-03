@@ -8,17 +8,8 @@ namespace AoC.Advent2018
     {
         public string Name => "2018-23";
 
-        struct Entry
-        {
-            [Regex(@"pos=<(.+,.+,.+)>, r=(.+)")]
-            public Entry(ManhattanVector3 pos, int r)
-            {
-                position = pos;
-                radius = r;
-            }
-            public ManhattanVector3 position;
-            public int radius;
-        }
+        [Regex(@"pos=<(.+,.+,.+)>, r=(.+)")]
+        record struct Entry(ManhattanVector3 position, int radius) {}
 
         public static int Part1(string input)
         {

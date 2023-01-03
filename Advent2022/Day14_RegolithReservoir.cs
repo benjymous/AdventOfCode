@@ -21,12 +21,8 @@ namespace AoC.Advent2022
 
             foreach (var (first, second) in pairs)
             {
-                var delta = (Math.Sign(second.X - first.X), Math.Sign(second.Y - first.Y));
-
-                for (var pos = first; pos != second; pos += delta)
-                {
-                    yield return pos;
-                }
+                var delta = second.Delta(first);
+                for (var pos = first; pos != second; pos += delta) yield return pos;
                 yield return second;
             }
         }

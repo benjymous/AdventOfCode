@@ -1,5 +1,4 @@
 ﻿using AoC.Utils;
-using System;
 using System.Linq;
 
 namespace AoC.Advent2022

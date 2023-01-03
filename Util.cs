@@ -82,21 +82,49 @@ namespace AoC
 
         public static T RegexCreate<T>(string line)
         {
-            foreach (var typeConstructor in typeof(T).GetConstructors())
+            if (typeof(T).GetCustomAttribute(typeof(RegexAttribute)) is RegexAttribute ownAttr)
             {
-                if (typeConstructor?.GetCustomAttributes(typeof(RegexAttribute), true)
-                    .FirstOrDefault() is not RegexAttribute attribute) continue; // skip constructor if it doesn't have attr
+                var typeConstructor = typeof(T).GetConstructors().First();
+                if (RegexCreateInternal(line, typeConstructor, ownAttr, out T result)) return result;
+            }
+            else
+            {
+                foreach (var typeConstructor in typeof(T).GetConstructors())
+                {
+                    if (typeConstructor?.GetCustomAttributes(typeof(RegexAttribute), true)
+                        .FirstOrDefault() is not RegexAttribute attribute) continue; // skip constructor if it doesn't have attr
 
-                var matches = attribute.Regex.Matches(line); // match this constructor against the input line
+                    if (RegexCreateInternal(line, typeConstructor, attribute, out T result)) return result;
 
-                if (!matches.Any()) continue; // Try other constructors to see if they match
+                    //var matches = attribute.Regex.Matches(line); // match this constructor against the input line
 
-                var paramInfo = typeConstructor.GetParameters();
+                    //if (!matches.Any()) continue; // Try other constructors to see if they match
 
-                object[] convertedParams = ConstructParams(matches, paramInfo);
-                return (T)Activator.CreateInstance(typeof(T), convertedParams);
+                    //var paramInfo = typeConstructor.GetParameters();
+
+                    //object[] convertedParams = ConstructParams(matches, paramInfo);
+                    //return (T)Activator.CreateInstance(typeof(T), convertedParams);
+                }
             }
             throw new Exception("RegexParse failed to find suitable constructor for " + typeof(T).Name);
+        }
+
+        static bool RegexCreateInternal<T>(string line, ConstructorInfo typeConstructor, RegexAttribute attr, out T result)
+        {
+            var matches = attr.Regex.Matches(line); // match this constructor against the input line
+
+            if (!matches.Any())
+            {
+                result = default;
+                return false;
+            }// Try other constructors to see if they match
+
+            var paramInfo = typeConstructor.GetParameters();
+
+            object[] convertedParams = ConstructParams(matches, paramInfo);
+            result = (T)Activator.CreateInstance(typeof(T), convertedParams);
+
+            return true;
         }
 
         private static object ConvertFromString(Type type, string input)
@@ -107,7 +135,7 @@ namespace AoC
 
                 if (elementType == typeof(string)) return Util.Split(input);
                 if (elementType == typeof(int)) return Util.ParseNumbers<int>(input).ToArray();
-                if (elementType == typeof(long)) return Util.ParseNumbers<long>(input).ToArray();
+                if (elementType == typeof(long)) return Util.ParseNumbers<long>(input).ToArray();                
 
                 throw new Exception("Can't convert array type " + type);
             }
@@ -687,7 +715,7 @@ namespace AoC
         public T Sum { get; private set; }
     }
 
-    [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Struct)]
     public class RegexAttribute : Attribute
     {
         public RegexAttribute(string pattern)

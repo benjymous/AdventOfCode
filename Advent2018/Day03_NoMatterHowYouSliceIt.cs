@@ -11,29 +11,14 @@ namespace AoC.Advent2018
 
         const int FabricSize = 1000;
 
-        struct Shape
+        [Regex(@"#(\d+) @ (\d+),(\d+): (\d+)x(\d+)")]
+        record struct Shape(string ID, int Left, int Top, int Width, int Height)
         {
-            public string ID;
-            public int Left;
-            public int Top;
-            public int W;
-            public int H;
-
-            [Regex(@"#(\d+) @ (\d+),(\d+): (\d+)x(\d+)")]
-            public Shape(string id, int l, int t, int w, int h)
-            {
-                ID = id;
-                Left = l;
-                Top = t;
-                W = w;
-                H = h;
-            }
-
             public IEnumerable<int> Squares()
             {
-                for (var y = Top; y < Top + H; ++y)
+                for (var y = Top; y < Top + Height; ++y)
                 {
-                    for (var x = Left; x < Left + W; ++x)
+                    for (var x = Left; x < Left + Width; ++x)
                     {
                         yield return GetKey(x, y);
                     }
@@ -63,7 +48,7 @@ namespace AoC.Advent2018
         public static int Part1(string input)
         {
             var shapes = Util.RegexParse<Shape>(input);
-            return FindOverlaps(shapes).Count();
+            return FindOverlaps(shapes).Count;
         }
 
         public static string Part2(string input)

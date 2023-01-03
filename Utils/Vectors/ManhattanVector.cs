@@ -275,7 +275,15 @@ namespace AoC.Utils.Vectors
 
         public static ManhattanVector2 operator -(ManhattanVector2 a, ManhattanVector2 b) => new((ManhattanVectorN)a - (ManhattanVectorN)b);
 
-
+        public ManhattanVector2 Delta(ManhattanVector2 other)
+        {
+            var delta = this - other;
+            for(int i=0; i<2; ++i)
+            {
+                delta.Component[i] = Math.Sign(delta.Component[i]);
+            }
+            return delta;
+        }
 
         public static readonly ManhattanVector2 Zero = new(0, 0);
 
@@ -404,8 +412,22 @@ namespace AoC.Utils.Vectors
         }
     }
 
+    public class Direction2TypeConverter : TypeConverter
+    {
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        {
+            return new Direction2((value as string)[0]);
+        }
+    }
+
     #endregion
 
+    [TypeConverter(typeof(Direction2TypeConverter))]
     public class Direction2
     {
         public int DX { get; set; } = 0;
@@ -423,10 +445,28 @@ namespace AoC.Utils.Vectors
             DY = dy;
         }
 
+        public Direction2(char dir)
+        {
+            SetDirection(dir switch
+            {
+                '>' or 'R' => East,
+                '<' or 'L' => West,
+                '^' or 'U' => North,
+                'v' or 'D' => South,
+                _ => throw new Exception("invalid char direction"),
+            });
+        }
+
         public void SetDirection(int dirx, int diry)
         {
             DX = dirx;
             DY = diry;
+        }
+
+        public void SetDirection(Direction2 other)
+        {
+            DX = other.DX;
+            DY = other.DY;
         }
 
         public void FaceNorth() => SetDirection(0, -1);
@@ -547,18 +587,6 @@ namespace AoC.Utils.Vectors
             }
 
             return i;
-        }
-
-        public static Direction2 FromChar(char d)
-        {
-            switch (d)
-            {
-                case '>': return Direction2.East;
-                case '<': return Direction2.West;
-                case '^': return Direction2.North;
-                case 'v': return Direction2.South;
-                default: throw new Exception("invalid char direction");
-            }
         }
 
         public char AsChar()

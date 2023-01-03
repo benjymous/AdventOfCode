@@ -4,18 +4,8 @@
     {
         public string Name => "2021-02";
 
-        struct Instruction
-        {
-            [Regex(@"(.).+ (\d+)")]
-            public Instruction(char command, int distance)
-            {
-                Command = command;
-                Distance = distance;
-            }
-
-            public char Command;
-            public int Distance;
-        }
+        [Regex(@"(.).+ (\d+)")]
+        record struct Instruction(char Command, int Distance) {}
 
         public static int Part1(string input)
         {

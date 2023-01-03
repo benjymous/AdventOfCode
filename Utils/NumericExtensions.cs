@@ -106,5 +106,7 @@ namespace AoC.Utils
         public static int Distance(this (int x, int y) a, (int x, int y) b) => Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
         public static int Distance(this (int x, int y, int z) a, (int x, int y, int z) b) => Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y) + Math.Abs(a.z - b.z);
         public static int Distance(this (int x, int y, int z, int w) a, (int x, int y, int z, int w) b) => Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y) + Math.Abs(a.z - b.z) + Math.Abs(a.w - b.w);
+
+        public static (int x, int y) Plus(this (int x, int y) left, (int x, int y) right) => (left.x + right.x, left.y + right.y);
     }
 }

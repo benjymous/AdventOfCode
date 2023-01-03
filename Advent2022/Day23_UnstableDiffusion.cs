@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using AoC.Utils;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2022
@@ -19,10 +20,7 @@ namespace AoC.Advent2022
         static bool DirectionFree(HashSet<(int x, int y)> map, (int x, int y) pos, int direction)
         {
             for (int i=0; i<3; ++i)
-            {
-                var (dx, dy) = CheckDirs[direction, i];
-                if (map.Contains((pos.x + dx, pos.y + dy))) return false;
-            }
+                if (map.Contains(pos.Plus(CheckDirs[direction, i]))) return false;            
             return true;
         }
 
@@ -50,24 +48,20 @@ namespace AoC.Advent2022
                         int move = (moveIndex + i) % 4;
                         if (DirectionFree(positions, key, move))
                         {
-                            var (dx, dy) = CheckDirs[move, 0];
-                            var proposal = (key.x + dx, key.y + dy);
+                            var proposal = key.Plus(CheckDirs[move, 0]);
                             if (!potentialMoves.ContainsKey(proposal)) potentialMoves[proposal] = new();
                             potentialMoves[proposal].Add(key);
                             break;
                         }
-                    }       
+                    }
                 }
                 moveIndex++;
                 if (!potentialMoves.Any()) break;
 
-                foreach (var proposal in potentialMoves)
-                {
-                    if (proposal.Value.Count == 1)
-                    {
-                        positions.Remove(proposal.Value.First());
-                        positions.Add(proposal.Key);
-                    }
+                foreach (var proposal in potentialMoves.Where(kvp => kvp.Value.Count == 1))
+                {                    
+                    positions.Remove(proposal.Value.First());
+                    positions.Add(proposal.Key);
                 }
 
                 if (moveIndex == maxSteps) return CountEmpty(positions);

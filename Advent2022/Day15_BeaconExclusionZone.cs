@@ -1,7 +1,6 @@
 ﻿using AoC.Utils;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 
 namespace AoC.Advent2022
 {
@@ -29,7 +28,7 @@ namespace AoC.Advent2022
             {
                 for (int y = 0; y <= Range + 1; ++y)
                 {
-                    int size = (Range - y) + 1;
+                    int size = Range - y + 1;
                     yield return (Pos.x - size, Pos.y + y);
                     if (size > 0) yield return (Pos.x + size, Pos.y + y);
                     if (y != 0)
@@ -54,7 +53,7 @@ namespace AoC.Advent2022
                              .Count() - beacons.Count();
         }
 
-        public static BigInteger Part2(string input, int max = 4000000)
+        public static long Part2(string input, int max = 4000000)
         {
             var sensors = Util.RegexParse<Sensor>(input).ToArray();
 
@@ -63,7 +62,7 @@ namespace AoC.Advent2022
                                .Where(p => !sensors.Any(s => s.InRange(p)))
                                .First();
 
-            return (new BigInteger(4000000) * x) + y;
+            return (4000000L * x) + y;
         }
 
         public void Run(string input, ILogger logger)

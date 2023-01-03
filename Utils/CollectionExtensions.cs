@@ -157,6 +157,14 @@ namespace AoC.Utils
             }
         }
 
+        public static IEnumerable<T> Repeat<T>(this IEnumerable<T> input, int repeats)
+        {
+            for (int i=0; i<repeats; ++i)
+            {
+                foreach (var v in input) yield return v;
+            }
+        }
+
 
         public static IEnumerable<T> Values<T>(this T[,] array2d)
         {
@@ -471,6 +479,11 @@ namespace AoC.Utils
                     yield return i;
                 }
             }
+        }
+
+        public static (T First, T second) Decompose2<T>(this IEnumerable<T> input)
+        {
+            return (input.First(), input.Skip(1).First());
         }
 
         public static IEnumerable<T> GetUniqueItems<T>(this IEnumerable<T> array)

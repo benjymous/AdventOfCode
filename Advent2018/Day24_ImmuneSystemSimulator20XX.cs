@@ -150,10 +150,10 @@ namespace AoC.Advent2018
 
         private static IEnumerable<Group> Parse(string input, uint boost)
         {
-            var parts = input.Split("\n\n");
+            var (immuneData, infectionData) = input.Split("\n\n").Decompose2();
 
-            var immune = Util.RegexParse<Group>(parts[0].Split("\n", StringSplitOptions.TrimEntries).Skip(1)).ToArray();
-            var infection = Util.RegexParse<Group>(parts[1].Split("\n", StringSplitOptions.TrimEntries).Skip(1)).ToArray();
+            var immune = Util.RegexParse<Group>(immuneData.Split("\n", StringSplitOptions.TrimEntries).Skip(1)).ToArray();
+            var infection = Util.RegexParse<Group>(infectionData.Split("\n", StringSplitOptions.TrimEntries).Skip(1)).ToArray();
             immune.WithIndex().ForEach(g => g.Value.Id = g.Index + 1);
             immune.ForEach(g => g.AttackDamage += boost);
             infection.WithIndex().ForEach(g => { g.Value.ImmuneSystem = false; g.Value.Id = g.Index + 1; });

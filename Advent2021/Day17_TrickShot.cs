@@ -7,19 +7,11 @@ namespace AoC.Advent2021
     {
         public string Name => "2021-17";
 
-        public class TargetRect
-        {
-            public static TargetRect Create(string input)
-            {
-                return Util.RegexCreate<TargetRect>(input);
-            }
 
-            [Regex(@"target area: x=(\d+)..(\d+), y=(-?\d+)..(-?\d+)")]
-            public TargetRect(int x1, int x2, int y1, int y2)
-            {
-                (X1, X2, Y1, Y2) = (x1, x2, y1, y2);
-            }
-            public readonly int X1, X2, Y1, Y2;
+        [Regex(@"target area: x=(\d+)..(\d+), y=(-?\d+)..(-?\d+)")]
+        public record struct TargetRect(int X1, int X2, int Y1, int Y2)
+        {
+            public static TargetRect Create(string input) => Util.RegexCreate<TargetRect>(input);
 
             public bool Contains((int X, int Y) point, bool ignoreX) => ignoreX ? point.Y >= Y1 && point.Y <= Y2 : point.X >= X1 && point.Y >= Y1 && point.X <= X2 && point.Y <= Y2;
 

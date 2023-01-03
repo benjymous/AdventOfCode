@@ -13,26 +13,27 @@ namespace AoC.Advent2021
             on,
             off,
         }
+        public record struct Box(int MinX, int MaxX, int MinY, int MaxY, int MinZ, int MaxZ) { }
 
         public class Instruction
         {
             [Regex(@"(.+) x=(-?\d+)..(-?\d+),y=(-?\d+)..(-?\d+),z=(-?\d+)..(-?\d+)")]
-            public Instruction(Toggle action, int x1, int x2, int y1, int y2, int z1, int z2) => (Action, Box) = (action, (x1, x2 + 1, y1, y2 + 1, z1, z2 + 1));
+            public Instruction(Toggle action, int x1, int x2, int y1, int y2, int z1, int z2) => (Action, Box) = (action, new(x1, x2 + 1, y1, y2 + 1, z1, z2 + 1));
 
             public Toggle Action;
-            public (int minX, int maxX, int minY, int maxY, int minZ, int maxZ) Box;
+            public Box Box;
         }
 
-        static IEnumerable<int> GetDivisions(int a1, int a2, int b1, int b2) => new HashSet<int> { a1, a2, b1, b2 }.Order();
+        static int[] GetDivisions(params int[] values) => values.Distinct().Order().ToArray();
 
-        static IEnumerable<(int minX, int maxX, int minY, int maxY, int minZ, int maxZ)> Subtract((int minX, int maxX, int minY, int maxY, int minZ, int maxZ) b1, (int minX, int maxX, int minY, int maxY, int minZ, int maxZ) b2)
+        static IEnumerable<Box> Subtract(Box b1, Box b2)
         {
-            var divX = GetDivisions(b1.minX, b1.maxX, b2.minX, b2.maxX).ToArray();
-            var divY = GetDivisions(b1.minY, b1.maxY, b2.minY, b2.maxY).ToArray();
-            var divZ = GetDivisions(b1.minZ, b1.maxZ, b2.minZ, b2.maxZ).ToArray();
+            var divX = GetDivisions(b1.MinX, b1.MaxX, b2.MinX, b2.MaxX);
+            var divY = GetDivisions(b1.MinY, b1.MaxY, b2.MinY, b2.MaxY);
+            var divZ = GetDivisions(b1.MinZ, b1.MaxZ, b2.MinZ, b2.MaxZ);
             foreach (var (zpair, ypair, xpair) in divZ.OverlappingPairs().SelectMany(zpair => divY.OverlappingPairs().SelectMany(ypair => divX.OverlappingPairs().Select(xpair => (zpair, ypair, xpair)))))
             {
-                var newBox = (xpair.first, xpair.second, ypair.first, ypair.second, zpair.first, zpair.second);
+                var newBox = new Box(xpair.first, xpair.second, ypair.first, ypair.second, zpair.first, zpair.second);
                 // keep segments in b1 but not b2
                 if (Overlaps(newBox, b1) && !Overlaps(newBox, b2))
                 {
@@ -41,35 +42,25 @@ namespace AoC.Advent2021
             }
         }
 
-        static bool Overlaps((int minX, int maxX, int minY, int maxY, int minZ, int maxZ) box1, (int minX, int maxX, int minY, int maxY, int minZ, int maxZ) box2) => (box1.minX < box2.maxX) && (box1.maxX > box2.minX) && (box1.minY < box2.maxY) && (box1.maxY > box2.minY) && (box1.minZ < box2.maxZ) && (box1.maxZ > box2.minZ);
+        static bool Overlaps(Box box1, Box box2) => (box1.MinX < box2.MaxX) && (box1.MaxX > box2.MinX) && (box1.MinY < box2.MaxY) && (box1.MaxY > box2.MinY) && (box1.MinZ < box2.MaxZ) && (box1.MaxZ > box2.MinZ);
 
-        static long Volume((int minX, int maxX, int minY, int maxY, int minZ, int maxZ) box) => (box.maxX - (long)box.minX) * (box.maxY - (long)box.minY) * (box.maxZ - (long)box.minZ);
+        static long Volume(Box box) => (box.MaxX - (long)box.MinX) * (box.MaxY - (long)box.MinY) * (box.MaxZ - (long)box.MinZ);
 
         public static long RunOperation(IEnumerable<Instruction> instructions)
         {
-            var data = Enumerable.Empty<(int minX, int maxX, int minY, int maxY, int minZ, int maxZ)>();
+            var data = Enumerable.Empty<Box>();
 
             foreach (var instr in instructions)
             {
-                var newBoxes = new List<(int minX, int maxX, int minY, int maxY, int minZ, int maxZ)>();
-                if (instr.Action == Toggle.on)
-                {
-                    newBoxes.Add(instr.Box);
-                }
+                var newBoxes = new List<Box>();
+                if (instr.Action == Toggle.on) newBoxes.Add(instr.Box);
                 foreach (var box in data)
                 {
-                    if (Overlaps(box, instr.Box))
-                    {
-                        newBoxes.AddRange(Subtract(box, instr.Box));
-                    }
-                    else
-                    {
-                        newBoxes.Add(box);
-                    }
+                    if (Overlaps(box, instr.Box)) newBoxes.AddRange(Subtract(box, instr.Box));
+                    else newBoxes.Add(box);
                 }
                 data = newBoxes;
-            }
-
+            }            
             return data.Sum(Volume);
         }
 

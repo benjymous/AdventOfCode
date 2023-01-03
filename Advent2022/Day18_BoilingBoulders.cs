@@ -30,18 +30,14 @@ namespace AoC.Advent2022
         private static int CountOuterEdges(IEnumerable<Node> cells) 
             => cells.SelectMany(cell => cell.Edges()).GetUniqueItems().Count();
 
+        static (int dx, int dy, int dz)[] Neighbours = new[] { (-1, 0, 0), (1, 0, 0), (0, -1, 0), (0, 1, 0), (0, 0, -1), (0, 0, 1) };
         static void FloodFill((int x, int y, int z) pos, HashSet<(int x, int y, int z)> matrix)
         {
             if (matrix.Contains(pos))
             {
                 matrix.Remove(pos);
-
-                FloodFill((pos.x - 1, pos.y, pos.z), matrix);
-                FloodFill((pos.x + 1, pos.y, pos.z), matrix);
-                FloodFill((pos.x, pos.y - 1, pos.z), matrix);
-                FloodFill((pos.x, pos.y + 1, pos.z), matrix);
-                FloodFill((pos.x, pos.y, pos.z - 1), matrix);
-                FloodFill((pos.x, pos.y, pos.z + 1), matrix);
+                foreach (var (dx, dy, dz) in Neighbours)
+                    FloodFill((pos.x + dx, pos.y + dy, pos.z + dz), matrix);
             }
         }
 
