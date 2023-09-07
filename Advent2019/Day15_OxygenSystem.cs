@@ -1,6 +1,5 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Pathfinding;
-using AoC.Utils.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,56 +10,33 @@ namespace AoC.Advent2019
     {
         public string Name => "2019-15";
 
-        public class RepairDrone : NPSA.ICPUInterrupt
+        public class RepairDrone : NPSA.ICPUInterrupt, IIsWalkable<int>
         {
             readonly NPSA.IntCPU cpu;
             (int x, int y) position = (0, 0);
 
             (int x, int y) tryState;
-            ((int x, int y), (int x, int y)) target;
-            bool hasTarget = false;
+            readonly Queue<(int x, int y)> path = new();
 
             public int Steps { get; private set; } = 0;
 
-            public int minx = 0, miny = 0;
-            public int maxx = 0, maxy = 0;
+            int minx = 0, miny = 0, maxx = 0, maxy = 0;
 
-            public const int OPEN = 0;
-            public const int WALL = 1;
-            public const int OXYGEN = 2;
+            public const int OPEN = 1, WALL = 0, OXYGEN = 2;
 
-            class Walkable : IIsWalkable<int>
-            {
-                public bool IsWalkable(int cell)
-                {
-                    return cell != WALL;
-                }
-            }
+            readonly Dictionary<int, (int, int)> SpecialCells = new();
 
-            public GridMap<int> map = new(new Walkable());
+            public GridMap<int> map;
+            public bool IsWalkable(int cell) => cell != WALL;
 
-            public (int x, int y) FindCell(int num)
-            {
-                return map.FindCell(num);
-            }
+            public (int x, int y) FindCell(int num) => SpecialCells[num];
 
-            readonly Stack<((int x, int y), (int x, int y))> unknowns = new();
-
-            public enum Mode
-            {
-                Interactive = 0,
-                Search = 2,
-            }
-
-            public Mode mode = Mode.Search;
-
+            readonly Stack<((int x, int y) position, (int x, int y) unknownNeighbour)> unknowns = new();
 
             public RepairDrone(string input)
             {
-                cpu = new NPSA.IntCPU(input)
-                {
-                    Interrupt = this
-                };
+                map = new(this);
+                cpu = new NPSA.IntCPU(input) { Interrupt = this };
             }
 
             public void Run()
@@ -69,76 +45,28 @@ namespace AoC.Advent2019
                 Console.WriteLine(cpu.Speed());
             }
 
-            public void AddIfUnknown((int x, int y) current, (int x, int y) neighbour)
-            {
-                if (!map.Data.ContainsKey(neighbour))
-                {
-                    unknowns.Push((current, neighbour));
-                }
-            }
+            readonly (int dx, int dy)[] Neighbours = new[] { (-1, 0), (1, 0), (0, -1), (0, 1) };
 
             public void AddUnknowns()
             {
-                AddIfUnknown(position, (position.x - 1, position.y));
-                AddIfUnknown(position, (position.x + 1, position.y));
-                AddIfUnknown(position, (position.x, position.y - 1));
-                AddIfUnknown(position, (position.x, position.y + 1));
+                foreach (var n in Neighbours.Select(n => position.OffsetBy(n)).Where(n => !map.Data.ContainsKey(n))) unknowns.Push((position, n));
             }
 
-            public void HasPutOutput()
+            public void OutputReady()
             {
-                var val = cpu.Output.Dequeue();
+                var val = (int)cpu.Output.Dequeue();
 
-                switch (val)
-                {
-                    case 0:
-                        {
-                            if (mode == Mode.Interactive) Console.WriteLine("Wall!");
-
-                            map.Data[tryState] = WALL;
-                        }
-                        break;
-                    case 1:
-                        {
-                            if (mode == Mode.Interactive) Console.WriteLine("Ok");
-                            map.Data[tryState] = OPEN;
-                            position = tryState;
-                        }
-                        break;
-                    case 2:
-                        {
-                            if (mode == Mode.Interactive) Console.WriteLine("Found Oxygen system");
-                            map.Data[tryState] = OXYGEN;
-                            position = tryState;
-                        }
-                        break;
-                    default:
-                        {
-                            if (mode == Mode.Interactive) Console.WriteLine("??? {val}");
-                            map.Data[tryState] = (int)val;
-                            position = tryState;
-                        }
-                        break;
-                }
-                minx = Math.Min(minx, tryState.x);
-                maxx = Math.Max(maxx, tryState.x);
-
-                miny = Math.Min(miny, tryState.y);
-                maxy = Math.Max(maxy, tryState.y);
+                map.Data[tryState] = val;
+                if (val > 1) SpecialCells[val] = tryState;
+                if (val != WALL) position = tryState;
             }
 
-            public int GetMapData(int x, int y)
-            {
-                var key = (x,y);
-                if (map.Data.TryGetValue(key, out int value))
-                {
-                    return value;
-                }
-                else return 0;
-            }
+            public int GetMapData(int x, int y) => map.Data.TryGetValue((x, y), out int value) ? value : -1;
 
             public void DrawMap(ILogger logger)
             {
+                (minx, maxx) = map.Data.Keys.MinMax(v => v.x);
+                (miny, maxy) = map.Data.Keys.MinMax(v => v.y);
                 if (logger == null) return;
                 logger.WriteLine();
                 for (var y = miny; y <= maxy; ++y)
@@ -146,7 +74,6 @@ namespace AoC.Advent2019
                     var line = "";
                     for (int x = minx; x <= maxx; ++x)
                     {
-
                         if (x == position.x && y == position.y)
                         {
                             line += "@";
@@ -159,8 +86,9 @@ namespace AoC.Advent2019
                         {
                             line += GetMapData(x, y) switch
                             {
-                                0 => ".",
-                                1 => "#",
+                                OPEN => " ",
+                                WALL => "#",
+                                OXYGEN => "o",
                                 _ => "?",
                             };
                         }
@@ -170,95 +98,46 @@ namespace AoC.Advent2019
                 logger.WriteLine();
 
             }
-            public void WillReadInput()
+
+            public void RequestInput()
             {
                 Steps++;
-                if (mode == Mode.Interactive)
+                
+                AddUnknowns();
+
+                if (!path.Any())
                 {
-                    DrawMap(new ConsoleOut());
-                    Console.WriteLine($"Located at {position}");
-                    Console.WriteLine("north (1), south (2), west (3), and east (4) ?");
-
-                    int code = 0;
-
-                    while (code < 1 || code > 4)
-                    {
-                        Console.Write("> ");
-                        var key = Console.ReadKey();
-                        Console.WriteLine();
-
-                        try
-                        {
-                            code = int.Parse($"{key.KeyChar}");
-
-                            switch (code)
-                            {
-                                case 1: tryState = (position.x, position.y - 1); break;
-                                case 2: tryState = (position.x, position.y + 1); break;
-                                case 3: tryState = (position.x - 1, position.y); break;
-                                case 4: tryState = (position.x + 1, position.y); break;
-                            }
-                        }
-                        catch
-                        {
-                        }
-                    }
-                    cpu.Input.Enqueue(code);
-                }
-                else if (mode == Mode.Search)
-                {
-                    //DrawMap();
-
-                    if (mode == Mode.Search)
-                    {
-                        AddUnknowns();
-                    }
-
-                    if (unknowns.Count == 0 && !hasTarget)
+                    if (unknowns.Count == 0)
                     {
                         cpu.Input.Enqueue(0); // stop
                         return;
                     }
-
-                    if (!hasTarget)
-                    {
-                        target = unknowns.Pop();
-                        hasTarget = true;
-                    }
-
-                    if (target.Item2.Distance(position) == 1)
-                    {
-                        tryState = target.Item2;
-                        hasTarget = false;
-                    }
-                    else if (target.Item1.Distance(position) == 1)
-                    {
-                        tryState = target.Item1;
-                    }
-                    else
-                    {
-                        // need to path find
-
-                        var path = FindPath(position, target.Item1);
-                        tryState = path.First();
-                    }
-
-                    int code = 0;
-
-                    if (tryState.y < position.y) code = 1; // up
-                    else if (tryState.y > position.y) code = 2; // down
-                    else if (tryState.x < position.x) code = 3; // left
-                    else if (tryState.x > position.x) code = 4; // right
-
-                    cpu.Input.Enqueue(code); // stop
+                    PlotRoute(unknowns.Pop());
                 }
+
+                tryState = path.Dequeue();
+
+                cpu.Input.Enqueue((tryState.x - position.x, tryState.y - position.y) switch
+                {
+                    (0, -1) => 1, // up
+                    (0, 1) => 2,  // down
+                    (-1, 0) => 3,  // left
+                    (1, 0) => 4, // right
+                    _ => 0
+                });
             }
 
-            public IEnumerable<(int x, int y)> FindPath((int x, int y) start, (int x, int y) end)
+            private void PlotRoute(((int x, int y) position, (int x, int y) unknownNeighbour) target)
             {
-                return AStar<(int x, int y)>.FindPath(map, start, end);
+                foreach (var pos in FindPath(position, target.position))
+                {
+                    path.Add(pos);
+                    if (pos == target.unknownNeighbour) return;
+                }
+                path.Add(target.unknownNeighbour);
             }
 
+            public IEnumerable<(int x, int y)> FindPath((int x, int y) start, (int x, int y) end) => map.FindPath(start, end);
         }
 
         public static int Part1(string input, ILogger logger = null)
@@ -270,11 +149,19 @@ namespace AoC.Advent2019
 
             logger?.WriteLine($"Map explored in {droid.Steps} steps");
 
-            var oxygenSystemPosition = droid.FindCell(RepairDrone.OXYGEN);
+            return droid.FindPath((0, 0), droid.FindCell(RepairDrone.OXYGEN)).Count();
+        }
 
-            var path = droid.FindPath((0, 0), oxygenSystemPosition);
+        static void FloodFill(int currentDistance, (int x, int y) position, GridMap<int> map, Dictionary<(int, int), int> distances)
+        {
+            if (!map.IsValidNeighbour(position) || distances.TryGetValue(position, out var prev) && prev <= currentDistance) return;
 
-            return path.Count();
+            distances[position] = currentDistance;
+
+            FloodFill(currentDistance + 1, (position.x + 1, position.y), map, distances);
+            FloodFill(currentDistance + 1, (position.x - 1, position.y), map, distances);
+            FloodFill(currentDistance + 1, (position.x, position.y + 1), map, distances);
+            FloodFill(currentDistance + 1, (position.x, position.y - 1), map, distances);
         }
 
         public static int Part2(string input)
@@ -283,29 +170,10 @@ namespace AoC.Advent2019
             droid.Run();
             var oxygenSystemPosition = droid.FindCell(2);
 
-            var dist = 0;
-            for (int y = droid.miny + 1; y < droid.maxy; ++y)
-            {
-                for (int x = droid.minx + 1; x < droid.maxx; ++x)
-                {
-                    if (droid.GetMapData(x, y) == 0)
-                    {
-                        int score = droid.GetMapData(x + 1, y) +
-                                    droid.GetMapData(x - 1, y) +
-                                    droid.GetMapData(x, y + 1) +
-                                    droid.GetMapData(x, y - 1);
+            Dictionary<(int, int), int> distance = new();
+            FloodFill(0, oxygenSystemPosition, droid.map, distance);
 
-                        if (score == 3)
-                        {
-                            // dead end
-                            var path = droid.FindPath(oxygenSystemPosition, (x, y));
-                            dist = Math.Max(dist, path.Count());
-                        }
-                    }
-                }
-            }
-
-            return dist;
+            return distance.Values.Max();
         }
 
         public void Run(string input, ILogger logger)

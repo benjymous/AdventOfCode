@@ -1,6 +1,9 @@
 ﻿using AoC.Utils;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 
 namespace AoC.Advent2015
 {
@@ -8,52 +11,30 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-20";
 
-        public static IEnumerable<int> GetFactors(int x)
+        private static int Solve(string input, QuestionPart part)
         {
-            for (int i = 1; i * i <= x; i++)
+            int multiplier = part.One() ? 10 : 11;
+            int target = int.Parse(input);
+            int[] numPresents = new int[1000000];
+            for (int i = 1; i < numPresents.Length; i++)
             {
-                if (0 == (x % i))
+                for (int j = i, count = part.Two() ? 50 : int.MaxValue; j < numPresents.Length && count > 0; j += i, count--)
                 {
-                    yield return i;
-                    if (i != (x / i))
-                    {
-                        yield return x / i;
-                    }
+                    numPresents[j] += i * multiplier;
                 }
+                if (numPresents[i] >= target) return i;
             }
-        }
-
-        static int NumPresents(int doorNumber)
-        {
-            return GetFactors(doorNumber).Sum(f => f * 10);
-        }
-
-        static int NumPresents2(int doorNumber, Dictionary<int, int> elfCount)
-        {
-            int score = 0;
-            var factors = GetFactors(doorNumber);
-            foreach (var factor in factors)
-            {
-                elfCount.IncrementAtIndex(factor);
-                if (elfCount[factor] <= 50)
-                {
-                    score += factor * 11;
-                }
-            }
-            return score;
+            return 0;
         }
 
         public static int Part1(string input)
         {
-            int target = int.Parse(input);
-            return Util.Forever(1).Where(i => NumPresents(i) > target).First();
+            return Solve(input, QuestionPart.Part1);
         }
 
         public static int Part2(string input)
         {
-            int target = int.Parse(input);
-            Dictionary<int, int> elfCount = new();
-            return Util.Forever(1).Where(i => NumPresents2(i, elfCount) > target).First();
+            return Solve(input, QuestionPart.Part2);
         }
 
         public void Run(string input, ILogger logger)

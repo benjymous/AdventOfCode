@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using AoC.Utils;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2018
@@ -7,133 +8,81 @@ namespace AoC.Advent2018
     {
         public string Name => "2018-07";
 
-
-        private static void ParseInput(string input, out HashSet<string> steps, out Dictionary<string, HashSet<string>> dependencies)
+        private class Factory
         {
-            var lines = Util.Split(input);
-            steps = new HashSet<string>();
-            dependencies = new Dictionary<string, HashSet<string>>();
-            foreach (var line in lines)
+            public Factory(string input)
             {
-                var bits = line.Split(" ");
+                Util.Split(input).ForEach(line => AddDependency(line.Split(" ").Where((v, idx) => idx == 1 || idx == 7).Select(str => str[0]).ToArray().Decompose2()));
+                steps = dependencies.Keys.Concat(dependencies.SelectMany(kvp => kvp.Value)).ToHashSet();
+            }
 
-                if (!steps.Contains(bits[1])) steps.Add(bits[1]);
-                if (!steps.Contains(bits[7])) steps.Add(bits[7]);
+            void AddDependency((char dependency, char task) entry) => dependencies.GetOrCalculate(entry.task, _ => new()).Add(entry.dependency);
 
-                if (!dependencies.ContainsKey(bits[7]))
+            readonly HashSet<char> steps;
+            readonly Dictionary<char, HashSet<char>> dependencies = new();
+            readonly HashSet<char> ready = new();
+
+            public bool WorkToDo => steps.Any();
+            public bool WorkReady => ready.Any();
+
+            public char GetNext()
+            {
+                var next = ready.Min();
+                steps.Remove(next);
+                ready.Remove(next);
+
+                return next;
+            }
+
+            public void UpdateDependencies() => ready.UnionWith(steps.Where(step => !dependencies.ContainsKey(step)));
+            public void CompleteTask(char task) => dependencies.Where(kvp => kvp.Value.Remove(task) && !kvp.Value.Any()).ForEach(kvp => dependencies.Remove(kvp.Key));
+        }
+
+        class Worker
+        {
+            char task;
+            int timeRemaining = 0;
+            public bool Busy => timeRemaining > 0;
+
+            public void DoWork(Factory factory)
+            {
+                if (timeRemaining == 0 && factory.WorkReady)
                 {
-                    dependencies[bits[7]] = new HashSet<string>();
+                    task = factory.GetNext();
+                    timeRemaining = task - 4; // A = 61, B = 62, etc
                 }
-                dependencies[bits[7]].Add(bits[1]);
+                if (timeRemaining > 0 && --timeRemaining==0) factory.CompleteTask(task);
             }
         }
 
         public static string Part1(string input)
         {
-            ParseInput(input, out HashSet<string> steps, out Dictionary<string, HashSet<string>> dependencies);
+            var factory = new Factory(input);
 
-            List<string> result = new();
-            HashSet<string> ready = new();
-            while (steps.Count > 0)
+            List<char> result = new();
+            while (factory.WorkToDo)
             {
-
-                foreach (var step in steps)
-                {
-                    if (!dependencies.ContainsKey(step) || dependencies[step].Count == 0)
-                    {
-                        ready.Add(step);
-                    }
-                }
-
-                var next = ready.Order().First();
+                factory.UpdateDependencies();
+                var next = factory.GetNext();
+                factory.CompleteTask(next);
                 result.Add(next);
-                steps.Remove(next);
-                ready.Remove(next);
-
-                foreach (var step in steps)
-                {
-                    if (dependencies.ContainsKey(step))
-                    {
-                        dependencies[step].Remove(next);
-                    }
-                }
-
             }
 
-            return string.Join("", result);
-        }
-
-        class Worker
-        {
-            public string step = null;
-            public int timeRemaining = 0;
+            return result.AsString();
         }
 
         public static int Part2(string input)
         {
-            ParseInput(input, out HashSet<string> steps, out Dictionary<string, HashSet<string>> dependencies);
-
-            List<string> result = new();
-            HashSet<string> ready = new();
-
-            List<Worker> workers = new();
-
-            const int workerCount = 5;
-
-            for (int i = 0; i < workerCount; ++i)
-            {
-                workers.Add(new Worker());
-            }
+            var factory = new Factory(input);
+            List<Worker> workers = Util.CreateMultiple<Worker>(5);
 
             int time = 0;
 
-            while (steps.Count > 0 || workers.Any(w => w.step != null))
+            while (factory.WorkToDo || workers.Any(w => w.Busy))
             {
-                foreach (var step in steps)
-                {
-                    if (!dependencies.ContainsKey(step) || dependencies[step].Count == 0)
-                    {
-                        ready.Add(step);
-                    }
-                }
-
-                foreach (var worker in workers)
-                {
-                    if (worker.step == null)
-                    {
-                        if (ready.Count > 0)
-                        {
-                            var next = ready.Order().First();
-                            ready.Remove(next);
-                            steps.Remove(next);
-                            worker.step = next;
-                            worker.timeRemaining = next[0] - 4; // A = 61, B = 62, etc
-                        }
-                    }
-
-                    if (worker.step != null)
-                    {
-                        worker.timeRemaining--;
-
-                        if (worker.timeRemaining == 0)
-                        {
-                            result.Add(worker.step);
-
-                            foreach (var step in steps)
-                            {
-                                if (dependencies.ContainsKey(step))
-                                {
-                                    dependencies[step].Remove(worker.step);
-                                }
-                            }
-
-                            worker.step = null;
-                        }
-                    }
-
-                }
+                factory.UpdateDependencies();
+                workers.ForEach(w => w.DoWork(factory));
                 time++;
-
             }
 
             return time;

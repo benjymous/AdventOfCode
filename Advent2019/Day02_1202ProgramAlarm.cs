@@ -1,13 +1,10 @@
-using System;
-using System.Linq;
-
 namespace AoC.Advent2019
 {
     public class Day02 : IPuzzle
     {
         public string Name => "2019-02";
 
-        public static Int64 RunProgram(string input, int noun, int verb)
+        public static long RunProgram(string input, int noun, int verb)
         {
             var cpu = new NPSA.IntCPU(input);
             cpu.Poke(1, noun);
@@ -16,13 +13,23 @@ namespace AoC.Advent2019
             return cpu.Peek(0);
         }
 
-        public static Int64 Part1(string input) => RunProgram(input, 12, 2);
+        public static long Part1(string input)
+        {
+            return RunProgram(input, 12, 2);
+        }
 
         const int Part2_Target = 19690720;
 
-        public static int Part2(string input) => Util.Matrix(100, 100)
-                   .Where(val => RunProgram(input, val.x, val.y) == Part2_Target)
-                   .Select(val => (100 * val.x) + val.y).FirstOrDefault();
+        public static int Part2(string input)
+        {
+            var initial = RunProgram(input, 0, 0);
+            long aim = initial + (Part2_Target % 100) - (initial % 100) + (((initial % 100) > (Part2_Target % 100)) ? 100 : 0);
+
+            (_, var y) = Util.BinarySearch(0, 100, y => (RunProgram(input, 0, y) >= aim, y));
+            (_, var x) = Util.BinarySearch(0, 100, x => (RunProgram(input, x, y) >= Part2_Target, x));
+
+            return (x * 100) + y;
+        }
 
         public void Run(string input, ILogger logger)
         {

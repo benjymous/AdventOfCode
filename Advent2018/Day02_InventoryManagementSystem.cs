@@ -1,6 +1,4 @@
-﻿using AoC.Utils;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
 namespace AoC.Advent2018
 {
@@ -28,22 +26,25 @@ namespace AoC.Advent2018
         public static string Part2(string input)
         {
             var keys = Util.Split(input);
-            foreach (var s1 in keys)
+            for (int i = 0; i < keys.Length; i++)
             {
-                foreach (var s2 in keys)
+                string s1 = keys[i];
+                for (int j = i + 1; j < keys.Length; j++)
                 {
+                    string s2 = keys[j];
                     var diff = 0;
                     var answer = "";
 
-                    for (int i = 0; i < s1.Length; ++i)
+                    for (int k = 0; k < s1.Length; ++k)
                     {
-                        if (s1[i] != s2[i])
+                        if (s1[k] != s2[k])
                         {
                             diff++;
+                            if (diff > 1) break;
                         }
                         else
                         {
-                            answer += s1[i];
+                            answer += s1[k];
                         }
                     }
 

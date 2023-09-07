@@ -1,6 +1,5 @@
-﻿using AoC.Utils.Vectors;
+﻿using AoC.Utils;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2019
@@ -9,149 +8,36 @@ namespace AoC.Advent2019
     {
         public string Name => "2019-10";
 
-        static List<ManhattanVector2> Parse(string input)
+        public static double AngleBetween((int x, int y) vector1, (int x, int y) vector2)
         {
-            var lines = Util.Split(input);
-
-            var result = new List<ManhattanVector2>();
-
-            for (var y = 0; y < lines.Length; ++y)
-            {
-                var line = lines[y];
-                for (var x = 0; x < line.Length; ++x)
-                {
-                    if (line[x] != '.')
-                    {
-                        result.Add(new ManhattanVector2(x, y));
-                    }
-                }
-            }
-
-            return result;
+            if (vector1 == vector2) return 0;
+            var angle = Math.Atan2(vector2.x - vector1.x, vector1.y - vector2.y);
+            return angle < 0 ? angle + Math.PI * 2 : angle;
         }
 
-        public static double AngleBetween(ManhattanVector2 vector1, ManhattanVector2 vector2)
+        public static int[] FindBestLocation(string input)
         {
-            var angle = Math.Atan2(vector2.X - vector1.X, vector1.Y - vector2.Y) * (180 / Math.PI);
-            if (angle < 0) angle += 360;
-            return angle;
-        }
+            var data = Util.ParseSparseMatrix<bool>(input).Keys;
 
-        public static IEnumerable<IEnumerable<IGrouping<double, (ManhattanVector2, ManhattanVector2)>>> BuildGroups(string input)
-        {
-            var data = Parse(input);
-
-            var groups = data.Select(a1 => data.Select(a2 => (AngleBetween(a1, a2), (a1, a2))).GroupBy(tup => tup.Item1, tup => tup.Item2));
-
-            return groups;
+            return data.Select(a1 => data.GroupBy(a2 => AngleBetween(a1, a2), a2 => a2.x*100 + a2.y))
+                .MaxBy(e => e.Count())
+                .OrderBy(group => group.Key)
+                .Select(group => group.First())
+                .ToArray();
         }
 
         public static int Part1(string input)
         {
-            var grouped = BuildGroups(input);
-
-            var counts = grouped.Max(group => group.Count());
-
-            return counts;
+            return FindBestLocation(input).Length;
         }
 
         public static int Part2(string input, int position)
         {
-            var order = TargetOrder(input);
-            var pos = order.ToList()[position - 1];
-            return pos.X * 100 + pos.Y;
-        }
-
-        public static List<ManhattanVector2> TargetOrder(string input)
-        {
-            var data = Parse(input);
-
-            var grouped = BuildGroups(input);
-
-            var counts = grouped.OrderBy(group => group.Count()).Reverse();
-
-            var best = counts.First().OrderBy(item => item.Key);
-
-            // first result will be the group with the most visible (i.e. the part1 answer)
-            var result = counts.First();
-
-            // Extract the position from this (ick!)
-            var bestPosition = result.First().First().Item1;
-
-            var targets = result.Select(x => x.Select(y => (x.Key, y.Item2)));
-
-            // now sort into order
-            var order = new List<(double, int, ManhattanVector2)>();
-            foreach (var x in targets)
-            {
-                foreach (var y in x)
-                {
-                    order.Add((y.Key, y.Item2.Distance(bestPosition), y.Item2));
-                }
-            }
-
-            var sorted = order.OrderBy(x => x.Item1).ThenBy(y => y.Item2)
-                .Skip(1); // ignore first element, as the base can't target itself
-
-            var queue = new Queue<(double, int, ManhattanVector2)>(sorted);
-
-            double currentAngle = 0;
-
-            List<ManhattanVector2> destroyed = new();
-
-            while (queue.Any())
-            {
-                var target = queue.Dequeue();
-                if (target.Item1 >= currentAngle || !queue.Any())
-                {
-                    //Console.WriteLine($"[{++steps}] Destroyed {target.Item3} [{currentAngle}]");   
-                    destroyed.Add(target.Item3);
-                }
-                else
-                {
-                    queue.Enqueue(target);
-                }
-                currentAngle = target.Item1 + 0.00001;
-                if (currentAngle > 360) currentAngle -= 360;
-            }
-
-            return destroyed;
+            return FindBestLocation(input)[position - 1];
         }
 
         public void Run(string input, ILogger logger)
         {
-
-            //Console.WriteLine(AngleBetween(new ManhattanVector2(8,3), new ManhattanVector2(8,1)));   
-
-            // Console.WriteLine(AngleBetween(new ManhattanVector2(5,5), new ManhattanVector2(10,5)));
-            // Console.WriteLine(AngleBetween(new ManhattanVector2(5,5), new ManhattanVector2(0,5)));
-
-            // Console.WriteLine(AngleBetween(new ManhattanVector2(5,5), new ManhattanVector2(5,0)));
-            // Console.WriteLine(AngleBetween(new ManhattanVector2(5,5), new ManhattanVector2(10,0)));
-
-            // Console.WriteLine(AngleBetween(new ManhattanVector2(0,0), new ManhattanVector2(1,1)));
-            // Console.WriteLine(AngleBetween(new ManhattanVector2(0,0), new ManhattanVector2(2,2)));
-            // Console.WriteLine(AngleBetween(new ManhattanVector2(0,0), new ManhattanVector2(3,3)));
-
-            // Console.WriteLine(AngleBetween(new ManhattanVector2(1,1), new ManhattanVector2(0,0)));
-
-            // Console.WriteLine(AngleBetween(new ManhattanVector2(0,1), new ManhattanVector2(1,0)));
-            // Console.WriteLine(AngleBetween(new ManhattanVector2(1,0), new ManhattanVector2(0,1)));
-
-            // Console.WriteLine("8? " + Part1(".#..#,.....,#####,....#,...##"));
-
-            // Console.WriteLine("33? " + Part1("......#.#.,#..#.#....,..#######.,.#.#.###..,.#..#.....,..#....#.#,#..#....#.,.##.#..###,##...#..#.,.#....####"));
-
-            // Console.WriteLine("35? " + Part1("#.#...#.#.,.###....#.,.#....#...,##.#.#.#.#,....#.#.#.,.##..###.#,..#...##..,..##....##,......#...,.####.###."));
-
-            // Console.WriteLine("41? " + Part1(".#..#..###,####.###.#,....###.#.,..###.##.#,##.##.#.#.,....###..#,..#.#..#.#,#..#.#.###,,.##...##.#,.....#.#.."));
-
-            // Console.WriteLine("210? " + Part1(".#..##.###...#######,##.############..##.,.#.######.########.#,.###.#######.####.#.,#####.##.#.##.###.##,..#####..#.#########,####################,#.####....###.#.#.##,##.#################,#####.##.###..####..,..######..##.#######,####.##.####...##..#,.#####..#.######.###,##...#.##########...,#.##########.#######,.####.#.###.###.#.##,....##.##.###..#####,.#.#.###########.###,#.#.#.#####.####.###,###.##.####.##.#..##"));
-
-
-            //Console.WriteLine(Part2(".#..#,.....,#####,....#,...##"));
-            //Console.WriteLine(Part2(".#....#####...#..,##...##.#####..##,##...#...#.#####.,..#.....X...###..,..#.#.....#....##"));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input, 200));
         }

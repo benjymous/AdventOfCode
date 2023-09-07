@@ -17,7 +17,7 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void Polymer01Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day05.Part1(input));
+            Assert.AreEqual(expected, Day05.Part1(input));
         }
 
         [TestCategory("Test")]
@@ -25,7 +25,7 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void Polymer02Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day05.Part2(input));
+            Assert.AreEqual(expected, Day05.Part2(input));
         }
 
         [TestCategory("Regression")]

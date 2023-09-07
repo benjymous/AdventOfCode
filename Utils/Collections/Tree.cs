@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,34 +15,27 @@ namespace AoC.Utils.Collections
 
         public List<TreeNode<TKeyType, TDataType>> Children { get; set; } = new List<TreeNode<TKeyType, TDataType>>();
 
-        public int GetDescendantCount() => Children.Count + Children.Sum(c => c.GetDescendantCount());
+        int cachedChildCount = -1;
+        public int GetDescendantCount()
+        {
+            cachedChildCount = cachedChildCount == -1 ? Children.Sum(c => c.GetDescendantCount()) : cachedChildCount;
+            return Children.Count + cachedChildCount;
+        }
 
         public override string ToString() => Key.ToString();
     }
 
     public class Tree<TKeyType> : Tree<TKeyType, object> { }
 
-    public class Tree<TKeyType, TDataType>
+    public class Tree<TKeyType, TDataType> : IEnumerable<TreeNode<TKeyType, TDataType>> 
     {
         readonly Dictionary<TKeyType, TreeNode<TKeyType, TDataType>> index = new();
 
         public IEnumerable<TKeyType> GetIndex() => index.Keys;
-        public IEnumerable<TreeNode<TKeyType, TDataType>> GetNodes() => index.Values;
 
-        TreeNode<TKeyType, TDataType> root = null;
-        public TreeNode<TKeyType, TDataType> GetRoot()
-        {
-            return root ??= TraverseToRoot(index.Keys.First()).Last();
-        }
+        public TKeyType GetRootKey() => TraverseToRoot(index.Keys.First()).Last();
 
-        public TreeNode<TKeyType, TDataType> GetNode(TKeyType key)
-        {
-            if (!index.ContainsKey(key))
-            {
-                index[key] = new TreeNode<TKeyType, TDataType> { Key = key, Id = index.Count };
-            }
-            return index[key];
-        }
+        public TreeNode<TKeyType, TDataType> GetNode(TKeyType key) => index.GetOrCalculate(key, _ => new TreeNode<TKeyType, TDataType> { Key = key, Id = index.Count });
 
         public TreeNode<TKeyType, TDataType> this[TKeyType key] => GetNode(key);
 
@@ -67,15 +61,19 @@ namespace AoC.Utils.Collections
             n2.Children.Add(n1);
         }
 
-        public IEnumerable<TreeNode<TKeyType, TDataType>> TraverseToRoot(TKeyType key)
+        public IEnumerable<TKeyType> TraverseToRoot(TKeyType key)
         {
             var node = GetNode(key);
             while (node.Parent != null)
             {
-                yield return node.Parent;
+                yield return node.Parent.Key;
                 node = node.Parent;
             }
         }
+
+        public IEnumerator<TreeNode<TKeyType, TDataType>> GetEnumerator() => index.Values.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
 }

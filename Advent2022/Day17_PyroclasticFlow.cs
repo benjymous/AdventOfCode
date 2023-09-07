@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2022
@@ -7,35 +8,34 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-17";
 
-        readonly static (int x, int y)[][] Shapes = Util.Values("####",".#.,###,.#.","###,..#,..#","#,#,#,#","##,##").Select(part => Util.ParseSparseMatrix<bool>(part).Keys.ToArray()).ToArray();
+        readonly static (int x, int y)[][] Shapes = Util.Values("####",".#.,###,.#.","###,..#,..#","#,#,#,#","##,##").Select(part => Util.ParseSparseMatrix<bool>(part).Keys.OrderByDescending(k => k.y).ToArray()).ToArray();
 
         class State
         {
-            public State(string input) => windData = input.Trim().Select(c => c == '<' ? -1:1).ToArray();
+            public State(string input)
+            {
+                windData = input.Trim().Select(c => c == '<' ? -1 : 1).ToArray();
+            }
 
-            readonly List<byte> map = new() { 255 };
+            readonly int[] map = new int[10000];
             readonly int[] windData;
-            public int windIdx = 0;
-
-            public int MaxHeight => map.Count-1;
+            public int WindIdx { get; private set; } = 0;
+            public int MaxHeight { get; private set; } = 0;
 
             public int WindDirection()
             {
-                int res = windData[windIdx];
-                windIdx = (windIdx + 1) % windData.Length;
+                int res = windData[WindIdx];
+                WindIdx = (WindIdx + 1) % windData.Length;
                 return res;
             }
 
-            bool Blocked((int x, int y) pos) => pos.y <= 0 || pos.x <= 0 || pos.x >= 8 || map.Count>pos.y && ((map[pos.y] & 1 << pos.x) != 0);
-            public bool CheckBlocked(IEnumerable<(int x, int y)> shape, int dx, int dy) => shape.Any((pos) => Blocked((pos.x + dx, pos.y + dy)));
+            bool Blocked((int x, int y) pos) => pos.y <= 0 || pos.x <= 0 || pos.x >= 8 || MaxHeight+1>pos.y && ((map[pos.y] & 1 << pos.x) != 0);
+            public bool CheckBlocked((int x, int y)[] shape, int dx, int dy) => shape.Any((pos) => Blocked((pos.x + dx, pos.y + dy)));
 
-            public void FinishBlock(IEnumerable<(int x, int y)> shape, (int x, int y) pos)
+            public void FinishBlock((int x, int y)[] shape, (int x, int y) pos)
             {
-                foreach (var (x, y) in shape.Select(p => (p.x + pos.x, p.y + pos.y)))
-                {
-                    while (map.Count < y + 1) map.Add(0);
-                    map[y] |= (byte)(1 << x);
-                }
+                MaxHeight = Math.Max(MaxHeight, shape[0].y + pos.y);
+                for (int i=0; i<shape.Length; ++i) map[pos.y + shape[i].y] |= 1 << (pos.x + shape[i].x);
             }
         }
 
@@ -44,7 +44,7 @@ namespace AoC.Advent2022
             var state = new State(input);
             HashSet<int> seen = new();
 
-            int currentShape = 0, findWindIndex = -1;
+            int currentShape = 0, findCombo = -1;
             ulong benchmarkHeight = 0, firstRepeatIndex = 0, repeatHeight = 0, secondRepeatIndex = 0, targetRound = rounds;
             for (ulong i = 0; i < targetRound; ++i)
             {
@@ -61,24 +61,22 @@ namespace AoC.Advent2022
                 }
                 currentShape = (currentShape + 1) % 5;
 
-                if (currentShape == 0)
+                int checkCombo = currentShape + ((state.WindIdx) << 3);
+                if (findCombo == -1)
                 {
-                    if (findWindIndex == -1)
+                    if (seen.Contains(checkCombo))
                     {
-                        if (seen.Contains(state.windIdx))
-                        {
-                            findWindIndex = state.windIdx;
-                            benchmarkHeight = (uint)state.MaxHeight;
-                            firstRepeatIndex = i;
-                        }
-                        else seen.Add(state.windIdx);
+                        findCombo = checkCombo;
+                        benchmarkHeight = (ulong)state.MaxHeight;
+                        firstRepeatIndex = i;
                     }
-                    else if (state.windIdx == findWindIndex)
-                    {
-                        repeatHeight = (ulong)state.MaxHeight - benchmarkHeight;
-                        secondRepeatIndex = i - firstRepeatIndex;
-                        targetRound = i + (rounds - firstRepeatIndex) % secondRepeatIndex;
-                    }
+                    else seen.Add(checkCombo);
+                }
+                else if (checkCombo == findCombo)
+                {
+                    repeatHeight = (ulong)state.MaxHeight - benchmarkHeight;
+                    secondRepeatIndex = i - firstRepeatIndex;
+                    targetRound = i + (rounds - firstRepeatIndex) % secondRepeatIndex;
                 }
             }
 

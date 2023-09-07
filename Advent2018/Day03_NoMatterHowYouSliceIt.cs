@@ -1,5 +1,4 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -56,7 +55,7 @@ namespace AoC.Advent2018
             var shapes = Util.RegexParse<Shape>(input);
             var overlaps = FindOverlaps(shapes);
 
-            return shapes.First(shape => !shape.Squares().Intersect(overlaps).Any()).ID;
+            return shapes.First(shape => !overlaps.Overlaps(shape.Squares())).ID;
         }
 
         public void Run(string input, ILogger logger)

@@ -22,27 +22,27 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void Tubes01Test()
         {
-            Assert.AreEqual("ABCDEF", Advent2017.Day19.Part1(test));
+            Assert.AreEqual("ABCDEF", Day19.Part1(test));
         }
 
         [DataTestMethod]
         public void Tubes02Test()
         {
-            Assert.AreEqual(38, Advent2017.Day19.Part2(test));
+            Assert.AreEqual(38, Day19.Part2(test));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Tubes_Part1_Regression()
         {
-            Assert.AreEqual("PBAZYFMHT", Advent2017.Day19.Part1(input));
+            Assert.AreEqual("PBAZYFMHT", Day19.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Tubes_Part2_Regression()
         {
-            Assert.AreEqual(16072, Advent2017.Day19.Part2(input));
+            Assert.AreEqual(16072, Day19.Part2(input));
         }
 
     }

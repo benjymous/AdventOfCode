@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2020
@@ -15,17 +14,17 @@ namespace AoC.Advent2020
             multiply
         }
 
-        static Int64 Solve(Queue<char> data, QuestionPart part)
+        static long Solve(Queue<char> data, QuestionPart part)
         {
-            var stack = new Stack<Int64>();
-            Int64 result = 0;
+            var stack = new Stack<long>();
+            long result = 0;
             Operation op = Operation.blank;
             while (data.Count > 0)
             {
                 var ch = data.Dequeue();
-                Int64 val = -1;
+                long val = -1;
 
-                if (ch >= '0' && ch <= '9')
+                if (ch is >= '0' and <= '9')
                 {
                     val = ch - '0';
                 }
@@ -59,20 +58,12 @@ namespace AoC.Advent2020
 
                 if (val != -1)
                 {
-                    switch (op)
+                    result = op switch
                     {
-                        case Operation.blank:
-                            result = val;
-                            break;
-
-                        case Operation.add:
-                            result += val;
-                            break;
-
-                        case Operation.multiply:
-                            result *= val;
-                            break;
-                    }
+                        Operation.add => result + val,
+                        Operation.multiply => result * val,
+                        _ => val,
+                    };
                 }
             }
 
@@ -84,22 +75,15 @@ namespace AoC.Advent2020
             return result;
         }
 
-        static Queue<char> ToQueue(string input)
-            => new(input.Replace(" ", ""));
+        static Queue<char> ToQueue(string input) => new(input.Replace(" ", ""));
 
-        public static Int64 Solve1(string input)
-            => Solve(ToQueue(input), QuestionPart.Part1);
+        public static long Solve1(string input) => Solve(ToQueue(input), QuestionPart.Part1);
 
-        public static Int64 Solve2(string input)
-            => Solve(ToQueue(input), QuestionPart.Part2);
+        public static long Solve2(string input) => Solve(ToQueue(input), QuestionPart.Part2);
 
+        public static long Part1(string input) => input.Split("\n").Sum(Solve1);
 
-        public static Int64 Part1(string input)
-            => input.Split("\n").Sum(Solve1);
-
-        public static Int64 Part2(string input)
-            => input.Split("\n").Sum(Solve2);
-
+        public static long Part2(string input) => input.Split("\n").Sum(Solve2);
 
         public void Run(string input, ILogger logger)
         {

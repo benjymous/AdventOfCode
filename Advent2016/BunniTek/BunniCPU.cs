@@ -1,13 +1,15 @@
 using AoC.Utils;
 using System;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace AoC.Advent2016.BunniTek
 {
-    enum OpCode
+    public enum OpCode
     {
-        cpy = 0,
-        inc = 1,
-        dec = 2,
+        inc = 0,
+        dec = 1,
+        cpy = 2,
         jnz = 3,
         tgl = 4,
         @out = 5
@@ -15,96 +17,29 @@ namespace AoC.Advent2016.BunniTek
 
     public enum RegisterId
     {
-        a = 0,
-        b = 1,
-        c = 2,
-        d = 3
+        a = 0, b = 1, c = 2, d = 3
     };
 
-    public struct Value
+    public readonly record struct Value(int IntVal, bool IsInt)
     {
-        public bool IsInt { get; private set; }
-        public int IntVal { get; private set; }
-
-        public Value(int input)
-        {
-            IsInt = true;
-            IntVal = input;
-        }
-
-        public Value(RegisterId input)
-        {
-            IsInt = false;
-            IntVal = (int)input;
-        }
-
-        public Value(string input)
-        {
-            if (int.TryParse(input, out int v))
-            {
-                IsInt = true;
-                IntVal = v;
-            }
-            else if (Enum.TryParse(input, out RegisterId r))
-            {
-                IntVal = (int)r;
-                IsInt = false;
-            }
-            else
-            {
-                IsInt = true;
-                IntVal = 0;
-            }
-        }
-
-        public static implicit operator Value(int rhs) => new(rhs);
-        public static implicit operator Value(RegisterId rhs) => new(rhs);
-
-        public override string ToString()
-        {
-            if (IsInt)
-            {
-                return $"{IntVal}";
-            }
-            else
-            {
-                return ((RegisterId)IntVal).ToString();
-            }
-        }
+        public static implicit operator Value(int intVal) => new(intVal, true);
+        public static implicit operator Value(RegisterId regIndex) => new((int)regIndex, false);
+        public static implicit operator Value(string input) => input[0] >= 'a' ? new Value(input[0]-'a', false) : new Value(int.Parse(input), true);
     }
 
-    class Instruction
+    public class Instruction
     {
         public OpCode Opcode;
-        public readonly Value X;
-        public readonly Value? Y = null;
+        public readonly Value X, Y;
 
         public Instruction(string line)
         {
             var bits = line.Split(" ");
-            if (!Enum.TryParse(bits[0], out Opcode)) throw new Exception("Unknown opcode");
+            Opcode = Enum.Parse<OpCode>(bits[0]);
 
-            X = new Value(bits[1]);
-
-            if (bits.Length == 3)
-            {
-                Y = new Value(bits[2]);
-            }
+            X = bits[1];
+            if (bits.Length == 3) Y = bits[2];
         }
-
-        //public Instruction(Instruction other)
-        //{
-        //    Opcode = other.Opcode;
-        //    X = new Value(other.X);
-        //    if (other.Y != null) Y = new Value(other.Y.Value);
-        //}
-
-        public override string ToString() => $"{Opcode} {X} {Y}";
-    }
-
-    public interface IOutput
-    {
-        bool Put(int i);
     }
 
     public class BunnyCPU
@@ -113,130 +48,67 @@ namespace AoC.Advent2016.BunniTek
         readonly int[] Registers = new int[] { 0, 0, 0, 0 };
 
         System.Diagnostics.Stopwatch sw;
-        Int64 CycleCount = 0;
+        long CycleCount = 0;
 
-        public IOutput Output = null;
+        public Func<int, bool> Output = null;
 
-        int InstructionPointer = 0;
+        public static Instruction[] Compile(string program) => Util.Parse<Instruction>(program).ToArray();
 
-        public BunnyCPU(string program)
-        {
-            Instructions = Util.Parse<Instruction>(program).ToArray();
-        }
+        public BunnyCPU(string program) : this(Compile(program)) { }
+        public BunnyCPU(Instruction[] program) => Instructions = program.ToArray();
 
-        public void Set(RegisterId id, Value source) => Set((int)id, source);
+        public void Set(RegisterId id, Value source) => Registers[(int)id] = Get(source);
 
-        public void Set(int destination, Value source)
-        {
-            Registers[destination] = Get(source);
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int Get(Value source) => source.IsInt ? source.IntVal : Registers[source.IntVal];
 
-        public int Get(Value source)
-        {
-            if (source.IsInt)
-            {
-                return source.IntVal;
-            }
-
-            return Registers[source.IntVal];
-        }
-
-        public bool Step()
-        {
-            CycleCount++;
-            if (InstructionPointer >= Instructions.Length) return false;
-
-            //if (CycleCount % 100000000 == 0)
-            //{
-            //    Console.WriteLine(Speed());
-            //    Console.WriteLine(string.Join(", ", Registers));
-            //}
-
-            var instr = Instructions[InstructionPointer];
-
-            switch (instr.Opcode)
-            {
-                case OpCode.cpy:
-                    Set(instr.Y.Value.IntVal, instr.X);
-                    break;
-
-                case OpCode.inc:
-                    Registers[instr.X.IntVal]++;
-                    break;
-
-                case OpCode.dec:
-                    Registers[instr.X.IntVal]--;
-                    break;
-
-                case OpCode.jnz:
-                    int val = Get(instr.X);
-                    if (val != 0)
-                    {
-                        InstructionPointer += Get(instr.Y.Value);
-                        return true;
-                    }
-                    break;
-
-                case OpCode.tgl:
-                    int instrToChange = InstructionPointer + Get(instr.X);
-                    if (instrToChange >= 0 && instrToChange < Instructions.Length)
-                    {
-                        var otherInstr = Instructions[instrToChange];
-
-                        if (otherInstr.Y == null)
-                        {
-                            if (otherInstr.Opcode == OpCode.inc)
-                            {
-                                otherInstr.Opcode = OpCode.dec;
-                            }
-                            else
-                            {
-                                otherInstr.Opcode = OpCode.inc;
-                            }
-                        }
-                        else
-                        {
-                            if (otherInstr.Opcode == OpCode.jnz)
-                            {
-                                otherInstr.Opcode = OpCode.cpy;
-                            }
-                            else
-                            {
-                                otherInstr.Opcode = OpCode.jnz;
-                            }
-                        }
-                    }
-                    break;
-                case OpCode.@out:
-                    if (Output != null)
-                    {
-                        if (!Output.Put(Get(instr.X)))
-                        {
-                            return false;
-                        }
-                    }
-                    break;
-
-                default:
-                    throw new Exception("Unknown opcode");
-            }
-
-            InstructionPointer++;
-            return true;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        bool GetInstr(int idx, out Instruction instr) => (instr = idx >= 0 && idx < Instructions.Length ? Instructions[idx] : null) != null;
 
         public void Run()
         {
-            sw = new System.Diagnostics.Stopwatch();
+            sw = new();
             sw.Start();
-            while (Step()) ;
+            bool running = true;
+            int ip = 0;
+            while (running)
+            {
+                CycleCount++;
+
+                if (!GetInstr(ip, out var instr)) break;
+
+                switch (instr.Opcode)
+                {
+                    case OpCode.inc:
+                        Registers[instr.X.IntVal]++;
+                        break;
+
+                    case OpCode.dec:
+                        Registers[instr.X.IntVal]--;
+                        break;
+
+                    case OpCode.cpy:
+                        Registers[instr.Y.IntVal] = Get(instr.X);
+                        break;
+
+                    case OpCode.jnz:
+                        if (Get(instr.X) != 0) ip += Get(instr.Y) - 1;
+                        break;
+
+                    case OpCode.tgl:
+                        if (GetInstr(ip + Get(instr.X), out var otherInstr)) otherInstr.Opcode += ((int)otherInstr.Opcode & 1) == 0 ? 1 : -1;
+                        break;
+
+                    case OpCode.@out:
+                        if (Output != null && !Output(Get(instr.X))) running = false;
+                        break;
+                }
+
+                ip++;
+            }
             sw.Stop();
         }
 
-        public string Speed()
-        {
-            var speed = (double)CycleCount / sw.Elapsed.TotalSeconds;
-            return $"{CycleCount} cycles - {speed.ToEngineeringNotation()}hz";
-        }
+        public string Speed() => $"{CycleCount} cycles - {((double)(CycleCount / sw.Elapsed.TotalSeconds)).ToEngineeringNotation()}hz";
     }
 }

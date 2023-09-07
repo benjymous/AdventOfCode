@@ -8,12 +8,35 @@ namespace AoC.Advent2018.Test
     {
         readonly string input = Util.GetInput<Day12>();
 
+        readonly string test = @"initial state: #..#.#..##......###...###
+
+...## => #
+..#.. => #
+.#... => #
+.#.#. => #
+.#.## => #
+.##.. => #
+.#### => #
+#.#.# => #
+#.### => #
+##.#. => #
+##.## => #
+###.. => #
+###.# => #
+####. => #".Replace("\r","");
+
+        [TestMethod]
+        public void Plants01Test()
+        {
+            Assert.AreEqual(325, Day12.Part1(test));
+        }
+
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void PlantPropgation_Part1_Regression()
         {
-            Assert.AreEqual(1715, Day12.Part1(input));
+            Assert.AreEqual(2040, Day12.Part1(input));
         }
 
         [TestCategory("Regression")]

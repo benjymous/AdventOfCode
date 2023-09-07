@@ -1,5 +1,4 @@
 ﻿using AoC.Utils;
-using AoC.Utils.Vectors;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,71 +8,41 @@ namespace AoC.Advent2016
     {
         public string Name => "2016-17";
 
-        const string opens = "BCDEF";
         const string direction = "UDLR";
 
-        static readonly Direction2[] offsets = new Direction2[]
-        {
-            new Direction2(0,-1),
-            new Direction2(0,1),
-            new Direction2(-1,0),
-            new Direction2(1,0)
-        };
+        static readonly int[] offsets = new [] { -4, 4, -1, 1 };
 
-        struct AvailableDoors
+        static readonly bool[][] availableDoors = GetAvailableDoors();
+
+        static bool[][] GetAvailableDoors()
         {
-            public AvailableDoors(bool[] d)
+            bool[][] result = new bool[16][];
+            for (int i=0; i<16; ++i)
             {
-                directions = d;
-            }
-            public bool[] directions;
-        }
-
-        static readonly AvailableDoors[,] availableDoors = GetAvailableDoors();
-
-        static AvailableDoors[,] GetAvailableDoors()
-        {
-            AvailableDoors[,] result = new AvailableDoors[4, 4];
-            for (int x = 0; x < 4; ++x)
-            {
-                for (int y = 0; y < 4; ++y)
-                {
-                    bool up = y > 0;
-                    bool down = y < 3;
-                    bool left = x > 0;
-                    bool right = x < 3;
-                    result[x, y] = new AvailableDoors(new bool[] { up, down, left, right });
-                }
+                int x = i % 4, y = i / 4;
+                result[i] = new bool[] { y > 0, y < 3, x > 0, x < 3 };
             }
             return result;
         }
 
-        public static IEnumerable<int> Exits((string path, ManhattanVector2 position) state, string passcode)
+        public static IEnumerable<int> Exits((string path, int position) state, string passcode)
         {
-            var key = $"{passcode}{state.path}";
-            var possible = availableDoors[state.position.X, state.position.Y].directions;
-            var unlocked = key.GetMD5Chars().Take(4).Select(opens.Contains).ToArray();
+            var possible = availableDoors[state.position];
+            var unlocked = $"{passcode}{state.path}".GetMD5Chars(2).Select(c => c >= 'B').ToArray();
             for (int i = 0; i < 4; ++i)
             {
                 if (possible[i] && unlocked[i]) yield return i;
             }
         }
 
-        static string Key((string path, ManhattanVector2 position) state, IEnumerable<int> exits) => $"{state.position}-{string.Join(",", exits)}";
-
-        public static string Part1(string input)
+        private static string FindRoute(string input, QuestionPart part)
         {
             var passcode = input.Trim();
 
-            var jobqueue = new Queue<(string path, ManhattanVector2 position)>();
+            var jobqueue = new Queue<(string path, int position)>(400) { { ("", 0) } };
 
-            jobqueue.Enqueue(("", new ManhattanVector2(0, 0)));
-            var cache = new Dictionary<string, int>();
-
-            int best = int.MaxValue;
-            string path = "";
-
-            var dest = new ManhattanVector2(3, 3);
+            string best = "";
+            var dest = 15; // bottom right cell
 
             while (jobqueue.Any())
             {
@@ -81,76 +50,33 @@ namespace AoC.Advent2016
 
                 if (entry.position == dest)
                 {
-                    if (entry.path.Length < best)
+                    if (part.One()) return entry.path;
+                    else if (entry.path.Length > best.Length) best = entry.path;
+                }
+                else
+                {
+                    foreach (var i in Exits(entry, passcode))
                     {
-                        best = entry.path.Length;
-                        path = entry.path;
+                        jobqueue.Enqueue((entry.path + direction[i], entry.position + offsets[i]));
                     }
-                    continue; // don't continue if the path has reached the vault
-                }
-
-                var exits = Exits(entry, passcode);
-
-                var key = Key(entry, exits);
-
-                if (cache.TryGetValue(key, out var prev))
-                {
-                    if (prev < entry.path.Length) continue;
-                }
-
-                cache[key] = entry.path.Length;
-
-                foreach (var i in exits)
-                {
-                    jobqueue.Enqueue((entry.path + direction[i], new ManhattanVector2(entry.position.X + offsets[i].DX, entry.position.Y + offsets[i].DY)));
-                }
-            }
-
-            return path;
-        }
-
-        public static int Part2(string input)
-        {
-            var passcode = input.Trim();
-
-            var jobqueue = new Queue<(string path, ManhattanVector2 position)>();
-
-            jobqueue.Enqueue(("", new ManhattanVector2(0, 0)));
-
-            int best = int.MinValue;
-            var dest = new ManhattanVector2(3, 3);
-
-            while (jobqueue.Any())
-            {
-                var entry = jobqueue.Dequeue();
-
-                if (entry.position == dest)
-                {
-                    if (entry.path.Length > best)
-                    {
-                        best = entry.path.Length;
-                    }
-                    continue;  // don't continue if the path has reached the vault
-                }
-
-                var exits = Exits(entry, passcode);
-                foreach (var i in exits)
-                {
-                    jobqueue.Enqueue((entry.path + direction[i], new ManhattanVector2(entry.position.X + offsets[i].DX, entry.position.Y + offsets[i].DY)));
                 }
             }
 
             return best;
         }
 
+        public static string Part1(string input)
+        {
+            return FindRoute(input, QuestionPart.Part1);
+        }
+
+        public static int Part2(string input)
+        {
+            return FindRoute(input, QuestionPart.Part2).Length;
+        }
+
         public void Run(string input, ILogger logger)
         {
-            // var dirs = Exits("", "hijkl");
-            // var dirs1 = Exits("D", "hijkl");
-            // var dirs2 = Exits("DR", "hijkl");
-
-            //logger.WriteLine("??"+Part2("ihgpwlah"));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

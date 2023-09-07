@@ -1,5 +1,6 @@
 ﻿using AoC.Utils;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2020
@@ -10,12 +11,12 @@ namespace AoC.Advent2020
 
         public class State
         {
-            public State(int w, int h, QuestionPart p)
+            public State(int w, int h, HashSet<int> seats, QuestionPart p)
             {
                 Width = w;
                 Height = h;
                 part = p;
-                Cells = new char[Width, Height];
+                Seats = seats;
             }
 
             public int Height { get; private set; }
@@ -31,141 +32,110 @@ namespace AoC.Advent2020
                 Height = lines.Length;
                 Width = lines[0].Length;
 
-                Cells = new char[Width, Height];
-
                 for (var y = 0; y < lines.Length; ++y)
                 {
                     for (var x = 0; x < lines[y].Length; ++x)
                     {
-                        Set(x, y, lines[y][x]);
+                        var c = lines[y][x];
+                        if (c != '.') Seats.Add(x + (y << 16));
+                        if (c == '#') Occupied.Add(x + (y << 16));
                     }
                 }
             }
 
-            public char[,] Cells { get; private set; }
+            public readonly HashSet<int> Occupied = new();
+            public readonly HashSet<int> Seats = new();
 
             int MaxOccupancy { get => part.One() ? 4 : 5; }
 
-            public void Set(int x, int y, char c) => Cells[x, y] = c;
-
-            public char Get(int x, int y = 0) =>
-                (x < 0 || x >= Width || y < 0 || y >= Height) ? ' ' : Cells[x, y];
-
-            public char CheckDirection(int x, int y, int dx, int dy)
+            public bool CheckDirection(int intpos, int dir)
             {
                 if (part.One())
                 {
-                    return Get(x + dx, y + dy);
+                    return Occupied.Contains(intpos + dir);
                 }
                 else
                 {
-                    while (true)
+                    while (((intpos & 0xffff) >= 0) && ((intpos & 0xffff) < Width) && ((intpos >> 16) >= 0) && ((intpos >> 16) < Height))
                     {
-                        x += dx;
-                        y += dy;
-                        char c = Get(x, y);
-                        if (c != '.') return c;
+                        intpos += dir;
+                        if (Seats.Contains(intpos)) return Occupied.Contains(intpos);
                     }
+                    return false;
                 }
             }
 
-            static readonly (int dx, int dy)[] directions = new (int, int)[]
+            static readonly int[] directions = new int[]
             {
-                (0, 1),   // N
-                (1, 1),   // NE
-                (1, 0),   // E
-                (1, -1),  // SE
-                (0, -1),  // S 
-                (-1, -1), // SW
-                (-1, 0),  // W
-                (-1, 1),  // NW
+               (  0+  ( -1 << 16)), // N
+               (  1+  ( -1 << 16)), // NE
+               (  1+  (        0)), // E
+               (  1+  (  1 << 16)), // SE
+               (  0+  (  1 << 16)), // S 
+               ( -1+  (  1 << 16)), // SW
+               ( -1+  (        0)), // W
+               ( -1+  ( -1 << 16))  // NW
             };
 
-            public int Neighbours(int xs, int ys) =>
-                directions.Select(d => CheckDirection(xs, ys, d.dx, d.dy)).Count(d => d == '#');
+            public int Neighbours(int intpos) =>
+                directions.Count(d => CheckDirection(intpos,d)==true);
 
-            public bool Tick(State oldState, int x, int y)
+            public bool Tick(State oldState, int intpos)
             {
-                int neighbours = oldState.Neighbours(x, y);
-                var oldVal = oldState.Get(x, y);
+                int neighbours = oldState.Neighbours(intpos);
+                var oldVal = oldState.Occupied.Contains(intpos);
                 switch (oldVal)
                 {
-                    case 'L': // empty seat
+                    case false: // empty seat
                         if (neighbours == 0)
                         {
-                            Cells[x, y] = '#';
+                            Occupied.Add(intpos);
                             return true;
                         }
                         break;
 
-                    case '#': // occupied seat
+                    case true: // occupied seat
                         if (neighbours >= MaxOccupancy)
                         {
-                            Cells[x, y] = 'L';
                             return true;
                         }
                         break;
                 }
-                Cells[x, y] = oldVal;
+                if (oldVal) Occupied.Add(intpos);
                 return false;
-            }
-
-            public void Display()
-            {
-                for (int y = 0; y < Height; ++y)
-                {
-                    for (int x = 0; x < Width; ++x)
-                    {
-                        Console.Write(Cells[x, y]);
-                    }
-                    Console.WriteLine();
-                }
-                Console.WriteLine();
             }
         }
 
 
         public static bool Tick(State oldState, State newState)
         {
+            newState.Occupied.Clear();
             bool changed = false;
-            for (var y = 0; y < oldState.Height; ++y)
+
+            foreach (var key in oldState.Seats)
             {
-                for (var x = 0; x < oldState.Width; ++x)
-                {
-                    changed |= newState.Tick(oldState, x, y);
-                }
+                changed |= newState.Tick(oldState, key);
             }
             return changed;
         }
 
         public static int Run(string input, QuestionPart part)
         {
-            State[] states = new State[2];
-            states[0] = new State(input, part);
-            states[1] = new State(states[0].Width, states[0].Height, part);
+            State s1 = new (input, part), s2 = new (s1.Width, s1.Height, s1.Seats, part);
 
             bool changed = true;
-            int current = 0;
+            int steps = 0;
             while (changed)
             {
-                var oldState = states[current];
-                var newState = states[(current + 1) % 2];
+                changed = Tick(s1, s2);
 
-                changed = Tick(oldState, newState);
-
-                //newState.Display();
-
-                current = 1 - current;
+                (s1, s2) = (s2, s1);
+                steps++;
             }
 
-            return states[current].Cells.Values().Count(v => v == '#');
-        }
+            System.Console.WriteLine(steps);
 
-        public static int TestNeighbours(string input, int tx, int ty)
-        {
-            var state = new State(input, QuestionPart.Part2);
-            if (state.Get(tx, ty) != 'L') return -1;
-            return state.Neighbours(tx, ty);
+            return s1.Occupied.Count;
         }
 
         public static int Part1(string input)

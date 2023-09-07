@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace AoC.Advent2019.Test
 {
@@ -8,14 +9,19 @@ namespace AoC.Advent2019.Test
     {
         readonly string input = Util.GetInput<Day04>();
 
+        static int[] ToArray(string input)
+        {
+            return input.Select(x => x-'0').ToArray();
+        }
+
         [TestCategory("Test")]
         [DataRow("111111", true)]
-        [DataRow("223450", false)]
+        //[DataRow("223450", false)] // checked by outer code
         [DataRow("123789", false)]
         [DataTestMethod]
         public void SecureTest01(string input, bool expected)
         {
-            Assert.AreEqual(expected, Day04.CheckCriteria(input, false));
+            Assert.AreEqual(expected, Day04.HasAdjacentPair(ToArray(input), false));
         }
 
         [TestCategory("Test")]
@@ -25,7 +31,7 @@ namespace AoC.Advent2019.Test
         [DataTestMethod]
         public void SecureTest02(string input, bool expected)
         {
-            Assert.AreEqual(expected, Day04.CheckCriteria(input, true));
+            Assert.AreEqual(expected, Day04.HasAdjacentPair(ToArray(input), true));
         }
 
         [TestCategory("Regression")]

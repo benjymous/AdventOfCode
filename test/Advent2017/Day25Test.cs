@@ -8,41 +8,43 @@ namespace AoC.Advent2017.Test
     {
         readonly string input = Util.GetInput<Day25>();
 
-        readonly string test = @"Begin in state A.
-        Perform a diagnostic checksum after 6 steps.
+        readonly string test = 
+@"Begin in state A.
+Perform a diagnostic checksum after 6 steps.
 
-        In state A:
-          If the current value is 0:
-            - Write the value 1.
-            - Move one slot to the right.
-            - Continue with state B.
-          If the current value is 1:
-            - Write the value 0.
-            - Move one slot to the left.
-            - Continue with state B.
+In state A:
+    If the current value is 0:
+    - Write the value 1.
+    - Move one slot to the right.
+    - Continue with state B.
+    If the current value is 1:
+    - Write the value 0.
+    - Move one slot to the left.
+    - Continue with state B.
 
-        In state B:
-          If the current value is 0:
-            - Write the value 1.
-            - Move one slot to the left.
-            - Continue with state A.
-          If the current value is 1:
-            - Write the value 1.
-            - Move one slot to the right.
-            - Continue with state A.";
+In state B:
+    If the current value is 0:
+    - Write the value 1.
+    - Move one slot to the left.
+    - Continue with state A.
+    If the current value is 1:
+    - Write the value 1.
+    - Move one slot to the right.
+    - Continue with state A.
+".Replace("\r","");
 
         [TestCategory("Test")]
         [DataTestMethod]
         public void Tape01Test()
         {
-            Assert.AreEqual(3, Advent2017.Day25.Part1(test));
+            Assert.AreEqual(3, Day25.Part1(test));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Tape_Part1_Regression()
         {
-            Assert.AreEqual(2794, Advent2017.Day25.Part1(input));
+            Assert.AreEqual(2794, Day25.Part1(input));
         }
 
     }

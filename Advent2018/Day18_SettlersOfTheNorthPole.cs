@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 
 namespace AoC.Advent2018
 {
@@ -14,130 +13,87 @@ namespace AoC.Advent2018
         const char TREES = '|';
         const char LUMBERYARD = '#';
 
-        public static char Step(char current, IEnumerable<char> neighbours)
+        public static char Step(char current, IEnumerable<char> neighbours) => current switch
         {
-            switch (current)
-            {
-                case OPEN:
-                    // An open acre will become filled with trees if three or more adjacent acres
-                    // contained trees. 
-                    // Otherwise, nothing happens.
-                    if (neighbours.Count(n => n == TREES) >= 3) return TREES;
-                    break;
+            // An acre filled with trees will become a lumberyard if three or more adjacent
+            // acres were lumberyards. 
+            // Otherwise, nothing happens.
+            TREES => (neighbours.Count(n => n == LUMBERYARD) >= 3) ? LUMBERYARD : TREES,
 
-                case TREES:
-                    // An acre filled with trees will become a lumberyard if three or more adjacent
-                    // acres were lumberyards. 
-                    // Otherwise, nothing happens.
-                    if (neighbours.Count(n => n == LUMBERYARD) >= 3) return LUMBERYARD;
-                    break;
+            // An acre containing a lumberyard will remain a lumberyard if it was adjacent
+            // to at least one other lumberyard and at least one acre containing trees.
+            // Otherwise, it becomes open.
+            LUMBERYARD => neighbours.Any(n => n == LUMBERYARD) && neighbours.Any(n => n == TREES) ? LUMBERYARD : OPEN,
 
-                case LUMBERYARD:
-                    // An acre containing a lumberyard will remain a lumberyard if it was adjacent
-                    // to at least one other lumberyard and at least one acre containing trees.
-                    // Otherwise, it becomes open.
-                    if (neighbours.Where(n => n == LUMBERYARD).Any() &&
-                        neighbours.Where(n => n == TREES).Any()) return LUMBERYARD;
-                    else return OPEN;
-            }
+            // An open acre will become filled with trees if three or more adjacent acres
+            // contained trees. 
+            // Otherwise, nothing happens.
+            _ => (neighbours.Count(n => n == TREES) >= 3) ? TREES : OPEN,
+        };
 
-            return current;
-        }
+        public static int CalcHash(ref char[,] state) => state.Values().GetCombinedHashCode();
 
-        static IEnumerable<char> Flat(char[][] data)
-        {
-            foreach (var line in data)
-                foreach (var ch in line)
-                    yield return ch;
-        }
-
-        public static int CalcHash(char[][] data)
-        {
-            return new BigInteger(Flat(data).Select(x => (byte)x).ToArray()).GetHashCode();
-        }
-
-        static int Count(char type, char[][] state)
-        {
-            var all = Flat(state);
-            return all.Count(c => c == type);
-        }
-
-        static char GetAt(char[][] input, int x, int y)
-        {
-            if (y < 0 || y >= input.Length) return '-';
-            if (x < 0 || x >= input[y].Length) return '-';
-            return input[y][x];
-        }
+        static int Count(char type, ref char[,] state) => state.Values().Count(c => c == type);
 
         public static int Run(string input, int iterations)
         {
-            var currentState = Util.Split(input).Select(line => line.ToArray()).ToArray();
-            var newState = (char[][])currentState.Clone();
+            var currentState = Util.ParseMatrix<char>(input);
 
-            var previous = new Queue<int>();
-            int targetStep = -1;
+            var previous = new Dictionary<int, int>();
+
+            int targetStep = iterations < 100 ? iterations : -1;
+
+            int width = currentState.Width();
+            int height = currentState.Height();
+
+            var newState = new char[width, height];
 
             for (var i = 0; i < iterations; ++i)
             {
                 if (targetStep == i)
                 {
-                    return Count(TREES, currentState) * Count(LUMBERYARD, currentState);
+                    return Count(TREES, ref currentState) * Count(LUMBERYARD, ref currentState);
                 }
                 else if (targetStep == -1)
                 { 
-                    var hash = CalcHash(currentState);
+                    var hash = CalcHash(ref currentState);
 
-                    var matchIdx = i - previous.Count;
-                    foreach (var prev in previous)
+                    if (previous.TryGetValue(hash, out int idx))
                     {
-                        matchIdx++;
-                        if (prev == hash)
-                        {
-                            var cycleLength = i - matchIdx + 1;
-
-                            if (cycleLength == 1)
-                            {
-                                targetStep = i + 1;
-                            }
-                            else
-                            {
-                                int cycleOffset = (i % cycleLength);
-                                targetStep = i + ((iterations - cycleOffset) % cycleLength);
-                            }                      
-                        }
+                        var cycleLength = i - idx;
+                        targetStep = cycleLength == 1 ? i + 1 : i + ((iterations - i % cycleLength) % cycleLength);
                     }
 
-                    previous.Enqueue(hash);
-                    if (previous.Count > 50) previous.Dequeue();
+                    previous[hash] = i;
                 }
 
-                for (var y = 0; y < currentState.Length; ++y)
+                for (var y = 0; y < height; ++y)
                 {
-                    List<char> line = new();
-                    for (var x = 0; x < currentState[y].Length; ++x)
+                    for (var x = 0; x < width; ++x)
                     {
-                        var cell = GetAt(currentState, x, y);
-                        List<char> neighbours = new();
-
-                        for (var y1 = y - 1; y1 <= y + 1; ++y1)
-                        {
-                            for (var x1 = x - 1; x1 <= x + 1; ++x1)
-                            {
-                                if (x != x1 || y != y1)
-                                {
-                                    neighbours.Add(GetAt(currentState, x1, y1));
-                                }
-                            }
-                        }
-
-                        line.Add(Step(cell, neighbours));
+                        newState[x,y] = Step(currentState[x,y], GetNeighbours(currentState, x, y, width, height));
                     }
-                    newState[y] = line.ToArray();
+
                 }
-                currentState = (char[][])newState.Clone();
+                (currentState, newState) = (newState, currentState);
             }
 
-            return Count(TREES, currentState) * Count(LUMBERYARD, currentState);
+            return Count(TREES, ref currentState) * Count(LUMBERYARD, ref currentState);
+        }
+
+        private static IEnumerable<char> GetNeighbours(char[,] currentState, int x, int y, int width, int height)
+        {
+            var minx = Math.Max(0, x - 1);
+            var miny = Math.Max(0, y - 1);
+            var maxx = Math.Min(height-1, x + 1);
+            var maxy = Math.Min(width-1, y + 1);
+            for (var y1 = miny; y1 <= maxy; ++y1)
+            {
+                for (var x1 = minx; x1 <= maxx; ++x1)
+                {
+                    if (x != x1 || y != y1) yield return currentState[x1,y1];
+                }
+            }
         }
 
         public static int Part1(string input)

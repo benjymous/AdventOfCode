@@ -23,14 +23,14 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
         [DataTestMethod]
         public void Segments01Test()
         {
-            Assert.AreEqual(26, Advent2021.Day08.Part1(test.Replace("\r", "")));
+            Assert.AreEqual(26, Day08.Part1(test.Replace("\r", "")));
         }
 
         [TestCategory("Test")]
         [DataTestMethod]
         public void Segments02Test()
         {
-            Assert.AreEqual(61229, Advent2021.Day08.Part2(test.Replace("\r", "")));
+            Assert.AreEqual(61229, Day08.Part2(test.Replace("\r", "")));
         }
 
         [TestCategory("Regression")]

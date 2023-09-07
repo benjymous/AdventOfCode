@@ -7,20 +7,16 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-17";
 
-        public static Circle<int> Spinlock(int step, int totalSize, bool returnZero = false)
+        public static Circle<int> Spinlock(int step, int totalSize)
         {
-            var circle = new Circle<int>(0);
-
-            var current = circle;
+            var current = new Circle<int>(0);
 
             for (int i = 1; i < totalSize; ++i)
             {
-                current = current.Forward(step);
-                current = current.InsertNext(i);
-                if (i % 100000 == 0) Console.WriteLine($"{i} - {circle.Next().Value}");
+                current = current.Forward(step).InsertNext(i);
             }
 
-            return returnZero ? circle : current;
+            return current;
         }
 
         public static int Part1(string input)

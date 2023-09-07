@@ -9,128 +9,80 @@ namespace AoC.Advent2018
     {
         public string Name => "2018-12";
 
-        private static string Step(Dictionary<string, char> rules, string current)
+        struct State
         {
-            List<char> next = new() { '.', '.' };
-            for (var i = 0; i < current.Length - 5; ++i)
+            public State(HashSet<int> rules, int[] initial)
             {
-                var sub = current.Substring(i, 5);
-
-                if (rules.TryGetValue(sub, out var rule))
-                {
-                    next.Add(rule);
-                }
-                else
-                {
-                    next.Add('.');
-                }
+                Rules = rules;
+                for (int i = 0; i < initial.Length; i++) if (initial[i] == 1) Set(i);
             }
-            next.AddRange("..");
-            current = next.AsString();
-            return current;
+            public State(HashSet<int> rules) => Rules = rules;
+
+            public readonly HashSet<int> Rules;
+            readonly HashSet<int> data = new();
+            public int Left { get; private set; } = 0;
+            public int Right { get; private set; } = 0;
+
+            public void Set(int index)
+            {
+                if (data.Count == 0) Left = index;
+                Right = index;
+                data.Add(index - Left);
+            }
+
+            public int Slice(int pos)
+            {
+                int val = 0;
+                for (int j = 0; j < 5; ++j) val = (val << 1) + (data.Contains(pos + j - Left) ? 1 : 0);
+                return val;
+            }
+
+            public void Step(ref State next)
+            {
+                next.data.Clear();
+
+                for (int i = Left - 2; i < Right + 2; ++i) if (Rules.Contains(Slice(i - 2))) next.Set(i);
+            }
+
+            public bool Equivalent(State other) => data.SequenceEqual(other.data);
+
+            public long Score(long offset = 0) => data.Sum() + ((Left+offset) * data.Count);
         }
 
-        private static void ParseInput(string input, out string initialState, out Dictionary<string, char> rules)
+        static int DecodeRule(string rule) => rule.Aggregate(0, (val, ch) => (val << 1) + (ch == '#' ? 1 : 0));
+
+        private static void ParseInput(string input, out State initialState)
         {
             var lines = Util.Split(input);
-            initialState = lines[0].Split(": ")[1];
-            rules = new();
-            foreach (var line in lines.Skip(1))
+            var rules = lines.Skip(1).Select(line => line.Split(" => ")).Where(bits => bits[1][0]=='#').Select(bits => DecodeRule(bits[0])).ToHashSet();
+            initialState = new(rules, lines[0].Split(": ")[1].Select(ch => ch == '#' ? 1 : 0).ToArray());
+        }
+
+        public static long Solve(string input, long generations)
+        {
+            ParseInput(input, out var s1);
+            State s2 = new(s1.Rules);
+
+            long gen;
+            for (gen = 0; gen < generations; ++gen)
             {
-                var bits = line.Split(" => ");
-                rules[bits[0]] = bits[1][0];
+                if (s1.Equivalent(s2)) break; // We've got a stable pattern
+                s1.Step(ref s2);
+                (s1, s2) = (s2, s1);
             }
+
+            long additionalLeftShift = (generations - gen) * (s1.Left - s2.Left); // we'd progress this many cells over the remaining generations
+            return s1.Score(additionalLeftShift);
         }
 
         public static int Part1(string input)
         {
-            ParseInput(input, out var initialState, out var rules);
-
-            var left = 0;
-
-            for (var i = 0; i < 30; ++i)
-            {
-                initialState = "." + initialState + ".";
-                left--;
-            }
-
-            var current = initialState;
-
-            for (var gen = 0; gen < 20; ++gen)
-            {
-                current = Step(rules, current);
-            }
-
-            var sum = 0;
-            for (var i = 0; i < current.Length; ++i)
-            {
-                if (current[i] == '#')
-                {
-                    sum += (i + left);
-                }
-            }
-
-            return sum;
+            return (int)Solve(input, 20);
         }
 
-        public static Int64 Part2(string input)
+        public static long Part2(string input)
         {
-            ParseInput(input, out var initialState, out var rules);
-
-            var left = 0;
-
-            var current = initialState;
-            var previous = "";
-
-
-            int gen = 0;
-            int lastLeft;
-            while (true)
-            {
-                // Keep the line padded with 5 .s either side
-                lastLeft = left;
-                for (var z = 0; z < 5; ++z)
-                {
-                    current = "." + current + ".";
-                    left--;
-                }
-
-                var i = current.IndexOf('#');
-                if (i > 5)
-                {
-                    current = current[(i - 5)..];
-                    left += (i - 5);
-                }
-                var j = current.LastIndexOf("#");
-                if ((current.Length - j - 1) > 5)
-                {
-                    current = current[..(j + 6)];
-                }
-
-                if (current == previous) break; // We've got a stable pattern
-
-
-                previous = current;
-                current = Step(rules, current) + ".....";
-                gen++;
-
-            }
-
-            var turnStep = left - lastLeft; // we progress this many cells each turn
-
-            // we'd progress this many cells over 50 billion turns
-            Int64 finalLeft = left + ((50000000000 - gen) * turnStep);
-
-            Int64 sum = 0;
-            for (var i = 0; i < current.Length; ++i)
-            {
-                if (current[i] == '#')
-                {
-                    sum += (i + finalLeft);
-                }
-            }
-
-            return sum;
+            return Solve(input, 50000000000);
         }
 
         public void Run(string input, ILogger logger)

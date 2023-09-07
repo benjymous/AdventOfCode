@@ -12,10 +12,8 @@ namespace AoC.Advent2016
         {
             var lines = Util.Split(input);
 
-            var first = lines.First();
-
             var storage = new List<Dictionary<char, int>>();
-            foreach (var _ in first)
+            for (int i= 0; i < lines.First().Length; ++i )
             {
                 storage.Add(new Dictionary<char, int>());
             }

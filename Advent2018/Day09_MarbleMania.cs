@@ -1,5 +1,4 @@
 ﻿using AoC.Utils.Collections;
-using System;
 using System.Linq;
 
 namespace AoC.Advent2018
@@ -8,31 +7,29 @@ namespace AoC.Advent2018
     {
         public string Name => "2018-09";
 
-        public static UInt64 MarbleGame(int players, int marbles)
+        public static ulong MarbleGame(int players, int marbles)
         {
-            uint nextMarble = 1;
             int player = -1;
 
             var circle = new Circle<uint>(0);
-            var scores = new UInt64[players];
+            var scores = new ulong[players];
 
             var current = circle;
 
-            while (nextMarble <= marbles)
+            for(uint m = 1; m <= marbles; ++m)
             {
-                if (nextMarble % 23 == 0)
+                if (m % 23 == 0)
                 {
                     var removed = current.Back(7);
                     current = removed.Remove();
 
-                    scores[player] += nextMarble + removed.Value;
+                    scores[player] += m + removed.Value;
                 }
                 else
                 {
-                    current = current.Next().InsertNext(nextMarble);
+                    current = current.Next().InsertNext(m);
                 }
 
-                nextMarble++;
                 player = (player + 1) % players;
             }
 
@@ -40,7 +37,7 @@ namespace AoC.Advent2018
             return score;
         }
 
-        public static UInt64 Part1(string input)
+        public static ulong Part1(string input)
         {
             var numbers = Util.ExtractNumbers(input);
 
@@ -50,7 +47,7 @@ namespace AoC.Advent2018
             return MarbleGame(numPlayers, numMarbles);
         }
 
-        public static UInt64 Part2(string input)
+        public static ulong Part2(string input)
         {
             var numbers = Util.ExtractNumbers(input);
 

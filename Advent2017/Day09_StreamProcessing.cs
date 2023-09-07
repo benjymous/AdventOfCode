@@ -8,77 +8,42 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-09";
 
-        public class State
+        public static (IEnumerable<char> stripped, int garbageCount) StripGarbage(string input)
         {
-            public State(string i) { input = i; }
-            public string input;
-            public int GarbageCount = 0;
-        }
-
-        public static IEnumerable<char> StripGarbage(State state)
-        {
+            List<char> result = new();
             bool inGarbage = false;
-            bool skipNext = false;
-            foreach (var ch in state.input)
+            int garbageCount = 0;
+            for (int i = 0; i < input.Length; i++)
             {
+                char ch = input[i];
                 if (inGarbage)
                 {
-                    if (skipNext)
-                    {
-                        skipNext = false;
-                        continue;
-                    }
-
-                    if (ch == '!')
-                    {
-                        skipNext = true;
-                        continue;
-                    }
-
-                    if (ch == '>')
-                    {
-                        inGarbage = false;
-                        continue;
-                    }
-
-                    state.GarbageCount++;
+                    if (ch == '!') i++;
+                    else if (ch == '>') inGarbage = false;
+                    else garbageCount++;
                 }
                 else
                 {
-                    if (ch == '<')
-                    {
-                        inGarbage = true;
-                        continue;
-                    }
-                    yield return ch;
+                    if (ch == '<') inGarbage = true;
+                    else result.Add(ch);
                 }
             }
+            return (result.AsString(), garbageCount);
         }
 
         public static IEnumerable<int> GetGroups(string input)
         {
             int currentScore = 0;
-            foreach (var ch in StripGarbage(new State(input)))
+            foreach (var ch in StripGarbage(input).stripped)
             {
                 if (ch == '{') currentScore++;
-                if (ch == '}')
-                {
-                    yield return currentScore--;
-                }
+                else if (ch == '}') yield return currentScore--;
             }
         }
 
-        public static int GetScore(string input)
-        {
-            return GetGroups(input).Sum();
-        }
+        public static int GetScore(string input) => GetGroups(input).Sum();
 
-        public static int CountGarbage(string input)
-        {
-            var state = new State(input);
-            StripGarbage(state).AsString();
-            return state.GarbageCount;
-        }
+        public static int CountGarbage(string input) => StripGarbage(input).garbageCount;
 
         public static int Part1(string input)
         {

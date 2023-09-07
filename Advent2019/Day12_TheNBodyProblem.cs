@@ -1,9 +1,6 @@
 ﻿using AoC.Utils;
-using AoC.Utils.Vectors;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2019
 {
@@ -13,153 +10,60 @@ namespace AoC.Advent2019
 
         public class Body
         {
-            public ManhattanVector3 position;
-            public ManhattanVector3 velocity = new(0, 0, 0);
-            public Body(string input)
-            {
-                position = new ManhattanVector3(input);
-            }
+            [Regex("<x=(.+), y=(.+), z=(.+)>")]
+            public Body(int x, int y, int z) => position = new int[] { x, y, z };
 
-            public void ApplyGravity(Body other, int component)
-            {
-                velocity.Component[component] += Math.Sign(other.position.Component[component] - position.Component[component]);
-            }
+            public int[] position, velocity = new int[] { 0, 0, 0 };
 
-            public void ApplyGravity(Body other)
-            {
-                for (int i = 0; i < position.ComponentCount; ++i)
-                {
-                    ApplyGravity(other, i);
-                }
-            }
+            public void ApplyGravity(Body other, int component) => velocity[component] += Math.Sign(other.position[component] - position[component]);
 
-            public void ApplyVelocity(int component)
-            {
-                position.Component[component] += velocity.Component[component];
-            }
-
-            public void ApplyVelocity()
-            {
-                position += velocity;
-            }
-
-            public override string ToString()
-            {
-                return $"pos=<{position}> vel=<{velocity}>";
-            }
-
-            public int Energy()
-            {
-                var pot = position.Component.Sum(Math.Abs);
-                var kin = velocity.Component.Sum(Math.Abs);
-                return pot * kin;
-            }
+            public void ApplyVelocity(int component) => position[component] += velocity[component];
         }
 
         public class System
         {
-            readonly List<Body> bodies;
-            public System(string input)
-            {
-                bodies = Util.Parse<Body>(input);
-            }
+            readonly Body[] bodies;
+            public System(string input) => bodies = Util.RegexParse<Body>(input).ToArray();
 
             public void Step(int component)
             {
-                UpdateGravity(component);
-                UpdatePositions(component);
+                for (int i = 0; i < bodies.Length; ++i)
+                {
+                    var b1 = bodies[i];
+                    for (int j = i + 1; j < bodies.Length; ++j)
+                    {
+                        var b2 = bodies[j];
+                        b1.ApplyGravity(b2, component);
+                        b2.ApplyGravity(b1, component);
+                    }
+                    b1.ApplyVelocity(component);
+                }
             }
 
             public void Step()
             {
-                UpdateGravity();
-                UpdatePositions();
+                for (int i = 0; i < 3; ++i) Step(i);
             }
 
-            public override string ToString()
+            public int GetState(int component)
             {
-                var sb = new StringBuilder();
-                foreach (var b in bodies)
+                if (bodies[0].velocity[component] != 0) return 0;
+                unchecked
                 {
-                    sb.Append(b);
-                    sb.Append('\n');
-                }
-                return sb.ToString();
-            }
-
-            public string GetStateString(int component)
-            {
-                var sb = new StringBuilder();
-                foreach (var b in bodies)
-                {
-                    sb.Append(b.position.Component[component]);
-                    sb.Append(':');
-                    sb.Append(b.velocity.Component[component]);
-                    sb.Append(':');
-                }
-                return sb.ToString();
-            }
-
-            public string HashString()
-            {
-                return ToString().GetMD5String(false);
-            }
-
-            public int Energy()
-            {
-                return bodies.Sum(b => b.Energy());
-            }
-
-            void UpdateGravity(int component)
-            {
-                foreach (var b1 in bodies)
-                {
-                    foreach (var b2 in bodies)
-                    {
-                        b1.ApplyGravity(b2, component);
-                    }
+                    int hash = 17;
+                    foreach (var b in bodies)  hash = hash * 31 + b.position[component];
+                    return hash;
                 }
             }
 
-            void UpdateGravity()
-            {
-                foreach (var b1 in bodies)
-                {
-                    foreach (var b2 in bodies)
-                    {
-                        b1.ApplyGravity(b2);
-                    }
-                }
-            }
-
-            void UpdatePositions(int component)
-            {
-                foreach (var b in bodies)
-                {
-                    b.ApplyVelocity(component);
-                }
-            }
-
-            void UpdatePositions()
-            {
-                foreach (var b in bodies)
-                {
-                    b.ApplyVelocity();
-                }
-            }
+            public int Energy() => bodies.Sum(b => (b.position.Sum(Math.Abs) * b.velocity.Sum(Math.Abs)));
         }
 
         public static int Part1(string input)
         {
             var system = new System(input);
 
-            for (int i = 0; i < 1000; ++i)
-            {
-                //Console.WriteLine($"After {i} steps");
-                //system.Print();
-
-                system.Step();
-            }
+            for (int i = 0; i < 1000; ++i) system.Step();
 
             return system.Energy();
         }
@@ -168,58 +72,25 @@ namespace AoC.Advent2019
         {
             var system = new System(input);
 
-            int step = 0;
+            var starthash = system.GetState(component);
 
-            var starthash = system.GetStateString(component);
-
-            while (true)
+            for (int step=1;true;++step)
             {
                 system.Step(component);
-                step++;
-                var hash = system.GetStateString(component);
-                if (hash == starthash) return step;
+                if (system.GetState(component) == starthash) return step;
             }
         }
 
-        static Int64 CalcLCM(Int64 a, Int64 b)
+        public static long Part2(string input)
         {
-            Int64 num1, num2;
-            if (a > b)
-            {
-                num1 = a; num2 = b;
-            }
-            else
-            {
-                num1 = b; num2 = a;
-            }
-
-            for (Int64 i = 1; i < num2; i++)
-            {
-                if ((num1 * i) % num2 == 0)
-                {
-                    return i * num1;
-                }
-            }
-            return num1 * num2;
-        }
-
-        public static Int64 Part2(string input)
-        {
-            var results = Enumerable.Range(0, 3).AsParallel().Select(i => FindCycle(input, i));
-
-            Int64 result = 1;
-            foreach (var r in results)
-            {
-                result = CalcLCM(result, r);
-            }
-
-            return result;
+            return Enumerable.Range(0, 3)
+                             .AsParallel()
+                             .Select(i => FindCycle(input, i))
+                             .Aggregate(1L, (curr, next) => Util.LCM(curr, next));
         }
 
         public void Run(string input, ILogger logger)
         {
-            //logger.WriteLine(Part2("<x=-1, y=0, z=2>\n<x=2, y=-10, z=-7>\n<x=4, y=-8, z=8>\n<x=3, y=5, z=-1>"));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

@@ -9,20 +9,20 @@ namespace AoC.Advent2016
     {
         public string Name => "2016-16";
 
-        public static bool[] pad = new bool[] { false };
-
-        public static bool[] Iterate(bool[] input)
-        {
-            return input.Concat(pad).Concat(input.Reverse().Select(c => !c)).ToArray();
-        }
+        static readonly bool[] pad = new bool[] { false };
 
         public static IEnumerable<bool> Fill(bool[] input, int size)
         {
-            while (input.Length < size)
+            int currentSize = input.Length;
+            var result = new List<bool>(size);
+            result.AddRange(input);
+            while (currentSize < size)
             {
-                input = Iterate(input);
+                var extra = pad.Concat(result.Select(c => !c).Reverse()).ToArray();
+                result.AddRange(extra);
+                currentSize += currentSize + 1;
             }
-            return input.Take(size);
+            return result.Take(size).ToArray();
         }
 
         public static bool[] Input(IEnumerable<char> input)
@@ -42,7 +42,7 @@ namespace AoC.Advent2016
             {
                 if (data.Length % 2 != 0) return data;
 
-                List<bool> result = new();
+                List<bool> result = new(data.Length/2);
 
                 for (int i = 0; i < data.Length; i += 2)
                 {
@@ -71,20 +71,6 @@ namespace AoC.Advent2016
         }
         public void Run(string input, ILogger logger)
         {
-            // Util.Test(Iterate("1").AsString(), "100");
-            // Util.Test(Iterate("0").AsString(), "001");
-            // Util.Test(Iterate("11111").AsString(), "11111000000");
-            // Util.Test(Iterate("111100001010").AsString(), "1111000010100101011110000");
-
-            // Util.Test(Fill("10000", 20).AsString(), "10000011110010000111");
-
-            // Util.Test(Output(CheckSum(Input("110010110100"))), "100");
-
-            // var v1 = Fill(Input("10010000000110000"), 35651584);
-            // logger.WriteLine("1");
-            // var v2 = CheckSum(v1);
-            // logger.WriteLine("2");
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

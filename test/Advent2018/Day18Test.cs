@@ -31,7 +31,7 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void RulesTest(char current, string neighbours, char expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day18.Step(current, neighbours));
+            Assert.AreEqual(expected, Day18.Step(current, neighbours));
         }
 
         [TestCategory("Test")]
@@ -39,7 +39,7 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void Lumber01Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day18.Part1(input));
+            Assert.AreEqual(expected, Day18.Part1(input));
         }
 
         [TestCategory("Test")]
@@ -64,7 +64,7 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void Lumber02Test(string input, int iterations, int expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day18.Run(input, iterations));
+            Assert.AreEqual(expected, Day18.Run(input, iterations));
         }
 
         [TestCategory("Regression")]

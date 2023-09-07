@@ -14,7 +14,7 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void Chains01Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day24.Part1(input));
+            Assert.AreEqual(expected, Day24.Part1(input));
         }
 
         [TestCategory("Test")]
@@ -22,21 +22,21 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void Chains02Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day24.Part2(input));
+            Assert.AreEqual(expected, Day24.Part2(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Chains_Part1_Regression()
         {
-            Assert.AreEqual(1656, Advent2017.Day24.Part1(input));
+            Assert.AreEqual(1656, Day24.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Chains_Part2_Regression()
         {
-            Assert.AreEqual(1642, Advent2017.Day24.Part2(input));
+            Assert.AreEqual(1642, Day24.Part2(input));
         }
 
     }

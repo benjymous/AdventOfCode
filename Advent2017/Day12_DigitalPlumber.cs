@@ -12,77 +12,34 @@ namespace AoC.Advent2017
             public Pools(string input)
             {
                 var lines = Util.Split(input, '\n');
-                foreach (var line in lines)
+                foreach (var line in lines.OrderByDescending(l => l.Length))
                 {
-                    var bits = Util.ExtractNumbers(line.Replace("-", ""));
-                    AddGroup(bits);
+                    AddGroup(Util.ExtractNumbers(line.Replace("-", "")).ToHashSet());
                 }
             }
 
-            readonly List<HashSet<int>> pools = new();
+            List<HashSet<int>> pools = new();
 
-            public void AddGroup(int[] group)
+            public void AddGroup(HashSet<int> group)
             {
-                List<HashSet<int>> joinedPools = new();
-
-                foreach (var pool in pools)
-                {
-                    foreach (var num in group)
-                    {
-                        if (pool.Contains(num))
-                        {
-                            joinedPools.Add(pool);
-                            break;
-                        }
-                    }
-                }
-
-                if (joinedPools.Count == 1)
-                {
-                    // exising items don't span any pools
-                    var pool = joinedPools.First();
-                    foreach (var num in group)
-                    {
-                        pool.Add(num);
-                    }
-                }
-                else
-                {
-                    // multiple pools spanned, or new pool
-                    HashSet<int> newPool = new(group);
-
-                    foreach (var oldPool in joinedPools)
-                    {
-                        pools.Remove(oldPool);
-                        newPool.UnionWith(oldPool);
-                    }
-
-                    pools.Add(newPool);
-                }
+                var joinedPools = pools.Where(p => p.Overlaps(group)).ToArray();
+                group.UnionWith(joinedPools.SelectMany(i => i));
+                pools = pools.Except(joinedPools).Append(group).ToList();
             }
 
-            public HashSet<int> FindPool(int number)
-            {
-                foreach (var pool in pools)
-                {
-                    if (pool.Contains(number)) return pool;
-                }
-                return null;
-            }
+            public HashSet<int> FindPool(int number) => pools.FirstOrDefault(p => p.Contains(number));
 
             public int NumGroups() => pools.Count;
         }
 
         public static int Part1(string input)
         {
-            var pools = new Pools(input);
-            return pools.FindPool(0).Count;
+            return new Pools(input).FindPool(0).Count;
         }
 
         public static int Part2(string input)
         {
-            var pools = new Pools(input);
-            return pools.NumGroups();
+            return new Pools(input).NumGroups();
         }
 
         public void Run(string input, ILogger logger)

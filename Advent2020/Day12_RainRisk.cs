@@ -12,7 +12,7 @@ namespace AoC.Advent2020
             public Instruction(string line)
             {
                 cmd = line[0];
-                val = Int32.Parse(line[1..]);
+                val = int.Parse(line[1..]);
             }
 
             readonly char cmd;

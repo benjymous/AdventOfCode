@@ -9,32 +9,12 @@ namespace AoC.Advent2020
 
         public static int Part1(string input)
         {
-            var groups = input.Split("\n\n");
-            int total = 0;
-            foreach (var g in groups)
-            {
-                var merged = g.Replace("\n", "");
-                var set = new HashSet<char>(merged);
-                total += set.Count;
-            }
-            return total;
+            return input.Split("\n\n").Sum(g => g.Replace("\n", "").Distinct().Count());
         }
 
         public static int Part2(string input)
         {
-            var groups = input.Split("\n\n");
-            int total = 0;
-            foreach (var g in groups)
-            {
-                var split = g.Split("\n");
-                IEnumerable<char> set = split[0];
-                foreach (var row in split)
-                {
-                    set = set.Intersect(row);
-                }
-                total += set.Count();
-            }
-            return total;
+            return input.Split("\n\n").Sum(g => { var lines = g.Split("\n"); return lines.Aggregate(lines.First() as IEnumerable<char>, (s1, s2) => s1.Intersect(s2)).Count(); });
         }
 
         public void Run(string input, ILogger logger)

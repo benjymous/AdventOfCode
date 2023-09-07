@@ -1,4 +1,5 @@
-﻿using AoC.Utils.Vectors;
+﻿using AoC.Utils;
+using AoC.Utils.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,25 +9,18 @@ namespace AoC.Advent2019
 {
     class Hoovamatic : NPSA.ASCIITerminal
     {
-        public Int64 DustCollected => finalOutput;
+        public long DustCollected => finalOutput;
 
         public Hoovamatic(string input) : base(input)
         {
             cpu.Reserve(3500);
         }
 
-        public void Activate()
-        {
-            cpu.Poke(0, 2);
-        }
+        public void Activate() => cpu.Poke(0, 2);
 
-        public void Run()
-        {
-            cpu.Run();
-            //Console.WriteLine(cpu.Speed());
-        }
+        public void Run() => cpu.Run();
 
-        public IEnumerable<ManhattanVector2> FindIntersections()
+        public IEnumerable<(int x, int y)> FindIntersections()
         {
             for (int y = 1; y < buffer.Max.Y; ++y)
             {
@@ -38,7 +32,7 @@ namespace AoC.Advent2019
                         (buffer.GetAt(x, y - 1) == '#') &&
                         (buffer.GetAt(x, y + 1) == '#'))
                     {
-                        yield return new ManhattanVector2(x, y);
+                        yield return (x, y);
                     }
                 }
             }
@@ -94,10 +88,7 @@ namespace AoC.Advent2019
             return string.Join("\n", result);
         }
 
-        static bool NeedsToShrink(string s)
-        {
-            return s.Contains('L') || s.Contains('R');
-        }
+        static bool NeedsToShrink(string s) => s.Contains('L') || s.Contains('R');
 
         public static string Filter(string input)
         {
@@ -111,17 +102,7 @@ namespace AoC.Advent2019
             return input;
         }
 
-        public static IEnumerable<string> TestResult(string shrunk, List<string> used)
-        {
-            if (NeedsToShrink(shrunk))
-            {
-                return null;
-            }
-            else
-            {
-                return used.Prepend(Filter(shrunk));
-            }
-        }
+        public static IEnumerable<string> TestResult(string shrunk, List<string> used) => NeedsToShrink(shrunk) ? null : used.Prepend(Filter(shrunk));
 
         public static IEnumerable<string> TrySubstitute(string shrunk, List<string> used)
         {
@@ -191,10 +172,10 @@ namespace AoC.Advent2019
             var direction = new Direction2(0, -1);
             while (true)
             {
-                if (CountNeighbours(position.X, position.Y) == 1 && command.Any()) break;
+                if (CountNeighbours(position.x, position.y) == 1 && command.Any()) break;
 
                 int spins = 0;
-                while (buffer.GetAt(position.X + direction.DX, position.Y + direction.DY) != '#' || spins == 2)
+                while (buffer.GetAt(position.x + direction.DX, position.y + direction.DY) != '#' || spins == 2)
                 {
                     direction.TurnRight();
                     spins++;
@@ -204,17 +185,13 @@ namespace AoC.Advent2019
                 else command += "L,";
 
                 int distance = 0;
-                while (buffer.GetAt(position.X + direction.DX, position.Y + direction.DY) == '#')
+                while (buffer.GetAt(position.x + direction.DX, position.y + direction.DY) == '#')
                 {
-                    position.Offset(direction);
+                    position = position.OffsetBy(direction);
                     distance++;
                 }
                 command += $"{distance}, ";
 
-                if (command.Length == 250)
-                {
-                    Console.WriteLine("?");
-                }
             }
 
             return command;
@@ -244,7 +221,7 @@ namespace AoC.Advent2019
 
             var intersections = robot.FindIntersections();
 
-            return intersections.Sum(v => v.X * v.Y);
+            return intersections.Sum(v => v.x * v.y);
         }
 
         public static Int64 Part2(string input)

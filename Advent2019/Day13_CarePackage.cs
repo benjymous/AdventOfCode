@@ -1,6 +1,4 @@
-﻿using AoC.Utils;
-using AoC.Utils.Vectors;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,51 +19,31 @@ namespace AoC.Advent2019
             // 3 is a horizontal paddle tile. The paddle is indestructible.
             // 4 is a ball tile. The ball moves diagonally and bounces off objects.
 
-            const string tiles = " █■━●";
+            //const string tiles = " █■━●";
 
-            public NPVGS(string program)
+            int ballPos, paddlePos, score;
+            readonly QuestionPart part;
+
+            public NPVGS(string program, QuestionPart p)
             {
                 cpu = new NPSA.IntCPU(program);
                 cpu.Reserve(3200);
                 cpu.Interrupt = this;
+                part = p;
             }
 
             public int Run()
             {
                 cpu.Run();
 
-                return screen.Count(kvp => kvp.Value == 2);
+                return part.One() ? screen.Count(kvp => kvp.Value == 2) : score;
             }
 
-            public void InsertCoin()
-            {
-                cpu.Poke(0, 2);
-            }
+            public void InsertCoin() => cpu.Poke(0, 2);
 
-            public int Score()
-            {
-                return screen.GetOrDefault((-1,0));
-            }
+            public void RequestInput() => cpu.Input.Enqueue(Math.Sign(ballPos - paddlePos));
 
-            ManhattanVector2 FindCell(int tile)
-            {
-                return new ManhattanVector2(screen.Where(kvp => kvp.Value == tile).First().Key);
-            }
-
-            public void WillReadInput()
-            {
-
-                var ball = FindCell(4);
-                var paddle = FindCell(3);
-
-                int joystick = Math.Sign(ball.X - paddle.X);
-
-                cpu.Input.Enqueue(joystick);
-
-                //Draw();
-            }
-
-            public void HasPutOutput()
+            public void OutputReady()
             {
                 if (cpu.Output.Count == 3)
                 {
@@ -73,46 +51,27 @@ namespace AoC.Advent2019
                     int yPos = (int)cpu.Output.Dequeue();
                     int tile = (int)cpu.Output.Dequeue();
 
-                    screen[(xPos,yPos)] = tile;
-
-                    // if (tile == 4)
-                    // {
-                    //     Draw();
-                    // }
+                    if (xPos == -1 && yPos == 0) score = tile;
+                    if (tile == 3) paddlePos = xPos;
+                    if (tile == 4) ballPos = xPos;
+                    
+                    if (part.One()) screen[(xPos,yPos)] = tile;
                 }
-            }
-
-            public void Draw()
-            {
-                Console.WriteLine();
-                Console.WriteLine();
-                for (int y = 0; y < 25; ++y)
-                {
-                    var str = "";
-                    for (int x = 0; x <= 40; ++x)
-                    {
-                        str += tiles[screen.GetOrDefault((x,y))] + " ";
-                    }
-                    Console.WriteLine(str);
-                }
-
-                System.Threading.Thread.Sleep(100);
             }
         }
 
         public static int Part1(string input)
         {
-            var game = new NPVGS(input);
+            var game = new NPVGS(input, QuestionPart.Part1);
 
             return game.Run();
         }
 
         public static int Part2(string input)
         {
-            var game = new NPVGS(input);
+            var game = new NPVGS(input, QuestionPart.Part2);
             game.InsertCoin();
-            game.Run();
-            return game.Score();
+            return game.Run();
         }
 
         public void Run(string input, ILogger logger)

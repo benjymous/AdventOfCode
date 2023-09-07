@@ -10,11 +10,13 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-12";
 
-        public class MapData : IMap<(int x, int y)>
+        static int ToKey((int x, int y) v) => v.x + (v.y << 16);
+
+        public class MapData : IMap<int>
         {
             public MapData(string input)
             {
-                Grid = Util.ParseSparseMatrix<char>(input);
+                Grid = Util.ParseSparseMatrix<char>(input).ToDictionary(kvp => ToKey(kvp.Key), kvp => kvp.Value);
                 Index = Grid.Invert();
 
                 Start = Index['S'].First();
@@ -24,28 +26,26 @@ namespace AoC.Advent2022
                 Grid[End] = 'z';
             }
 
-            public readonly Dictionary<(int x, int y), char> Grid;
-            public readonly Dictionary<char, IEnumerable<(int x, int y)>> Index;
+            public readonly Dictionary<int, char> Grid;
+            public readonly Dictionary<char, IEnumerable<int>> Index;
 
-            public readonly (int x, int y) Start, End;
+            public readonly int Start, End;
 
-            static readonly (int dx, int dy)[] neighbours = new[] { (1, 0), (-1, 0), (0, 1), (0, -1) };
-            public virtual IEnumerable<(int x, int y)> GetNeighbours((int x, int y) center)
+            static readonly int[] neighbours = new[] { 1, -1, 1<<16, -1<<16 };
+            public virtual IEnumerable<int> GetNeighbours(int center)
             {
                 var maxClimb = Grid[center]+1;
 
-                return neighbours.Select(delta => (center.x + delta.dx, center.y + delta.dy))
+                return neighbours.Select(delta => center + delta)
                                  .Where(pt => Grid.TryGetValue(pt, out var height) && height <= maxClimb);
             }
-
-            public int Heuristic((int x, int y) location1, (int x, int y) location2) => location1.Distance(location2);
         }
     
         public static int Part1(string input)
         {
             var map = new MapData(input);
 
-            return AStar<(int x, int y)>.FindPath(map, map.Start, map.End).Length;
+            return map.FindPath(map.Start, map.End).Length;
         }
 
         public static int Part2(string input)
@@ -54,27 +54,22 @@ namespace AoC.Advent2022
             var allStarts = map.Index['a'];
             var goodStarts = allStarts.Where(pos => map.GetNeighbours(pos).Any(pos => map.Grid[pos] == 'b')).ToHashSet();
             allStarts.Except(goodStarts).ForEach(pos => map.Grid.Remove(pos));
+            HashSet<int> seen = new();
 
             int min = int.MaxValue;
             goodStarts.Operate(pos =>
             {
-                var route = AStar<(int x, int y)>.FindPath(map, pos, map.End);
-                if (route.Any())
+                var route = map.FindPath(pos, map.End);
+                if (!route.Any()) return;
+
+                int routeLength = route.Length;
+                min = Math.Min(min, routeLength);
+
+                var intersect = route.Reverse().Intersect(goodStarts);
+                if (intersect.Any())
                 {
-                    int routeLength = route.Length;
-
-                    min = Math.Min(min, routeLength);
-
-                    foreach (var step in route)
-                    {
-                        routeLength--;
-                        if (goodStarts.Contains(step))
-                        {
-                            map.Grid.Remove(step);
-                            min = Math.Min(min, routeLength);
-                            goodStarts.Remove(step);
-                        }
-                    }
+                    min = Math.Min(min, routeLength - route.IndexOf(intersect.First()));
+                    goodStarts.ExceptWith(intersect);
                 }
             });
 

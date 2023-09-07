@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2018
@@ -10,26 +9,27 @@ namespace AoC.Advent2018
 
         static int Reduce(IEnumerable<char> inp)
         {
-            var input = inp.ToArray();
-            bool replaced = true;
+            var input = inp.ToList();
+            bool replaced;
             do
             {
                 replaced = false;
 
-                for (var i = 0; i < input.Length - 1; ++i)
+                for (var i = 0; i < input.Count - 1; ++i)
                 {
-                    if (input[i] != input[i + 1] && char.ToLower(input[i]) == char.ToLower(input[i + 1]))
+                    if (input[i] != input[i + 1] && ((input[i] & 0x1f) == (input[i + 1] & 0x1f)))
                     {
-                        input[i] = ' ';
-                        input[i + 1] = ' ';
+                        input.RemoveAt(i);
+                        input.RemoveAt(i);
+                        i--;
+
                         replaced = true;
                     }
                 }
-                input = input.Where(i => i != ' ').ToArray();
 
             } while (replaced);
 
-            return input.Length;
+            return input.Count;
         }
 
         public static int Part1(string input)
@@ -39,8 +39,8 @@ namespace AoC.Advent2018
 
         public static int ShrinkReduce(char c, IEnumerable<char> input)
         {
-            var shrunk = input.Where(ch => ch != c && ch != char.ToUpper(c));
-            return Reduce(shrunk);
+            var check = c & 0x1f;
+            return Reduce(input.Where(ch => (ch & 0x1f) != check));
         }
 
         public static int Part2(string input)

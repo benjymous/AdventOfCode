@@ -41,7 +41,7 @@ namespace AoC.Advent2022
         public static int Part2(string input)
         {
             return Util.Parse<Rucksack>(input)
-                       .Split(3)
+                       .Partition(3)
                        .Select(g => g.Select(r => r.All).ToArray())
                        .Sum(group => Priority(group[0].Intersect(group[1]).Intersect(group[2]).First()));
         }

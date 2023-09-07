@@ -8,11 +8,6 @@ namespace AoC.Advent2020.Test
     {
         readonly string input = Util.GetInput<Day11>();
 
-
-
-
-
-
         [TestCategory("Test")]
         [DataRow("L.LL.LL.LL\n" +
                  "LLLLLLL.LL\n" +
@@ -27,7 +22,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Seats01Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2020.Day11.Part1(input));
+            Assert.AreEqual(expected, Day11.Part1(input));
         }
 
         [TestCategory("Test")]
@@ -55,7 +50,15 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void NeighboursTest(string input, int x, int y, int expected)
         {
-            Assert.AreEqual(expected, Advent2020.Day11.TestNeighbours(input, x, y));
+            int v = TestNeighbours(input, x, y);
+            Assert.AreEqual(expected, v);
+        }
+
+        public static int TestNeighbours(string input, int tx, int ty)
+        {
+            var state = new Day11.State(input, QuestionPart.Part2);
+            if (!state.Seats.Contains(tx + (ty << 16))) return -1;
+            return state.Neighbours(tx + (ty << 16));
         }
 
         [TestCategory("Test")]
@@ -72,7 +75,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Seats02Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2020.Day11.Part2(input));
+            Assert.AreEqual(expected, Day11.Part2(input));
         }
 
 

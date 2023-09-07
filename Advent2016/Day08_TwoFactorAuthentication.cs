@@ -1,8 +1,5 @@
 ﻿using AoC.Utils;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2016
 {
@@ -12,14 +9,12 @@ namespace AoC.Advent2016
 
         public class Display
         {
-            readonly int GridWidth;
-            readonly int GridHeight;
+            readonly int GridWidth, GridHeight;
             readonly bool[,] pixels;
 
             public Display(string input, int w, int h)
             {
-                GridWidth = w;
-                GridHeight = h;
+                (GridWidth, GridHeight) = (w, h);
 
                 pixels = new bool[GridWidth, GridHeight];
 
@@ -36,34 +31,22 @@ namespace AoC.Advent2016
                     switch (bits[0])
                     {
                         case "rect":
-                            var rect = bits[1];
-                            var size = rect.Split("x");
-                            var width = int.Parse(size[0]);
-                            var height = int.Parse(size[1]);
-                            Set(width, height);
+                            var nums = Util.ParseNumbers<int>(bits[1], 'x');
+                            Set(nums[0], nums[1]);
                             break;
 
                         case "rotate":
                             switch (bits[1])
                             {
                                 case "row":
-                                    var row = int.Parse(bits[2].Replace("y=", ""));
-                                    var shiftrow = int.Parse(bits[4]);
-                                    RotateRow(row, shiftrow);
+                                    RotateRow(int.Parse(bits[2].Replace("y=", "")), int.Parse(bits[4]));
                                     break;
 
                                 case "column":
-                                    var col = int.Parse(bits[2].Replace("x=", ""));
-                                    var shiftcol = int.Parse(bits[4]);
-                                    RotateCol(col, shiftcol);
+                                    RotateCol(int.Parse(bits[2].Replace("x=", "")), int.Parse(bits[4]));
                                     break;
                             }
                             break;
-
-                        default:
-                            Console.WriteLine($"Unknown command {line}");
-                            break;
-
                     }
                 }
             }
@@ -71,86 +54,43 @@ namespace AoC.Advent2016
             void Set(int width, int height)
             {
                 for (int y = 0; y < height; ++y)
-                {
                     for (int x = 0; x < width; ++x)
-                    {
                         pixels[x, y] = true;
-                    }
-                }
             }
 
             void RotateRow(int row, int shift)
             {
-                List<bool> changedRow = new();
+                var oldRow = pixels.Row(row).ToArray();
                 for (int x = 0; x < GridWidth; ++x)
-                {
-                    int nx = (GridWidth + (x - shift)) % GridWidth;
-                    changedRow.Add(pixels[nx, row]);
-                }
-
-                for (int x = 0; x < GridWidth; ++x)
-                {
-                    pixels[x, row] = changedRow[x];
-                }
+                    pixels[x, row] = oldRow[(GridWidth + (x - shift)) % GridWidth];
             }
 
             void RotateCol(int col, int shift)
             {
-                List<bool> changedCol = new();
+                var oldCol = pixels.Column(col).ToArray();
                 for (int y = 0; y < GridHeight; ++y)
-                {
-                    int ny = (GridHeight + (y - shift)) % GridHeight;
-                    changedCol.Add(pixels[col, ny]);
-                }
-
-                for (int y = 0; y < GridHeight; ++y)
-                {
-                    pixels[col, y] = changedCol[y];
-                }
+                    pixels[col, y] = oldCol[(GridHeight + (y - shift)) % GridHeight];
             }
 
-            public int NumPixelsOn() => pixels.Values().Count(x => x == true);
+            public int NumPixelsOn() => pixels.Values().Count(x => x);
 
-            public override string ToString()
-            {
-                var sb = new StringBuilder();
-                for (var y = 0; y < GridHeight; ++y)
-                {
-                    for (var x = 0; x < GridWidth; ++x)
-                    {
-                        sb.Append(pixels[x, y] ? "##" : "..");
-                    }
-                    sb.AppendLine();
-                }
-                return sb.ToString();
-            }
+            public override string ToString() => pixels.AsString(v => v ? "##" : "..");
         }
 
         public static int Part1(string input)
         {
-            var display = new Display(input, 50, 6);
-            return display.NumPixelsOn();
+            return new Display(input, 50, 6).NumPixelsOn();
         }
 
         public static string Part2(string input, ILogger logger = null)
         {
             var display = new Display(input, 50, 6).ToString();
-            logger?.WriteLine(display);
+            logger?.WriteLine("\n\n"+display);
             return display.GetMD5String(false);
         }
 
         public void Run(string input, ILogger logger)
         {
-            // var display = new Display("", 7, 3);
-            // display.Perform("rect 3x2");
-            // logger.WriteLine($"{display}\n\n");
-            // display.Perform("rotate column x=1 by 1");
-            // logger.WriteLine($"{display}\n\n");
-            // display.Perform("rotate row y=0 by 4");
-            // logger.WriteLine($"{display}\n\n");
-            // display.Perform("rotate column x=1 by 1");
-            // logger.WriteLine($"{display}\n\n");
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - \n" + Part2(input));
         }

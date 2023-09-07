@@ -4,6 +4,7 @@ namespace AoC.Advent2018.Test
 {
     [TestCategory("2018")]
     [TestCategory("BinarySearch")]
+    [TestCategory("AStar")]
     [TestClass]
     public class Day15Test
     {

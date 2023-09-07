@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2017
@@ -10,42 +9,29 @@ namespace AoC.Advent2017
 
         class Part1Port : NorthCloud.IOutputPort
         {
-            public Int64 Value { get; set; }
+            public long Value { get; private set; }
 
-            public void Write(Int64 value)
-            {
-                Value = value;
-            }
+            public void Write(long value) => Value = value;
         }
 
         class Part2Port : NorthCloud.IInputPort, NorthCloud.IOutputPort
         {
             public int SendCount { get; internal set; } = 0;
 
-            readonly Queue<Int64> values = new();
+            readonly Queue<long> values = new();
 
-            public bool Read(out Int64 value)
-            {
-                if (values.Any())
-                {
-                    value = values.Dequeue();
-                    return true;
-                }
-                else
-                {
-                    value = 0;
-                    return false;
-                }
-            }
-
-            public void Write(Int64 value)
+            public void Write(long value)
             {
                 SendCount++;
                 values.Enqueue(value);
             }
+
+            public bool HasData() => values.Any();
+
+            public long Read() => values.Dequeue();
         }
 
-        public static Int64 Part1(string input)
+        public static long Part1(string input)
         {
             var cpu = new NorthCloud.Coprocessor(input, "Common,Day18,Day18Part1");
             var reciever = new Part1Port();
@@ -85,8 +71,8 @@ namespace AoC.Advent2017
 
             //Part2("snd 1\nsnd 2\nsnd p\nrcv a\nrcv b\nrcv c\nrcv d");
 
-            //logger.WriteLine("- Pt1 - "+Part1(input));
-            //logger.WriteLine("- Pt2 - " + Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

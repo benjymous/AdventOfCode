@@ -10,14 +10,14 @@ namespace AoC.Advent2015.Test
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Part1_Regression()
+        public void Circuit_Part1_Regression()
         {
             Assert.AreEqual(16076, Day07.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Part2_Regression()
+        public void Circuit_Part2_Regression()
         {
             Assert.AreEqual(2797, Day07.Part2(input));
         }

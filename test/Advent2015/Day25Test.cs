@@ -10,7 +10,7 @@ namespace AoC.Advent2015.Test
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Part1_Regression()
+        public void SnowMachine_Part1_Regression()
         {
             Assert.AreEqual(8997277, Day25.Part1(input));
         }

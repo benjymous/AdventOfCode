@@ -6,7 +6,7 @@ namespace AoC.Advent2019
 {
     class SpringDroid : NPSA.ASCIITerminal
     {
-        public Int64 DamageReport => finalOutput;
+        public long DamageReport => finalOutput;
 
         public SpringDroid(string program) : base(program)
         {
@@ -19,7 +19,7 @@ namespace AoC.Advent2019
             commandBuffer = program;
             cpu.Reserve(3000);
             cpu.Run();
-            // Console.WriteLine(cpu.Speed());
+            Console.WriteLine(cpu.Speed());
         }
 
         public override IEnumerable<string> AutomaticInput() => commandBuffer;
@@ -29,7 +29,7 @@ namespace AoC.Advent2019
     {
         public string Name => "2019-21";
 
-        public static Int64 SurveyHull(string input, IEnumerable<string> commandBuffer)
+        public static long SurveyHull(string input, IEnumerable<string> commandBuffer)
         {
             var droid = new SpringDroid(input);
             droid.SetDisplay(false);
@@ -42,7 +42,7 @@ namespace AoC.Advent2019
         // OR X Y sets Y to true if at least one of X or Y is true; otherwise, it sets Y to false.
         // NOT X Y sets Y to true if X is false; otherwise, it sets Y to false.
 
-        public static Int64 Part1(string input)
+        public static long Part1(string input)
         {
             // (!A|!B|!C) & D
 
@@ -64,7 +64,7 @@ namespace AoC.Advent2019
             return SurveyHull(input, commandBuffer);
         }
 
-        public static Int64 Part2(string input)
+        public static long Part2(string input)
         {
             // (!A|!B|!C) & D & (E|H))
 

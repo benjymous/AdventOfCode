@@ -15,14 +15,7 @@
             {
                 int offset = instructions[position];
 
-                if (mode2 && (offset >= 3))
-                {
-                    instructions[position]--;
-                }
-                else
-                {
-                    instructions[position]++;
-                }
+                instructions[position] += (mode2 && (offset >= 3)) ? -1 : 1;
 
                 position += offset;
                 steps++;

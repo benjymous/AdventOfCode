@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2020
 {
@@ -10,28 +9,28 @@ namespace AoC.Advent2020
     {
         public string Name => "2020-22";
 
-        static Queue<byte>[] ParseData(string input)
+        static Queue<int>[] ParseData(string input)
         {
             var groups = input.Split("\n\n");
-            var decks = new List<Queue<byte>>();
+            var decks = new List<Queue<int>>();
 
             foreach (var group in groups)
             {
                 var data = group.Split("\n");
-                var deck = Util.ParseNumbers<int>(data.Skip(1)).Select(i => (byte)i).ToQueue();
+                var deck = Util.ParseNumbers<int>(data.Skip(1)).ToQueue();
                 decks.Add(deck);
             }
 
             return decks.ToArray();
         }
 
-        static int GetKey(Queue<byte>[] decks) => decks[0].GetCombinedHashCode();
+        static int GetKey(Queue<int>[] decks) => decks[0].Take(4).GetCombinedHashCode();
 
-        static int PlayRound(Queue<byte>[] decks, bool recursive = false, bool subgame = false)
+        static int PlayRound(Queue<int>[] decks, bool recursive = false, bool subgame = false)
         {
             var seen = new HashSet<int>();
 
-            while (decks.Count(d => d.Count > 0) == 2)
+            while (decks.All(d => d.Count > 0))
             {
                 if (subgame)
                 {
@@ -49,7 +48,7 @@ namespace AoC.Advent2020
                     decks[0].Count >= taken[0] &&
                     decks[1].Count >= taken[1])
                 {
-                    var result = PlayRound(new Queue<byte>[]{
+                    var result = PlayRound(new Queue<int>[]{
                         decks[0].Take(taken[0]).ToQueue(),
                         decks[1].Take(taken[1]).ToQueue()
                     }, true, true);
@@ -81,7 +80,6 @@ namespace AoC.Advent2020
         {
             return PlayRound(ParseData(input));
         }
-
 
         public static int Part2(string input)
         {

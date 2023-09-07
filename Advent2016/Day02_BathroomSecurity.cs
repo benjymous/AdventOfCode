@@ -9,43 +9,26 @@ namespace AoC.Advent2016
     {
         public string Name => "2016-02";
 
-        static readonly string keypad1 = "123  \n" +
-                                "456  \n" +
+        static readonly string keypad1 = 
+                                "123\n" +
+                                "456\n" +
                                 "789";
 
-        static readonly string keypad2 = "  1   \n" +
-                                " 234  \n" +
-                                "56789 \n" +
-                                " ABC  \n" +
-                                "  D   \n";
+        static readonly string keypad2 = 
+                                "  1  \n" +
+                                " 234 \n" +
+                                "56789\n" +
+                                " ABC \n" +
+                                "  D  \n";
 
-        static Dictionary<(int x, int y), char> ParseKeypad(string kp)
-        {
-            var result = new Dictionary<(int x, int y), char>();
-            var lines = Util.Split(kp);
-            int y = 0;
 
-            foreach (var line in lines)
-            {
-                int x = 0;
-                foreach (var c in line)
-                {
-                    if (c != ' ')
-                    {
-                        result[(x, y)] = c;
-                    }
-                    x++;
-                }
-                y++;
-            }
-            return result;
-        }
+        static Dictionary<(int x, int y), char> ParseKeypad(string kp) => Util.ParseSparseMatrix<char>(kp, new Util.Convertomatic.SkipSpaces());
 
         public static string SimulateKeypad(string input, string keypadLayout)
         {
-            Dictionary<(int x, int y), char> keypad = ParseKeypad(keypadLayout);
+           var keypad = ParseKeypad(keypadLayout);
 
-            ManhattanVector2 position = keypad.First(kvp => kvp.Value == '5').Key;
+            var position = keypad.First(kvp => kvp.Value == '5').Key;
 
             var lines = Util.Split(input);
             StringBuilder code = new();
@@ -54,19 +37,13 @@ namespace AoC.Advent2016
 
             foreach (var line in lines)
             {
-                foreach (var c in line)
+                foreach (var offset in line.Select(c => new Direction2(c)))
                 {
-                    newPos.Set(position.X, position.Y);
-                    switch (c)
-                    {
-                        case 'L': newPos.Offset(-1, 0); break;
-                        case 'R': newPos.Offset(1, 0); break;
-                        case 'U': newPos.Offset(0, -1); break;
-                        case 'D': newPos.Offset(0, 1); break;
-                    }
+                    newPos = position;
+                    newPos.Offset(offset);
                     if (keypad.ContainsKey(newPos))
                     {
-                        position.Set(newPos.X, newPos.Y);
+                        position = newPos;
                     }
                 }
                 code.Append(keypad[position]);
@@ -89,7 +66,7 @@ namespace AoC.Advent2016
         {
 
             //logger.WriteLine(Part1("ULL\nRRDDD\nLURDL\nUUUUD"));
-            logger.WriteLine(Part2("ULL\nRRDDD\nLURDL\nUUUUD"));
+            //logger.WriteLine(Part2("ULL\nRRDDD\nLURDL\nUUUUD"));
 
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));

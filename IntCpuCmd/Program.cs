@@ -19,12 +19,12 @@ namespace IntCpuCmd
 
             public void Run() => cpu.Run();
 
-            public void HasPutOutput()
+            public void OutputReady()
             {
                 Console.WriteLine($"- {cpu.Output.Dequeue()}");
             }
 
-            public void WillReadInput()
+            public void RequestInput()
             {
                 Console.Write("?> ");
                 var input = Console.ReadLine();

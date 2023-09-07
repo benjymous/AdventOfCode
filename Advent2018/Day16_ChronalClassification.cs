@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AoC.Advent2018.ChronMatic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,46 +9,33 @@ namespace AoC.Advent2018
     {
         public string Name => "2018-16";
 
-
-
         public class Test
         {
-            public long[] before;
-            public long[] after;
-            public long instr;
-            public long[] args;
+            public readonly long[] before;
+            public readonly long[] after;
+            public readonly int instr;
+            public int[] args;
 
             public Test(string b, string i, string a)
             {
                 before = Util.ExtractLongNumbers(b);
                 after = Util.ExtractLongNumbers(a);
-                var data = Util.ExtractLongNumbers(i);
+                var data = Util.ExtractNumbers(i);
                 instr = data[0];
                 args = data.Skip(1).ToArray();
             }
         }
 
-
-        private static List<Test> ParseTests(string[] lines)
+        private static List<Test> ParseTests(string[] testData)
         {
             List<Test> tests = new();
 
-            string before = null;
-            string instr = null;
-            foreach (var line in lines)
+            foreach (var grp in testData)
             {
-                if (line.StartsWith("Before"))
+                var lines = grp.Split('\n');
+                if (lines.Length == 3)
                 {
-                    before = line;
-                }
-                else if (line.StartsWith("After"))
-                {
-                    var test = new Test(before, instr, line);
-                    tests.Add(test);
-                }
-                else
-                {
-                    instr = line;
+                    tests.Add(new Test(lines[0], lines[1], lines[2]));
                 }
             }
 
@@ -66,122 +54,89 @@ namespace AoC.Advent2018
             return true;
         }
 
-        static bool DoTest(Test test, ChronMatic.IInstr instr)
+        static bool DoTest(Test test, IInstr instr)
         {
             var data = test.before.ToArray();
-            instr.Do(test.args[0], test.args[1], test.args[2], ref data);
+            instr.Do(ref test.args, ref data);
             return Match(data, test.after);
+        }
+
+        static Dictionary<Test, HashSet<IInstr>> RunTests(string[] lines, ILogger logger=null)
+        {
+            var tests = ParseTests(lines);
+            logger?.WriteLine("1a");
+
+            var instrs = new HashSet<IInstr>(ChronCPU.GetInstructions());
+
+            logger?.WriteLine("1b");
+
+            Dictionary<Test, HashSet<IInstr>> testMatches = new();
+            foreach (var test in tests)
+            {
+                testMatches[test] = new();
+                foreach (var instr in instrs)
+                {
+                    if (DoTest(test, instr)) testMatches[test].Add(instr);
+                }
+            }
+
+            return testMatches;
         }
 
         public static int Part1(string input)
         {
-            var lines = Util.Split(input, '\n');
+            var testLines = input.Split("\n\n");
 
-            List<Test> tests = ParseTests(lines);
-
-            var instrs = ChronMatic.ChronCPU.GetInstructions();
-
-            int count = 0;
-            foreach (var test in tests)
-            {
-                int match = 0;
-                foreach (var i in instrs)
-                {
-                    if (DoTest(test, i)) match++;
-                }
-                if (match >= 3) count++;
-            }
-
-            return count;
+            Dictionary<Test, HashSet<IInstr>> testMatches = RunTests(testLines);
+            return testMatches.Count(kvp => kvp.Value.Count >= 3);
         }
 
-        public static long Part2(string input)
+        public static long Part2(string input, ILogger logger)
         {
-            var lines = input.Split('\n');
+            logger.WriteLine("0");
+            var data = input.Split("\n\n\n");
+            var testLines = data[0].Split("\n\n");
 
-            IEnumerable<Test> tests = ParseTests(lines).OrderBy(t => t.instr);
+            logger.WriteLine("1");
 
-            var instrs = new HashSet<ChronMatic.IInstr>(ChronMatic.ChronCPU.GetInstructions());
+            Dictionary<Test, HashSet<IInstr>> testMatches = RunTests(testLines, logger);
 
-            var mapping = new Dictionary<int, ChronMatic.IInstr>();
+            logger.WriteLine("2");
 
+            var mapping = new Dictionary<int, IInstr>();
             while (mapping.Count < 16)
             {
-                for (int i = 0; i < 16; ++i)
+                foreach (var match in testMatches.Where(kvp => kvp.Value.Count == 1))
                 {
-                    if (mapping.ContainsKey(i)) continue;
-                    HashSet<ChronMatic.IInstr> potentials = new(instrs);
-                    foreach (var test in tests.Where(t => t.instr == i))
-                    {
-                        HashSet<ChronMatic.IInstr> pass = new();
-                        foreach (var instr in potentials)
-                        {
-                            if (DoTest(test, instr))
-                            {
-                                pass.Add(instr);
-                            }
-                        }
-                        potentials = pass;
-                    }
+                    var matched = match.Value.First();
+                    mapping[match.Key.instr] = matched;
+                    testMatches.Remove(match.Key);
 
-                    if (potentials.Count == 0)
+                    foreach (var other in testMatches)
                     {
-                        throw new Exception($"Failed to map {i}");
-                    }
-                    if (potentials.Count == 1)
-                    {
-                        var instr = potentials.First();
-                        //Console.WriteLine($"instr {i} is {instr.GetType().Name}");
-                        mapping[i] = instr;
-                        instrs.Remove(instr);
-                    }
-                    else
-                    {
-                        //Console.WriteLine($"instr {i} has {potentials.Count()} potentials"); 
-                    }
+                        other.Value.Remove(matched);
+                    }             
                 }
             }
 
-            // find the three blank lines that indicate the start of the program
-            int progStart = 0;
-            for (int i = 3; i < lines.Length; ++i)
-            {
-                if (lines[i] == lines[i - 1] && lines[i] == lines[i - 2])
-                {
-                    progStart = i + 1;
-                    break;
-                }
-            }
+            logger.WriteLine("3");
 
-            var progLines = lines.Skip(progStart);
+            var cpu = new ChronCPU(Util.Split(data[1], '\n'), mapping);
 
-            var cpu = new ChronMatic.ChronCPU(progLines, mapping);
+            logger.WriteLine("4");
+
             cpu.Run();
+            Console.WriteLine(cpu.Speed());
+
+            logger.WriteLine("5");
+
             return cpu.Get(0);
-
-            // List<int[]> program = new List<int[]>();
-            // foreach (var line in progLines)
-            // {
-            //     if (!string.IsNullOrEmpty(line))
-            //     {
-            //         program.Add(Util.ExtractNumbers(line));
-            //     }
-            // }
-
-            // var regs = new int[]{0,0,0,0};
-            // foreach (var line in program)
-            // {
-            //     var instr = mapping[line[0]];
-            //     instr.Do(line[1], line[2], line[3], ref regs);
-            // }
-
-            // return regs[0];
         }
 
         public void Run(string input, ILogger logger)
         {
             logger.WriteLine("- Pt1 - " + Part1(input));
-            logger.WriteLine("- Pt2 - " + Part2(input));
+            logger.WriteLine("- Pt2 - " + Part2(input, logger));
         }
     }
 }

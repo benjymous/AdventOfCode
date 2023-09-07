@@ -1,4 +1,5 @@
-﻿using AoC.Utils.Vectors;
+﻿using AoC.Utils;
+using AoC.Utils.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,14 @@ namespace AoC.Advent2018
 
         public static int Part1(string input)
         {
-            var data = Util.Parse<ManhattanVector2>(input).ToArray();
+            var data = Util.Parse<ManhattanVector2>(input).Select(v => v.AsSimple()).ToArray();
 
-            var width = data.Max(pos => pos.X);
-            var height = data.Max(pos => pos.Y);
+            var width = data.Max(pos => pos.x);
+            var height = data.Max(pos => pos.y);
 
             var grid = new int[height,width];
+
+            Dictionary<int, int> counts = new();
 
             for (var y = 0; y < height; ++y)
             {
@@ -50,6 +53,7 @@ namespace AoC.Advent2018
                     if (smallestCount == 1)
                     {
                         grid[y,x] = smallestIdx;
+                        counts.IncrementAtIndex(smallestIdx);
                     }
                     else
                     {
@@ -57,54 +61,31 @@ namespace AoC.Advent2018
                     }
                 }
             }
-
-            var infinite = new HashSet<int>();
-
+          
             for (var x = 0; x < width; ++x)
             {
-                infinite.Add(grid[0, x]);
-                infinite.Add(grid[height - 1,x]);
+                counts.Remove(grid[0, x]);
+                counts.Remove(grid[height - 1,x]);
             }
 
             for (var y = 0; y < height; ++y)
             {
-                infinite.Add(grid[y, 0]);
-                infinite.Add(grid[y, width - 1]);
+                counts.Remove(grid[y, 0]);
+                counts.Remove(grid[y, width - 1]);
             }
 
-            var maxArea = 0;
-            for (var i = 0; i < data.Length; ++i)
-            {
-                var count = 0;
+            return counts.Max(kvp => kvp.Value);
 
-                if (!infinite.Contains(i))
-                {
-                    for (var y = 0; y < height; ++y)
-                    {
-                        for (var x = 0; x < width; ++x)
-                        {
-                            if (grid[y,x] == i)
-                            {
-                                count++;
-                            }
-                        }
-                    }
-                }
-
-                maxArea = Math.Max(maxArea, count);
-            }
-
-            return maxArea;
         }
 
         public static int Part2(string input, int safeDistance)
         {
-            var data = Util.Parse<ManhattanVector2>(input);
+            var data = Util.Parse<ManhattanVector2>(input).Select(v => v.AsSimple()).ToArray();
 
-            var width = data.Max(pos => pos.X);
-            var height = data.Max(pos => pos.Y);
+            var width = data.Max(pos => pos.x);
+            var height = data.Max(pos => pos.y);
 
-            return ParallelEnumerable.Range(0, height).Sum(y => ParallelEnumerable.Range(0, width).Where(x => data.Select(e => e.Distance(x, y)).Sum() < safeDistance).Count());
+            return ParallelEnumerable.Range(0, height).Sum(y => Enumerable.Range(0, width).Where(x => data.Select(e => e.Distance(x, y)).Sum() < safeDistance).Count());
         }
 
         public static int Part2(string input) => Part2(input, 10000);

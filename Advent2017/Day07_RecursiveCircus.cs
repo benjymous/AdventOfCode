@@ -8,12 +8,7 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-07";
 
-        static (string, int) ExtractParent(string data)
-        {
-            var key = data.Split(" ")[0];
-            var value = Util.ExtractNumbers(data).First();
-            return (key, value);
-        }
+        static (string, int) ExtractParent(string data) => (data.Split(" ")[0], Util.ExtractNumbers(data).First());
 
         public static Tree<string, int> ParseTree(string input)
         {
@@ -48,20 +43,20 @@ namespace AoC.Advent2017
             return tree;
         }
 
-        public static string Part1(string input) => ParseTree(input).GetRoot().Key;
-
-        static int GetChildScore(TreeNode<string, int> node)
+        static int GetChildScore(TreeNode<string, int> node) => node.Value + node.Children.Sum(GetChildScore);
+        
+        public static string Part1(string input)
         {
-            return node.Value + node.Children.Sum(GetChildScore);
+            return ParseTree(input).GetRootKey();
         }
 
         public static int Part2(string input)
         {
             var tree = ParseTree(input);
 
-            var currentParents = tree.GetNodes().Where(node => node.Children.Count == 0)
-                                                .Select(node => node.Parent)
-                                                .ToHashSet();
+            var currentParents = tree.Where(node => node.Children.Count == 0)
+                                     .Select(node => node.Parent)
+                                     .ToHashSet();
 
             // Find any leaves that have a missmatched weight
             while (currentParents.Any())
@@ -96,11 +91,6 @@ namespace AoC.Advent2017
 
         public void Run(string input, ILogger logger)
         {
-
-            //var testData = "pbga (66)\nxhth (57)\nebii (61)\nhavc (66)\nktlj (57)\nfwft (72) -> ktlj, cntj, xhth\nqoyq (66)\npadx (45) -> pbga, havc, qoyq\ntknk (41) -> ugml, padx, fwft\njptl (61)\nugml (68) -> gyxo, ebii, jptl\ngyxo (61)\ncntj (57)";
-            //Util.Test(Part2(testData), 60);
-
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using AoC.Utils;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2018
@@ -31,23 +32,21 @@ namespace AoC.Advent2018
 
             grid[pos] = '|';
 
-            if (pos.y < maxY && !grid.ContainsKey((pos.x, pos.y + 1))) Set((pos.x, pos.y + 1), grid, maxY);
+            if (pos.y < maxY) Set((pos.x, pos.y + 1), grid, maxY);
 
             if (IsFilled(pos.x, pos.y + 1, grid))
             {
                 int x1 = pos.x;
                 int x2 = pos.x;
 
-                while (true)
+                while (!IsWall(x1 - 1, pos.y, grid) && IsFilled(x1 - 1, pos.y + 1, grid))
                 {
-                    if (IsWall(x1 - 1, pos.y, grid) || !IsFilled(x1 - 1, pos.y + 1, grid)) break;
                     x1--;
                 }
                 bool openLeft = !IsWall(x1 - 1, pos.y, grid);
 
-                while (true)
+                while (!IsWall(x2 + 1, pos.y, grid) && IsFilled(x2 + 1, pos.y + 1, grid))
                 {
-                    if (IsWall(x2 + 1, pos.y, grid) || !IsFilled(x2 + 1, pos.y + 1, grid)) break;
                     x2++;
                 }
                 bool openRight = !IsWall(x2 + 1, pos.y, grid);
@@ -77,9 +76,8 @@ namespace AoC.Advent2018
         private static Dictionary<(int x, int y), char> RunWater(string input)
         {
             var walls = Util.RegexParse<Wall>(input);
-            var data = walls.SelectMany(w => w.Vals).ToHashSet().ToDictionary(p => p, p => '#');
-            int maxY = data.Max(p => p.Key.y);
-            int minY = data.Min(p => p.Key.y);
+            var data = walls.SelectMany(w => w.Vals).Distinct().ToDictionary(p => p, p => '#');
+            var (minY, maxY) = data.Keys.MinMax(p => p.y);
 
             Set((500, minY), data, maxY);
 

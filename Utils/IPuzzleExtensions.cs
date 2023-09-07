@@ -19,12 +19,13 @@ namespace AoC.Utils
         public static long TimeRun(this IPuzzle puzzle, ILogger logger)
         {
             var input = Util.GetInput(puzzle);
-            logger.WriteLine(puzzle.Name);
+
             var watch = new System.Diagnostics.Stopwatch();
             var thread = System.Threading.Thread.CurrentThread;
             thread.Priority = System.Threading.ThreadPriority.AboveNormal;
             watch.Start();
 
+            logger.WriteLine(puzzle.Name);
             puzzle.Run(input, logger);
             thread.Priority = System.Threading.ThreadPriority.BelowNormal;
             return watch.ElapsedMilliseconds;

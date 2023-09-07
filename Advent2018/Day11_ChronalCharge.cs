@@ -9,14 +9,7 @@ namespace AoC.Advent2018
 
         public static int Power(int serial, int x, int y)
         {
-            int rackId = x + 10;
-            int powerLevel = (rackId * y);
-            powerLevel += serial;
-            powerLevel *= rackId;
-            int hundreds = (powerLevel / 100) % 10;
-            var power = hundreds - 5;
-
-            return power;
+            return ((((x + 10) * y) + serial) * (x + 10) / 100 % 10) - 5;
         }
 
         public static string Part1(string input)

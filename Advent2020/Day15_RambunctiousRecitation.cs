@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using AoC.Utils;
+using System.Collections.Generic;
 
 namespace AoC.Advent2020
 {
@@ -8,15 +9,8 @@ namespace AoC.Advent2020
 
         class Entry
         {
-            public Entry(int v)
-            {
-                Set(v);
-            }
-            public void Set(int v)
-            {
-                v1 = v2;
-                v2 = v;
-            }
+            public Entry(int v) => Set(v);
+            public void Set(int v) => (v1, v2) = (v2, v);
 
             public bool IsFirst => v1 == -1;
             public int Get => v1;
@@ -29,12 +23,7 @@ namespace AoC.Advent2020
         {
             public Storage(string input)
             {
-                var numbers = Util.ParseNumbers<int>(input);
-                foreach (var n in numbers)
-                {
-                    LastNum = n;
-                    LastEntry = values[LastNum] = new Entry(++Count);
-                }
+                Util.ParseNumbers<int>(input).ForEach(AddNumber);
             }
 
             public void Next() => AddNumber(LastEntry.IsFirst ? 0 : Count - LastEntry.Get);

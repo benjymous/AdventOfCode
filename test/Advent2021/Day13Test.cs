@@ -42,7 +42,7 @@ fold along x=5";
         [DataTestMethod]
         public void Origami02Test()
         {
-            Assert.AreEqual("C5BD8018ED6D44DC4DBA14BC4A6CE32B", Day13.Part2(test.Replace("\r", "")));
+            Assert.AreEqual("243C751E061AA9A187EDACEE48B7965C", Day13.Part2(test.Replace("\r", ""), new ConsoleOut()));
         }
 
         [TestCategory("Regression")]
@@ -56,7 +56,7 @@ fold along x=5";
         [DataTestMethod]
         public void Origami_Part2_Regression()
         {
-            Assert.AreEqual("1A98F1E8E8399775E1991961C2990153", Day13.Part2(input));
+            Assert.AreEqual("64E2320B4AC529E90D02EF51B3B4B7CE", Day13.Part2(input, new ConsoleOut()));
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,37 +8,34 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-24";
 
-        public static IEnumerable<IEnumerable<int>> Groupings(IEnumerable<int> available, int target)
+        public static IEnumerable<int[]> Groupings(int[] available, int target)
         {
             foreach (var first in available)
             {
                 if (first == target)
                 {
-                    yield return new List<int> { first };
+                    yield return new[] { first };
+                    if (available.Length == 1) yield break;
                 }
-                else if (first < target)
+                else 
                 {
+                    int restTarget = target - first;
+                    var remaining = available.Where(x => x < first && x <= restTarget).ToArray();
+
                     int shortest = int.MaxValue;
-                    Int64 QE = Int64.MaxValue;
-                    HashSet<string> seen = new();
-                    foreach (var child in Groupings(available.Where(x => x != first), target - first))
+                    long QE = long.MaxValue;
+                    
+                    foreach (var child in Groupings(remaining, restTarget))
                     {
-                        if (child.Count() <= shortest)
+                        if (child.Length <= shortest)
                         {
-                            var key = string.Join(",", child.OrderDescending());
-                            if (seen.Contains(key)) continue;
-
-                            seen.Add(key);
-
                             var qe = child.Product();
                             if (qe < QE)
                             {
                                 QE = qe;
-                                shortest = child.Count();
-                                var l = new List<int>() { first };
-                                l.AddRange(child);
+                                shortest = child.Length;
 
-                                yield return l;
+                                yield return child.Append(first).ToArray();
                             }
                         }
                         else
@@ -51,57 +47,40 @@ namespace AoC.Advent2015
             }
         }
 
-        public static bool CanCreateChildGroups(IEnumerable<int> remaining, int target)
-        {
-            var g = Groupings(remaining, target);
-            return g.Any();
-        }
+        public static bool CanCreateChildGroups(int[] remaining, int target) => Groupings(remaining, target).Any();
 
-        public static Int64 Solve(string input, int numGroups)
+        public static long Solve(string input, int numGroups)
         {
-            var parcels = Util.ParseNumbers<int>(input).OrderDescending();
+            var parcels = Util.ParseNumbers<int>(input).OrderDescending().ToArray();
 
-            int totalSize = parcels.Sum();
-            int groupSize = totalSize / numGroups;
+            int groupSize = parcels.Sum() / numGroups;
 
             var groups = Groupings(parcels, groupSize);
 
             int smallestGroup = int.MaxValue;
-            Int64 QE = Int64.MaxValue;
+            long QE = long.MaxValue;
 
-            HashSet<string> seen = new();
-
-            foreach (var g in groups)//.Reverse())// .OrderBy(g => g.Count()))
+            foreach (var g in groups)
             {
-                if (smallestGroup < int.MaxValue && g.Count() > smallestGroup) break;
-
-                var key = string.Join(",", g.OrderDescending());
-                if (seen.Contains(key)) continue;
-
-                seen.Add(key);
+                if (g.Length > smallestGroup) break;
 
                 var qe = g.Product();
-                if (qe < QE)
+                if (qe < QE && CanCreateChildGroups(parcels.Except(g).ToArray(), groupSize))
                 {
-                    if (CanCreateChildGroups(parcels.Where(x => !g.Contains(x)), groupSize))
-                    {
-                        QE = qe;
-                        //Console.WriteLine($"{g.Count()} {qe} {string.Join(", ", g)}");
-                        smallestGroup = g.Count();
-                    }
+                    QE = qe;
+                    smallestGroup = g.Length;
                 }
-
             }
 
             return QE;
         }
 
-        public static Int64 Part1(string input)
+        public static long Part1(string input)
         {
             return Solve(input, 3);
         }
 
-        public static Int64 Part2(string input)
+        public static long Part2(string input)
         {
             return Solve(input, 4);
         }

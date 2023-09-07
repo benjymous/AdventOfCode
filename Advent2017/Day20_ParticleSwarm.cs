@@ -9,7 +9,7 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-20";
 
-        record class Particle
+        class Particle
         {
             [Regex(@"[p]=<(-*\d+,-*\d+,-*\d+)>, [v]=<(-*\d+,-*\d+,-*\d+)>, [a]=<(-*\d+,-*\d+,-*\d+)>")]
             public Particle(ManhattanVector3 p, ManhattanVector3 v, ManhattanVector3 a)
@@ -25,15 +25,11 @@ namespace AoC.Advent2017
 
             public int Distance => pos.Length;
 
-            public void Step()
+            public Particle Step()
             {
                 vel += acc;
                 pos += vel;
-            }
-
-            public override string ToString()
-            {
-                return $"P={pos}, V={vel}, A={acc};  D={Distance}";
+                return this;
             }
         }
 
@@ -45,39 +41,27 @@ namespace AoC.Advent2017
             return particles.IndexOf(slowest);
         }
 
+        static IEnumerable<Particle> FilterCollisions(IEnumerable<Particle> particles) => particles.GroupBy(p => p.pos).Where(g => g.Count() == 1).SelectMany(x => x);
+
+
         public static int Part2(string input)
         {
-            IEnumerable<Particle> particles = Util.RegexParse<Particle>(input).ToList();
+            Particle[] particles = Util.RegexParse<Particle>(input).ToArray();
 
             int lastCol = 0;
 
             while (true)
             {
-                foreach (var p in particles)
-                {
-                    p.Step();
-                }
+                int lastCount = particles.Length;
+                particles = FilterCollisions(particles.Select(p => p.Step())).ToArray();
+                if (particles.Length < lastCount) lastCol = 0;
 
-                var grouped = particles.GroupBy(p => p.pos).Where(grp => grp.Count() == 1).Select(grp => grp.First());
-                if (grouped.Count() < particles.Count())
-                {
-                    particles = grouped;
-                    lastCol = 0;
-                }
-
-                lastCol++;
-
-                if (lastCol > 100) return particles.Count();
+                if (++lastCol > 10) return particles.Length;
             }
         }
 
-
         public void Run(string input, ILogger logger)
         {
-            //var test = "p=<3,0,0>, v=<2,0,0>, a=<-1,0,0>\np=<4,0,0>, v=<0,0,0>, a=<-2,0,0>";
-
-            //Part1(test);
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

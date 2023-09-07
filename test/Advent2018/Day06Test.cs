@@ -21,7 +21,7 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void Coordinates02Test(string input, int maxValue, int expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day06.Part2(input, maxValue));
+            Assert.AreEqual(expected, Day06.Part2(input, maxValue));
         }
 
         [TestCategory("Regression")]

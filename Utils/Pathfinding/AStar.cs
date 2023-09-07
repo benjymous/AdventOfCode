@@ -1,4 +1,3 @@
-using AoC.Utils.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,6 +63,12 @@ namespace AoC.Utils.Pathfinding
         public int GScore((int x, int y) location) => 1;
     }
 
+    public static class AStarExtension
+    {
+        public static TCoordinateType[] FindPath<TCoordinateType>(this IMap<TCoordinateType> map, TCoordinateType start, TCoordinateType goal) 
+            => AStar<TCoordinateType>.FindPath(map, start, goal);
+    }
+
 
     public static class AStar<TCoordinateType>
     {
@@ -78,22 +83,18 @@ namespace AoC.Utils.Pathfinding
             while (state.openSet.Count > 0)
             {
                 var current = state.taskQueue.Dequeue();
-                if (current.Equals(goal))
-                {
-                    return state.Reconstruct(current);
-                }
+                if (current.Equals(goal)) return state.Reconstruct(current);
 
                 state.openSet.Remove(current);
                 state.closedSet.Add(current);
 
                 foreach (var neighbour in map.GetNeighbours(current))
                 {
-                    if (state.closedSet.Contains(neighbour))
-                        continue;
+                    if (state.closedSet.Contains(neighbour)) continue;
 
-                    var projectedG = state.GetGScore(current) + map.GScore(neighbour);
+                    var projectedG = state.gScore[current] + map.GScore(neighbour);
 
-                    if (state.openSet.Contains(neighbour) && (projectedG >= state.GetGScore(neighbour)))
+                    if (state.openSet.Contains(neighbour) && (projectedG >= state.gScore[neighbour]))
                         continue;
 
                     //record it
@@ -109,7 +110,7 @@ namespace AoC.Utils.Pathfinding
             return Array.Empty<TCoordinateType>();
         }
 
-        public class State
+        internal class State
         {
             public HashSet<TCoordinateType> closedSet = new();
 
@@ -121,8 +122,6 @@ namespace AoC.Utils.Pathfinding
             public Dictionary<TCoordinateType, int> gScore = new();
 
             public Dictionary<TCoordinateType, TCoordinateType> nodeLinks = new();
-
-            internal int GetGScore(TCoordinateType pt) => gScore[pt];
 
             internal TCoordinateType[] Reconstruct(TCoordinateType current)
             {

@@ -19,7 +19,7 @@ namespace AoC.Advent2019.Test
         [DataTestMethod]
         public void Image_Part2_Regression()
         {
-            const string expectedHash = "83314289071513F5D831987A2AE99D107ACF077F8A950D9D9EBA5437B8434833";
+            const string expectedHash = "BF017A4D4B8D52C8691BFF2CA2F5E763";
             Assert.AreEqual(expectedHash, Day08.Part2(input, new ConsoleOut()));
         }
 

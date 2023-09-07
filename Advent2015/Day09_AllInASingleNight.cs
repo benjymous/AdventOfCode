@@ -1,4 +1,5 @@
 ﻿using AoC.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,63 +9,54 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-09";
 
-        class Distance
+        class Factory
         {
             [Regex(@"(.+) to (.+) = (.+)")]
-            public Distance(string from, string to, int distance)
-            {
-                (From, To, Dist) = (from.GetHashCode(), to.GetHashCode(), distance);
-            }
+            public void Parse(string from, string to, int distance) => Atlas[Remap(from) | Remap(to)] = distance;
 
-            public int From;
-            public int To;
-            public int Dist;
+            int Remap(string name) => MappingDict.GetIndexBit(name);
 
-            public override string ToString()
-            {
-                return $"{From} -> {To} = {Dist}";
-            }
+            public int[] LocationKeys => MappingDict.Values.ToArray();
+
+            readonly Dictionary<string, int> MappingDict = new();
+            public readonly Dictionary<int, int> Atlas = new();
         }
 
-        static int GetDistance(IEnumerable<int> route, Dictionary<int, int> atlas)
+        static (int min, int max) MeasureRoutes(IEnumerable<int> remaining, Dictionary<int, int> atlas, int current = 0)
         {
-            var r = route.ToArray();
+            if (!remaining.Any()) return (0, 0);
+            int min = int.MaxValue, max = int.MinValue;
 
-            var distance = 0;
-            for (int i = 0; i < r.Length - 1; ++i)
+            foreach (var node in remaining)
             {
-                distance += atlas[r[i] * r[i + 1]];
-            }
+                int distance = current == 0 ? 0 : atlas[current | node];
 
-            return distance;
+                var (minRemaining, maxRemaining) = MeasureRoutes(remaining.Where(i => i != node).ToArray(), atlas, node);
+
+                (min, max) = (Math.Min(minRemaining + distance, min), Math.Max(maxRemaining + distance, max));
+            }
+            return (min, max);
         }
 
-        public static IEnumerable<int> GetRoutes(string input)
+        static (int min, int max) Solve(string input)
         {
-            var distances = Util.RegexParse<Distance>(input);
+            var data = Util.RegexFactory<Factory>(input);
 
-            var lookup = distances.ToDictionary(d => d.From * d.To, d => d.Dist);
-
-            var names = distances.Select(d => d.From).Union(distances.Select(d => d.To)).Distinct().ToArray();
-
-            var permutations = names.Permutations();
-
-            return permutations.Select(r => GetDistance(r, lookup));
+            return MeasureRoutes(data.LocationKeys, data.Atlas);
         }
 
         public static int Part1(string input)
         {
-            return GetRoutes(input).Min();
+            return Solve(input).min;
         }
 
         public static int Part2(string input)
         {
-            return GetRoutes(input).Max();
+            return Solve(input).max;
         }
 
         public void Run(string input, ILogger logger)
         {
-            //Console.WriteLine(Part1("London to Dublin = 464\nLondon to Belfast = 518\nDublin to Belfast = 141"));
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

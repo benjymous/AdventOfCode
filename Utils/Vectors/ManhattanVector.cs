@@ -2,18 +2,10 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Utils.Vectors
 {
-
-    public interface IVec
-    {
-        int Distance(IVec other);
-    }
-
-
-    public class ManhattanVectorN : IVec
+    public class ManhattanVectorN
     {
         public ManhattanVectorN(int[] components)
         {
@@ -22,8 +14,7 @@ namespace AoC.Utils.Vectors
 
         public ManhattanVectorN(string val)
         {
-            var bits = Split(val);
-            Component = bits.Select(int.Parse).ToArray();
+            Component = Util.ParseNumbers<int>(val);
         }
 
         public int[] Component = null;
@@ -33,17 +24,6 @@ namespace AoC.Utils.Vectors
         public override string ToString()
         {
             return string.Join(",", Component);
-        }
-
-        private static string[] Split(string val)
-        {
-            const string keep = "0192345678,-";
-            StringBuilder sb = new();
-            foreach (var c in val)
-            {
-                if (keep.Contains(c)) sb.Append(c);
-            }
-            return sb.ToString().Split(",");
         }
 
         public void Set(params int[] newVal)
@@ -88,18 +68,16 @@ namespace AoC.Utils.Vectors
             return new ManhattanVectorN(newVal);
         }
 
-        public int Distance(IVec other)
+        public int Distance(ManhattanVectorN other)
         {
-            if (other is not ManhattanVectorN) return Int32.MaxValue;
+            if (other is null) return int.MaxValue;
 
-            var man2 = other as ManhattanVectorN;
-
-            return Distance(man2.Component);
+            return Distance(other.Component);
         }
 
         public int Distance(params int[] other)
         {
-            if (other.Length != ComponentCount) return Int32.MaxValue;
+            if (other.Length != ComponentCount) return int.MaxValue;
 
             int distance = 0;
             for (var i = 0; i < ComponentCount; ++i)
@@ -122,21 +100,11 @@ namespace AoC.Utils.Vectors
             }
         }
 
-        public static bool operator ==(ManhattanVectorN v1, ManhattanVectorN v2)
-        {
-            return v1.Equals(v2);
-        }
+        public static bool operator ==(ManhattanVectorN v1, ManhattanVectorN v2) => v1.Equals(v2);
 
-        public static bool operator !=(ManhattanVectorN v1, ManhattanVectorN v2)
-        {
-            return !v1.Equals(v2);
-        }
+        public static bool operator !=(ManhattanVectorN v1, ManhattanVectorN v2) => !v1.Equals(v2);
 
-        public override bool Equals(object other)
-        {
-            if (other is not ManhattanVectorN) return false;
-            return Distance(other as ManhattanVectorN) == 0;
-        }
+        public override bool Equals(object other) => other is ManhattanVectorN && Distance(other as ManhattanVectorN) == 0;
 
         public override int GetHashCode()
         {
@@ -179,33 +147,19 @@ namespace AoC.Utils.Vectors
         {
         }
 
-        public int X { get { return Component[0]; } set { Component[0] = value; } }
-        public int Y { get { return Component[1]; } set { Component[1] = value; } }
+        public int X { get => Component[0]; set => Component[0] = value; }
+        public int Y { get => Component[1]; set => Component[1] = value; }
 
         public (int x, int y) AsSimple() => (X, Y);
+
+        public int Distance((int x, int y) other) => other.Distance(X, Y);
 
         public static implicit operator ValueTuple<int, int>(ManhattanVector2 v) => v.AsSimple();
         public static implicit operator ManhattanVector2(ValueTuple<int, int> v) => new(v);
 
-        public static bool operator ==(ManhattanVector2 v1, (int x, int y) v2)
-        {
-            return v1.X == v2.x && v1.Y == v2.y;
-        }
+        public void Offset(Direction2 dir, int multiple = 1) => Offset(dir.DX * multiple, dir.DY * multiple);
 
-        public static bool operator !=(ManhattanVector2 v1, (int x, int y) v2)
-        {
-            return v1.X != v2.x || v1.Y != v2.y;
-        }
-
-        public void Offset(Direction2 dir, int multiple = 1)
-        {
-            Offset(dir.DX * multiple, dir.DY * multiple);
-        }
-
-        public void Offset(ManhattanVector2 dir, int multiple = 1)
-        {
-            Offset(dir.X * multiple, dir.Y * multiple);
-        }
+        public void Offset(ManhattanVector2 dir, int multiple = 1) => Offset(dir.X * multiple, dir.Y * multiple);
 
         public void Offset(ManhattanVector2 dir)
         {
@@ -219,14 +173,7 @@ namespace AoC.Utils.Vectors
             Y += y;
         }
 
-        public void TurnLeft()
-        {
-            // up :  0,-1 ->  -1,0;
-            // left: -1,0 -> 0,1
-            // down: 0,1 -> 1,0
-            // right: 1,0 -> 0,-1
-            Set(new int[] { Y, -X });
-        }
+        public void TurnLeft() => Set(new int[] { Y, -X });
 
         public void TurnLeftBy(int degrees)
         {
@@ -240,15 +187,7 @@ namespace AoC.Utils.Vectors
             }
         }
 
-        public void TurnRight()
-        {
-            // up :  0,-1 ->  1,0;
-            // right: 1,0 -> 0,1
-            // down: 0,1 -> -1,0
-            // left: -1,0 -> 0,-1
-
-            Set(new int[] { -Y, X });
-        }
+        public void TurnRight() => Set(new int[] { -Y, X });
 
 
         public void TurnRightBy(int degrees)
@@ -286,16 +225,6 @@ namespace AoC.Utils.Vectors
         }
 
         public static readonly ManhattanVector2 Zero = new(0, 0);
-
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
     }
 
     [TypeConverter(typeof(ManhattanVector3TypeConverter))]
@@ -325,11 +254,13 @@ namespace AoC.Utils.Vectors
             if (ComponentCount != 3) throw new Exception("Invalid component count for Vector3");
         }
 
-        public int X { get { return Component[0]; } set { Component[0] = value; } }
-        public int Y { get { return Component[1]; } set { Component[1] = value; } }
-        public int Z { get { return Component[2]; } set { Component[2] = value; } }
+        public int X { get => Component[0]; set => Component[0] = value; }
+        public int Y { get => Component[1]; set => Component[1] = value; }
+        public int Z { get => Component[2]; set => Component[2] = value; }
 
         public (int x, int y, int z) AsSimple() => (X, Y, Z);
+
+        public int Distance((int x, int y, int z) other) => other.Distance(X, Y, Z);
 
         public static ManhattanVector3 operator +(ManhattanVector3 a, ManhattanVector3 b) => new(a + (ManhattanVectorN)b);
         public static ManhattanVector3 operator -(ManhattanVector3 a, ManhattanVector3 b) => new((ManhattanVectorN)a - (ManhattanVectorN)b);
@@ -358,12 +289,14 @@ namespace AoC.Utils.Vectors
             if (ComponentCount != 4) throw new Exception("Invalid component count for Vector4");
         }
 
-        public int X { get { return Component[0]; } set { Component[0] = value; } }
-        public int Y { get { return Component[1]; } set { Component[1] = value; } }
-        public int Z { get { return Component[2]; } set { Component[2] = value; } }
-        public int W { get { return Component[3]; } set { Component[3] = value; } }
+        public int X { get => Component[0]; set => Component[0] = value; }
+        public int Y { get => Component[1]; set => Component[1] = value; }
+        public int Z { get => Component[2]; set => Component[2] = value; }
+        public int W { get => Component[3]; set => Component[3] = value; }
 
         public (int x, int y, int z, int w) AsSimple() => (X, Y, Z, W);
+
+        public int Distance((int x, int y, int z, int w) other) => other.Distance(X, Y, Z, W);
 
         public static ManhattanVector4 operator +(ManhattanVector4 a, ManhattanVector4 b) => new(a + (ManhattanVectorN)b);
         public static ManhattanVector4 operator -(ManhattanVector4 a, ManhattanVector4 b) => new((ManhattanVectorN)a - (ManhattanVectorN)b);
@@ -375,56 +308,27 @@ namespace AoC.Utils.Vectors
     #region typeconverters
     public class ManhattanVector2TypeConverter : TypeConverter
     {
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-        {
-            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-        }
-
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-        {
-            return new ManhattanVector2(value as string);
-        }
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value) => new ManhattanVector2(value as string);
     }
 
     public class ManhattanVector3TypeConverter : TypeConverter
     {
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-        {
-            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-        }
-
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-        {
-            return new ManhattanVector3(value as string);
-        }
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value) => new ManhattanVector3(value as string);
     }
 
     public class ManhattanVector4TypeConverter : TypeConverter
     {
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-        {
-            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-        }
-
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-        {
-            return new ManhattanVector4(value as string);
-        }
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType); 
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value) => new ManhattanVector4(value as string);
     }
 
     public class Direction2TypeConverter : TypeConverter
     {
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-        {
-            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-        }
-
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-        {
-            return new Direction2((value as string)[0]);
-        }
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value) => new Direction2((value as string)[0]);
     }
-
     #endregion
 
     [TypeConverter(typeof(Direction2TypeConverter))]
@@ -457,16 +361,18 @@ namespace AoC.Utils.Vectors
             });
         }
 
-        public void SetDirection(int dirx, int diry)
+        public Direction2 SetDirection(int dirx, int diry)
         {
             DX = dirx;
             DY = diry;
+            return this;
         }
 
-        public void SetDirection(Direction2 other)
+        public Direction2 SetDirection(Direction2 other)
         {
             DX = other.DX;
             DY = other.DY;
+            return this;
         }
 
         public void FaceNorth() => SetDirection(0, -1);
@@ -474,22 +380,9 @@ namespace AoC.Utils.Vectors
         public void FaceEast() => SetDirection(1, 0);
         public void FaceWest() => SetDirection(-1, 0);
 
-        public Direction2 TurnLeft()
-        {
-            // up :  0,-1 ->  -1,0;
-            // left: -1,0 -> 0,1
-            // down: 0,1 -> 1,0
-            // right: 1,0 -> 0,-1
-
-            if (DX == 0 && DY == -1) SetDirection(-1, 0);
-            else if (DX == -1 && DY == 0) SetDirection(0, 1);
-            else if (DX == 0 && DY == 1) SetDirection(1, 0);
-            else if (DX == 1 && DY == 0) SetDirection(0, -1);
-
-            else throw new Exception("Unrecognised direction: " + DX + "," + DY);
-
-            return this;
-        }
+        public Direction2 TurnLeft() => SetDirection(DY, -DX);
+        public Direction2 TurnRight() => SetDirection(-DY, DX);
+        public Direction2 Turn180() => SetDirection(-DX, -DY);
 
         public Direction2 TurnLeftByDegrees(int degrees)
         {
@@ -499,39 +392,15 @@ namespace AoC.Utils.Vectors
 
             return TurnLeftBySteps(steps);
         }
-        public Direction2 TurnLeftBySteps(int steps)
+
+        public Direction2 TurnLeftBySteps(int steps) => (steps % 4) switch
         {
-            if (steps == 2) return Turn180();
-            for (var i = 0; i < steps; ++i)
-            {
-                TurnLeft();
-            }
-            return this;
-        }
-
-        public Direction2 TurnRight()
-        {
-            // up :  0,-1 ->  1,0;
-            // right: 1,0 -> 0,1
-            // down: 0,1 -> -1,0
-            // left: -1,0 -> 0,-1
-
-            if (DX == 0 && DY == -1) SetDirection(1, 0);
-            else if (DX == 1 && DY == 0) SetDirection(0, 1);
-            else if (DX == 0 && DY == 1) SetDirection(-1, 0);
-            else if (DX == -1 && DY == 0) SetDirection(0, -1);
-
-            else throw new Exception("Unrecognised direction :" + DX + "," + DY);
-
-            return this;
-        }
-
-        public Direction2 Turn180()
-        {
-            SetDirection(-DX, -DY);
-            return this;
-        }
-
+            0 => this,
+            1 or -3 => TurnLeft(),
+            2 or -2 => Turn180(),
+            3 or -1 => TurnRight(),
+            _ => throw new Exception("Shouldn't happen!"),
+        };
 
         public Direction2 TurnRightByDegrees(int degrees)
         {
@@ -542,15 +411,14 @@ namespace AoC.Utils.Vectors
             return TurnRightBySteps(steps);
         }
 
-        public Direction2 TurnRightBySteps(int steps)
+        public Direction2 TurnRightBySteps(int steps) => (steps % 4) switch
         {
-            if (steps == 2) return Turn180();
-            for (var i = 0; i < steps; ++i)
-            {
-                TurnRight();
-            }
-            return this;
-        }
+            0 => this,
+            1 or -3 => TurnRight(),
+            2 or -2 => Turn180(),
+            3 or -1 => TurnLeft(),
+            _ => throw new Exception("Shouldn't happen!"),
+        };
 
         public static bool operator ==(Direction2 v1, Direction2 v2)
         {
@@ -564,15 +432,7 @@ namespace AoC.Utils.Vectors
 
         public static Direction2 operator +(Direction2 a, Direction2 b)
         {
-            var t1 = new Direction2(a);
-            var t2 = new Direction2(b);
-
-            while (t1 != Up)
-            {
-                t1.TurnRight();
-                t2.TurnRight();
-            }
-            return t2;
+            return new Direction2(b).TurnLeftBySteps(a.RotationSteps());
         }
 
         public static int operator -(Direction2 a, Direction2 b)
@@ -589,14 +449,30 @@ namespace AoC.Utils.Vectors
             return i;
         }
 
+        public static Direction2 operator +(Direction2 a, int b)
+        {
+            return new Direction2(a).TurnRightBySteps(b);
+        }
+
+        public static Direction2 operator -(Direction2 a, int b)
+        {
+            return new Direction2(a).TurnLeftBySteps(b);
+        }
+
         public char AsChar()
         {
             if (DX > 0) return '>';
             if (DX < 0) return '<';
             if (DY < 0) return '^';
-            if (DY > 0) return 'v';
+            return 'v';
+        }
 
-            return '?';
+        public int RotationSteps()
+        {
+            if (DY < 0) return 0;
+            if (DX > 0) return 1;
+            if (DY > 0) return 2;
+            return 3;
         }
 
         public static readonly Direction2 Null = new(0, 0);
@@ -610,6 +486,15 @@ namespace AoC.Utils.Vectors
         public static readonly Direction2 Down = new(0, 1);
         public static readonly Direction2 Right = new(1, 0);
         public static readonly Direction2 Left = new(-1, 0);
+
+        public static Direction2 FromChar(char c) => c switch
+        {
+            '>' or 'R' => East,
+            '<' or 'L' => West,
+            '^' or 'U' => North,
+            'v' or 'D' => South,
+            _ => throw new Exception("invalid char direction"),
+        };
 
         public override string ToString()
         {

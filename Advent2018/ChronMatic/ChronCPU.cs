@@ -2,12 +2,13 @@ using AoC.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace AoC.Advent2018.ChronMatic
 {
     public interface IInstr
     {
-        void Do(long a, long b, long c, ref long[] regs);
+        void Do(ref int[] args, ref long[] regs);
         string Dump(int a, int b, int c);
     }
 
@@ -16,89 +17,97 @@ namespace AoC.Advent2018.ChronMatic
     {
         class @addr : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] + regs[b];
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] + regs[args[1]];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} + r{b};";
         }
         class @addi : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] + b;
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] + args[1];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} + {b};";
         }
 
         class @mulr : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] * regs[b];
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] * regs[args[1]];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} * r{b};";
         }
         class @muli : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] * b;
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] * args[1];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} * {b};";
         }
 
         class @banr : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] & regs[b];
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] & regs[args[1]];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} & r{b};";
         }
         class @bani : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] & b;
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] & args[1];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} & {b};";
         }
 
         class @borr : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] | regs[b];
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] | regs[args[1]];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} | r{b};";
         }
         class @bori : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a] | b;
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] | (long)args[1];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} | {b};";
         }
 
         class @setr : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = regs[a];
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]];
             public string Dump(int a, int b, int c) => $"r{c} = r{a};";
         }
         class @seti : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = a;
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = args[0];
             public string Dump(int a, int b, int c) => $"r{c} = {a};";
         }
 
         class @gtir : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (a > regs[b]) ? 1 : 0;
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = (args[0] > regs[args[1]]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = ({a} > r{b}) ? 1 : 0;";
         }
         class @gtri : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (regs[a] > b) ? 1 : 0;
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = (regs[args[0]] > args[1]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} > {b}) ? 1 : 0;";
         }
         class @gtrr : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (regs[a] > regs[b]) ? 1 : 0;
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = (regs[args[0]] > regs[args[1]]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} > r{b}) ? 1 : 0;";
         }
 
         class @eqir : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (a == regs[b]) ? 1 : 0;
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = (args[0] == regs[args[1]]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = ({a} == r{b}) ? 1 : 0;";
         }
         class @eqri : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (regs[a] == b) ? 1 : 0;
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = (regs[args[0]] == args[1]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} == {b}) ? 1 : 0;";
         }
         class @eqrr : IInstr
         {
-            public void Do(long a, long b, long c, ref long[] regs) => regs[c] = (regs[a] == regs[b]) ? 1 : 0;
+            public void Do(ref int[] args, ref long[] regs) => regs[args[2]] = (regs[args[0]] == regs[args[1]]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} == r{b}) ? 1 : 0;";
+        }
+
+        public static class All
+        {
+            public static List<IInstr> Get()
+            {
+                return new List<IInstr> { new addr(), new addi(), new mulr(), new muli(), new banr(), new bani(), new borr(), new bori(), new setr(), new seti(), new gtir(), new gtri(), new gtrr(), new eqir(), new eqri(), new eqrr() };
+            }
         }
     }
 #pragma warning restore IDE1006 // Naming Styles
@@ -129,9 +138,7 @@ namespace AoC.Advent2018.ChronMatic
 
         public static IEnumerable<IInstr> GetInstructions()
         {
-            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
-                .Where(x => typeof(IInstr).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
-                .Select(x => (IInstr)Activator.CreateInstance(x));
+            return ChronMatic.Instructions.All.Get();
         }
 
         readonly Dictionary<int, IInstr> InstrMap;
@@ -140,7 +147,7 @@ namespace AoC.Advent2018.ChronMatic
         long[] Registers = new long[] { 0, 0, 0, 0, 0, 0 };
 
         System.Diagnostics.Stopwatch sw;
-        public Int64 CycleCount { get; private set; } = 0;
+        private int CycleCount = 0;
 
 
         public ChronCPU(string program, Dictionary<int, IInstr> instrMap = null) : this(Util.Split(program, '\n'), instrMap)
@@ -148,7 +155,6 @@ namespace AoC.Advent2018.ChronMatic
 
         public ChronCPU(IEnumerable<string> program, Dictionary<int, IInstr> instrMap = null)
         {
-            var opcodes = GetInstructions().ToDictionary(i => i.Name(), i => i);
 
             Dictionary<string, int> reverseMap;
             if (instrMap != null)
@@ -160,6 +166,7 @@ namespace AoC.Advent2018.ChronMatic
             {
                 reverseMap = new Dictionary<string, int>();
                 InstrMap = new Dictionary<int, IInstr>();
+                var opcodes = GetInstructions().ToDictionary(i => i.Name(), i => i);
                 foreach (var instr in opcodes)
                 {
                     int idx = reverseMap.Count;
@@ -204,46 +211,24 @@ namespace AoC.Advent2018.ChronMatic
             Instructions = instrs.ToArray();
         }
 
-        public int PeekTime = 0;
-        public bool Log = false;
-
-        public bool Step()
-        {
-            CycleCount++;
-            if (InstructionPointer >= Instructions.Length) return false;
+        //public int PeekTime = 0;
 
 
-            //if (PeekTime > 0 && CycleCount % PeekTime == 0)
-            //{
-            //    Console.WriteLine(Speed());
-            //    Console.WriteLine(string.Join(", ", Registers));
-            //}
 
-            var line = Instructions[InstructionPointer];
-
-            if (Log)
-            {
-                Console.WriteLine($"[{InstructionPointer}] [{string.Join(", ", Registers)}] {line.instr.Name()} : {string.Join(" ", line.values)}");
-            }
-
-            line.instr.Do(line.values[0], line.values[1], line.values[2], ref Registers);
-            InstructionPointer++;
-
-            return true;
-        }
-
-        public bool Run(int cycleLimit = int.MaxValue)
+        public void Run()
         {
             sw = new System.Diagnostics.Stopwatch();
             sw.Start();
-            while (CycleCount < cycleLimit)
+            while (InstructionPointer < Instructions.Length)
             {
-                Step();
+                CycleCount++;
+
+                var line = Instructions[InstructionPointer];
+                line.instr.Do(ref line.values, ref Registers);
+                InstructionPointer++;
             }
 
             sw.Stop();
-
-            return CycleCount < cycleLimit;
         }
 
         public IEnumerable<string> Dump(bool useGotos)

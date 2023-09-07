@@ -10,16 +10,16 @@ namespace AoC.Advent2016.Test
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Part1_Regression()
+        public void TFA_Part1_Regression()
         {
             Assert.AreEqual(123, Day08.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Part2_Regression()
+        public void TFA_Part2_Regression()
         {
-            Assert.AreEqual("6BECD89D8FB1E7A460E1A444E831CB6C", Day08.Part2(input));
+            Assert.AreEqual("10F7D860E71BC77C7C91BE1592DAD4CB", Day08.Part2(input, new ConsoleOut()));
         }
     }
 }

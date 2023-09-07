@@ -15,9 +15,8 @@ namespace AoC.Advent2016
             int hashNumber = 0;
             while (sb.Count < 8)
             {
-                hashNumber = HashBreaker.FindHash(doorId, 5, hashNumber + 1);
-                var hashString = HashBreaker.GetHashChars(hashNumber, doorId);
-                char c = hashString.Skip(5).First();
+                (hashNumber, var foundHash) = HashBreaker.FindHash(doorId, 5, hashNumber + 1);
+                char c = foundHash.Skip(5).First();
                 sb.Add(c);
                 logger?.WriteLine($"{c} {sb.AsString()}");
             }
@@ -32,8 +31,8 @@ namespace AoC.Advent2016
 
             while (outpass.Contains('_'))
             {
-                hashNumber = HashBreaker.FindHash(doorId, 5, hashNumber + 1);
-                var hashString = HashBreaker.GetHashChars(hashNumber, doorId).Skip(5).Take(2).ToArray();
+                (hashNumber, var foundHash) = HashBreaker.FindHash(doorId, 5, hashNumber + 1);
+                var hashString = foundHash.Skip(5).Take(2).ToArray();
                 char c = hashString[1];
                 char p = hashString[0];
 

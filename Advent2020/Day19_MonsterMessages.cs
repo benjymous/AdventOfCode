@@ -24,7 +24,6 @@ namespace AoC.Advent2020
         static string Resolve(string key, Dictionary<string, Rule> rules)
         {
             if (!rules.ContainsKey(key)) return key;
-            //Console.WriteLine("?+'"+key+"'");
             var current = rules[key];
             string result = "";
 

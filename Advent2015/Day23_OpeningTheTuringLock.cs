@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AoC.Advent2015
 {
@@ -9,61 +10,48 @@ namespace AoC.Advent2015
 
         public class CPU
         {
-            readonly string[] program;
+            readonly string[][] program;
             int programCounter = 0;
-            Dictionary<string, int> registers = new();
-            public CPU(string input)
-            {
-                program = Util.Split(input.Replace(",", ""));
-            }
+            Dictionary<char, int> registers = new();
+            public CPU(string input) => program = Util.Split(input.Replace(",", "")).Select(str => str.Split(" ")).ToArray();
 
             bool Step()
             {
-                var command = program[programCounter];
+                var bits = program[programCounter++];
 
-                var bits = command.Split(" ");
                 var instr = bits[0];
+                var reg = bits[1][0];
 
                 switch (instr)
                 {
                     case "hlf":
-                        registers[bits[1]] /= 2;
-                        programCounter++;
+                        registers[reg] /= 2;
                         break;
 
                     case "tpl":
-                        registers[bits[1]] *= 3;
-                        programCounter++;
+                        registers[reg] *= 3;
                         break;
 
                     case "inc":
-                        registers[bits[1]]++;
-                        programCounter++;
+                        registers[reg]++;
                         break;
 
                     case "jmp":
-                        programCounter += int.Parse(bits[1]);
+                        programCounter += int.Parse(bits[1])-1;
                         break;
 
                     case "jie":
-                        if ((registers[bits[1]] % 2) == 0)
+                        if ((registers[reg] % 2) == 0)
                         {
-                            programCounter += int.Parse(bits[2]);
+                            programCounter += int.Parse(bits[2])-1;
                         }
-                        else
-                        {
-                            programCounter++;
-                        }
+ 
                         break;
 
                     case "jio":
-                        if (registers[bits[1]] == 1)
+                        if (registers[reg] == 1)
                         {
-                            programCounter += int.Parse(bits[2]);
-                        }
-                        else
-                        {
-                            programCounter++;
+                            programCounter += int.Parse(bits[2])-1;
                         }
                         break;
 
@@ -74,26 +62,26 @@ namespace AoC.Advent2015
                 return programCounter < program.Length;
             }
 
-            public int Run(Dictionary<string, int> initial)
+            public int Run(Dictionary<char, int> initial)
             {
                 registers = initial;
 
                 while (Step()) ;
 
-                return registers["b"];
+                return registers['b'];
             }
         }
 
         public static int Part1(string input)
         {
             var cpu = new CPU(input);
-            return cpu.Run(new Dictionary<string, int>() { { "a", 0 }, { "b", 0 } });
+            return cpu.Run(new Dictionary<char, int>() { { 'a', 0 }, { 'b', 0 } });
         }
 
         public static int Part2(string input)
         {
             var cpu = new CPU(input);
-            return cpu.Run(new Dictionary<string, int>() { { "a", 1 }, { "b", 0 } });
+            return cpu.Run(new Dictionary<char, int>() { { 'a', 1 }, { 'b', 0 } });
         }
 
         public void Run(string input, ILogger logger)

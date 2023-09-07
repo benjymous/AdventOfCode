@@ -13,13 +13,10 @@ namespace AoC.Advent2020
         {
             public Range(string input)
             {
-                var values = Util.ParseNumbers<int>(input, '-');
-                Min = values[0];
-                Max = values[1];
+                (Min, Max) = Util.ParseNumbers<int>(input, '-').Decompose2();
             }
 
-            readonly int Min;
-            readonly int Max;
+            readonly int Min, Max;
 
             public bool InRange(int v) => (v >= Min && v <= Max);
         }
@@ -28,9 +25,9 @@ namespace AoC.Advent2020
         {
             public TicketRule(string input)
             {
-                var bits1 = input.Split(": ");
-                Class = bits1[0];
-                Ranges = Util.Parse<Range>(bits1[1], " or ");
+                var bits = input.Split(": ");
+                Class = bits[0];
+                Ranges = Util.Parse<Range>(bits[1], " or ");
             }
             public string Class;
             public List<Range> Ranges;
@@ -91,7 +88,7 @@ namespace AoC.Advent2020
                     classMatrix[rule.Class] = new HashSet<int>();
                     for (var i = 0; i < Rules.Count; ++i)
                     {
-                        bool anyInvalid = validTickets.Any(t => rule.Validate(t.Values[i]) == false);
+                        bool anyInvalid = validTickets.Any(t => !rule.Validate(t.Values[i]));
                         if (!anyInvalid)
                         {
                             classMatrix[rule.Class].Add(i);

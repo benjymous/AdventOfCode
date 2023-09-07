@@ -23,9 +23,9 @@ namespace AoC.Advent2018
         const int SOUTH = 2;
         const int WEST = 3;
 
-        static IEnumerable<string> SplitOptions(string input)
+        static IEnumerable<IEnumerable<char>> SplitOptions(char[] input)
         {
-            List<string> parts = new();
+            List<IEnumerable<char>> parts = new();
 
             int close = 1;
             int depth = 1;
@@ -41,7 +41,8 @@ namespace AoC.Advent2018
                         {
                             if (depth == 1)
                             {
-                                parts.Add(part.AsString()); part.Clear();
+                                parts.Add(part.ToArray()); 
+                                part.Clear();
                             }
                             else part.Add(c);
                             break;
@@ -49,75 +50,59 @@ namespace AoC.Advent2018
                     default: part.Add(c); break;
                 }
             }
-            parts.Add(part.AsString());
+            parts.Add(part);
 
             var rest = input[close..];
 
             foreach (var p in parts)
             {
-                yield return $"{p}{rest}";
+                yield return p.Concat(rest);
             }
         }
         static Dictionary<(int x, int y), Cell> BuildMap(string input, ILogger logger = null)
         {
             var map = new Dictionary<(int x, int y), Cell>();
 
-            Queue<((int x, int y) position, string tape)> queue = new();
+            Queue<((int x, int y) position, char[] tape)> queue = new();
 
-            queue.Enqueue(((0, 0), input[1..]));
+            queue.Enqueue(((0, 0), input[1..].ToArray()));
 
-            map[(0, 0)] = new();
+            map[(0, 0)] = new() { DoorDistance = 0 };
 
             while (queue.TryDequeue(out var state))
             {
-                var ch = state.tape.First();
-
-                var cell = map[state.position];
-
-                (int dx, int dy) move = (-1, -1);
-                int forward = 0, backward = 0;
-
+                var ch = state.tape[0];
                 if (ch == '(')
                 {
-                    var options = SplitOptions(state.tape);
-                    foreach (var option in options)
+                    foreach (var option in SplitOptions(state.tape))
                     {
-                        queue.Enqueue((state.position, option));
+                        queue.Enqueue((state.position, option.ToArray()));
                     }
                 }
                 else
                 {
-                    switch (ch)
+                    var forward = ch switch
                     {
-                        case 'N':
-                            move = Directions[0]; forward = NORTH; backward = SOUTH; break;
-                        case 'E':
-                            move = Directions[1]; forward = EAST; backward = WEST; break;
-                        case 'S':
-                            move = Directions[2]; forward = SOUTH; backward = NORTH; break;
-                        case 'W':
-                            move = Directions[3]; forward = WEST; backward = EAST; break;
-                    }
+                        'N' => NORTH,
+                        'E' => EAST,
+                        'S' => SOUTH,
+                        'W' => WEST,
+                        _ => -1,
+                    };
+                    if (forward == -1) continue;
 
-                    if (move != (-1, -1))
-                    {
-                        var newPos = (state.position.x + move.dx, state.position.y + move.dy);
-                        if (!map.TryGetValue(newPos, out var neighbour))
-                        {
-                            neighbour = new Cell();
-                            map[newPos] = neighbour;
-                        }
-                        cell.Exits[forward] = true;
-                        neighbour.Exits[backward] = true;
+                    var newPos = state.position.OffsetBy(Directions[forward]);
 
-                        queue.Enqueue((newPos, state.tape[1..]));
-                    }
+                    map[state.position].Exits[forward] = true;
+                    map.GetOrCalculate(newPos, _ => new Cell()).Exits[(forward + 2) % 4] = true;
+
+                    queue.Enqueue((newPos, state.tape[1..]));
+                  
                 }
             }
 
             logger?.WriteLine("Built map");
 
-            map[(0, 0)].DoorDistance = 0;
             CalcFurthestDistance(map, (0, 0));
 
             logger?.WriteLine("Calculated distances");

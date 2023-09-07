@@ -1,5 +1,4 @@
 ﻿using AoC.Advent2017.NorthCloud;
-using System;
 
 namespace AoC.Advent2017
 {
@@ -7,38 +6,23 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-23";
 
-        class DebugPt1 : NorthCloud.IDebugger
-        {
-            public int MulCount { get; private set; } = 0;
-            public bool Next(int IP, IInstr instr, Variant x, Variant y, DataBus bus)
-            {
-                if (instr.Name() == "mul") MulCount++;
-                return true;
-            }
-        }
-
-        class DebugPt2 : NorthCloud.IDebugger
-        {
-            public bool Next(int IP, IInstr instr, Variant x, Variant y, DataBus bus)
-            {
-                return (IP != 8);
-            }
-        }
-
         public static int Part1(string input)
         {
-            var cpu = new NorthCloud.Coprocessor(input, "Common,Day23");
-            var debugger = new DebugPt1();
-            cpu.Debugger = debugger;
+            int mulCount = 0;
+            var cpu = new Coprocessor(input, "Common,Day23")
+            {
+                Debugger = (line) => { if (line.Name == "mul") mulCount++; return true; }
+            };
             cpu.Run();
-            return debugger.MulCount;
+            return mulCount;
         }
 
-        public static Int64 Part2(string input)
+        public static long Part2(string input)
         {
-            var cpu = new NorthCloud.Coprocessor(input, "Common,Day23");
-            var debugger = new DebugPt2();
-            cpu.Debugger = debugger;
+            var cpu = new Coprocessor(input, "Common,Day23")
+            {
+                Debugger = (line) => line.Index != 8
+            };
             cpu.Set('a', 1);
             cpu.Run();
 

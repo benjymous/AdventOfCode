@@ -9,7 +9,7 @@
             var cpu = new BunniTek.BunnyCPU(program);
             cpu.Set(BunniTek.RegisterId.a, input);
             cpu.Run();
-            //Console.WriteLine(cpu.Speed());
+            System.Console.WriteLine(cpu.Speed());
             return cpu.Get(BunniTek.RegisterId.a);
         }
 

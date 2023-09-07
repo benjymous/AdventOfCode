@@ -21,12 +21,12 @@ namespace AoC.Advent2021
             (3,1), (4,3), (5,6), (6,7), (7,6), (8,3), (9,1)
         };
 
-        static (long p1Won, long p2Won) DoStep(int p1Pos, int p2Pos, int p1Score, int p2Score, int turn, Dictionary<(int, int, int, int, int), (long, long)> cache)
+        static (long p1Won, long p2Won) DoStep(int p1Pos, int p2Pos, int p1Score = 0, int p2Score = 0, int turn = 0, Dictionary<int, (long, long)> cache = null)
         {
             if (p1Score >= 21) return (1, 0);
             if (p2Score >= 21) return (0, 1);
 
-            return cache.GetOrCalculate((p1Pos, p2Pos, p1Score, p2Score, turn), _ =>
+            return (cache ??= new()).GetOrCalculate(p1Pos + (p2Pos<<4) + (p1Score<<8) + (p2Score<<13) + (turn<<18), _ =>
             {
                 long p1Won = 0, p2Won = 0;
 
@@ -44,19 +44,17 @@ namespace AoC.Advent2021
             });
         }
 
-        class Player : Boxed<int>
+        class Factory
         {
             [Regex(@"Player . starting position: (\d+)")]
-            public Player(int pos) : base(pos) { }
+            public static int Player(int pos) => pos - 1;
         }
 
-        private static Player[] GetStartPositions(string input) => Util.RegexParse<Player>(input).ToArray();
+        private static int[] GetStartPositions(string input) => Util.RegexFactory<int, Factory>(input).ToArray();
 
         public static int Part1(string input)
         {
-            var startPositions = GetStartPositions(input);
-
-            var positions = new int[2] { startPositions[0] - 1, startPositions[1] - 1 };
+            var positions = GetStartPositions(input);
             var scores = new int[2] { 0, 0 };
             int turn = 0;
 
@@ -76,7 +74,7 @@ namespace AoC.Advent2021
         {
             var startPositions = GetStartPositions(input);
 
-            var (p1Won, p2Won) = DoStep(startPositions[0] - 1, startPositions[1] - 1, 0, 0, 0, new());
+            var (p1Won, p2Won) = DoStep(startPositions[0], startPositions[1]);
 
             return Math.Max(p1Won, p2Won);
         }

@@ -1,7 +1,4 @@
 ﻿using AoC.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace AoC.Advent2017
 {
@@ -9,30 +6,18 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-15";
 
-        public static IEnumerable<int> Generator(int value, int factor, int multiple)
-        {
-            while (true)
-            {
-                value = (int)((long)value * factor % 2147483647);
-                if (value % multiple == 0) yield return value;
-            }
-        }
-
-        public static IEnumerable<int> GeneratorA(int input, bool picky) => Generator(input, 16807, picky ? 4 : 1);
-        public static IEnumerable<int> GeneratorB(int input, bool picky) => Generator(input, 48271, picky ? 8 : 1);
-
-        public static IEnumerable<(int a, int b)> GeneratorDual(int inputA, int inputB, bool picky)
-        {
-            return GeneratorA(inputA, picky).Zip(GeneratorB(inputB, picky));
-        }
-
         private static int RunDuel(string input, int pairs, bool picky)
         {
-            var values = Util.ExtractNumbers(input);
-
-            return GeneratorDual(values[0], values[1], picky)
-                  .Take(pairs)
-                  .Count(x => (x.a & 0xffff) == (x.b & 0xffff));
+            var (valueA, valueB) = Util.ExtractNumbers(input).Decompose2();
+            var (multipleA, multipleB) = picky ? (4,8) : (1,1);
+            int count = 0;
+            while (pairs-- > 0)
+            {
+                do valueA = (int)((long)valueA * 16807 % 2147483647); while (valueA % multipleA != 0);
+                do valueB = (int)((long)valueB * 48271 % 2147483647); while (valueB % multipleB != 0);
+                if ((valueA & 0xffff) == (valueB & 0xffff)) count++;
+            }
+            return count;
         }
 
         public static int Part1(string input)

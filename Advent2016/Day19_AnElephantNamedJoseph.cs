@@ -19,9 +19,7 @@ namespace AoC.Advent2016
 
             public void TakePresents(Elf other)
             {
-                //Console.WriteLine($"Elf {id} takes {other.id}'s {other.numPresents.MultipleWithS("present")}");
                 numPresents += other.numPresents;
-                other.numPresents = 0;
             }
 
             public override string ToString() => $"Elf {id} with {numPresents.MultipleWithS("present")}";

@@ -9,62 +9,61 @@ namespace AoC.Advent2021
     {
         public string Name => "2021-15";
 
-        class Map : IMap<(int x, int y)>
+        static int ToKey(int x, int y) => x + (y << 16);
+
+        class Map : IMap<int>
         {
             public Map(string input, QuestionPart part)
             {
-                Data = Util.ParseSparseMatrix<byte>(input);
+                var raw = Util.ParseMatrix<int>(input);
+                Data = raw.Entries().ToDictionary(kvp => ToKey(kvp.key.x, kvp.key.y), kvp => kvp.value);
 
                 if (part.One())
                 {
-                    RealX = MaxX = Data.Keys.Max(c => c.x);
-                    RealY = MaxY = Data.Keys.Max(c => c.y);
+                    (RealX, RealY) = (MaxX, MaxY) = (raw.Width() - 1, raw.Height() - 1);
                 }
                 else
                 {
-                    RealX = Data.Keys.Max(c => c.x) + 1;
-                    RealY = Data.Keys.Max(c => c.y) + 1;
-                    MaxX = (RealX * 5) - 1;
-                    MaxY = (RealY * 5) - 1;
+                    (RealX, RealY) = (raw.Width(), raw.Height());
+                    (MaxX, MaxY) = ((RealX * 5) - 1, (RealY * 5) - 1);
                 }
+
+                for (int x = -1; x <= MaxX + 1; ++x) Data[ToKey(x, -1)] = Data[ToKey(x, MaxY + 1)] = 9999;
+                for (int y = -1; y <= MaxY + 1; ++y) Data[ToKey(-1, y)] = Data[ToKey(MaxX + 1, y)] = 9999;
             }
 
-            public int MaxX { get; private set; }
-            public int MaxY { get; private set; }
+            readonly int MaxX, MaxY, RealX, RealY;
+            readonly Dictionary<int, int> Data;
 
-            readonly int RealX, RealY;
-            readonly Dictionary<(int x, int y), byte> Data;
-
-            public IEnumerable<(int x, int y)> GetNeighbours((int x, int y) location)
+            public IEnumerable<int> GetNeighbours(int location)
             {
-                if (location.x < MaxX) yield return (location.x + 1, location.y);
-                if (location.y < MaxY) yield return (location.x, location.y + 1);
-                if (location.x > 0) yield return (location.x - 1, location.y);
-                if (location.y > 0) yield return (location.x, location.y - 1);
+                yield return location + 1;
+                yield return location + (1 << 16);
+                yield return location - 1;
+                yield return location - (1 << 16);
             }
 
-            public int GScore((int x, int y) pos)
+            public int GScore(int pos) => Data.GetOrCalculate(pos, pos =>
             {
-                return Data.GetOrCalculate(pos, pos =>
-                {
-                    int cellDist = pos.x / RealX + pos.y / RealY;
-                    return (byte)(((Data[(pos.x % RealX, pos.y % RealY)] + cellDist - 1) % 9) + 1);
-                });
+                var (x, y) = (pos & 0xffff, pos >> 16);
+                return ((Data[(x % RealX) + ((y % RealY) << 16)] + (x / RealX + y / RealY) - 1) % 9) + 1;
+            });
+
+            public static int Solve(string input, QuestionPart part)
+            {
+                var map = new Map(input, part);
+                return map.FindPath(0, ToKey(map.MaxX, map.MaxY)).Sum(map.GScore);
             }
         }
 
-        private static int Solve(Map map) => AStar<(int x, int y)>
-                                                 .FindPath(map, (0, 0), (map.MaxX, map.MaxY))
-                                                 .Sum(map.GScore);
-
         public static int Part1(string input)
         {
-            return Solve(new Map(input, QuestionPart.Part1));
+            return Map.Solve(input, QuestionPart.Part1);
         }
 
         public static int Part2(string input)
         {
-            return Solve(new Map(input, QuestionPart.Part2));
+            return Map.Solve(input, QuestionPart.Part2);
         }
 
         public void Run(string input, ILogger logger)

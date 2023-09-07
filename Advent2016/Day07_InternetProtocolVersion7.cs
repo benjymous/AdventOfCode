@@ -56,24 +56,18 @@ namespace AoC.Advent2016
                 }
                 else if (address[i] == address[i + 2] && address[i] != address[i + 1])
                 {
-                    var tla = $"{address[i]}{address[i + 1]}{address[i + 2]}";
                     if (bracketCount > 0)
                     {
-                        babs.Add(tla);
+                        babs.Add(address.Substring(i, 2));
                     }
                     else
                     {
-                        abas.Add(tla);
+                        abas.Add(address.Substring(i+1, 2));
                     }
                 }
             }
 
-            foreach (var aba in abas)
-            {
-                if (babs.Contains($"{aba[1]}{aba[0]}{aba[1]}")) return true;
-            }
-
-            return false;
+            return babs.Intersect(abas).Any();
         }
 
         public static int Part1(string input)
@@ -88,22 +82,6 @@ namespace AoC.Advent2016
 
         public void Run(string input, ILogger logger)
         {
-            // logger.WriteLine(HasAbba("--abba--"));
-            // logger.WriteLine(HasAbba("abba--"));
-            // logger.WriteLine(HasAbba("--abba"));
-            // logger.WriteLine(HasAbba("--abab--"));
-            // logger.WriteLine(HasAbba("--aba--"));
-
-            // logger.WriteLine(HasAbba("abba[mnop]qrst"));  // true
-            // logger.WriteLine(HasAbba("abcd[bddb]xyyx"));  // false
-            // logger.WriteLine(HasAbba("aaaa[qwer]tyui"));  // false
-            // logger.WriteLine(HasAbba("ioxxoj[asdfgh]zxcvbn"));  // true
-
-            //logger.WriteLine(HasAbaBab("aba[bab]xyz")); // true
-            //logger.WriteLine(HasAbaBab("xyx[xyx]xyx")); // false
-            //logger.WriteLine(HasAbaBab("aaa[kek]eke")); // true
-            //logger.WriteLine(HasAbaBab("zazbz[bzb]cdb")); // true
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

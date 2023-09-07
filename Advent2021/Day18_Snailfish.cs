@@ -8,12 +8,14 @@ namespace AoC.Advent2021
     {
         public string Name => "2021-18";
 
-        public class Val
+        public class Val : ISummable<Val>
         {
             public int Value = 0;
             public Val first, second, parent, left, right;
 
-            public static Val Parse(Queue<char> data, Val parent = null)
+            public static Val Parse(string data) => Parse(data.ToQueue());
+
+            static Val Parse(Queue<char> data, Val parent = null)
             {
                 var v = new Val { parent = parent };
                 while (true)
@@ -29,20 +31,13 @@ namespace AoC.Advent2021
                 }
             }
 
-            public Val Clone(Val parent = null)
-            {
-                var v = new Val { Value = Value, parent = parent };
-                (v.first, v.second) = (first?.Clone(v), second?.Clone(v));
-                return v;
-            }
-
             public bool IsPair => first != null;
             public int Depth => parent == null ? 0 : parent.Depth + 1;
             public long Magnitude => IsPair ? 3 * first.Magnitude + 2 * second.Magnitude : Value;
 
             public Val Reduce() { while (TryExplode() || TrySplit()) ; return this; }
 
-            IEnumerable<Val> Flatten() => IsPair ? first.Flatten().Concat(second.Flatten()) : (new[] { this });
+            IEnumerable<Val> Flatten() => IsPair ? first.Flatten().Concat(second.Flatten()) : this.ToEnumerable();
 
             public bool TrySplit() => Split() || (IsPair && (first.TrySplit() || second.TrySplit()));
             bool Split()
@@ -55,11 +50,19 @@ namespace AoC.Advent2021
             public bool TryExplode() => Explode() || (IsPair && (first.TryExplode() || second.TryExplode()));
             bool Explode()
             {
-                if (parent == null) Flatten().ToArray().OverlappingPairs().ForEach(pair => (pair.second.left, pair.first.right) = pair);
+                if (parent == null)
+                {
+                    var flat = Flatten().ToArray();
+                    for (int i = 0; i < flat.Length - 1; ++i)
+                    {
+                        flat[i].right = flat[i + 1];
+                        flat[i + 1].left = flat[i];
+                    }
+                }
                 if (IsPair)
                 {
                     if (first.Explode() || second.Explode()) return true;
-                    if (Depth == 4)
+                    else if (Depth == 4)
                     {
                         if (first.left != null) first.left.Value += first.Value;
                         if (second.right != null) second.right.Value += second.Value;
@@ -70,7 +73,7 @@ namespace AoC.Advent2021
                 return false;
             }
 
-            public static Val Add(Val lhs, Val rhs)
+            public static Val operator +(Val lhs, Val rhs)
             {
                 var v = lhs.parent = rhs.parent = new Val { first = lhs, second = rhs };
                 return v.Reduce();
@@ -79,13 +82,13 @@ namespace AoC.Advent2021
 
         public static long Part1(string input)
         {
-            return Util.Split(input, '\n').Select(line => Val.Parse(line.ToQueue())).Aggregate(Val.Add).Magnitude;
+            return Util.Split(input, '\n').Select(Val.Parse).Sum().Magnitude;
         }
 
         public static long Part2(string input)
         {
-            var numbers = Util.Split(input, '\n').Select(line => Val.Parse(line.ToQueue()));
-            return Util.Matrix(numbers, numbers).Max(pair => Val.Add(pair.item1.Clone(), pair.item2.Clone()).Magnitude);
+            var lines = Util.Split(input, '\n');
+            return Util.Matrix(lines, lines).AsParallel().Max(pair => (Val.Parse(pair.item1) + Val.Parse(pair.item2)).Magnitude);
         }
 
         public void Run(string input, ILogger logger)

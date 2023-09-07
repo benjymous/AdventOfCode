@@ -9,211 +9,104 @@ namespace AoC.Advent2016
     {
         public string Name => "2016-11";
 
-        public class State
+        public readonly struct State
         {
-            public State(string input)
+            public State(string input, QuestionPart part)
             {
-                var lines = Util.Split(input.Replace(",", "").Replace(".", ""));
+                Dictionary<string, byte> nameLookup = new();
+                Floors = Util.Split(input, '\n').Select(line => Tokenise(line, nameLookup)).ToArray();
 
-                Dictionary<string, int> nameLookup = new();
-                chipsPerFloor = new byte[4];
-                generatorsPerFloor = new byte[4];
-                for (int i = 0; i < 4; ++i)
+                if (part.Two())
                 {
-                    chipsPerFloor[i] = 0;
-                    generatorsPerFloor[i] = 0;
-                }
-
-                int floor = 0;
-                foreach (var line in lines)
-                {
-                    var bits = line.Split(' ');
-
-                    for (int i = 0; i < bits.Length; i++)
-                    {
-                        if (bits[i] == "microchip")
-                        {
-                            var chipName = bits[i - 1].Replace("-compatible", "");
-
-                            int idx = 0;
-                            if (nameLookup.ContainsKey(chipName))
-                            {
-                                idx = nameLookup[chipName];
-                            }
-                            else
-                            {
-                                idx = nameLookup.Count;
-                                nameLookup[chipName] = idx;
-                            }
-
-                            chipsPerFloor[floor] += (byte)(1 << idx);
-                        }
-                        if (bits[i] == "generator")
-                        {
-                            var genName = bits[i - 1];
-
-                            int idx = 0;
-                            if (nameLookup.ContainsKey(genName))
-                            {
-                                idx = nameLookup[genName];
-                            }
-                            else
-                            {
-                                idx = nameLookup.Count;
-                                nameLookup[genName] = idx;
-                            }
-
-                            generatorsPerFloor[floor] += (byte)(1 << idx);
-                        }
-                    }
-
-                    floor++;
+                    byte nextTwoIds = (byte)(nameLookup.Values.Max() * 6);
+                    Floors[0].chips += nextTwoIds;
+                    Floors[0].generators += nextTwoIds;
                 }
             }
 
-            public State(State previous, int newFloor, int moveChips, int moveGens)
+            static (byte chips, byte generators) Tokenise(string line, Dictionary<string, byte> nameLookup) => line.Split(' ').Select(v => v.Length > 3 ? v[..3] : v).OverlappingPairs().Select(pair => (pair.second == "mic" ? nameLookup.GetIndexBit(pair.first) : 0, pair.second == "gen" ? nameLookup.GetIndexBit(pair.first) : 0)).Aggregate(((byte)0, (byte)0), (curr, next) => ((byte)(curr.Item1 + next.Item1), (byte)(curr.Item2 + next.Item2)));
+
+            State(State previous, int newFloor, int moveChips, int moveGens)
             {
-                steps = previous.steps + 1;
-                elevator = newFloor;
-                var oldfloor = previous.elevator;
+                Steps = previous.Steps + 1;
+                CurrentFloor = newFloor;
+                var oldFloor = previous.CurrentFloor;
 
-                chipsPerFloor = previous.chipsPerFloor.ToArray();
-                generatorsPerFloor = previous.generatorsPerFloor.ToArray();
+                Floors = previous.Floors.ToArray();
 
-                chipsPerFloor[oldfloor] -= (byte)moveChips;
-                chipsPerFloor[newFloor] += (byte)moveChips;
+                Floors[oldFloor].chips -= (byte)moveChips;
+                Floors[newFloor].chips += (byte)moveChips;
 
-                generatorsPerFloor[oldfloor] -= (byte)moveGens;
-                generatorsPerFloor[newFloor] += (byte)moveGens;
+                Floors[oldFloor].generators -= (byte)moveGens;
+                Floors[newFloor].generators += (byte)moveGens;
+
+                if (IsValid(Floors[oldFloor]) & IsValid(Floors[newFloor])) Remaining = CalcRemaining();
             }
 
             static readonly byte empty = 0;
 
             public IEnumerable<State> GetMoves()
             {
-                var currentChips = chipsPerFloor[elevator].BitSequence().ToArray();
-                var currentGens = generatorsPerFloor[elevator].BitSequence().ToArray();
+                var currentChips = Floors[CurrentFloor].chips.BitSequence();
+                var currentGens = Floors[CurrentFloor].generators.BitSequence();
 
-                foreach (var chip1 in currentChips)
+                if (CurrentFloor < 3)
                 {
-                    if (elevator < 3) yield return new State(this, elevator + 1, chip1, empty);
-                    if (elevator > 0) yield return new State(this, elevator - 1, chip1, empty);
-
-                    foreach (var chip2 in currentChips)
+                    foreach (var chip1 in currentChips)
                     {
-                        if (chip1 != chip2)
-                        {
-                            if (elevator < 3) yield return new State(this, elevator + 1, chip1 + chip2, empty);
-                        }
-                    }
+                        foreach (var chip2 in currentChips)
+                            if (chip1 < chip2) yield return new State(this, CurrentFloor + 1, chip1 + chip2, empty);
 
-                    foreach (var gen in currentGens)
-                    {
-                        if (elevator < 3) yield return new State(this, elevator + 1, chip1, gen);
+                        yield return new State(this, CurrentFloor + 1, chip1, empty);
+
+                        foreach (var gen in currentGens) yield return new State(this, CurrentFloor + 1, chip1, gen);
                     }
                 }
 
                 foreach (var gen1 in currentGens)
                 {
-                    if (elevator < 3) yield return new State(this, elevator + 1, empty, gen1);
-                    if (elevator > 0) yield return new State(this, elevator - 1, empty, gen1);
+                    if (CurrentFloor > 0) yield return new State(this, CurrentFloor - 1, empty, gen1);
 
-                    foreach (var gen2 in currentGens)
+                    if (CurrentFloor < 3)
                     {
-                        if (gen1 != gen2)
-                        {
-                            if (elevator < 3) yield return new State(this, elevator + 1, empty, gen1 + gen2);
-                        }
+                        foreach (var gen2 in currentGens)
+                            if (gen1 < gen2) yield return new State(this, CurrentFloor + 1, empty, gen1 + gen2);
+
+                        yield return new State(this, CurrentFloor + 1, empty, gen1);
                     }
                 }
             }
 
-            public bool IsValid()
-            {
-                for (int i = 0; i < 4; ++i)
-                {
-                    if (generatorsPerFloor[i] > 0 && chipsPerFloor[i] > 0)
-                    {
-                        foreach (var bit in chipsPerFloor[i].BitSequence())
-                        {
-                            if (!((generatorsPerFloor[i] & bit) == bit))
-                            {
-                                return false;
-                            }
-                        }
-                    }
-                }
+            static bool IsValid((byte chips, byte generators) floor) => floor.chips == 0 || floor.generators == 0 || ((floor.generators & floor.chips) == floor.chips);
+            int CalcRemaining() => Floors.Take(3).Sum(f => byte.PopCount(f.chips) + byte.PopCount(f.generators));
+            public ulong Key() => (Floors.Take(3).Aggregate(0UL, (prev, curr) => ((prev << 14) + (ulong)(curr.chips << 7) + curr.generators)) << 4) + (ulong)CurrentFloor;
 
-                return true;
-            }
-
-            public int Remaining()
-            {
-                int sum = 0;
-                for (int i = 0; i < 3; ++i)
-                {
-                    sum += chipsPerFloor[i].CountBits();
-                    sum += generatorsPerFloor[i].CountBits();
-                }
-                return sum;
-            }
-
-            public ulong Key()
-            {
-                ulong result = 0;
-
-                for (int i = 0; i < 4; ++i)
-                {
-                    result <<= 7;
-                    result += chipsPerFloor[i];
-                    result <<= 7;
-                    result += generatorsPerFloor[i];
-                }
-
-                result <<= 4;
-                result += (ulong)elevator;
-
-                return result;
-            }
-
-            public byte[] chipsPerFloor;
-            public byte[] generatorsPerFloor;
-            readonly int elevator = 0;
-            public int steps = 0;
+            readonly (byte chips, byte generators)[] Floors;
+            readonly int CurrentFloor = 0;
+            public readonly int Steps = 0;
+            //public readonly bool Valid = true;
+            public readonly int Remaining = int.MaxValue;
         }
-
 
         private static int FindBestPath(State initialState)
         {
-            PriorityQueue<State, int> queue = new();
-            queue.Enqueue(initialState, 0);
-
+            PriorityQueue<State, int> queue = new(new[] { (initialState, 0) });
             Dictionary<ulong, int> cache = new();
 
-            int bestScore = int.MaxValue;
-            int closest = int.MaxValue;
+            int bestScore = int.MaxValue, closest = int.MaxValue;
 
             queue.Operate((state) =>
             {
-                foreach (var move in state.GetMoves().Where(move => move.IsValid()))
+                foreach (var move in state.GetMoves().Where(move => move.Steps < bestScore && move.Remaining - closest <=2))
                 {
-                    int remaining = move.Remaining();
-
-                    if (remaining == 0)
+                    if (move.Remaining == 0 && bestScore > move.Steps) bestScore = move.Steps;
+                    else 
                     {
-                        bestScore = Math.Min(bestScore, move.steps);
-                        continue;
+                        if (cache.NotSeenHigher(move.Key(), move.Steps)) continue;
+
+                        closest = Math.Min(move.Remaining, closest);
+                        queue.Enqueue(move, move.Remaining);
                     }
-
-                    if (remaining - closest > 2) continue;
-                    closest = Math.Min(remaining, closest);
-
-                    var key = move.Key();
-
-                    if ((move.steps >= bestScore) || (cache.TryGetValue(key, out int prevScore) && prevScore <= move.steps)) continue;
-                    cache[key] = move.steps;
-
-                    queue.Enqueue(move, move.steps + remaining);
                 }
             });
 
@@ -222,27 +115,12 @@ namespace AoC.Advent2016
 
         public static int Part1(string input)
         {
-            var initialState = new State(input);
-
-            return FindBestPath(initialState);
+            return FindBestPath(new State(input, QuestionPart.Part1));
         }
 
         public static int Part2(string input)
         {
-            var initialState = new State(input);
-
-            int next = initialState.chipsPerFloor.Sum(v => v.CountBits());
-
-            int bit1 = 1 << next;
-            int bit2 = 1 << (next + 1);
-
-            initialState.chipsPerFloor[0] += (byte)bit1;
-            initialState.chipsPerFloor[0] += (byte)bit2;
-
-            initialState.generatorsPerFloor[0] += (byte)bit1;
-            initialState.generatorsPerFloor[0] += (byte)bit2;
-
-            return FindBestPath(initialState);
+            return FindBestPath(new State(input, QuestionPart.Part2));
         }
 
         public void Run(string input, ILogger logger)

@@ -13,7 +13,7 @@ namespace AoC.Advent2021.Test
         readonly string input = Util.GetInput<Day18>();
 
         string AsString(Val v) => v.IsPair ? $"[{AsString(v.first)},{AsString(v.second)}]" : v.Value.ToString();
-        public static Val Parse(string data) => Day18.Val.Parse(data.ToQueue());
+        public static Val Parse(string data) => Val.Parse(data);
 
         [TestCategory("Test")]
 
@@ -123,7 +123,7 @@ namespace AoC.Advent2021.Test
                 Console.WriteLine($"+ {v}");
                 Assert.AreEqual(next, AsString(v));
 
-                number = Val.Add(number, v);
+                number = number + v;
 
                 Console.WriteLine($"= {number}");
                 Console.WriteLine();
@@ -154,14 +154,14 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void Magnitude_Part1_Regression()
         {
-            Assert.AreEqual(4072, Day18.Part1(input));
+            Assert.AreEqual(4072, Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Magnitude_Part2_Regression()
         {
-            Assert.AreEqual(4483, Day18.Part2(input));
+            Assert.AreEqual(4483, Part2(input));
         }
     }
 }

@@ -13,7 +13,7 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void Scanner01Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day13.Part1(input));
+            Assert.AreEqual(expected, Day13.Part1(input));
         }
 
         [TestCategory("Test")]
@@ -21,21 +21,21 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void Scanner02Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day13.Part2(input));
+            Assert.AreEqual(expected, Day13.Part2(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Scanner_Part1_Regression()
         {
-            Assert.AreEqual(1504, Advent2017.Day13.Part1(input));
+            Assert.AreEqual(1504, Day13.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Scanner_Part2_Regression()
         {
-            Assert.AreEqual(3823370, Advent2017.Day13.Part2(input));
+            Assert.AreEqual(3823370, Day13.Part2(input));
         }
 
     }

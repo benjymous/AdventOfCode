@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2017
@@ -8,96 +7,51 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-24";
 
-        public struct Component
+        public class Factory
         {
-            [Regex(@"(.+)\/(.+)")]
-            public Component(int x, int y)
-            {
-                val1 = Math.Min(x, y);
-                val2 = Math.Max(x, y);
-            }
-            public int val1;
-            public int val2;
-
-            public bool IsDifferent(Component other)
-            {
-                return other.val1 != val1 || other.val2 != val2;
-            }
-
-            public bool Has(int val)
-            {
-                return val1 == val || val2 == val;
-            }
-
-            public int Other(int a)
-            {
-                if (val1 == a) return val2; else return val1;
-            }
-
-            public int Strength()
-            {
-                return val1 + val2;
-            }
+            [Regex(@"(.+)\/(.+)")] public static (int x, int y, int s) Component(int x, int y) => (x, y, x+y);
         }
 
-        public static IEnumerable<IEnumerable<Component>> GetChains(int currentPort, IEnumerable<Component> inputs)
+        public static ((int length, int strength) longstrong, int strongest) GetChains(string input)
         {
-            var first = inputs.Where(c => c.Has(currentPort));
-
-            foreach (var component in first)
-            {
-                yield return new Component[] { component };
-                var rest = inputs.Where(c => c.IsDifferent(component)).ToArray();
-
-                var childResults = GetChains(component.Other(currentPort), rest);
-                foreach (var item in childResults)
-                {
-                    yield return item.Prepend(component).ToArray();
-                }
-            }
+            return GetChains(0, Util.RegexFactory<(int x, int y, int s), Factory>(input).ToArray());
         }
+
+        public static ((int length, int strength) longstrong, int strongest) GetChains(int currentPort, (int x, int y, int s)[] inputs)
+        {
+            int strongest = 0;
+            (int length, int strength) longstrong = (0, 0);
+
+            foreach (var component in inputs.Where(c => c.x == currentPort || c.y == currentPort))
+            {
+                var childResult = GetChains(component.x == currentPort ? component.y : component.x, inputs.Where(c => c != component).ToArray());
+
+                strongest = Math.Max(strongest, component.s + childResult.strongest);
+                childResult.longstrong.length++;
+                childResult.longstrong.strength += component.s;
+                if (childResult.longstrong.length > longstrong.length || (childResult.longstrong.length == longstrong.length && childResult.longstrong.strength > longstrong.strength)) longstrong = childResult.longstrong;
+            }
+
+            return (longstrong, strongest);
+
+        }
+        public static int Part1(((int length, int strength) longstrong, int strongest) chains) => chains.strongest;
+
+        public static int Part2(((int length, int strength) longstrong, int strongest) chains) => chains.longstrong.strength;
 
         public static int Part1(string input)
         {
-            var data = Util.RegexParse<Component>(input);
-            var chains = GetChains(0, data).ToArray();
-
-            return Part1(chains);
-        }
-
-        public static int Part1(IEnumerable<IEnumerable<Component>> chains)
-        {
-            return chains.Max(chain => chain.Sum(comp => comp.Strength()));
+            return Part1(GetChains(input));
         }
 
         public static int Part2(string input)
         {
-            var data = Util.RegexParse<Component>(input);
-            var chains = GetChains(0, data).ToArray();
-
-            return Part2(chains);
-        }
-
-        public static int Part2(IEnumerable<IEnumerable<Component>> chains)
-        {
-            var groups = chains.GroupBy(chain => chain.Count());
-
-            var longest = groups.Max(x => x.Key);
-
-            var longestGroup = groups.Where(x => x.Key == longest).SelectMany(x => x);
-
-            var longestStrongest = longestGroup.Max(chain => chain.Sum(component => component.Strength()));
-
-            return longestStrongest;
+            return Part2(GetChains(input));
         }
 
         public void Run(string input, ILogger logger)
         {
-            //Console.WriteLine(Part1("0/2\n2/2\n2/3\n3/4\n3/5\n0/1\n10/1\n9/10"));
-            //Console.WriteLine(Part2("0/2\n2/2\n2/3\n3/4\n3/5\n0/1\n10/1\n9/10"));
-
-            var data = Util.Parse<Component>(input);
-            var chains = GetChains(0, data).ToList();
+            var chains = GetChains(input);
 
             logger.WriteLine("- Pt1 - " + Part1(chains));
             logger.WriteLine("- Pt2 - " + Part2(chains));

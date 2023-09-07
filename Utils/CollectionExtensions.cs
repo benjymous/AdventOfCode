@@ -1,8 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Numerics;
 
 namespace AoC.Utils
@@ -26,7 +25,6 @@ namespace AoC.Utils
 
         public static T2 GetOrDefault<T1, T2>(this Dictionary<T1, T2> dict, T1 key) => dict.TryGetValue(key, out T2 val) ? val : default;
 
-
         public static T GetOrCalculate<K, T>(this Dictionary<K, T> dict, K key, Func<K, T> predicate)
         {
             if (!dict.TryGetValue(key, out T val))
@@ -36,7 +34,17 @@ namespace AoC.Utils
             return val;
         }
 
+        public static bool NotSeenHigher<K, T>(this Dictionary<K, T> dict, K key, T compare) where T : INumber<T>
+        {
+            if (dict.TryGetValue(key, out T old) && old <= compare) return true;
+            dict[key] = compare; return false;
+        }
+
+        public static T GetIndexBit<K, T>(this Dictionary<K, T> dict, K key) where T : INumber<T> => dict.GetOrCalculate(key, _ => T.CreateChecked(1 << dict.Count));
+
         public static string AsString(this IEnumerable<char> input) => string.Concat(input);
+        public static string AsString(this IEnumerable<string> input) => string.Concat(input);
+
 
         public static IEnumerable<byte> AsNybbles(this IEnumerable<byte> bytes)
         {
@@ -81,15 +89,6 @@ namespace AoC.Utils
             return set.Pairs().First();
         }
 
-        public static IEnumerable<T> Prepend<T>(this IEnumerable<T> items, T first)
-        {
-            yield return first;
-            foreach (T item in items)
-            {
-                yield return item;
-            }
-        }
-
         public static IEnumerable<T> Sandwich<T>(this IEnumerable<T> items, T firstlast)
         {
             yield return firstlast;
@@ -100,12 +99,9 @@ namespace AoC.Utils
             yield return firstlast;
         }
 
-        public static IEnumerable<IEnumerable<T>> Combinations<T>(this IEnumerable<T> items)
+        public static IEnumerable<T[]> Combinations<T>(this IEnumerable<T> items)
         {
-            if (!items.Any())
-            {
-                yield return items;
-            }
+            if (!items.Any()) yield return Array.Empty<T>();
             else
             {
                 var head = items.First();
@@ -113,9 +109,10 @@ namespace AoC.Utils
                 foreach (var sequence in tail.Combinations())
                 {
                     yield return sequence; // Without first
-                    yield return sequence.Prepend(head);
+                    yield return sequence.Prepend(head).ToArray();
                 }
             }
+
         }
 
         public static IEnumerable<T[]> Windows<T>(this IEnumerable<T> input, int count)
@@ -159,7 +156,7 @@ namespace AoC.Utils
 
         public static IEnumerable<T> Repeat<T>(this IEnumerable<T> input, int repeats)
         {
-            for (int i=0; i<repeats; ++i)
+            for (int i = 0; i < repeats; ++i)
             {
                 foreach (var v in input) yield return v;
             }
@@ -197,6 +194,23 @@ namespace AoC.Utils
         {
             for (int row = 0; row < array2d.Height(); row++)
                 yield return array2d[col, row];
+        }
+
+        public static IEnumerable<IEnumerable<T>> Rows<T>(this T[,] array2d)
+        {
+            for (int row = 0; row < array2d.Height(); row++)
+                yield return Row(array2d, row);
+        }
+
+        public static IEnumerable<IEnumerable<T>> Columns<T>(this T[,] array2d)
+        {
+            for (int col = 0; col < array2d.Width(); col++)
+                yield return Column(array2d, col);
+        }
+
+        public static string AsString<T>(this T[,] array2d, Func<T, string> displayFunc)
+        {
+            return string.Join("\n", array2d.Rows().Select(row => string.Join("", row.Select(v => displayFunc(v)))));
         }
 
         public static bool TrySet<T>(this T[,] array2d, (int col, int row) pos, T val) => TrySet(array2d, pos.col, pos.row, val);
@@ -255,7 +269,7 @@ namespace AoC.Utils
             return enumerable.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
         }
 
-        public static SortedDictionary<TKey, TValue> ToSortedDictionary<TKey,TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> enumerable, IComparer<TKey> comparer)
+        public static SortedDictionary<TKey, TValue> ToSortedDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> enumerable, IComparer<TKey> comparer)
         {
             var dict = new SortedDictionary<TKey, TValue>(comparer);
 
@@ -313,7 +327,7 @@ namespace AoC.Utils
             }
         }
 
-        public static Dictionary<K,V> Resolve<K,V>(this Dictionary<K, V> source, Action<(K Key, V Value, Dictionary<K, V> Collection)> action)
+        public static Dictionary<K, V> Resolve<K, V>(this Dictionary<K, V> source, Action<(K Key, V Value, Dictionary<K, V> Collection)> action)
         {
             foreach (var element in source)
             {
@@ -353,6 +367,11 @@ namespace AoC.Utils
         public static void EnqueueRange<T>(this Queue<T> queue, IEnumerable<T> sequence)
         {
             foreach (var t in sequence) queue.Enqueue(t);
+        }
+
+        public static void PushRange<T>(this Stack<T> stack, IEnumerable<T> sequence)
+        {
+            foreach (var t in sequence) stack.Push(t);
         }
 
         public static T Pop<T>(this IEnumerator<T> enumerator)
@@ -396,6 +415,12 @@ namespace AoC.Utils
             }
         }
 
+        public static bool IsUnseen<TElement>(this HashSet<TElement> set, TElement element)
+        {
+            if (set.Contains(element)) return false;
+            set.Add(element); return true;
+        }
+
         public static IEnumerable<T> InsertRangeAt<T>(this IEnumerable<T> into, IEnumerable<T> elements, int pos)
         {
             return into.Take(pos).Union(elements).Union(into.Skip(pos));
@@ -427,6 +452,19 @@ namespace AoC.Utils
             }
         }
 
+        public static int GetCombinedHashCode(this IEnumerable<char> collection)
+        {
+            unchecked
+            {
+                int hash = 17;
+                foreach (var v in collection)
+                {
+                    hash = hash * 31 + v;
+                }
+                return hash;
+            }
+        }
+
         public static int IndexOf<T>(this IEnumerable<T> collection, T item) where T : IComparable<T>
         {
             int count = 0;
@@ -438,14 +476,53 @@ namespace AoC.Utils
             return -1;
         }
 
-        public static IEnumerable<IEnumerable<T>> Split<T>(this IEnumerable<T> source, int chunkSize)
+        public static IEnumerable<IEnumerable<T>> Partition<T>(this IEnumerable<T> items, int partitionSize)
         {
-            return source.Where((x, i) => i % chunkSize == 0).Select((x, i) => source.Skip(i * chunkSize).Take(chunkSize));
+            return new PartitionHelper<T>(items, partitionSize);
+        }
+
+        private sealed class PartitionHelper<T> : IEnumerable<IEnumerable<T>>
+        {
+            readonly IEnumerable<T> Items;
+            readonly int ChunkSize;
+            bool ItemsRemaining;
+
+            internal PartitionHelper(IEnumerable<T> items, int chunkSize)
+            {
+                Items = items;
+                ChunkSize = chunkSize;
+            }
+
+            public IEnumerator<IEnumerable<T>> GetEnumerator()
+            {
+                var enumerator = Items.GetEnumerator();
+                ItemsRemaining = enumerator.MoveNext();
+                while (ItemsRemaining)
+                    yield return GetNextBatch(enumerator).ToArray();
+            }
+
+            IEnumerable<T> GetNextBatch(IEnumerator<T> enumerator)
+            {
+                for (int i = 0; i < ChunkSize; ++i)
+                {
+                    yield return enumerator.Current;
+                    ItemsRemaining = enumerator.MoveNext();
+                    if (!ItemsRemaining)
+                        yield break;
+                }
+            }
+
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
 
         public static Dictionary<TVal, IEnumerable<TKey>> Invert<TKey, TVal>(this Dictionary<TKey, TVal> dict)
         {
-            return dict.GroupBy(kvp => kvp.Value).ToDictionary(g => g.Key, g => g.Select(kvp => kvp.Key));
+            return dict.Where(kvp => kvp.Value != null).GroupBy(kvp => kvp.Value).ToDictionary(g => g.Key, g => g.Select(kvp => kvp.Key));
+        }
+
+        public static Dictionary<TVal, TKey> InvertSolo<TKey, TVal>(this Dictionary<TKey, TVal> dict)
+        {
+            return dict.Where(kvp => kvp.Value != null).GroupBy(kvp => kvp.Value).ToDictionary(g => g.Key, g => g.Select(kvp => kvp.Key).First());
         }
 
         public static Dictionary<TVal, IEnumerable<(int x, int y)>> Invert<TVal>(this TVal[,] dict)
@@ -481,9 +558,14 @@ namespace AoC.Utils
             }
         }
 
-        public static (T First, T second) Decompose2<T>(this IEnumerable<T> input)
+        public static (T First, T Second) Decompose2<T>(this IEnumerable<T> input)
         {
-            return (input.First(), input.Skip(1).First());
+            return (input.FirstOrDefault(), input.Skip(1).FirstOrDefault());
+        }
+
+        public static (T First, T Second, T Third) Decompose3<T>(this IEnumerable<T> input)
+        {
+            return (input.FirstOrDefault(), input.Skip(1).FirstOrDefault(), input.Skip(2).FirstOrDefault());
         }
 
         public static IEnumerable<T> GetUniqueItems<T>(this IEnumerable<T> array)
@@ -503,5 +585,127 @@ namespace AoC.Utils
             }
             return uniques;
         }
+
+        public static IEnumerable<T> GetDuplicatedItems<T>(this IEnumerable<T> array)
+        {
+            var seen = new HashSet<T>();
+            var duplicates = new HashSet<T>();
+            foreach (var item in array)
+            {
+                if (seen.Contains(item))
+                {
+                    duplicates.Add(item);
+                    continue;
+                }
+                seen.Add(item);
+            }
+            return duplicates;
+        }
+
+        public static IEnumerable<(TFirst, TSecond)> ZipLongest<TFirst, TSecond>(this IEnumerable<TFirst> first, IEnumerable<TSecond> second)
+        {
+            using IEnumerator<TFirst> e1 = first.GetEnumerator();
+            using IEnumerator<TSecond> e2 = second.GetEnumerator();
+            var has1 = e1.MoveNext();
+            var has2 = e2.MoveNext();
+            while (has1 || has2)
+            {
+                yield return (has1 ? e1.Current : default, has2 ? e2.Current : default);
+                has1 = e1.MoveNext();
+                has2 = e2.MoveNext();
+            }
+        }
+
+        public static (TResult min, TResult max) MinMax<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector) where TResult : struct, IBinaryInteger<TResult>
+        {
+            TResult min, max;
+            using (IEnumerator<TSource> e = source.GetEnumerator())
+            {
+                e.MoveNext();
+                min = max = selector(e.Current);
+                while (e.MoveNext())
+                {
+                    TResult x = selector(e.Current);
+                    if (x < min)
+                    {
+                        min = x;
+                    }
+                    if (x > max)
+                    {
+                        max = x;
+                    }
+                }
+            }
+
+            return (min, max);
+        }
+
+        public static (T min, T max) MinMax<T>(this IEnumerable<T> source) where T : struct, IBinaryInteger<T>
+        {
+            T min, max;
+            using (IEnumerator<T> e = source.GetEnumerator())
+            {
+                e.MoveNext();
+                min = max = e.Current;
+                while (e.MoveNext())
+                {
+                    T x = e.Current;
+                    if (x < min)
+                    {
+                        min = x;
+                    }
+                    if (x > max)
+                    {
+                        max = x;
+                    }
+                }
+            }
+
+            return (min, max);
+        }
+
+        public static T GetMax<T, U>(this IEnumerable<T> data, Func<T, U> f) where U : IComparable
+        {
+            return data.Aggregate((i1, i2) => f(i1).CompareTo(f(i2)) > 0 ? i1 : i2);
+        }
+
+        public static IEnumerable<TResult> SelectMultiple<TSource, TResult>(this IEnumerable<TSource> source, params Func<TSource, TResult>[] selectors)
+        {
+            foreach (var el in source)
+            {
+                foreach (var sel in selectors)
+                {
+                    yield return sel(el);
+                }
+            }
+        }
+
+        public static IEnumerable<T> ToEnumerable<T>(this T item)
+        {
+            yield return item;
+        }
+
+        public static IEnumerable<string> WithoutNullOrWhiteSpace(this IEnumerable<string> input) => input.Where(line => !string.IsNullOrWhiteSpace(line));
+
+
+        public static T[] SwapIndices<T>(this T[] array, int idx1, int idx2)
+        {
+            (array[idx1], array[idx2]) = (array[idx2], array[idx1]);
+            return array;
+        }
+
+        public static List<T> MoveIndex<T>(this List<T> list, int idx1, int idx2)
+        {
+            T item = list[idx1];
+            list.RemoveAt(idx1);
+            list.Insert(idx2, item);
+            return list;
+        }
+
+        public static T[] ToArray<T>(this (T, T) pair)
+        {
+            return new T[] { pair.Item1, pair.Item1 };
+        }
+
     }
 }

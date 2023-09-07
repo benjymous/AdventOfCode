@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AoC.Advent2017
 {
@@ -8,30 +7,21 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-25";
 
-        struct Conditional
-        {
-            public bool Write { get; set; }
-            public int Move { get; set; }
-            public char Next { get; set; }
-        }
+        static int ToKey(char c) => c - 'A';
 
+        enum Action
+        {
+            Set,
+            Clear,
+            Skip,
+        }
         class State
         {
-            public char ID { get; private set; }
-            public State(string[] initialLine)
-            {
-                //In state A:
-                ID = initialLine[2][0];
-                Parsing = 0;
-                Conditions[0] = new Conditional();
-                Conditions[1] = new Conditional();
-            }
+            int Parsing = 0;
 
-            public int Parsing = -1;
+            public readonly (Action action, int move, int next)[] Conditions = new (Action, int, int)[2];
 
-            public Conditional[] Conditions = new Conditional[2];
-
-            public void Feed(string[] nextLine)
+            public void Feed(string nextLine)
             {
                 /*
                 - Write the value 1.
@@ -39,16 +29,17 @@ namespace AoC.Advent2017
                 - Continue with state B.
                 */
 
-                switch (nextLine[1])
+                switch (nextLine[6])
                 {
-                    case "Write":
-                        Conditions[Parsing].Write = int.Parse(nextLine[4].Replace(".", "")) == 1;
+                    case 'W': // Write
+                        int val = nextLine[22] == '0' ? 0 : 1;
+                        Conditions[Parsing].action = val == Parsing ? Action.Skip : val == 1 ? Action.Set : Action.Clear;
                         return;
-                    case "Move":
-                        Conditions[Parsing].Move = nextLine[6][0] == 'r' ? 1 : -1;
+                    case 'M': // Move
+                        Conditions[Parsing].move = nextLine[27] == 'r' ? 1 : -1;
                         return;
-                    case "Continue":
-                        Conditions[Parsing].Next = nextLine[4][0];
+                    case 'C': // Continue
+                        Conditions[Parsing].next = ToKey(nextLine[26]);
                         Parsing++;
                         return;
                     default:
@@ -58,48 +49,38 @@ namespace AoC.Advent2017
             }
         }
 
-        public class Program
+        class Program
         {
             public Program(string input)
             {
-                input = input.Replace("\r", "") + "\n";
+                List<State> states = new();
                 State state = null;
                 foreach (var line in input.Split("\n"))
                 {
                     if (string.IsNullOrWhiteSpace(line))
                     {
-                        if (state != null)
-                        {
-                            States[state.ID] = state;
-                        }
+                        if (state != null) states.Add(state);
                         state = null;
                         continue;
                     }
 
-                    var tokens = line.Trim().Split(" ");
-                    switch (tokens[0])
+                    switch (line[0])
                     {
-                        case "Begin":
-                            //Begin in state A.
-                            Start = tokens[3][0];
+                        case 'B': //Begin in state A.
+                            Start = ToKey(line[15]);
                             break;
 
-                        case "Perform":
-                            //Perform a diagnostic checksum after 12399302 steps.
-                            Diagnostic = int.Parse(tokens[5]);
+                        case 'P': //Perform a diagnostic checksum after 12399302 steps.
+                            Diagnostic = Util.ExtractNumbers(line)[0];
                             break;
 
-                        case "In":
-                            state = new State(tokens);
+                        case 'I':
+                            state = new State();
                             break;
 
-                        case "If":
+                        case ' ':
+                            if (line[4] == '-') state.Feed(line);
                             break;
-
-                        case "-":
-                            state.Feed(tokens);
-                            break;
-
 
                         default:
                             Console.WriteLine("Tokenization failed");
@@ -107,50 +88,44 @@ namespace AoC.Advent2017
                     }
                 }
 
+                States = states.ToArray();
             }
 
-            public void Run()
+            public int Run()
             {
+                HashSet<int> tape = new();
                 State state = States[Start];
+                int tapePosition = 0;
                 for (int cycle = 0; cycle < Diagnostic; ++cycle)
                 {
-                    var condition = state.Conditions[ReadTape()];
+                    var (action, move, next) = state.Conditions[tape.Contains(tapePosition) ? 1 : 0];
 
-                    WriteTape(condition.Write);
-                    Position += condition.Move;
-                    state = States[condition.Next];
+                    state = States[next];
+
+                    switch (action)
+                    {
+                        case Action.Set:
+                            tape.Add(tapePosition);
+                            break;
+                        case Action.Clear:
+                            tape.Remove(tapePosition);
+                            break;
+                    }
+                    tapePosition += move;
+
                 }
+                return tape.Count;
             }
 
-            public int ReadTape()
-            {
-                return Tape.Contains(Position) ? 1 : 0;
-            }
-
-            public void WriteTape(bool val)
-            {
-                if (val) Tape.Add(Position);
-                else Tape.Remove(Position);
-            }
-
-            public int Checksum()
-            {
-                return Tape.Count;
-            }
-
-            readonly HashSet<int> Tape = new();
-
-            readonly char Start = '?';
-            int Position = 0;
+            readonly int Start = 0;
             readonly int Diagnostic = 0;
-            readonly Dictionary<char, State> States = new();
+            readonly State[] States;
         }
 
         public static int Part1(string input)
         {
             var program = new Program(input);
-            program.Run();
-            return program.Checksum();
+            return program.Run();
         }
 
         public void Run(string input, ILogger logger)

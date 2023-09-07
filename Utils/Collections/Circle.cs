@@ -1,11 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Utils.Collections
 {
 
-    public class Circle<T>
+    public class Circle<T> : IEnumerable<T>
     {
         public T Value { get; set; }
 
@@ -84,12 +85,12 @@ namespace AoC.Utils.Collections
 
         public Circle<T> InsertNext(T v)
         {
-            return new Circle<T>(v, this, this.next);
+            return new Circle<T>(v, this, next);
         }
 
         public Circle<T> InsertNext(Circle<T> v)
         {
-            v.Insert(this, this.next);
+            v.Insert(this, next);
             return v;
         }
 
@@ -145,19 +146,25 @@ namespace AoC.Utils.Collections
         public void Move(long delta)
         {
             if (delta == 0) return;
-            Circle<T> newPos = null;
             int move = (int)(Math.Abs(delta) % (Count - 1));
+            if (move > Count / 2)
+            {
+                delta = -delta;
+                move = Count - move - 1;
+            }
+
+            Circle<T> newPos;
             if (delta > 0)
             {
                 newPos = Prev();
                 Remove();
                 newPos = newPos.Forward(move);
             }
-            else if (delta < 0)
+            else
             {
                 newPos = Next();
                 Remove();
-                newPos = newPos.Back(move+1);
+                newPos = newPos.Back(move + 1);
             }
             newPos.InsertNext(this);
         }
@@ -192,7 +199,7 @@ namespace AoC.Utils.Collections
 
         bool orphaned = false;
 
-        public IEnumerable<T> Values()
+        IEnumerable<T> Values()
         {
             yield return Value;
             var current = next;
@@ -217,5 +224,18 @@ namespace AoC.Utils.Collections
         public static implicit operator T(Circle<T> node) => node.Value;
 
         public override string ToString() => Value.ToString();
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            yield return Value;
+            var current = next;
+            while (current != this)
+            {
+                yield return current.Value;
+                current = current.Next();
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

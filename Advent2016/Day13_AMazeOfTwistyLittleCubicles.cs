@@ -15,7 +15,7 @@ namespace AoC.Advent2016
             readonly Dictionary<(int x, int y), bool> data = new();
             readonly int Seed = 0;
 
-            public CubicleMap(int seed) => Seed = seed;
+            public CubicleMap(string seed) => Seed = int.Parse(seed);
 
             public virtual IEnumerable<(int x, int y)> GetNeighbours((int x, int y) center)
             {
@@ -36,64 +36,56 @@ namespace AoC.Advent2016
                     yield return pt;
             }
 
-            public bool IsValidNeighbour((int x, int y) pt)
-            {
-                if (pt.x < 0 || pt.y < 0)
-                {
-                    return false;
-                }
+            public bool IsValidNeighbour((int x, int y) pt) => pt.x >= 0 && pt.y >= 0 && data.GetOrCalculate(pt, _ => IsOpen(pt.x, pt.y));
 
-                if (!data.TryGetValue(pt, out var isOpen))
-                {
-                    isOpen = IsOpen(pt.x, pt.y);
-                    data[pt] = isOpen;
-                }
-
-                return isOpen;
-            }
-
-            bool IsOpen(int x, int y)
-            {
-                int c = (Seed + (x * x) + (3 * x) + (2 * x * y) + (y) + (y * y)).BitSequence().Count();
-                return (c % 2 == 0);
-            }
+            bool IsOpen(int x, int y) => (Seed + (x * x) + (3 * x) + (2 * x * y) + y + (y * y)).CountBits() % 2 == 0;
 
             public int Heuristic((int x, int y) location1, (int x, int y) location2) => location1.Distance(location2);
         }
 
         public static int Part1(string input)
         {
-            int seed = int.Parse(input);
-            var map = new CubicleMap(seed);
-            var route = AStar<(int x, int y)>.FindPath(map, (1, 1), (31, 39));
-            return route.Count();
+            var map = new CubicleMap(input);
+            var route = map.FindPath((1, 1), (31, 39));
+            return route.Length;
         }
 
         public static int Part2(string input)
         {
-            int seed = int.Parse(input);
-            var map = new CubicleMap(seed);
+            var map = new CubicleMap(input);
 
             const int MaxDistance = 50;
 
-            int count = 0;
-            for (int y = 0; y < MaxDistance; ++y)
+            Queue<(int x, int y)> toTry = new() { (1, 1) };
+            Dictionary<(int x, int y), int> distances = new() { { (1, 1), 0 } };
+            toTry.Operate(pos =>
             {
-                for (int x = 0; x < MaxDistance - y; ++x)
-                {
-                    if (!map.IsValidNeighbour((x, y)))
-                    {
-                        continue;
-                    }
-                    var route = AStar<(int x, int y)>.FindPath(map, (1,1), (x, y));
-                    if (route.Any() && route.Count() <= MaxDistance)
-                    { 
-                        count++;
-                    }
-                }
-            }
+                var dist = distances[pos];
 
-            return count+1;
+                foreach (var n in map.GetNeighbours(pos))
+                {
+                    if (!distances.TryGetValue(n, out var nDist))
+                    {
+                        nDist = dist + 1;
+                        if (nDist < MaxDistance)
+                        {
+                            distances[n] = nDist;
+                            toTry.Add(n);
+                        }
+                    }
+                    else
+                    {
+                        if (nDist > dist + 1)
+                        {
+                            distances[pos] = nDist - 1;
+                            toTry.Add(n);
+                        }
+                    }
+
+                }
+            });
+
+            return distances.Values.Count(v => v < MaxDistance)+1;
         }
 
         public void Run(string input, ILogger logger)

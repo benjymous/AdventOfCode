@@ -77,7 +77,7 @@ namespace AoC.Advent2018
 
                 var potentialTargets = targets.SelectMany(target => InRange.Select(offset => (x: target.Key.x + offset.dx, y: target.Key.y + offset.dy))).Where(pos => IsClear(pos) || pos == creature.Key).Distinct();
 
-                var reachable = potentialTargets.Select(pos => (pos, path: AStar<(int x, int y)>.FindPath(this, creature.Key, pos)))
+                var reachable = potentialTargets.Select(pos => (pos, path: this.FindPath(creature.Key, pos)))
                                                  .Where(entry => entry.path.Any());                                                                                                  
 
                 if (!reachable.Any()) return creature.Key;
@@ -99,7 +99,7 @@ namespace AoC.Advent2018
                     if (newPos == dest) return newPos;
                     if (IsClear(newPos))
                     {
-                        var path = AStar<(int x, int y)>.FindPath(this, newPos, dest);
+                        var path = this.FindPath(newPos, dest);
                         if (path.Any()) readingOrder.Add((newPos, path.Count()));
                     }
                 }

@@ -1,9 +1,7 @@
 ﻿using AoC.Utils;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-
-using CharFunc = System.Func<System.Collections.Generic.IEnumerable<char>, System.Collections.Generic.IEnumerable<char>>;
+using CharFunc = System.Func<char[], char[]>;
 
 namespace AoC.Advent2016
 {
@@ -20,117 +18,76 @@ namespace AoC.Advent2016
             public static CharFunc RotLeft(int count) => pwd => RotateLeft(pwd, count);
 
             [Regex(@"swap letter (.) with letter (.)")]
-            public static CharFunc SwapL(char from, char to) => pwd => SwapLetter(pwd, from, to);
+            public static CharFunc SwapLetter(char from, char to) => pwd => pwd.SwapIndices(Array.IndexOf(pwd, from), Array.IndexOf(pwd, to));
 
             [Regex(@"swap position (.) with position (.)")]
-            public static CharFunc SwapP(int from, int to) => pwd => SwapPosition(pwd, from, to);
+            public static CharFunc SwapPosition(int from, int to) => pwd => pwd.SwapIndices(from, to);
 
             [Regex(@"reverse positions (.) through (.)")]
-            public static CharFunc Rev(int start, int end) => pwd => Reverse(pwd, start, end);
+            public static CharFunc Reverse(int start, int end) => pwd => pwd.Take(start).Concat(pwd.Skip(start).Take(end - start + 1).Reverse()).Concat(pwd.Skip(end + 1)).ToArray();
 
             [Regex(@"move position (.) to position (.)")]
-            public static CharFunc Mov(int from, int to) => pwd => Move(pwd, from, to);
+            public static CharFunc Move(int from, int to) => pwd => pwd.ToList().MoveIndex(from, to).ToArray();
 
             [Regex(@"rotate based on position of letter (.)")]
-            public static CharFunc RotBased(char letter) => pwd => RotateRightBasedOnLetter(pwd, letter);
-        }
+            public static CharFunc RotateBased(char letter) => pwd => RotateRight(pwd, TranslatePos(pwd.IndexOf(letter)));
 
-        public static char Switch(char c, char from, char to)
-        {
-            if (c == from)
+            [Regex(@"UNROTATE (.)")]
+            public static CharFunc Unrotate(char letter) => pwd =>
             {
-                return to;
-            }
-            else if (c == to)
-            {
-                return from;
-            }
-            return c;
+                for (int i=1; i<=8; ++i)
+                {
+                    if (i != 5)
+                    {
+                        int checkPos = DeTranslatePos(i);
+                        var rot = RotateLeft(pwd, i);
+
+                        if (checkPos == rot.IndexOf(letter) || checkPos == 0 && rot.IndexOf(letter) == 7) return rot;
+                    }
+                }
+                throw new Exception("fail");
+            };
         }
 
-        private static IEnumerable<char> SwapLetter(IEnumerable<char> password, char from, char to)
-        {
-            return password.Select(c => Switch(c, from, to));
-        }
+        private static char[] RotateRight(char[] password, int dist) => password[(^dist)..].Concat(password[..(8 - dist)]).ToArray();
 
-        private static IEnumerable<char> SwapPosition(IEnumerable<char> password, int from, int to)
-        {
-            var charFrom = password.ElementAt(from);
-            var charTo = password.ElementAt(to);
-            return SwapLetter(password, charFrom, charTo);
-        }
+        private static char[] RotateLeft(char[] password, int dist) => password[dist..].Concat(password[..dist]).ToArray();
 
-        private static IEnumerable<char> RotateLeft(IEnumerable<char> password, int dist)
+        private static int TranslatePos(int pos) => pos switch
         {
-            var first = password.Take(dist);
-            var rest = password.Skip(dist);
-            return rest.Concat(first);
-        }
-
-        private static IEnumerable<char> RotateRight(IEnumerable<char> password, int dist)
-        {
-            var last = password.Skip(8 - dist).Take(dist);
-            var rest = password.Take(8 - dist);
-            return last.Concat(rest);
-        }
-
-        static readonly Dictionary<int, int> RotateLetterForward = new()
-        {
-            {0,1},
-            {1,2},
-            {2,3},
-            {3,4},
-            {4,6},
-            {5,7},
-            {6,8},
-            {7,9},
+            0 or 7 => 1,
+            1 or 2 or 3 => pos + 1,
+            4 or 5 or 6 => pos + 2,
+            _ => pos
         };
 
-        private static IEnumerable<char> RotateRightBasedOnLetter(IEnumerable<char> password, char letter)
-        {            
-            var pos = password.IndexOf(letter);
-            var dist = RotateLetterForward[pos];
-            return RotateRight(password, dist);
-        }
-
-        private static IEnumerable<char> Reverse(IEnumerable<char> password, int start, int end)
+        private static int DeTranslatePos(int pos) => pos switch
         {
-            return password.Take(start).Concat(password.Skip(start).Take(end - start + 1).Reverse()).Concat(password.Skip(end + 1));
-        }
+            1 or 2 or 3 or 4 => pos - 1,
+            6 or 7 or 8 => pos - 2,
+            0 => 7,
+            _ => pos
+        };
 
-        private static IEnumerable<char> Move(IEnumerable<char> password, int from, int to)
-        {
-            var fromChar = password.ElementAt(from);
-            var filtered = password.Where(c => c != fromChar);
-            return filtered.Take(to).Concat($"{fromChar}").Concat(filtered.Skip(to));
-        }
+        private static string Scramble(CharFunc[] instructions, char[] password) => instructions.Aggregate(password, (current, instr) => instr(current)).AsString();
 
-        private static string Scramble(IEnumerable<CharFunc> instructions, IEnumerable<char> password)
-        {
-            foreach (var instr in instructions)
-            {
-                password = instr(password).ToList();
-            }
+        public static CharFunc[] ParseInstructions(string input) => Util.RegexFactory<CharFunc, InstructionFactory>(input).ToArray();
+        public static CharFunc[] ReverseInstructions(string input) => Util.RegexFactory<CharFunc, InstructionFactory>(input.Split('\n').Select(Reverse).Reverse(), new InstructionFactory()).ToArray();
 
-            return password.AsString();
-        }
+        public static string Reverse(string rule) => rule.StartsWith("rotate based ")
+                ? $"UNROTATE {rule[35]}"
+                : rule.StartsWith("move position ")
+                    ? $"move position {rule[28]} to position {rule[14]}"
+                    : rule.Contains("right") ? rule.Replace("right", "left") : rule.Replace("left", "right");
 
         public static string Part1(string input)
         {
-            var instructions = Util.RegexFactory<CharFunc, InstructionFactory>(input).ToArray();
-
-            return Scramble(instructions, "abcdefgh");
+            return Scramble(ParseInstructions(input), "abcdefgh".ToArray());
         }
 
         public static string Part2(string input)
         {
-            var instructions = Util.RegexFactory<CharFunc, InstructionFactory>(input).ToArray();
-
-            var scrambled = "fbgdceah";
-
-            var perms = scrambled.Permutations();
-
-            return perms.AsParallel().Where(p => Scramble(instructions, p) == scrambled).First().AsString();
+            return Scramble(ReverseInstructions(input), "fbgdceah".ToArray());
         }
 
         public void Run(string input, ILogger logger)

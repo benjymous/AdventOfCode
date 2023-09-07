@@ -13,7 +13,7 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void Sleepy01Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day04.Part1(input));
+            Assert.AreEqual(expected, Day04.Part1(input));
         }
 
         [TestCategory("Test")]
@@ -21,7 +21,7 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void Inventory02Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day04.Part2(input));
+            Assert.AreEqual(expected, Day04.Part2(input));
         }
 
         [TestCategory("Regression")]

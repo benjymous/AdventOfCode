@@ -16,7 +16,7 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void Captcha01Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day01.Part1(input));
+            Assert.AreEqual(expected, Day01.Part1(input));
         }
 
         [TestCategory("Test")]
@@ -28,21 +28,21 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void Captcha02Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day01.Part2(input));
+            Assert.AreEqual(expected, Day01.Part2(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Captcha_Part1_Regression()
         {
-            Assert.AreEqual(1141, Advent2017.Day01.Part1(input));
+            Assert.AreEqual(1141, Day01.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Captcha_Part2_Regression()
         {
-            Assert.AreEqual(950, Advent2017.Day01.Part2(input));
+            Assert.AreEqual(950, Day01.Part2(input));
         }
 
     }

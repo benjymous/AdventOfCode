@@ -17,7 +17,7 @@ namespace AoC.Advent2019.Test
         [DataTestMethod]
         public void Fuel01Test(int input, int expected)
         {
-            Assert.IsTrue(Advent2019.Day01.GetFuelRequirement(input) == expected);
+            Assert.IsTrue(Day01.GetFuelRequirement(input) == expected);
         }
 
         [TestCategory("Test")]
@@ -27,7 +27,7 @@ namespace AoC.Advent2019.Test
         [DataTestMethod]
         public void Fuel02Test(int input, int expected)
         {
-            Assert.IsTrue(Advent2019.Day01.GetFullFuelRequirement(input) == expected);
+            Assert.IsTrue(Day01.GetFullFuelRequirement(input) == expected);
         }
 
         [TestCategory("Regression")]

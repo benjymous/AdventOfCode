@@ -8,72 +8,60 @@ namespace AoC.Advent2021
     {
         public string Name => "2021-24";
 
-        static (int i, int j, int k) GetCycleParams(int digit) => digit switch
-        {
-            0 => (1, 15, 15),
-            1 => (1, 12, 5),
-            2 => (1, 13, 6),
-            3 => (26, -14, 7),
-            4 => (1, 15, 9),
-            5 => (26, -7, 6),
-            6 => (1, 14, 14),
-            7 => (1, 15, 3),
-            8 => (1, 15, 1),
-            9 => (26, -7, 3),
-            10 => (26, -8, 4),
-            11 => (26, -7, 6),
-            12 => (26, -5, 7),
-            13 => (26, -10, 1),
-            _ => (0, 0, 0),
-        };
-
         public static int CalcPart(int w, int z, int digit)
         {
-            var (i, j, k) = GetCycleParams(digit);
+            var (i, j, k) = digit switch
+            {
+                0 => (1, 15, 15),
+                1 => (1, 12, 5),
+                2 => (1, 13, 6),
+                3 => (26, -14, 7),
+                4 => (1, 15, 9),
+                5 => (26, -7, 6),
+                6 => (1, 14, 14),
+                7 => (1, 15, 3),
+                8 => (1, 15, 1),
+                9 => (26, -7, 3),
+                10 => (26, -8, 4),
+                11 => (26, -7, 6),
+                12 => (26, -5, 7),
+                13 => (26, -10, 1),
+                _ => (0, 0, 0),
+            };
 
             int x = (z % 26) + j;
             z /= i;
             return (w != x) ? (z * 26) + w + k : z;
         }
-
+         
         private static long FindModelNumber(bool biggest)
         {
             var queue = new PriorityQueue<(int prevZ, int digit), int>();
-            var seen = new HashSet<(int prevZ, int digit)>();
-            var cache = new Dictionary<(int digit, int z), (int w, int z)>();
-
+            var cache = new Dictionary<int, (int w, int z)>();
+            var endStates = new HashSet<(int prevZ, int finalW)>();
             queue.Enqueue((0, 0), 0);
 
-            var endStates = new List<(int prevZ, int finalW)>();
-
-            int step = 0;
-            long lastBest = 0;
+            long step = 0, lastBest = 0;
 
             while (queue.TryDequeue(out (int prevZ, int digit) state, out var _))
             {
                 for (int inputW = 10 - 1; inputW >= 1; --inputW)
                 {
                     int newZ = CalcPart(inputW, state.prevZ, state.digit);
-                    if (!cache.ContainsKey((state.digit, newZ)) || (biggest && cache[(state.digit, newZ)].w < inputW) || (!biggest && (cache[(state.digit, newZ)].w > inputW)))
+                    int cacheKey = state.digit + (newZ << 8);
+                    if (!cache.ContainsKey(cacheKey) || (biggest && cache[cacheKey].w < inputW) || (cache[cacheKey].w > inputW))
                     {
-                        cache[(state.digit, newZ)] = (inputW, state.prevZ);
-
-                        if (state.digit < 13)
-                        {
-                            var next = (newZ, state.digit + 1);
-                            if (!seen.Contains(next))
-                            {
-                                queue.Enqueue(next, newZ);
-                                seen.Add(next);
-                            }
-                        }
-                        else if (newZ == 0) endStates.Add((state.prevZ, inputW));
+                        cache[cacheKey] = (inputW, state.prevZ);
+                        if (state.digit < 13) queue.Enqueue((newZ, state.digit + 1), newZ);
+                        else if (newZ == 0)
+                            if (biggest) endStates.Add((state.prevZ, inputW));
+                            else return inputW + Reconstruct(cache, state.prevZ, 12);
                     }
                 }
 
-                if ((step++ % 100000) == 0 && endStates.Any())
+                if ((step++ % 10000) == 0 && endStates.Any())
                 {
-                    var best = ReconstructAll(cache, endStates, biggest);
+                    var best = ReconstructAll(cache, endStates);
                     if (best == lastBest) return best;
                     lastBest = best;
                 }
@@ -82,15 +70,14 @@ namespace AoC.Advent2021
             return 0;
         }
 
-        private static long ReconstructAll(Dictionary<(int digit, int z), (int w, int z)> cache, List<(int prevZ, int finalW)> endStates, bool biggest)
+        private static long ReconstructAll(Dictionary<int, (int w, int z)> cache, HashSet<(int prevZ, int finalW)> endStates)
         {
-            var res = endStates.Select(v => v.finalW + Reconstruct(cache, v.prevZ, 12));
-            return biggest ? res.Max() : res.Min();
+            return endStates.Select(v => v.finalW + Reconstruct(cache, v.prevZ, 12)).Max();
         }
 
-        private static long Reconstruct(Dictionary<(int digit, int z), (int w, int z)> cache, int prevZ, int digit)
+        private static long Reconstruct(Dictionary<int, (int w, int z)> cache, int prevZ, int digit)
         {
-            var (w, z) = cache[(digit, prevZ)];
+            var (w, z) = cache[digit + (prevZ << 8)];
             return (w * (long)Math.Pow(10, 13 - digit)) + ((digit > 0) ? Reconstruct(cache, z, digit - 1) : 0);
         }
 

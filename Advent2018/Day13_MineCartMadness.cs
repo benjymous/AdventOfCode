@@ -1,5 +1,5 @@
-﻿using AoC.Utils.Vectors;
-using System;
+﻿using AoC.Utils;
+using AoC.Utils.Vectors;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,82 +11,37 @@ namespace AoC.Advent2018
 
         public class Train
         {
-            public ManhattanVector2 position = new(0, 0);
             public Direction2 direction = new(0, 0);
-            public int turn;
-            public bool crash;
+            public int turn = 0;
         }
 
         public class TrainSim
         {     
-            List<Train> trains = new();
-            Dictionary<(int x, int y), char> map;
-
-            public bool Debug { get; set; } = false;
+            readonly Dictionary<(int x, int y), Train> trains;
+            readonly Dictionary<(int x, int y), char> map;
 
             public bool StopOnCrash { get; set; } = true;
 
-            void AddTrain(int x, int y, int dx, int dy)
+            public TrainSim(string data)
             {
-                trains.Add(new Train { position = new ManhattanVector2(x, y), direction = new Direction2(dx, dy), turn = 0, crash = false });
-            }
-
-            public TrainSim(string data) : this(Util.Split(data)) { }
-
-            public TrainSim(string[] tracks)
-            {
-                List<string> rawMap = new();
-
-                foreach (var line in tracks)
-                {
-                    string outLine = "";
-
-                    for (var i = 0; i < line.Length; ++i)
-                    {
-                        var c = line[i];
-                        switch (c)
-                        {
-                            case '>':
-                                AddTrain(i, rawMap.Count, 1, 0);
-                                c = '-';
-                                break;
-                            case '<':
-                                AddTrain(i, rawMap.Count, -1, 0);
-                                c = '-';
-                                break;
-                            case '^':
-                                AddTrain(i, rawMap.Count, 0, -1);
-                                c = '|';
-                                break;
-                            case 'v':
-                                AddTrain(i, rawMap.Count, 0, 1);
-                                c = '|';
-                                break;
-                        }
-
-                        outLine += c;
-                    }
-
-                    rawMap.Add(outLine);
-                }
-
-                map = Util.ParseSparseMatrix<char>(rawMap);
+                map = Util.ParseSparseMatrix<char>(data);
+                var trainChars = "^v<>".ToHashSet();
+                trains = map.Where(kvp => trainChars.Contains(kvp.Value)).Select(kvp => (kvp.Key, new Train { direction = new Direction2(kvp.Value) })).ToDictionary();
             }
 
             public string Run()
             {
-                bool running = true;
-                string result = null;
-               
-                while (running)
+                while (true)
                 {
-                    foreach (var t in trains)
+                    foreach (var currentPos in trains.Keys.OrderBy(pos => (pos.y, pos.x)).ToList())
                     {
-                        t.position.Offset(t.direction);
+                        if (!trains.TryGetValue(currentPos, out var t)) continue;
 
-                        var newTrack = map[t.position];
+                        trains.Remove(currentPos);
 
-                        switch (newTrack)
+                        var newPos = currentPos.OffsetBy(t.direction);
+
+                        switch (map[newPos])
                         {
                             case '\\':
                                 t.direction.SetDirection(t.direction.DY, t.direction.DX);
@@ -96,53 +51,21 @@ namespace AoC.Advent2018
                                 break;
 
                             case '+':
-                                switch (t.turn)
-                                {
-                                    case 0: // left
-                                        t.direction.TurnLeft();
-                                        t.turn = 1;
-                                        break;
-
-                                    case 1: // straight;
-                                        t.turn = 2;
-                                        break;
-
-                                    case 2: // right
-                                        t.direction.TurnRight();
-                                        t.turn = 0;
-                                        break;
-                                }
+                                t.direction.TurnRightBySteps(t.turn - 1);
+                                t.turn = (t.turn + 1) % 3;
                                 break;
                         }
 
-                        foreach (var other in trains.Where(o => o != t && o.position == t.position))
+                        if (!trains.TryGetValue(newPos, out var other)) trains[newPos] = t;
+                        else
                         {
-                            if (StopOnCrash)
-                            {
-                                running = false;
-                            }
-                            t.crash = true;
-                            other.crash = true;
-
-                            result = $"Crash at {t.position}";
-                            if (Debug) Console.WriteLine(result);
+                            trains.Remove(newPos);
+                            if (StopOnCrash) return $"Crash at {newPos}";
                         }
                     }
 
-                    if (running)
-                    {
-                        // remove crashed trains, and sort top to bottom
-                        trains = trains.Where(t => !t.crash).OrderBy(t => (t.position.Y,t.position.X)).ToList();
-
-                        if (trains.Count < 2)
-                        {
-                            result = $"Last train at {trains.First().position}";
-                            running = false;
-                        }
-                    }
-
+                    if (trains.Count < 2) return $"Last train at {trains.First().Key}";
                 }
-                return result;
             }
         }
 

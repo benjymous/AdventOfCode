@@ -14,11 +14,18 @@ namespace AoC.Advent2022
             public List<DirNode> ChildDirs = new();
             public int FileSize = 0;
 
-            int? _size = null;
-            public int Size => _size ??= FileSize + ChildDirs.Sum(child => child.Size);
+            public int Size => FileSize + ChildDirs.Sum(child => child.Size);
+
+            public DirNode CreateChild(List<DirNode> index)
+            {
+                DirNode child = new() { Parent = this };
+                ChildDirs.Add(child);
+                index.Add(child);
+                return child;
+            }
         }
 
-        private static IEnumerable<DirNode> BuildTree(string input)
+        private static int[] BuildTree(string input)
         {
             DirNode current = new();
             List<DirNode> index = new() { current };
@@ -27,49 +34,37 @@ namespace AoC.Advent2022
             {
                 if (tokens[0] == "$" && tokens[1] == "cd")
                 {
-                    var newPath = tokens[2];
-                    if (newPath == "/")
+                    current = tokens[2] switch
                     {
-                        current = index.First();
-                    }
-                    else if (newPath == "..")
-                    {
-                        current = current.Parent;
-                    }
-                    else
-                    {
-                        DirNode child = new() { Parent = current };
-                        current.ChildDirs.Add(child);
-                        index.Add(child);
-                        current = child;
-                    }
+                        "/" => index.First(),
+                        ".." => current.Parent,
+                        _ => current.CreateChild(index)
+                    };
                 }
                 else if (int.TryParse(tokens[0], out var fileSize))
                 {
                     current.FileSize += fileSize;
                 }
             }
-            return index;
+            return index.Select(d => d.Size).ToArray();
         }
 
         public static int Part1(string input)
         {
-            var index = BuildTree(input).Select(d => d.Size);
-
-            return index.Where(size => size <= 100000).Sum();
+            return BuildTree(input).Where(size => size <= 100000).Sum();
         }
 
         public static int Part2(string input)
         {
-            var index = BuildTree(input).Select(d => d.Size);
+            var sizes = BuildTree(input);
 
             const int driveSize = 70000000;
             const int updateSize = 30000000;
-            int rootSize = index.First();
+            int rootSize = sizes.First();
             int availableSpace = driveSize - rootSize;
             int requiredSpace = updateSize - availableSpace;
 
-            return index.Where(size => size >= requiredSpace).Order().First();
+            return sizes.Where(size => size >= requiredSpace).Min();
         }
 
         public void Run(string input, ILogger logger)

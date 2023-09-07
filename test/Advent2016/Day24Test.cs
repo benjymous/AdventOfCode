@@ -10,14 +10,14 @@ namespace AoC.Advent2016.Test
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Part1_Regression()
+        public void CleaningRobot_Part1_Regression()
         {
             Assert.AreEqual(500, Day24.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Part2_Regression()
+        public void CleaningRobot_Part2_Regression()
         {
             Assert.AreEqual(748, Day24.Part2(input));
         }

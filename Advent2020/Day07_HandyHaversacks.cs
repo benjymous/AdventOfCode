@@ -1,4 +1,4 @@
-﻿using System;
+﻿using AoC.Utils;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,81 +8,58 @@ namespace AoC.Advent2020
     {
         public string Name => "2020-07";
 
-        class BagRule
-        {
-            public BagRule(string input)
-            {
-                var bits = input.Split("s contain ");
-                BagType = bits[0].Replace(" bag", "");
-                //Console.WriteLine($"-{BagType}-  '{bits[1]}'");
-                var children = bits[1].Split(", ");
-                foreach (var child in children)
-                {
-                    //Console.WriteLine(child);
-                    var c = child.Trim().Split(" ");
-                    if (c[0] == "no") break;
-                    int count = Int32.Parse(c[0]);
-                    string name = $"{c[1]} {c[2]}";
-                    //Console.WriteLine($"  '{name}' : '{count}'");
+        static readonly uint ShinyGoldKey = MakeKey("shiny gold");
 
-                    Children[name] = count;
-                }
+        static uint MakeKey(string input) => input.GetCRC32();
+
+        readonly struct SubBag
+        {
+            [Regex(@"(.+) (.+ .+) bags?")] public SubBag(int count, string bagType) => (Count, BagType) = (count, MakeKey(bagType));
+            [Regex("no other bags")] public SubBag() {}
+
+            public readonly int Count = 0;
+            public readonly uint BagType;
+        }
+
+        readonly struct BagRule
+        {
+            [Regex(@"(.+) bags contain (.+)")]
+            public BagRule(string bagType, string[] children)
+            {
+                BagType = MakeKey(bagType);
+                Children = Util.RegexParse<SubBag>(children).Where(bag => bag.Count>0).ToDictionary(bag => bag.BagType, bag => bag.Count);
             }
 
-            public string BagType;
-            public Dictionary<string, int> Children = new();
+            public readonly uint BagType;
+            public readonly Dictionary<uint, int> Children = new();
+        }
+
+        static long Count(uint type, Dictionary<uint, BagRule> rules, Dictionary<uint,long> cache = null)
+        {
+            cache ??= new();
+            return cache.GetOrCalculate(type, type => rules[type].Children.Sum(c => c.Value * Count(c.Key, rules, cache)) + 1);
         }
 
         public static int Part1(string input)
         {
-            var rules = Util.Parse<BagRule>(input);
+            var rules = Util.RegexParse<BagRule>(input).ToArray();
+           
+            HashSet<uint> goldholders = rules.Where(r => r.Children.ContainsKey(ShinyGoldKey)).Select(r => r.BagType).ToHashSet();
 
-            HashSet<string> goldholders = new() { "shiny gold" };
-
-            var running = true;
-
-            while (running)
+            while (true)
             {
-                //Console.WriteLine(string.Join(", ", goldholders));
-                running = false;
+                var found = rules.Where(rule => !goldholders.Contains(rule.BagType)).Where(rule => rule.Children.Keys.Any(goldholders.Contains)).Select(rule => rule.BagType);
+                if (!found.Any()) return goldholders.Count;
 
-                foreach (var rule in rules)
-                {
-                    if (!goldholders.Contains(rule.BagType))
-                    {
-                        if (rule.Children.Keys.Intersect(goldholders).Any())
-                        {
-                            goldholders.Add(rule.BagType);
-                            running = true;
-                        }
-                    }
-                }
+                goldholders.UnionWith(found);
             }
-
-            return goldholders.Count - 1;
         }
 
-
-        static Int64 Count(string type, Dictionary<string, BagRule> rules)
+        public static long Part2(string input)
         {
-            var rule = rules[type];
+            var rules = Util.RegexParse<BagRule>(input).ToDictionary(r => r.BagType);
 
-            Int64 count = 1;
-
-            foreach (var c in rule.Children)
-            {
-                count += c.Value * Count(c.Key, rules);
-            }
-
-            return count;
-
-        }
-
-        public static Int64 Part2(string input)
-        {
-            var rules = Util.Parse<BagRule>(input).ToDictionary(r => r.BagType, r => r);
-
-            return Count("shiny gold", rules) - 1;
+            return Count(ShinyGoldKey, rules) - 1;
         }
 
         public void Run(string input, ILogger logger)

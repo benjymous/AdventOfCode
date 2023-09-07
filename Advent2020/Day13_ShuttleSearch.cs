@@ -103,33 +103,12 @@ namespace AoC.Advent2020
                 {
                     res += inc;
                 }
-                inc = CalcLCM(inc, n.Item1);
+                inc = Util.LCM(inc, n.Item1);
             }
 
             return res;
         }
 
-        static UInt64 CalcLCM(UInt64 a, UInt64 b)
-        {
-            UInt64 num1, num2;
-            if (a > b)
-            {
-                num1 = a; num2 = b;
-            }
-            else
-            {
-                num1 = b; num2 = a;
-            }
-
-            for (UInt64 i = 1; i < num2; i++)
-            {
-                if ((num1 * i) % num2 == 0)
-                {
-                    return i * num1;
-                }
-            }
-            return num1 * num2;
-        }
 
         public void Run(string input, ILogger logger)
         {

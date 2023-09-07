@@ -11,44 +11,29 @@ namespace AoC.Advent2022
 
         class Factory
         {
-            [Regex("noop")] public static Func<int, int> Noop() => null;
-            [Regex("addx (.+)")] public static Func<int, int> Addx(int v) => (current) => current + v;
+            [Regex("noop")] public static int Noop() => 0;
+            [Regex("addx (.+)")] public static int Addx(int v) => v;
         }
 
         private static IEnumerable<(int cycle, int val)> SimulateCPU(string input)
         {
-            var instructions = Util.RegexFactory<Func<int, int>, Factory>(input);
             int cycle = 1, x = 1;
-            foreach (var instr in instructions)
+            foreach (var instr in Util.RegexFactory<int, Factory>(input))
             {
-                yield return (cycle, x);
-                if (instr != null)
-                {
-                    for (int i = 0; i < 1; ++i) yield return (cycle + i + 1, x);
-                    x = instr(x);
-                    cycle++;
-                }
-                cycle++;
+                for (int i = 0; i < (instr == 0 ? 1 : 2); ++i) yield return (cycle++, x);
+                x += instr;
             }
         }
 
-        public static IEnumerable<char> SimulateCRT(IEnumerable<(int cycle, int x)> watch)
-        {
-            foreach (var (cycle, x) in watch)
-            {
-                int beamPos = cycle % 40;
-                yield return((beamPos >= x && beamPos <= x + 2) ? '#' : '.');
-                if (cycle % 40 == 0) yield return '\n';
-            }
-        }
+        public static IEnumerable<char> SimulateCRT(IEnumerable<(int cycle, int x)> watch) 
+            => watch.Select(v => (beamPos: v.cycle % 40, v.x))
+                    .Select(v => (v.beamPos == 0 ? '\n' : (v.beamPos >= v.x && v.beamPos <= v.x + 2) ? '▊' : ' '));
 
         public static int Part1(string input)
         {
-            var watchValues = SimulateCPU(input);
-
             HashSet<int> watchCycles = new() { 20, 60, 100, 140, 180, 220 };
-            return watchValues.Where(slice => watchCycles.Contains(slice.cycle))
-                              .Sum(slice => slice.val * slice.cycle);
+            return SimulateCPU(input).Where(slice => watchCycles.Contains(slice.cycle))
+                                     .Sum(slice => slice.val * slice.cycle);
         }
 
         public static string Part2(string input, ILogger logger)

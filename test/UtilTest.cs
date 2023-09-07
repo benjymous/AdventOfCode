@@ -99,7 +99,7 @@ namespace AoC.Test
         {
             var circle = Circle<int>.Create(Enumerable.Range(0, 10));
 
-            Assert.AreEqual("0,1,2,3,4,5,6,7,8,9", string.Join(',', circle.Values()));
+            Assert.AreEqual("0,1,2,3,4,5,6,7,8,9", string.Join(',', circle));
         }
 
         [DataTestMethod]
@@ -110,7 +110,7 @@ namespace AoC.Test
 
             circle = circle.Remove(5);
 
-            Assert.AreEqual("5,6,7,8,9", string.Join(',', circle.Values()));
+            Assert.AreEqual("5,6,7,8,9", string.Join(',', circle));
         }
 
         [DataTestMethod]
@@ -121,7 +121,7 @@ namespace AoC.Test
 
             circle = circle.Reverse(5);
 
-            Assert.AreEqual("4,3,2,1,0,5,6,7,8,9", string.Join(',', circle.Values()));
+            Assert.AreEqual("4,3,2,1,0,5,6,7,8,9", string.Join(',', circle));
         }
 
         [DataTestMethod]
@@ -132,7 +132,7 @@ namespace AoC.Test
 
             circle.Forward(3).Reverse(5);
 
-            Assert.AreEqual("0,1,2,7,6,5,4,3,8,9", string.Join(',', circle.Values()));
+            Assert.AreEqual("0,1,2,7,6,5,4,3,8,9", string.Join(',', circle));
         }
 
 

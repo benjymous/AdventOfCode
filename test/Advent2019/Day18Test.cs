@@ -18,7 +18,7 @@ namespace AoC.Advent2019.Test
         [DataTestMethod]
         public void PathTest(string input, int expected)
         {
-            Assert.AreEqual(expected, Day18.Part1(input));
+            Assert.AreEqual(expected, Day18.Part1(input, new ConsoleOut()));
         }
 
         [TestCategory("Test")]
@@ -27,21 +27,21 @@ namespace AoC.Advent2019.Test
         [DataTestMethod]
         public void PathTest2(string input, int expected)
         {
-            Assert.AreEqual(expected, Day18.Part2(input));
+            Assert.AreEqual(expected, Day18.Part2(input, new ConsoleOut()));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Vault_Part1_Regression()
         {
-            Assert.AreEqual(4668, Day18.Part1(input));
+            Assert.AreEqual(4668, Day18.Part1(input, new ConsoleOut()));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Vault_Part2_Regression()
         {
-            Assert.AreEqual(1910, Day18.Part2(input));
+            Assert.AreEqual(1910, Day18.Part2(input, new ConsoleOut()));
         }
     }
 }

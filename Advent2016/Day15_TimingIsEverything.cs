@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace AoC.Advent2016
+﻿namespace AoC.Advent2016
 {
     public class Day15 : IPuzzle
     {
@@ -8,35 +6,33 @@ namespace AoC.Advent2016
 
         public class Disc
         {
-            [Regex(@"Disc #(\d) has (\d+) positions; at time=0, it is at position (\d+).")]
+            [Regex(@"Disc #(\d) .+ (\d+) .+ (\d+).")]
             public Disc(int discNum, int numPos, int initialPos) => (NumPos, Offset) = (numPos, discNum + initialPos);
 
-            readonly int NumPos, Offset;
+            public readonly int NumPos, Offset;
 
-            public bool CheckStep(int step) => (step + Offset) % NumPos == 0;
+            public bool CheckAlignment(int delay) => (delay + Offset) % NumPos == 0;
         }
 
-        private static int FindDiscGap(string input)
+        private static int FindAlignment(string input)
         {
-            var discs = Util.RegexParse<Disc>(input).ToArray();
-
-            for (int i = 0; true; i++)
+            int i = 0, inc=1;
+            foreach (var disc in Util.RegexParse<Disc>(input))
             {
-                if (CheckDiscs(discs, i)) return i;
+                while (!disc.CheckAlignment(i += inc)) ;
+                inc *= disc.NumPos;
             }
+            return i;
         }
-
-        private static bool CheckDiscs(Disc[] discs, int i) => discs.All(disc => disc.CheckStep(i));
 
         public static int Part1(string input)
         {
-            return FindDiscGap(input);
+            return FindAlignment(input);
         }
 
         public static int Part2(string input)
         {
-            input += "Disc #7 has 11 positions; at time=0, it is at position 0.";
-            return FindDiscGap(input);
+            return FindAlignment(input + "Disc #7 has 11 .. 0.");
         }
 
         public void Run(string input, ILogger logger)

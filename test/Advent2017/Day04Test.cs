@@ -15,7 +15,7 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void Entropy01Test(string input, bool expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day04.ValidationRule2(input));
+            Assert.AreEqual(expected, Day04.ValidationRule2(input));
         }
 
         [TestCategory("Test")]
@@ -27,21 +27,21 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void Entropy02Test(string input, bool expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day04.ValidationRule2(input));
+            Assert.AreEqual(expected, Day04.ValidationRule2(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Entropy_Part1_Regression()
         {
-            Assert.AreEqual(325, Advent2017.Day04.Part1(input));
+            Assert.AreEqual(325, Day04.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Entropy_Part2_Regression()
         {
-            Assert.AreEqual(119, Advent2017.Day04.Part2(input));
+            Assert.AreEqual(119, Day04.Part2(input));
         }
 
     }

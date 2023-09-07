@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using AoC.Utils;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2021
@@ -7,25 +9,46 @@ namespace AoC.Advent2021
     {
         public string Name => "2021-20";
 
-        static (int minY, int maxY, int minX, int maxX) GetRange(IEnumerable<(int x, int y)> input, int margin)
-            => (minY: input.Min(k => k.y) - margin,
-                maxY: input.Max(k => k.y) + margin,
-                minX: input.Min(k => k.x) - margin,
-                maxX: input.Max(k => k.x) + margin);
+        class State
+        {
+            private readonly HashSet<int> data = new();
+            int MinX, MaxX, MinY, MaxY;
 
-        static IEnumerable<(int x, int y)> Step(HashSet<(int x, int y)> input, bool[] rules, int margin)
-            => Util.Range2DInclusive(GetRange(input, margin))
-                   .Where(pos => rules[GetRuleIndex(input, pos.x, pos.y)]);
+            public State(IEnumerable<(int x, int y)> input) => Set(input);
 
-        static int GetRuleIndex(IEnumerable<(int x, int y)> input, int x, int y)
+            public void Set(IEnumerable<(int x, int y)> input)
+            {
+                MinX = 0; MaxX = 0; MinY = 0; MaxY = 0;
+                data.Clear();
+                input.ForEach(p =>
+                {
+                    MinX = Math.Min(MinX, p.x);
+                    MinY = Math.Min(MinY, p.y);
+                    MaxX = Math.Max(MaxX, p.x);
+                    MaxY = Math.Max(MaxY, p.y);
+                    data.Add(p.x + (p.y << 16));
+                });
+            }
+
+            public int Get(int pos) => data.Contains(pos) ? 1 : 0;
+
+            public (int minY, int maxY, int minX, int maxX) GetRange(int margin) => (MinY - margin, MaxY + margin, MinX - margin, MaxX + margin);
+
+            public int Count => data.Count;
+        }
+
+        static IEnumerable<(int x, int y)> Step(State input, bool[] rules, int margin, bool crop, (int minY, int maxY, int minX, int maxX) cropSize)
+            => Util.Range2DInclusive(input.GetRange(margin))
+                   .Where(pos => rules[GetRuleIndex(input, pos.x + (pos.y << 16))] && (!crop || (pos.x >= cropSize.minX && pos.x <= cropSize.maxX && pos.y >= cropSize.minY && pos.y <= cropSize.maxY))).ToArray();
+
+        static readonly int[] Offsets = new[] { -1 + (-1 << 16), -1 << 16, 1 + (-1 << 16), -1, 0, 1, -1 + (1 << 16), 1 << 16, 1 + (1 << 16) };
+
+        static int GetRuleIndex(State input, int key)
         {
             int result = 0;
-            for (int y1 = y - 1; y1 <= y + 1; ++y1)
+            for (int i = 0; i < 9; ++i)
             {
-                for (int x1 = x - 1; x1 <= x + 1; ++x1)
-                {
-                    result = (result << 1) + (input.Contains((x1, y1)) ? 1 : 0);
-                }
+                result = (result << 1) + input.Get(key + Offsets[i]);
             }
             return result;
         }
@@ -34,19 +57,14 @@ namespace AoC.Advent2021
         {
             var bits = input.Split("\n\n");
             var rules = bits[0].Select(b => b == '#').ToArray();
-            var map = Util.ParseSparseMatrix<bool>(bits[1]).Keys.ToHashSet();
 
-            var (minY, maxY, minX, maxX) = GetRange(map, steps);
+            var map = new State(Util.ParseSparseMatrix<bool>(bits[1]).Keys);
+
+            var range = map.GetRange(steps);
 
             for (int i = 0; i < steps; i++)
             {
-                IEnumerable<(int x, int y)> next = Step(map, rules, margin);
-
-                if (crop && (i % 2) == 1) // Pretend that infinite mess never happened!
-                {
-                    next = next.Where(key => key.x >= minX && key.x <= maxX && key.y >= minY && key.y <= maxY);
-                }
-                map = next.ToHashSet();
+                map.Set(Step(map, rules, margin, crop && (i % 2) == 1, range));
             }
 
             return map.Count;

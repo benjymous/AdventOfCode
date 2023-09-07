@@ -12,12 +12,12 @@ namespace AoC.Advent2018.Test
         [TestCategory("Test")]
         [DataRow(8, 3, 5, 4)] // Fuel cell at 3,5, grid with serial number 8: power level 4
         [DataRow(57, 122, 79, -5)] // Fuel cell at  122,79, grid serial number 57: power level -5
-        [DataRow(57, 122, 79, -5)] // Fuel cell at 217,196, grid serial number 39: power level  0
-        [DataRow(57, 122, 79, -5)] // Fuel cell at 101,153, grid serial number 71: power level  4
+        [DataRow(39, 217, 196, 0)] // Fuel cell at 217,196, grid serial number 39: power level  0
+        [DataRow(71, 101, 153, 4)] // Fuel cell at 101,153, grid serial number 71: power level  4
         [DataTestMethod]
         public void PowerLevelTest(int serial, int x, int y, int expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day11.Power(serial, x, y));
+            Assert.AreEqual(expected, Day11.Power(serial, x, y));
         }
 
         [TestCategory("Regression")]

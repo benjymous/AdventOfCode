@@ -17,12 +17,13 @@ namespace AoC.Advent2021
             {
                 if (string.IsNullOrEmpty(line)) continue;
                 var bits = line.Split('-');
-                tree.AddBidirectional(bits[0], bits[1]);
+                if (bits[0] == "start") tree.AddPair(bits[0], bits[1]);
+                else if (bits[1] == "start") tree.AddPair(bits[1], bits[0]);
+                else tree.AddBidirectional(bits[0], bits[1]);
             }
             return tree;
         }
 
-        public static uint SetSeen(int nodeId) => (1U << nodeId);
         public static uint SetSeen(uint seen, int nodeId) => seen | (1U << nodeId);
         public static bool Contains(uint seen, int nodeId) => (seen & (1U << nodeId)) != 0;
 
@@ -31,11 +32,8 @@ namespace AoC.Advent2021
             var startNode = map["start"];
             var endNode = map["end"];
 
-            var queue = new Queue<(TreeNode<string, object> location, ulong key, uint seen, bool canRevisit)>
-                { (startNode, (ulong)startNode.Id, SetSeen(startNode.Id), revisit) };
-
-            var cache = new HashSet<ulong>()
-                { (ulong)startNode.Id };
+            var queue = new Queue<(TreeNode<string, object> location, uint seen, bool canRevisit)>
+                { (startNode, SetSeen(0, startNode.Id), revisit) };
 
             int routes = 0;
 
@@ -54,22 +52,17 @@ namespace AoC.Advent2021
 
                     if (char.IsLower(neighbour.Key[0]) && Contains(item.seen, neighbour.Id))
                     {
-                        if (!canRevisit || neighbour == startNode)
-                        {
-                            continue;
-                        }
-                        else
+                        if (canRevisit)
                         {
                             canRevisit = false;
                         }
+                        else
+                        {
+                            continue;
+                        }
                     }
 
-                    var key = (item.key << 4) + (ulong)neighbour.Id;
-                    if (cache.Contains(key)) continue;
-
-                    cache.Add(key);
-
-                    queue.Enqueue((neighbour, key, SetSeen(item.seen, neighbour.Id), canRevisit));
+                    queue.Enqueue((neighbour, SetSeen(item.seen, neighbour.Id), canRevisit));
                 }
             }
 

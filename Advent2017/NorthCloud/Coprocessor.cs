@@ -2,335 +2,184 @@ using AoC.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2017.NorthCloud
 {
     public interface IOutputPort
     {
-        void Write(Int64 value);
+        void Write(long value);
     }
 
     public interface IInputPort
     {
-        bool Read(out Int64 value);
+        bool HasData();
+        long Read();
     }
 
     public class DataBus
     {
-        public Int64[] Registers = new Int64[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        public long[] Registers = new long[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
         public IOutputPort Output;
         public IInputPort Input;
 
         public bool Waiting { get; internal set; } = false;
-
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
-            for (int i = 0; i < 26; ++i)
-            {
-                sb.Append(((char)(i + 'a')));
-                sb.Append(':');
-                sb.Append(Registers[i]);
-                sb.Append(' ');
-            }
-            return sb.ToString();
-        }
     }
 
     public class Variant
     {
-        public Variant(string input)
-        {
-            if (input.Length == 1 && input[0] >= 'a' && input[0] <= 'z')
-            {
-                Value = input[0] - 'a';
-                IsReg = true;
-            }
-            else
-            {
-                Value = Int64.Parse(input);
-            }
-        }
+        public Variant(string input) =>
+            (Value, IsReg) = (input.Length == 1 && input[0] >= 'a' && input[0] <= 'z') 
+                ? (input[0] - 'a', true)
+                : (long.Parse(input), false);
+
+        public DataBus Bus { get; set; }
 
         public bool IsReg { get; private set; } = false;
-        public Int64 Value { get; private set; } = 0;
+        public long Value { get; private set; } = 0;
 
-        public Int64 Read(DataBus bus)
-        {
-            if (IsReg)
-            {
-                return bus.Registers[Value];
-            }
-            else
-            {
-                return Value;
-            }
-        }
+        public static implicit operator long(Variant v) => v.IsReg ? v.Bus.Registers[v.Value] : v.Value;
 
-        public override string ToString()
-        {
-            if (IsReg)
-            {
-                return ((char)(Value + 'a')).ToString();
-            }
-            else
-            {
-                return $"{Value}";
-            }
-        }
-
-        public static Variant Null { get; } = new Variant("0");
+        public override string ToString() => IsReg ? ((char)(Value + 'a')).ToString() : $"{Value}";
     }
 
-    public interface IInstr
+    class Instructions
     {
-        int Do(Variant x, Variant y, DataBus bus);
-    }
-
-    public interface IDebugger
-    {
-        bool Next(int IP, IInstr instr, Variant x, Variant y, DataBus bus);
-    }
-
-#pragma warning disable IDE1006 // Naming Styles
-    namespace Instructions
-    {
-        namespace Common
+        public static IEnumerable<(string key, Func<Variant[], DataBus, int> instr)> Get(string sets)
         {
-            class @set : IInstr
+            var isets = sets.Split(",").ToHashSet();
+
+            if (isets.Contains("Common"))
             {
-                public int Do(Variant x, Variant y, DataBus bus)
+                yield return ("set", (Variant[] v, DataBus bus) =>
                 {
-                    bus.Registers[x.Value] = y.Read(bus);
+                    bus.Registers[v[0].Value] = v[1];
                     return 1;
-                }
+                });
+
+                yield return ("mul", (Variant[] v, DataBus bus) =>
+                {
+                    bus.Registers[v[0].Value] *= v[1];
+                    return 1;
+                });
             }
 
-            class @mul : IInstr
+            if (isets.Contains("Day18"))
             {
-                public int Do(Variant x, Variant y, DataBus bus)
+                yield return ("snd", (Variant[] v, DataBus bus) =>
                 {
-                    bus.Registers[x.Value] *= y.Read(bus);
+                    bus.Output.Write(v[0]);
                     return 1;
-                }
-            }
-        }
+                });
 
-        namespace Day18
-        {
-            class @snd : IInstr
-            {
-                public int Do(Variant x, Variant y, DataBus bus)
+                yield return ("add", (Variant[] v, DataBus bus) =>
                 {
-                    bus.Output.Write(x.Read(bus));
+                    bus.Registers[v[0].Value] += v[1];
                     return 1;
-                }
-            }
+                });
 
-            class @add : IInstr
-            {
-                public int Do(Variant x, Variant y, DataBus bus)
+                yield return ("mod", (Variant[] v, DataBus bus) =>
                 {
-                    bus.Registers[x.Value] += y.Read(bus);
+                    bus.Registers[v[0].Value] %= v[1];
                     return 1;
-                }
+                });
+
+                yield return ("jgz", (Variant[] v, DataBus bus) =>
+                {
+                    return v[0] > 0 ? (int)v[1] : 1;
+                });
             }
 
-            class @mod : IInstr
+            if (isets.Contains("Day18Part1"))
             {
-                public int Do(Variant x, Variant y, DataBus bus)
+                yield return ("rcv", (Variant[] v, DataBus bus) =>
                 {
-                    bus.Registers[x.Value] %= y.Read(bus);
-                    return 1;
-                }
+                    return v[0] != 0 ? 9999 : 1; // halt execution
+                });
             }
 
-
-
-            class @jgz : IInstr
+            if (isets.Contains("Day18Part2"))
             {
-                public int Do(Variant x, Variant y, DataBus bus)
+                yield return ("rcv", (Variant[] v, DataBus bus) =>
                 {
-                    if (x.Read(bus) > 0)
+                    if (bus?.Input.HasData() == true)
                     {
-                        return (int)y.Read(bus);
+                        bus.Waiting = false;
+                        bus.Registers[v[0].Value] = bus.Input.Read();
+                        return 1;
                     }
-                    return 1;
-                }
-            }
-
-        }
-
-        namespace Day18Part1
-        {
-            class @rcv : IInstr
-            {
-                public int Do(Variant x, Variant y, DataBus bus)
-                {
-                    if (x.Read(bus) != 0)
-                    {
-                        // halt execution
-                        return 9999;
-                    }
-                    return 1;
-                }
-            }
-        }
-
-        namespace Day18Part2
-        {
-            class @rcv : IInstr
-            {
-                public int Do(Variant x, Variant y, DataBus bus)
-                {
-                    if (bus.Input == null || bus.Input.Read(out long value) == false)
-                    {
+                    else
+                    { 
                         bus.Waiting = true;
                         return 0;
                     }
-
-                    bus.Waiting = false;
-                    bus.Registers[x.Value] = value;
-                    return 1;
-                }
-            }
-        }
-
-        namespace Day23
-        {
-            class @jnz : IInstr
-            {
-                public int Do(Variant x, Variant y, DataBus bus)
-                {
-                    if (x.Read(bus) != 0)
-                    {
-                        return (int)y.Read(bus);
-                    }
-                    return 1;
-                }
+                });
             }
 
-            class @sub : IInstr
+            if (isets.Contains("Day23"))
             {
-                public int Do(Variant x, Variant y, DataBus bus)
+                yield return ("jnz", (Variant[] v, DataBus bus) =>
                 {
-                    bus.Registers[x.Value] -= y.Read(bus);
+                    return v[0] != 0 ? (int)v[1] : 1;
+                });
+
+                yield return ("sub", (Variant[] v, DataBus bus) =>
+                {
+                    bus.Registers[v[0].Value] -= v[1];
                     return 1;
-                }
+                });
             }
         }
     }
-#pragma warning restore IDE1006 // Naming Styles
-    public static class Extensions
+
+    readonly public record struct InstructionLine(int Index, string Name, Func<Variant[], DataBus, int> Instr, Variant[] Args, DataBus Bus)
     {
-        public static string Name(this IInstr instr)
-        {
-            return instr.GetType().Name;
-        }
-    }
-
-    struct InstructionLine
-    {
-        public InstructionLine(IInstr i, Variant[] v)
-        {
-            instr = i;
-            if (v.Length == 2)
-            {
-                values = v;
-            }
-            else
-            {
-                values = new Variant[] { v[0], Variant.Null };
-            }
-        }
-        public IInstr instr;
-        public Variant[] values;
-
-        public override string ToString() => $"{instr.Name()} {values[0]} {values[1]}";
-
+        public int Exec() => Instr(Args, Bus);
     }
 
     public class Coprocessor
     {
+        readonly InstructionLine[] Program;
 
-        public static IEnumerable<IInstr> GetInstructions(string instructionSet)
-        {
-            var isets = instructionSet.Split(",");
-            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
-                .Where(x => typeof(IInstr).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
-                .Where(x => isets.Any(n => x.Namespace.EndsWith(n)))
-                .Select(x => (IInstr)Activator.CreateInstance(x));
-        }
-
-        readonly Dictionary<int, IInstr> InstrMap;
-        readonly InstructionLine[] Instructions;
-
-        public DataBus Bus { get; private set; } = new DataBus();
+        public readonly DataBus Bus = new();
 
         System.Diagnostics.Stopwatch sw;
-        Int64 CycleCount = 0;
+        long CycleCount = 0;
 
-        public IDebugger Debugger = null;
-
+        public Func<InstructionLine, bool> Debugger = null;
 
         public Coprocessor(string input, string instructionSet = "Common")
         {
-            var v1 = GetInstructions(instructionSet);
-            var opcodes = v1.ToDictionary(i => i.Name(), i => i);
-
-            Dictionary<string, int> reverseMap;
-            reverseMap = new Dictionary<string, int>();
-            InstrMap = new Dictionary<int, IInstr>();
-            foreach (var instr in opcodes)
-            {
-                int idx = reverseMap.Count;
-                reverseMap[instr.Key] = reverseMap.Count;
-                InstrMap[idx] = instr.Value;
-            }
+            var opcodes = Instructions.Get(instructionSet).ToDictionary(i => i.key, i => i.instr);
 
             List<InstructionLine> instrs = new();
-            var program = Util.Split(input, '\n');
-            foreach (var line in program)
+            foreach (var line in Util.Split(input, '\n').WithoutNullOrWhiteSpace())
             {
-                if (string.IsNullOrEmpty(line)) continue;
-
-                var bits = line.Split(" ");
-                if (reverseMap.TryGetValue(bits[0], out int icode))
+                var mnemonic = line[..3];
+                if (opcodes.TryGetValue(mnemonic, out var func))
                 {
-                    // text mnemonic;
-                    var rest = Util.Parse<Variant>(line[4..], " ").ToArray();
+                    var opargs = Util.Parse<Variant>(line[4..], " ").ToArray();
+                    opargs.ForEach(v => v.Bus = Bus);
 
-                    instrs.Add(new InstructionLine(InstrMap[icode], rest));
+                    instrs.Add(new InstructionLine(instrs.Count, mnemonic, func, opargs, Bus));
                 }
                 else
                 {
-                    throw new Exception($"Unknown mnemonic {bits[0]}");
+                    throw new Exception($"Unknown mnemonic {mnemonic}");
                 }
-
             }
-            Instructions = instrs.ToArray();
+            Program = instrs.ToArray();
         }
-
-        public int PeekTime = 0;
 
         public bool Step()
         {
             CycleCount++;
-            if (InstructionPointer >= Instructions.Length)
-                return false;
+            if (InstructionPointer >= Program.Length) return false;
 
-            //if (PeekTime > 0 && CycleCount % PeekTime == 0)
-            //{
-            //    Console.WriteLine(Speed());
-            //    Console.WriteLine(string.Join(", ", Bus.Registers));
-            //}
+            var line = Program[InstructionPointer];
 
-            var line = Instructions[InstructionPointer];
-
-            if (Debugger?.Next(InstructionPointer, line.instr, line.values[0], line.values[1], Bus) == false) return false;
-            InstructionPointer += line.instr.Do(line.values[0], line.values[1], Bus);
+            if (Debugger != null && (Debugger(line) == false)) return false;
+            InstructionPointer += line.Exec();
 
             return true;
         }
@@ -349,10 +198,9 @@ namespace AoC.Advent2017.NorthCloud
             return $"{CycleCount} cycles - {speed.ToEngineeringNotation()}hz";
         }
 
-        public int InstructionPointer { get; set; } = 0;
+        int InstructionPointer = 0;
 
-
-        public Int64 Get(char idx) => Bus.Registers[idx - 'a'];
+        public long Get(char idx) => Bus.Registers[idx - 'a'];
         public void Set(char idx, int val) => Bus.Registers[idx - 'a'] = val;
 
     }

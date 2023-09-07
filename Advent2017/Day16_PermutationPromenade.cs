@@ -9,57 +9,52 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-16";
 
-        private static IEnumerable<string> ParseInput(string input)
+        class InstructionFactory
         {
-            return input.Trim().Split(",").Select(x => x.Replace('/', ' '));
+            [Regex(@"s(\d+)")]
+            public static Func<char[], char[]> Spin(int count) => order =>
+            {
+                return order[^count..].Concat(order[..(order.Length - count)]).ToArray();
+            };
+
+            [Regex(@"x(\d+)\/(\d+)")]
+            public static Func<char[], char[]> Exchange(int s1, int s2) => order =>
+            {
+                (order[s1], order[s2]) = (order[s2], order[s1]);
+                return order;
+            };
+
+            [Regex(@"p(.)\/(.)")]
+            public static Func<char[], char[]> Partner(char c1, char c2) => order =>
+            {
+                var i1 = Array.IndexOf(order, c1);
+                var i2 = Array.IndexOf(order, c2);
+                order[i1] = c2;
+                order[i2] = c1;
+                return order;
+            };
+        }
+
+        private static IEnumerable<Func<char[], char[]>> ParseRules(string input)
+        {
+            return Util.RegexFactory<Func<char[], char[]>, InstructionFactory>(input, null, ",").ToArray();
         }
 
         public static string DoDance(string input, string players)
         {
-            return DoDance(ParseInput(input), players);
+            return DoDance(ParseRules(input), players.ToArray()).AsString();
         }
 
-        public static string DoDance(IEnumerable<string> instructions, string players)
+        public static char[] DoDance(IEnumerable<Func<char[], char[]>> instructions, char[] order)
         {
-
-            char[] order = players.ToArray();
-            int orderCount = players.Length;
+            int orderCount = order.Length;
 
             foreach (var instr in instructions)
             {
-                switch (instr[0])
-                {
-                    case 's':
-                        {
-                            var count = Util.ExtractNumbers(instr)[0];
-                            var start = order.Take(orderCount - count);
-                            var end = order.Skip(orderCount - count).Take(count);
-                            order = end.Concat(start).ToArray();
-                        }
-                        break;
-                    case 'x':
-                        {
-                            var swaps = Util.ExtractNumbers(instr);
-                            var c1 = order[swaps[0]];
-                            var c2 = order[swaps[1]];
-                            order[swaps[1]] = c1;
-                            order[swaps[0]] = c2;
-                        }
-                        break;
-                    case 'p':
-                        {
-                            var c1 = instr[1];
-                            var c2 = instr[3];
-                            var i1 = Array.IndexOf(order, c1);
-                            var i2 = Array.IndexOf(order, c2);
-                            order[i1] = c2;
-                            order[i2] = c1;
-                        }
-                        break;
-                }
+                order = instr(order);
             }
 
-            return order.AsString();
+            return order;
         }
 
         public static string Part1(string input)
@@ -67,26 +62,22 @@ namespace AoC.Advent2017
             return DoDance(input, "abcdefghijklmnop");
         }
 
-
         public static string Part2(string input)
         {
             long expectedRounds = 1000000000;
 
-            IEnumerable<string> instructions = ParseInput(input);
+            var instructions = ParseRules(input);
 
             var seen = new Dictionary<string, long>();
-            Int64 round = 0;
-            string order = "abcdefghijklmnop";
-            while (!seen.ContainsKey(order))
+            long round = 0;
+            var order = "abcdefghijklmnop".ToArray();
+            while (!seen.ContainsKey(order.AsString()))
             {
-                seen[order] = round++;
+                seen[order.AsString()] = round++;
                 order = DoDance(instructions, order);
             }
-            //Console.WriteLine($"Loop found after {round} rounds");
-            Int64 remainder = expectedRounds % round;
-            //Console.WriteLine($"So we want {remainder}th value");
+            long remainder = expectedRounds % round;
             return seen.Where(kvp => kvp.Value == remainder).First().Key;
-
         }
 
         public void Run(string input, ILogger logger)

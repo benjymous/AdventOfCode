@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace AoC.Advent2015
@@ -14,6 +15,9 @@ namespace AoC.Advent2015
                         .ToDictionary(bits => bits[0].Trim(), bits => int.Parse(bits[1]));
         }
 
+        static Dictionary<string, int> clues = ParseClues("children: 3, cats: 7, samoyeds: 2, pomeranians: 3, akitas: 0, vizslas: 0, goldfish: 5, trees: 3, cars: 2, perfumes: 1");
+
+
         public class Sue
         {
             public int Id;
@@ -28,15 +32,7 @@ namespace AoC.Advent2015
 
             public int ScorePart1(Dictionary<string, int> clues)
             {
-                int score = 0;
-                foreach (var clue in clues)
-                {
-                    if (clue.Value > 0 && inventory.TryGetValue(clue.Key, out int value) && clue.Value == value)
-                    {
-                        score++;
-                    }
-                }
-                return score;
+                return clues.Count(clue => clue.Value > 0 && inventory.TryGetValue(clue.Key, out int value) && clue.Value == value);
             }
 
             public int ScorePart2(Dictionary<string, int> clues)
@@ -75,26 +71,19 @@ namespace AoC.Advent2015
             }
         }
 
+        private static int Solve(string input, QuestionPart part)
+        {
+            return Util.Parse<Sue>(input).Select(a => (part.One() ? a.ScorePart1(clues) : a.ScorePart2(clues), a)).OrderByDescending(t => t.Item1).First().a.Id;
+        }
+
         public static int Part1(string input)
         {
-            var aunts = Util.Parse<Sue>(input);
-
-            var clues = ParseClues("children: 3, cats: 7, samoyeds: 2, pomeranians: 3, akitas: 0, vizslas: 0, goldfish: 5, trees: 3, cars: 2, perfumes: 1");
-
-            var data = aunts.Select(a => (a.ScorePart1(clues), a)).OrderByDescending(t => t.Item1);
-
-            return data.First().a.Id;
+            return Solve(input, QuestionPart.Part1);
         }
 
         public static int Part2(string input)
         {
-            var aunts = Util.Parse<Sue>(input);
-
-            var clues = ParseClues("children: 3, cats: 7, samoyeds: 2, pomeranians: 3, akitas: 0, vizslas: 0, goldfish: 5, trees: 3, cars: 2, perfumes: 1");
-
-            var data = aunts.Select(a => (a.ScorePart2(clues), a)).OrderByDescending(t => t.Item1);
-
-            return data.First().a.Id;
+            return Solve(input, QuestionPart.Part2);
         }
 
         public void Run(string input, ILogger logger)

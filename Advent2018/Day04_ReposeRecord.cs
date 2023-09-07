@@ -17,7 +17,7 @@ namespace AoC.Advent2018
         static Data Parse(string input)
         {
             int id = -1;
-            string sleep = null;
+            int sleepStart = 0;
 
             Data d = new();
 
@@ -39,14 +39,15 @@ namespace AoC.Advent2018
                 }
                 else if (line.Contains("asleep"))
                 {
-                    sleep = bits[1];
+                    sleepStart = int.Parse(bits[1]);
                 }
                 else if (line.Contains("wakes"))
                 {
-                    var duration = int.Parse(bits[1]) - int.Parse(sleep);
+                    int sleepEnd = int.Parse(bits[1]);
+                    var duration = sleepEnd - sleepStart;
                     d.durations[id] += duration;
 
-                    for (var m = int.Parse(sleep); m < int.Parse(bits[1]); ++m)
+                    for (var m = sleepStart; m < sleepEnd; ++m)
                     {
                         d.guards[id].IncrementAtIndex(m);
                     }
@@ -59,29 +60,8 @@ namespace AoC.Advent2018
         {
             var data = Parse(input);
 
-            int sleepiest = -1;
-            var v = 0;
-
-            foreach (var id in data.durations.Keys)
-            {
-                if (data.durations[id] > v)
-                {
-                    v = data.durations[id];
-                    sleepiest = id;
-                }
-            }
-
-            var m = -1;
-            var mv = -1;
-
-            foreach (var min in data.guards[sleepiest].Keys)
-            {
-                if (data.guards[sleepiest][min] > mv)
-                {
-                    mv = data.guards[sleepiest][min];
-                    m = min;
-                }
-            }
+            var sleepiest = data.durations.OrderByDescending(kvp => kvp.Value).First().Key;
+            var m = data.guards[sleepiest].OrderByDescending(kvp => kvp.Value).First().Key;
 
             return sleepiest * m;
         }
@@ -90,24 +70,9 @@ namespace AoC.Advent2018
         {
             var data = Parse(input);
 
-            var m = -1;
-            var mv = -1;
-            int sleepiest = -1;
+            var (guardId, min, count) = data.guards.SelectMany(kvp => kvp.Value.Select(kvp2 => (guardId: kvp.Key, min: kvp2.Key, count: kvp2.Value))).OrderByDescending(entry => entry.count).First();
+            return guardId * min;
 
-            foreach (var id in data.guards.Keys)
-            {
-                foreach (var min in data.guards[id].Keys)
-                {
-                    if (data.guards[id][min] > mv)
-                    {
-                        mv = data.guards[id][min];
-                        m = min;
-                        sleepiest = id;
-                    }
-                }
-            }
-
-            return sleepiest * m;
         }
 
         public void Run(string input, ILogger logger)

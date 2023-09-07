@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AoC.Utils;
+using System;
 using System.Linq;
 
 namespace AoC.Advent2016
@@ -9,41 +10,37 @@ namespace AoC.Advent2016
 
         class Rule
         {
-            public Rule(string input)
-            {
-                var vals = Util.ParseNumbers<ulong>(input, '-');
-                min = vals[0];
-                max = vals[1];
-            }
-            public UInt64 min;
-            public UInt64 max;
+            public Rule(string input) => (min, max) = Util.ParseNumbers<uint>(input, '-').Decompose2();
+            public uint min;
+            public uint max;
 
             public override string ToString() => $"{min} - {max}";
         }
 
-        public static UInt64 Part1(string input)
+        public static uint Part1(string input)
         {
-            var rules = Util.Parse<Rule>(input).OrderBy(r => r.min);
+            var rules = Util.Parse<Rule>(input).OrderBy(r => r.min).ToArray();
 
-            UInt64 current = 0;
+            uint current = 0;
             foreach (var rule in rules)
             {
                 if (current >= rule.min && current <= rule.max)
                 {
                     current = rule.max + 1;
                 }
+                if (current < rule.min) return current;
             }
 
             return current;
         }
 
-        public static UInt64 Part2(string input)
+        public static uint Part2(string input)
         {
-            var rules = Util.Parse<Rule>(input).OrderBy(r => r.min);
-            UInt64 max = uint.MaxValue;
+            var rules = Util.Parse<Rule>(input).OrderBy(r => r.min).ToArray();
+            uint max = uint.MaxValue;
 
-            UInt64 current = 0;
-            UInt64 ranges = 0;
+            uint current = 0;
+            uint ranges = 0;
 
             foreach (var rule in rules)
             {
@@ -53,15 +50,20 @@ namespace AoC.Advent2016
                 }
                 if (rule.min > current)
                 {
-                    var range = (rule.min) - current;
+                    var range = rule.min - current;
                     ranges += range;
+                    if (rule.max == max)
+                    {
+                        current = max;
+                        break;
+                    }
                     current = rule.max + 1;
                 }
             }
 
-            if (current <= max)
+            if (current < max)
             {
-                ranges += (max - current + 1);
+                ranges += (max - current);
             }
 
             return ranges;

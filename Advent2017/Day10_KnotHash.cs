@@ -11,70 +11,42 @@ namespace AoC.Advent2017
 
         public struct Loop
         {
-            public Loop(Circle<int> val)
+            public Loop(Circle<int> val) => (first, current) = (val, val);
+
+            public int CheckSum() => first * first.Next();
+
+            public void PerformCycles(IEnumerable<int> instructions, int cycles)
             {
-                first = val;
-                current = val;
-                skip = 0;
-            }
-
-            public int CheckSum()
-            {
-                return first.Value * first.Next().Value;
-            }
-
-            public string KnotHash()
-            {
-                IEnumerable<int> remaining = first.Values();
-
-                string result = "";
-
-                while (remaining.Any())
+                for (int i = 0; i < cycles; ++i)
                 {
-                    var chunk = remaining.Take(16);
-                    remaining = remaining.Skip(16);
-
-                    result += chunk.Xor().ToHex();
+                    foreach (var instr in instructions)
+                    {
+                        current.Reverse(instr);
+                        current = current.Forward(instr + skip++);
+                    }
                 }
-
-                return result;
             }
 
-            public override string ToString()
+            public IEnumerable<int> KnotHash()
             {
-                return string.Join(", ", first.Values());
+                return first.Partition(16).Select(g => g.Xor());
             }
 
             public Circle<int> first;
             public Circle<int> current;
-            public int skip;
-        }
-
-        public static Loop PerformCycle(Loop loop, IEnumerable<int> instructions)
-        {
-            foreach (var instr in instructions)
-            {
-                loop.current.Reverse(instr);
-
-                loop.current = loop.current.Forward(instr + loop.skip);
-                loop.skip++;
-            }
-            return loop;
+            public int skip = 0;
         }
 
         public static Loop RunHash(int listSize, IEnumerable<int> instructions, int cycles)
         {
             var cycle = new Loop(Circle<int>.Create(Enumerable.Range(0, listSize)));
-            for (int i = 0; i < cycles; ++i)
-            {
-                cycle = PerformCycle(cycle, instructions);
-            }
+            cycle.PerformCycles(instructions, cycles);
             return cycle;
         }
 
-        public static string KnotHash(string input)
+        public static IEnumerable<int> KnotHash(string input)
         {
-            var instructions = input.Trim().Select(x => (int)x).Concat(new int[] { 17, 31, 73, 47, 23 });
+            var instructions = input.Trim().Select(c => (int)c).Concat(new int[] { 17, 31, 73, 47, 23 }).ToArray();
 
             return RunHash(256, instructions, 64).KnotHash();
         }
@@ -86,9 +58,10 @@ namespace AoC.Advent2017
             return RunHash(256, instructions, 1).CheckSum();
         }
 
+
         public static string Part2(string input)
         {
-            return KnotHash(input);
+            return string.Join("",KnotHash(input).Select(i => i.ToHex()));
         }
 
         public void Run(string input, ILogger logger)

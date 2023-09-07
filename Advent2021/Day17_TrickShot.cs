@@ -51,8 +51,7 @@ namespace AoC.Advent2021
 
             return Util.Matrix(Util.RangeBetween(1, target.X2 + 1), Util.RangeBetween(target.Y1, 150))
                         .Select(pos => TestShot(target, pos, false))
-                        .Where(res => res.hit)
-                        .Count();
+                        .Count(res => res.hit);
         }
 
         public void Run(string input, ILogger logger)

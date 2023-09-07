@@ -9,191 +9,79 @@ namespace AoC.Advent2020
     {
         public string Name => "2020-14";
 
-        enum StatementType
+        public struct Statement
         {
-            mask,
-            mem,
+            [Regex("mask = (.+)")]
+            public Statement(string mask) => Mask = (Convert.ToInt64(mask.Replace('X', '0'), 2), Convert.ToInt64(mask.Replace('1', '0').Replace('X', '1'), 2));
+
+            [Regex(@"mem\[(\d+)\] = (\d+)")]
+            public Statement(long address, long value) => (Address, Value) = (address, value);
+
+            public readonly long Address = 0, Value = 0;
+            public (long Value, long QuantumBits) Mask;
+
+            public Statement SetMask((long Value, long QuantumBits) mask) { Mask = mask; return this; }
         }
 
-        class Statement
+        public static long ApplyMaskV1(long value, (long Value, long QuantumBits) mask)
         {
-            public Statement(string input)
-            {
-                var bits = input.Split(" = ");
-                if (bits[0] == "mask")
-                {
-                    type = StatementType.mask;
-                    Mask = Mask(bits[1]);
-                }
-                else
-                {
-                    type = StatementType.mem;
-                    Address = Int64.Parse(bits[0].Replace("mem", "").Replace("[", "").Replace("]", ""));
-                    Value = Int64.Parse(bits[1]);
-                }
-            }
-
-            public StatementType type;
-            public Int64 Address = 0;
-            public Int64 Value = 0;
-            public (Int64 Value, Int64 QuantumBits) Mask;
-        }
-
-        public static (Int64 Value, Int64 QuantumBits) Mask(string input)
-        {
-            Int64 v = 0, q = 0;
-            int j = 0;
-            for (var i = input.Length - 1; i >= 0; --i, ++j)
-            {
-                switch (input[i])
-                {
-                    case '1':
-                        Util.SetBit(ref v, j);
-                        break;
-
-                    case 'X':
-                        Util.SetBit(ref q, j);
-                        break;
-                }
-            }
-            return (v, q);
-        }
-
-        public static Int64 ApplyMaskV1(Int64 value, (Int64 Value, Int64 QuantumBits) mask)
-        {
-            Int64 result = value;
-
-            for (var i = 0; i < 36; ++i)
-            {
-                var b = 1L << i;
-
+            for (var b = 1L; b <= 1L << 35; b <<= 1)
+            { 
                 if ((mask.QuantumBits & b) == 0)
                 {
-                    if ((mask.Value & b) == 0)
-                    {
-                        Util.ClearBit(ref result, i);
-                    }
-                    else
-                    {
-                        Util.SetBit(ref result, i);
-                    }
+                    if ((mask.Value & b) == 0) value &= ~b;
+                    else value |= b;
                 }
             }
 
-            return result;
+            return value;
         }
 
-        public static (Int64 Value, Int64 QuantumBits) ApplyMaskV2(Int64 value, (Int64 Value, Int64 QuantumBits) mask)
-        {
-            Int64 resval = value;
-            Int64 resqua = 0;
-
-            for (var i = 0; i < 36; ++i)
-            {
-                var b = 1L << i;
-
-                if ((mask.Value & b) != 0)
-                {
-                    Util.SetBit(ref resval, i);
-                }
-                else if ((mask.QuantumBits & b) != 0)
-                {
-                    Util.SetBit(ref resqua, i);
-                }
-
-            }
-
-            return (resval, resqua);
-        }
+        public static (long Value, long QuantumBits) ApplyMaskV2(long value, (long Value, long QuantumBits) mask) => (value | mask.Value, mask.QuantumBits & ~mask.Value);
 
         class MemoryContainer<T>
         {
-            readonly Queue<T> items = new();
-            readonly HashSet<T> seen = new();
+            readonly Queue<T> items = new(255);
+            readonly HashSet<T> seen = new(255);
             public void Push(T v)
             {
-                if (!seen.Contains(v))
-                {
-                    items.Enqueue(v);
-                    seen.Add(v);
-                }
+                if (seen.IsUnseen(v)) items.Enqueue(v);
             }
 
             public T Take() => items.Dequeue();
-            public bool Any => items.Count > 0;
+            public bool Any() => items.Count > 0;
         }
 
-        public static IEnumerable<Int64> Combinations((Int64 Value, Int64 QuantumBits) input)
+        public static IEnumerable<long> Combinations((long Value, long QuantumBits) input) => input.QuantumBits.BitSequence().Combinations().Select(combo => input.Value & ~input.QuantumBits | combo.Sum());
+
+        static IEnumerable<Statement> Flatten(List<Statement> inputs)
         {
-            var inputs = new MemoryContainer<(Int64 Value, Int64 QuantumBits)>();
-            inputs.Push(input);
+            var mask = (0L, 0L);
 
-            while (inputs.Any)
+            for (int i = 0; i < inputs.Count; i++)
             {
-                var (Value, QuantumBits) = inputs.Take();
-
-                if (QuantumBits == 0)
-                {
-                    yield return Value;
-                }
-                else
-                {
-                    foreach (var b in QuantumBits.BitSequence())
-                    {
-                        Int64 newq = QuantumBits & ~b;
-                        inputs.Push((Value & ~(b), newq));
-                        inputs.Push((Value | b, newq));
-                    }
-                }
+                Statement statement = inputs[i];
+                if (statement.Address == 0) mask = statement.Mask;
+                else yield return statement.SetMask(mask);
             }
         }
 
-        public static Int64 Part1(string input)
+        private static IEnumerable<Statement> ParseData(string input) => Flatten(Util.RegexParse<Statement>(input).ToList()).Reverse();
+
+        public static long Part1(string input)
         {
-            var statements = Util.Parse<Statement>(input);
+            var statements = ParseData(input);
 
-            (Int64 Value, Int64 QuantumBits) mask = (0, 0);
-            var memory = new Dictionary<Int64, Int64>();
-            foreach (var statement in statements)
-            {
-                if (statement.type == StatementType.mask)
-                {
-                    mask = statement.Mask;
-                }
-                else
-                {
-                    memory[statement.Address] = ApplyMaskV1(statement.Value, mask);
-                }
-            }
-
-            return memory.Values.Sum();
+            HashSet<long> seen = new();
+            return statements.Where(s => seen.IsUnseen(s.Address)).Sum(s => ApplyMaskV1(s.Value, s.Mask));
         }
 
-        public static Int64 Part2(string input)
+        public static long Part2(string input)
         {
-            var statements = Util.Parse<Statement>(input);
+            var statements = ParseData(input);
 
-            (Int64 Value, Int64 QuantumBits) mask = (0, 0);
-            var memory = new Dictionary<Int64, Int64>();
-            foreach (var statement in statements)
-            {
-                if (statement.type == StatementType.mask)
-                {
-                    mask = statement.Mask;
-                }
-                else
-                {
-                    var addressMask = ApplyMaskV2(statement.Address, mask);
-                    var addresses = Combinations(addressMask);
-                    foreach (var addr in addresses)
-                    {
-                        memory[addr] = statement.Value;
-                    }
-                }
-            }
-
-            Console.WriteLine(memory.Count);
-            return memory.Values.Sum();
+            HashSet<long> seen = new();
+            return statements.Sum(s => s.Value * Combinations(ApplyMaskV2(s.Address, s.Mask)).Count(a => seen.IsUnseen(a)));
         }
 
         public void Run(string input, ILogger logger)

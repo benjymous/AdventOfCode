@@ -1,5 +1,4 @@
 ﻿using AoC.Utils;
-using System;
 using System.Linq;
 
 namespace AoC.Advent2020
@@ -8,28 +7,27 @@ namespace AoC.Advent2020
     {
         public string Name => "2020-09";
 
-        static bool ValidateNumber(int index, int preamble, Int64[] numbers) =>
+        static bool ValidateNumber(int index, int preamble, long[] numbers) =>
             numbers.Skip(index - preamble).Take(preamble)
                 .Pairs().Any(p => p.Item1 + p.Item2 == numbers[index]);
 
-        static Int64 FindInvalid(Int64[] numbers, int preamble) =>
+        static long FindInvalid(long[] numbers, int preamble) =>
             Enumerable.Range(preamble, numbers.Length)
                 .Where(i => !ValidateNumber(i, preamble, numbers))
                 .Select(i => numbers[i]).First();
 
-
-        public static Int64 Part1(string input, int preamble = 25)
+        public static long Part1(string input, int preamble = 25)
         {
             var numbers = Util.ParseNumbers<long>(input);
 
             return FindInvalid(numbers, preamble);
         }
 
-        public static Int64 Part2(string input, int preamble = 25)
+        public static long Part2(string input, int preamble = 25)
         {
             var numbers = Util.ParseNumbers<long>(input);
 
-            Int64 invalid = FindInvalid(numbers, preamble);
+            long invalid = FindInvalid(numbers, preamble);
 
             for (var i = 0; i < numbers.Length; ++i)
             {

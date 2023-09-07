@@ -1,5 +1,4 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,56 +8,9 @@ namespace AoC.Advent2016
     {
         public string Name => "2016-14";
 
-        static char FindTriplet(int index, string input, bool stretch, Dictionary<int, char> cache, Dictionary<int, string> hashCache)
-        {
-            return cache.GetOrCalculate(index, _ =>
-            {
-                var hashVal = GetHash(input, index, hashCache, stretch);
-                for (int i = 0; i < hashVal.Length - 2; ++i)
-                {
-                    if (hashVal[i] == hashVal[i + 1] &&
-                        hashVal[i] == hashVal[i + 2])
-                    {
-                        return hashVal[i];
-                    }
-                }
-
-                return (char)0;
-            });
-        }
-
-        static char FindQuintuplets(int index, string input, bool stretch, Dictionary<int, char> cache, Dictionary<int, string> hashCache)
-        {
-            return cache.GetOrCalculate(index, _ =>
-            {
-                var hashVal = GetHash(input, index, hashCache, stretch);
-                for (int i = 0; i < hashVal.Length - 4; ++i)
-                {
-                    if (hashVal[i] == hashVal[i + 1] &&
-                        hashVal[i] == hashVal[i + 2] &&
-                        hashVal[i] == hashVal[i + 3] &&
-                        hashVal[i] == hashVal[i + 4])
-                    {
-                        return hashVal[i];
-                    }
-                }
-
-                return (char)0;
-            });
-        }
-
-        public static string GetHash(string input, int number, Dictionary<int, string> cache, bool stretch)
-        {
-            return cache.GetOrCalculate(number, _ =>
-            {
-                return GenHash(input, number, stretch);
-            });
-        }
-
-        private static string GenHash(string input, int number, bool stretch)
-        {
-            string hash;
-            hash = $"{input}{number}".GetMD5String(true);
+        static IEnumerable<(int run, char repeat, string hash)> CheckRuns(int index, string input, bool stretch)
+        {            
+            string hash = $"{input}{index}".GetMD5String(true);
             if (stretch)
             {
                 for (int i = 0; i < 2016; ++i)
@@ -66,73 +18,74 @@ namespace AoC.Advent2016
                     hash = hash.GetMD5String(true);
                 }
             }
+            var ch = '\0';
 
-            return hash;
+            int run = 1;
+            for (var i = 0; i <= hash.Length; ++i)
+            {
+                if (i < hash.Length && hash[i] == ch)
+                {
+                    run++;
+                }
+                else
+                {
+                    if (run >= 3)
+                    {
+                        yield return (run, ch, hash);
+                    }
+                    run = 1;
+                    ch = i < hash.Length ? hash[i] : '\0';
+                }
+            }
         }
 
-        private static int GenKeys(string input, bool stretch, ILogger logger)
+        private static int FillCache(string input, bool stretch, Queue<(int index, (int run, char repeat, string hash)[] runs)> cache, int last, int target)
+        {
+            while (last <= target)
+            {
+                var run = CheckRuns(last, input, stretch).ToArray();
+                if (run.Length > 0) cache.Add((last, run));
+                last++;
+            }
+
+            return last;
+        }
+
+        private static int GenKeys(string input, bool stretch)
         {
             input = input.Trim();
+            Queue<(int index, (int run, char repeat, string hash)[] runs)> cache = new();
 
-            int i = 0;
-            int lastChecked = 0;
             int found = 0;
 
-            Dictionary<int, string> hashCache = new();
-            Dictionary<int, char> tripCache = new();
-            Dictionary<int, char> quintCache = new();
-            Dictionary<char, HashSet<int>> quintCache2 = new();
-
-            foreach (var ch in "0123456789abcdef")
-            {
-                quintCache2[ch] = new();
-            }
+            int last = FillCache(input, stretch, cache, 0, 10000);
 
             while (true)
             {
-                var trip = FindTriplet(i, input, stretch, tripCache, hashCache);
-                if (trip != 0)
-                {
-                    if (quintCache2.TryGetValue(trip, out var cached) && cached.Any(x => x > i))
-                    {
-                        found++;
-                        if (stretch && logger != null) logger.WriteLine($"Key {found} found at {i}");
-                        if (found == 64) return i;
-                    }
-                    else
-                    {
-                        int start = Math.Min(lastChecked, i + 1);
-                        for (int j = i + 1; j < i + 1000; ++j)
-                        {
-                            if (tripCache.TryGetValue(j, out var ch) && ch == 0) continue;
+                var (index, runs) = cache.Dequeue();
 
-                            var quint = FindQuintuplets(j, input, stretch, quintCache, hashCache);
-                            if (quint != 0)
-                            {
-                                quintCache2[quint].Add(j);
-                            }
-                        }
-                        lastChecked = i + 1000;
-                    }
-                }
+                last = FillCache(input, stretch, cache, last, index + 1000);
 
-                i++;
+                var triplet = runs[0].repeat;
+                if (cache.Where(v => v.index <= index+1000 && v.runs.Any(r => r.run >= 5 && r.repeat == triplet)).Any() && ++found == 64)
+                    return index;
             }
         }
-        public static int Part1(string input, ILogger logger = null)
+
+        public static int Part1(string input)
         {
-            return GenKeys(input, false, logger);
+            return GenKeys(input, false);
         }
 
-        public static int Part2(string input, ILogger logger = null)
+        public static int Part2(string input)
         {
-            return GenKeys(input, true, logger);
+            return GenKeys(input, true);
         }
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - " + Part1(input, logger));
-            logger.WriteLine("- Pt2 - " + Part2(input, logger));
+            logger.WriteLine("- Pt1 - " + Part1(input));
+            logger.WriteLine("- Pt2 - " + Part2(input));
         }
     }
 }

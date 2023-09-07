@@ -1,6 +1,4 @@
 ﻿using AoC.Utils;
-using AoC.Utils.Pathfinding;
-using AoC.Utils.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,282 +9,114 @@ namespace AoC.Advent2019
     {
         public string Name => "2019-20";
 
-        public static bool IsCapitalLetter(char c)
+        class PortalMap
         {
-            return c >= 'A' && c <= 'Z';
-        }
-
-        class PortalMap : GridMap<char>, IIsWalkable<char>
-        {
-            public PortalMap(string input)
-                : base(null)
+            public PortalMap(string[] lines)
             {
-                var lines = Util.Split(input);
-                var portals = new Dictionary<(int x, int y), string>();
-                var innerPortals = new Dictionary<(int x, int y), bool>();
+                var portals = new List<(ushort name, int location, bool isInner)>();
+                var partPortals = new Dictionary<int, char>();
 
-                Height = lines.Length;
-                Width = lines.First().Length;
-
-                for (var y = 0; y < lines.Length; ++y)
+                var (width, height) = (lines[0].Length, lines.Length);
+                for (var y = 0; y < height; ++y)
                 {
-                    var line = lines[y];
-                    for (var x = 0; x < line.Length; ++x)
+                    for (var x = 0; x < width; ++x)
                     {
-                        var c = line[x];
-                        if (IsCapitalLetter(c))
+                        var c = lines[y][x];
+                        if (c.IsCapitalLetter()) // part of a portal
                         {
-                            // part of a portal
-
-                            var leftNeighbour = Data.GetOrDefault((x - 1,y));
-                            var aboveNeighbour = Data.GetOrDefault((x,y - 1));
-
-                            string code = null;
-
-                            ManhattanVector2 v = null;
-                            bool isInner = false;
-
-                            if (IsCapitalLetter(leftNeighbour))
+                            if (partPortals.TryGetValue(GetKey(x - 1, y), out var leftNeighbour))
                             {
-                                code = $"{leftNeighbour}{c}";
-
-                                var leftLeftNeighbour = Data.GetOrDefault((x - 2, y));
-
-                                if (leftLeftNeighbour == '.')
-                                {
-                                    v = (x - 2, y);
-                                    isInner = v.X != Width - 3;
-                                }
-                                else
-                                {
-                                    v = (x + 1, y);
-                                    isInner = v.X != 2;
-                                }
-
+                                var code = Util.MakeTwoCC(leftNeighbour, c);
+                                if (WalkableSpaces.Contains(GetKey(x - 2, y))) portals.Add((code, GetKey(x - 2, y), x != width - 1));
+                                else portals.Add((code, GetKey(x + 1, y), x != 1));
                             }
-                            else if (IsCapitalLetter(aboveNeighbour))
+                            else if (partPortals.TryGetValue(GetKey(x, y - 1), out var aboveNeighbour))
                             {
-                                code = $"{aboveNeighbour}{c}";
-                                var aboveAboveNeighbour = Data.GetOrDefault((x,y-2));
-                                if (aboveAboveNeighbour == '.')
-                                {
-                                    v = (x, y - 2);
-                                    isInner = v.Y != Height - 3;
-                                }
-                                else
-                                {
-                                    v = (x, y + 1);
-                                    isInner = v.Y != 2;
-                                }
+                                var code = Util.MakeTwoCC(aboveNeighbour, c);
+                                if (WalkableSpaces.Contains(GetKey(x, y - 2))) portals.Add((code, GetKey(x, y - 2), y != height - 1));
+                                else portals.Add((code, GetKey(x, y + 1), y != 1));
                             }
-
-                            if (v is not null)
-                            {
-                                portals[v] = code;
-                                innerPortals[v] = isInner;
-                            }
-
-
+                            partPortals[GetKey(x, y)] = c;
                         }
-                        Data[(x,y)] = c;
+                        else if (c == '.') WalkableSpaces.Add(GetKey(x, y));
                     }
                 }
 
-                var groups = portals.GroupBy(kvp => kvp.Value);
-
-                foreach (var group in groups)
+                foreach (var (p1, p2) in portals.GroupBy(p => p.name).Where(g => g.Count() == 2).Select(g => g.Decompose2()))
                 {
-                    if (group.Count() == 2)
-                    {
-                        Portals[GetKey(group.First().Key)] = (group.Last().Key, innerPortals[group.First().Key]);
-                        Portals[GetKey(group.Last().Key)] = (group.First().Key, innerPortals[group.Last().Key]);
-                    }
+                    Portals[p1.location] = (p2.location, p2.isInner ? -1 : 1);
+                    Portals[p2.location] = (p1.location, p1.isInner ? -1 : 1);
                 }
 
-                Start = portals.Where(kvp => kvp.Value == "AA").First().Key;
-                End = portals.Where(kvp => kvp.Value == "ZZ").First().Key;
-
+                (Start, End) = (portals.OrderBy(p => p.name).First().location, portals.OrderBy(p => p.name).Last().location);
             }
 
-            public bool Part2 { get; set; } = false;
+            static int GetKey(int x, int y) => x + (y << 8);
 
-            public Dictionary<int, ((int x, int y), bool)> Portals { get; private set; } = new Dictionary<int, ((int x, int y), bool)>();
+            readonly Dictionary<int, (int destination, int travelDirection)> Portals = new();
+            readonly HashSet<int> WalkableSpaces = new();
 
-            public (int x, int y) Start { get; private set; }
-            public (int x, int y) End { get; private set; }
+            public readonly int Start, End, MaxDepth = 25;
 
-            public int Width { get; private set; }
-            public int Height { get; private set; }
-
-            public int MaxDepth { get; set; } = 25;
-
-
-            public override IEnumerable<(int x, int y)> GetNeighbours((int x, int y) centre)
+            public IEnumerable<int> GetNeighbours(int key)
             {
-                if (Portals.TryGetValue(GetKey(centre), out var other))
-                {
-                    yield return other.Item1;
-                }
-
-                foreach (var v in base.GetNeighbours(centre)) yield return v;
+                if (WalkableSpaces.Contains(key - 1)) yield return key - 1;
+                if (WalkableSpaces.Contains(key + 1)) yield return key + 1;
+                if (WalkableSpaces.Contains(key - (1 << 8))) yield return key - (1 << 8);
+                if (WalkableSpaces.Contains(key + (1 << 8))) yield return key + (1 << 8);
             }
 
-            public IEnumerable<((int x, int y), int)> GetNeighbours2((int x, int y) centre, int level)
+            public IEnumerable<int> GetNeighbours1(int location)
             {
-                if (Portals.TryGetValue(GetKey(centre), out var other))
-                {
-                    int newLevel = level;
-                    if (other.Item2)
-                    {
-                        newLevel++;
-                    }
-                    else
-                    {
-                        newLevel--;
-                    }
-                    if (newLevel >= 0 && newLevel <= MaxDepth)
-                    {
-                        yield return (other.Item1, newLevel);
-                    }
-                }
-
-                foreach (var v in base.GetNeighbours(centre)) yield return (v, level);
+                if (Portals.TryGetValue(location, out var other)) yield return other.destination;
+                foreach (var neighbour in GetNeighbours(location)) yield return neighbour;
             }
 
-            public bool IsWalkable(char cell)
+            public IEnumerable<int> GetNeighbours2(int location)
             {
-                return cell == '.';
+                if (Portals.TryGetValue(location & 0xffff, out var other))
+                {
+                    int newLevel = (location >> 16) + other.travelDirection;
+                    if (newLevel >= 0 && newLevel <= MaxDepth) yield return other.destination + (newLevel << 16);
+                }
+
+                foreach (var neighbour in GetNeighbours(location & 0xffff)) yield return neighbour + (location & 0xff0000);
             }
         }
 
-        public static int GetKey((int x, int y) pos) => (pos.x << 8) + (pos.y);
-        public static int GetKey((int x, int y) pos, int level) => (pos.x << 16) + (pos.y << 8) + level;
+        public static int Solve(string input, QuestionPart part)
+        {
+            var map = new PortalMap(Util.Split(input));
+
+            var jobqueue = new Queue<(int location, int distance)>() { (map.End, 0) };
+            var cache = new Dictionary<int, int>() { { map.End, 0 } };
+            Func<int, IEnumerable<int>> neighbourFunc = part.One() ? map.GetNeighbours1 : map.GetNeighbours2;
+            int best = int.MaxValue;
+
+            jobqueue.Operate(entry =>
+            {
+                if (entry.distance + 1 < best)
+                {
+                    foreach (var newLocation in neighbourFunc(entry.location))
+                    {
+                        int newDistance = entry.distance + 1;
+                        if (newLocation == map.Start) { best = Math.Min(newDistance, best); jobqueue.Clear(); break; }
+                        else if (!cache.NotSeenHigher(newLocation, newDistance)) jobqueue.Enqueue((newLocation, newDistance));
+                    }
+                }
+            });
+
+            return best;
+        }
 
         public static int Part1(string input)
         {
-            var map = new PortalMap(input);
-
-            var jobqueue = new Queue<((int x, int y), int)>();
-            jobqueue.Enqueue((map.End, 0));
-            int best = int.MaxValue;
-            var cache = new Dictionary<int, int>() { { GetKey(map.End), 0 } };
-
-            while (jobqueue.Any())
-            {
-                var entry = jobqueue.Dequeue();
-
-                if (entry.Item1 == map.Start)
-                {
-                    if (entry.Item2 < best)
-                    {
-                        best = entry.Item2;
-                    }
-                }
-                else
-                {
-                    foreach (var neighbour in map.GetNeighbours(entry.Item1))
-                    {
-                        var key = GetKey(neighbour);
-
-                        int newDistance = entry.Item2 + 1;
-                        if (cache.TryGetValue(key, out var dist))
-                        {
-                            if (dist < newDistance)
-                            {
-                                continue;
-                            }
-                        }
-                        cache[key] = newDistance;
-                        jobqueue.Enqueue((neighbour, newDistance));
-                    }
-                }
-            }
-
-            // for (var y=0; y<height; ++y)
-            // {
-            //     for (var x=0; x<width; ++x)
-            //     {
-            //         var c = map.data[$"{x},{y}"];
-            //         if (c == '.')
-            //         {
-            //             if (cache.TryGetValue($"{x},{y}", out int v))
-            //             {
-            //                 var d = v.ToString("X2");
-
-            //                 if (v>255)
-            //                 {
-            //                     d = "!!";
-            //                 }
-
-            //                 Console.Write(d);
-            //             }
-            //             else
-            //             {
-            //                 Console.Write("..");
-            //             }
-            //         }
-            //         else
-            //         {
-            //             Console.Write($"{c}{c}");
-            //         }
-            //     }
-            //     Console.WriteLine();
-            // }
-
-            return best;
+            return Solve(input, QuestionPart.Part1);
         }
-
-
-
-
 
         public static int Part2(string input)
         {
-            var map = new PortalMap(input);
-
-            var jobqueue = new Queue<((int x, int y), int, int)>();
-            jobqueue.Enqueue((map.End, 0, 0));
-            int best = int.MaxValue;
-            var cache = new Dictionary<int, int>() { { GetKey(map.End, 0), 0 } };
-
-            int deepest = 0;
-
-            while (jobqueue.Any())
-            {
-                var entry = jobqueue.Dequeue();
-                deepest = Math.Max(deepest, entry.Item2);
-
-                //Console.WriteLine($"{entry.Item1}:{entry.Item2} - {entry.Item3}");
-
-                if (entry.Item1 == map.Start && entry.Item2 == 0)
-                {
-                    if (entry.Item2 < best)
-                    {
-                        best = entry.Item3;
-                    }
-                }
-                else
-                {
-                    var neighbours = map.GetNeighbours2(entry.Item1, entry.Item2);
-                    foreach (var neighbour in neighbours)
-                    {
-                        var key = GetKey(neighbour.Item1, neighbour.Item2);
-
-                        int newDistance = entry.Item3 + 1;
-                        if (cache.TryGetValue(key, out var dist))
-                        {
-                            if (dist < newDistance)
-                            {
-                                continue;
-                            }
-                        }
-                        cache[key] = newDistance;
-                        jobqueue.Enqueue((neighbour.Item1, neighbour.Item2, newDistance));
-                    }
-                }
-            }
-
-            return best;
+            return Solve(input, QuestionPart.Part2);
         }
 
         public void Run(string input, ILogger logger)

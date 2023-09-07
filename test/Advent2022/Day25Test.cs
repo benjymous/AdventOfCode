@@ -8,6 +8,10 @@ namespace AoC.Advent2022.Test
     {
         readonly string input = Util.GetInput<Day25>();
 
+        public static long SnafuToDecimal(string snafu) => new Snafu(snafu).ToDecimal();
+
+        public static string DecimalToSnafu(long value) => new Snafu(value).ToString();
+
         [TestCategory("Test")]
         [DataRow(1, "1")]
         [DataRow(2, "2")]
@@ -27,10 +31,12 @@ namespace AoC.Advent2022.Test
         [DataTestMethod]
         public void DecimalToSnafuTest(int input, string expected)
         {
-            Assert.AreEqual(expected, Day25.DecimalToSnafu(input));
+            Assert.AreEqual(expected, DecimalToSnafu(input));
         }
 
         [TestCategory("Test")]
+        [DataRow("1121-1110-1=0", 314159265)]
+        [DataRow("1-0---0", 12345)]
         [DataRow("1=-0-2", 1747)]
         [DataRow("12111", 906)]
         [DataRow("2=0=", 198)]
@@ -47,14 +53,14 @@ namespace AoC.Advent2022.Test
         [DataTestMethod]
         public void SnafuToDecimalTest(string input, int expected)
         {
-            Assert.AreEqual(expected, Day25.SnafuToDecimal(input));
+            Assert.AreEqual(expected, SnafuToDecimal(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Snafu_Part1_Regression()
         {
-            Assert.AreEqual("20=2-02-0---02=22=21", Day25.Part1(input));
+            Assert.AreEqual("20=2-02-0---02=22=21", Day25.Part1(input).ToString());
         }
 
     }

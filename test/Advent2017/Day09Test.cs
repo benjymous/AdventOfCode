@@ -30,7 +30,7 @@ namespace AoC.Advent2017.Test
 
         public void GarbageStripTest(string input, string expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day09.StripGarbage(new Advent2017.Day09.State(input)).AsString());
+            Assert.AreEqual(expected, Day09.StripGarbage(input).stripped);
         }
 
 
@@ -45,7 +45,7 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void GroupCountTest(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day09.GetGroups(input).Count());
+            Assert.AreEqual(expected, Day09.GetGroups(input).Count());
         }
 
 
@@ -60,7 +60,7 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void ScoreTest(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day09.GetScore(input));
+            Assert.AreEqual(expected, Day09.GetScore(input));
         }
 
 
@@ -75,7 +75,7 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void CountTest(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day09.CountGarbage(input));
+            Assert.AreEqual(expected, Day09.CountGarbage(input));
         }
 
 
@@ -83,14 +83,14 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void Garbage_Part1_Regression()
         {
-            Assert.AreEqual(9662, Advent2017.Day09.Part1(input));
+            Assert.AreEqual(9662, Day09.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Garbage_Part2_Regression()
         {
-            Assert.AreEqual(4903, Advent2017.Day09.Part2(input));
+            Assert.AreEqual(4903, Day09.Part2(input));
         }
 
     }

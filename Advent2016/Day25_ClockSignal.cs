@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using AoC.Advent2016.BunniTek;
+using System;
 
 namespace AoC.Advent2016
 {
@@ -9,62 +9,37 @@ namespace AoC.Advent2016
 
         const int SAMPLE_SIZE = 10;
 
-        class Outputter : BunniTek.IOutput
+        static int Signal(Instruction[] program, int input)
         {
-            public List<int> values = new();
-            public bool Put(int i)
+            int responseCount = 0;
+            var cpu = new BunnyCPU(program)
             {
-                values.Add(i);
-                return values.Count < SAMPLE_SIZE;
-            }
-        }
-
-        public static IEnumerable<int> Signal(string program, int input)
-        {
-            var cpu = new BunniTek.BunnyCPU(program);
-            cpu.Set(BunniTek.RegisterId.a, input);
-            var Outputter = new Outputter();
-            cpu.Output = Outputter;
+                Output = i => i == responseCount % 2 && ++responseCount < SAMPLE_SIZE
+            };
+            cpu.Set(RegisterId.a, input);
             cpu.Run();
-            return Outputter.values;
-        }
-
-        public static IEnumerable<int> Expected()
-        {
-            for (int i = 0; i < SAMPLE_SIZE / 2; ++i)
-            {
-                yield return 0;
-                yield return 1;
-            }
-        }
-
-        public static int[] expected = Expected().ToArray();
-
-        public static bool Test(string program, int input)
-        {
-            var signal = Signal(program, input).ToArray();
-            for (int i = 0; i < SAMPLE_SIZE; ++i)
-            {
-                if (signal[i] != expected[i]) return false;
-            }
-            return true;
-        }
+            //Console.WriteLine($"{Convert.ToString(input, 2).PadLeft(8, '0')} : {input} : {responseCount}");
+            return responseCount;
+        }        
 
         public static int Part1(string input)
         {
-            int blockSize = 50;
+            var program = BunnyCPU.Compile(input);
 
-            int start = 0;
+            int testBit = 1;
+            int result = 0;
+            int best = 0;
             while (true)
             {
-                var res = Enumerable.Range(start, blockSize).AsParallel().Where(i => Test(input, i));
-                if (res.Any())
+                int res = Signal(program, result | testBit);
+                if (res == SAMPLE_SIZE) return result | testBit;
+                if (res > best)
                 {
-                    return res.Min();
+                    best = res;
+                    result |= testBit;
+                    testBit = 1 << res;
                 }
-                start += blockSize;
             }
-
         }
 
         public void Run(string input, ILogger logger)

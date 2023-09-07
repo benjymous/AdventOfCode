@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace AoC.Advent2017
 {
@@ -45,7 +46,7 @@ namespace AoC.Advent2017
 
                 if (matrix.Count == 0)
                 {
-                    yield return (size == 3 ? 16 : 0);
+                    yield return size == 3 ? 16 : 0;
                 }
                 else
                 {
@@ -86,10 +87,12 @@ namespace AoC.Advent2017
             return matrix.Select(v => (max - v.x, v.y)).ToHashSet();
         }
 
-        private static IEnumerable<(int x, int y)> ApplyRules(HashSet<(int x, int y)> map, Rule[] rules)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int ToKey(int x, int y) => x + (y << 16);
+
+        private static IEnumerable<int> ApplyRules(HashSet<int> map, Rule[] rules)
         {
-            int size = map.Max(v => v.x) + 1;
-            var result = new HashSet<(int x, int y)>();
+            int size = map.Max(v => v & 0xffff) + 1;
 
             if (size % 2 == 0)
             {
@@ -106,13 +109,13 @@ namespace AoC.Advent2017
                             for (int x = 0; x < 2; ++x)
                             {
                                 cell <<= 1;
-                                if (map.Contains((x + (cellx * 2), y + (celly * 2)))) cell++;
+                                if (map.Contains(ToKey(x + (cellx * 2), y + (celly * 2)))) cell++;
                             }
                         }
 
                         foreach (var (x, y) in rules[cell].Out)
                         {
-                            yield return (x + (cellx * 3), y + (celly * 3));
+                            yield return ToKey(x + (cellx * 3), y + (celly * 3));
                         }
                     }
                 }
@@ -132,13 +135,13 @@ namespace AoC.Advent2017
                             for (int x = 0; x < 3; ++x)
                             {
                                 cell <<= 1;
-                                if (map.Contains((x + (cellx * 3), y + (celly * 3)))) cell++;
+                                if (map.Contains(ToKey(x + (cellx * 3), y + (celly * 3)))) cell++;
                             }
                         }
 
                         foreach (var (x, y) in rules[cell + 16].Out)
                         {
-                            yield return (x + (cellx * 4), y + (celly * 4));
+                            yield return ToKey(x + (cellx * 4) ,  y + (celly * 4));
                         }
                     }
                 }
@@ -149,7 +152,7 @@ namespace AoC.Advent2017
         {
             var rules = Util.RegexParse<Rule>(input).Select(rule => rule.Rotations().ToHashSet().Select(key => (key, rule))).SelectMany(x => x).OrderBy(x => x.key).Select(x => x.rule).ToArray();
 
-            var map = Util.ParseSparseMatrix<char>(".#.\n..#\n###").Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key).ToHashSet();
+            var map = Util.ParseSparseMatrix<char>(".#.\n..#\n###").Where(kvp => kvp.Value == '#').Select(kvp => ToKey(kvp.Key.x,kvp.Key.y)).ToHashSet();
 
             for (int i = 0; i < iterations; ++i)
             {
@@ -163,7 +166,6 @@ namespace AoC.Advent2017
         {
             return RunRules(input, 5);
         }
-
 
         public static int Part2(string input)
         {

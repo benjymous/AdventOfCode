@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AoC.Advent2018.Test
 {
     [TestCategory("2018")]
+    [TestCategory("ChronCPU")]
     [TestClass]
     public class Day16Test
     {
@@ -20,7 +21,7 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void ReverseEngineer_Part2_Regression()
         {
-            Assert.AreEqual(525, Day16.Part2(input));
+            Assert.AreEqual(525, Day16.Part2(input, new ConsoleOut()));
         }
 
     }

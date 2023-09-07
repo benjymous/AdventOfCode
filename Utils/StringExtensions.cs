@@ -20,7 +20,7 @@ namespace AoC.Utils
             return sb.ToString();
         }
 
-        public static byte[] GetMD5(this string inputString) => MD5.HashData(Encoding.UTF8.GetBytes(inputString));
+        public static byte[] GetMD5(this string inputString) => MD5.HashData(Encoding.Default.GetBytes(inputString));
 
         public static string GetMD5String(this string inputString, bool lowerCase = false)
         {
@@ -30,22 +30,40 @@ namespace AoC.Utils
 
         public static IEnumerable<char> GetMD5Chars(this string inputString)
         {
-            foreach (byte b in inputString.GetMD5())
+            return Convert.ToHexString(inputString.GetMD5());
+        }
+
+        public static IEnumerable<char> GetMD5Chars(this string inputString, int numBytes)
+        {
+            return Convert.ToHexString(inputString.GetMD5(), 0, numBytes);
+        }
+
+        public static IEnumerable<char> GetHexChars(this byte[] input, bool lowerCase = false)
+        {
+            foreach (byte b in input)
             {
-                foreach (var c in b.ToString("X2"))
+                foreach (var c in b.ToString(lowerCase ? "x2" : "X2"))
                 {
                     yield return c;
                 }
             }
         }
 
+        public static uint GetCRC32(this string input) => Force.Crc32.Crc32CAlgorithm.Compute(Encoding.ASCII.GetBytes(input));
+
         private static readonly string vowels = "aeiouAEIOU";
 
         public static bool IsVowel(this char c) => vowels.Contains(c);
 
+        public static bool IsCapitalLetter(this char c) => c is >= 'A' and <= 'Z';
+
         private static readonly string digits = "0123456789";
 
         public static bool IsDigit(this char c) => digits.Contains(c);
+
+        private static readonly string hexdigits = "0123456789abcdef";
+
+        public static bool IsHex(this char c) => hexdigits.Contains(c);
 
         public static IEnumerable<int> AllIndexesOf(this string str, string value)
         {
@@ -136,19 +154,7 @@ namespace AoC.Utils
 
         public static string MultipleWithS(this int value, string str) => value == 1 ? str : $"{value} {str}s";
 
-        public static string Reversed(this string str) => new string(str.Reverse().ToArray());
-
-        public static IEnumerable<bool> BitSequenceFromHex(this string str)
-        {
-            foreach (var ch in str)
-            {
-                var b = Convert.ToString(Convert.ToInt32(ch.ToString(), 16), 2).PadLeft(4, '0');
-                foreach (var bch in b)
-                {
-                    yield return bch == '1';
-                }
-            }
-        }
+        public static string Reversed(this string str) => new (str.Reverse().ToArray());
 
         public static string Pop(this StringBuilder sb)
         {

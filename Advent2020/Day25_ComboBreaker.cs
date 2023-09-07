@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AoC.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,14 +11,14 @@ namespace AoC.Advent2020
 
         const int MagicNumber = 20201227;
 
-        public static IEnumerable<(int loop, Int64 val)> LoopVals(int subject)
+        public static IEnumerable<(int loop, long val)> LoopVals(int subject)
         {
             yield return (0, 0); // Keep things zero indexed
 
             int loop = 1;
-            Int64 val = 1;
+            long val = 1;
 
-            while (true) yield return (loop++, val = (val * subject) % MagicNumber);
+            while (true) yield return (loop++, val = val * subject % MagicNumber);
         }
 
         private static int CalculatePrivateKey(int publicKey)
@@ -32,9 +33,7 @@ namespace AoC.Advent2020
 
         public static int Part1(string input)
         {
-            var inputs = Util.ParseNumbers<int>(input);
-            var doorPublicKey = inputs[0];
-            var cardPublicKey = inputs[1];
+            var (doorPublicKey, cardPublicKey) = Util.ParseNumbers<int>(input).Decompose2();
 
             var privateKey = CalculatePrivateKey(doorPublicKey);
 

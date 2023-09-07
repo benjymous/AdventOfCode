@@ -13,7 +13,7 @@ namespace AoC.Advent2022
         public class Monkey
         {
             [Regex(@"Monkey (.+): Starting items: (.+) Operation: new = old (.) (.+) Test: divisible by (.+) If true: throw to monkey (.) If false: throw to monkey (.)")]
-            public Monkey(int id, long[] items, char op, string opBy, int test, int ifTrue, int ifFalse)
+            public Monkey(int id, int[] items, char op, string opBy, int test, int ifTrue, int ifFalse)
             {
                 Id = id;
                 Items = items.ToList();
@@ -28,56 +28,50 @@ namespace AoC.Advent2022
                 };
 
                 Divisor = test;
-                IfTrue = ifTrue;
-                IfFalse = ifFalse;
+                TargetIfTrue = ifTrue;
+                TargetIfFalse = ifFalse;
             }
 
             readonly public int Id, Divisor;
-            readonly List<long> Items;
+            public int Score;
+            readonly public List<int> Items;
             readonly Func<long, long> Operation;
-            readonly int IfTrue, IfFalse;
+            readonly int TargetIfTrue, TargetIfFalse;
 
-            public IEnumerable<(long worry, int target)> DoRound(bool lessWorry)
-            { 
-                foreach (var i in Items)
-                {
-                    var item = Operation(i) / (lessWorry ? 3 : 1);
-                    yield return item % Divisor == 0 ? (item, IfTrue) : (item, IfFalse);
-                }
+            public void DoRound(int reduceWorry, long filter, Monkey[] others)
+            {
+                Score += Items.Count;
+                var (destinationIfTrue, destinationIfFalse) = (others[TargetIfTrue].Items, others[TargetIfFalse].Items);
+                Items.Select(i => Operation(i) / reduceWorry).ForEach(item => (item % Divisor == 0 ? destinationIfTrue: destinationIfFalse).Add((int)(item % filter)));
                 Items.Clear();
             }
-
-            public void AddItem(long item) => Items.Add(item);
         }
 
-        private static long RunRounds(string input, int numRounds, bool lessWorry)
+        private static long RunRounds(string input, int numRounds, int reduceWorry)
         {
             var monkeys = Util.RegexParse<Monkey>(input.Split("\n\n").Select(line => line.Replace("\n", "").WithoutMultipleSpaces())).ToArray();
 
             var filter = monkeys.Product(m => m.Divisor);
 
-            Dictionary<int, int> monkeyScores = new();
             for (int round = 0; round < numRounds; ++round)
             {
                 foreach (var monkey in monkeys)
                 {
-                    var actions = monkey.DoRound(lessWorry).ToArray();
-                    monkeyScores.IncrementAtIndex(monkey.Id, actions.Length);
-                    actions.ForEach(val => monkeys[val.target].AddItem(val.worry % filter));
+                    monkey.DoRound(reduceWorry, filter, monkeys);
                 }
             }
 
-            return monkeyScores.Values.OrderDescending().Take(2).Product();
+            return monkeys.Select(m => m.Score).OrderDescending().Take(2).Product();
         }
 
         public static long Part1(string input)
         {
-            return RunRounds(input, 20, true);
+            return RunRounds(input, 20, 3);
         }
 
         public static long Part2(string input)
         {
-            return RunRounds(input, 10000, false);
+            return RunRounds(input, 10000, 1);
         }
 
         public void Run(string input, ILogger logger)

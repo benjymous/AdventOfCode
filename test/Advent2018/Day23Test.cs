@@ -14,7 +14,7 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void Teleportation01Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day23.Part1(input));
+            Assert.AreEqual(expected, Day23.Part1(input));
         }
 
         [TestCategory("Test")]
@@ -22,21 +22,21 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void Teleportation02Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day23.Part2(input));
+            Assert.AreEqual(expected, Day23.Part2(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Teleportation_Part1_Regression()
         {
-            Assert.AreEqual(232, Advent2018.Day23.Part1(input));
+            Assert.AreEqual(232, Day23.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Teleportation_Part2_Regression()
         {
-            Assert.AreEqual(82010396, Advent2018.Day23.Part2(input));
+            Assert.AreEqual(82010396, Day23.Part2(input));
         }
 
     }

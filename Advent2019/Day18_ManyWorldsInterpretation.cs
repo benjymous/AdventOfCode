@@ -1,6 +1,5 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Pathfinding;
-using AoC.Utils.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,37 +15,23 @@ namespace AoC.Advent2019
         // b        = 000010
         // c        = 000100
         // etc
-        public static int KeyCode(char c) => (1 << char.ToLower(c) - 'a');
+        public static int KeyCode(char c) => 1 << char.ToLower(c) - 'a';
 
-        public static int PlayerCode(int i) => (1 << 26 + i);
+        public static int PlayerCode(int i) => 1 << 26 + i;
 
-        // set bit in given value for key added
-        public static int AddKey(int v, char c) => v | KeyCode(c);
-
-        public class RoomPath
+        public readonly struct RoomPath
         {
-            public RoomPath(Dictionary<(int x, int y), char> map, IEnumerable<(int x, int y)> path)
+            public RoomPath(IEnumerable<char> path)
             {
-                if (!path.Any()) throw new Exception("empty path");
-
-                // find all the doors this path passes through
-                foreach (var pos in path)
-                {
-                    var c = map[pos];
-
-                    if (c >= 'A' && c <= 'Z')
-                    {
-                        Doors = AddKey(Doors, c);
-                    }
-                }
+                Doors = path.Where(c => c >= 'A' && c <= 'Z').Sum(KeyCode);
                 Count = path.Count();
             }
 
-            public bool IsWalkable(int heldKeys) => ((Doors & heldKeys) == Doors);
+            public bool IsWalkable(int heldKeys) => (Doors & heldKeys) == Doors;
 
             readonly int Doors = 0;
 
-            public int Count { get; private set; }
+            public readonly int Count;
         }
 
         public class MapData : GridMap<char>
@@ -62,24 +47,11 @@ namespace AoC.Advent2019
 
             class Walkable : IIsWalkable<char>
             {
-                public bool IsWalkable(char cell)
-                {
-                    return cell != '#';
-                }
+                public bool IsWalkable(char cell) => cell != '#';
             }
 
-            readonly Dictionary<int, IEnumerable<int>> BitCache = new();
-            public IEnumerable<int> Bits(int input)
-            {
-                if (BitCache.TryGetValue(input, out var output))
-                {
-                    return output;
-                }
-
-                var seq = input.BitSequence().ToArray();
-                BitCache[input] = seq;
-                return seq;
-            }
+            readonly Dictionary<int, int[]> BitCache = new();
+            public int[] Bits(int input) => BitCache.GetOrCalculate(input, _ => input.BitSequence().ToArray());
 
             public MapData(string input) : base(new Walkable())
             {
@@ -118,20 +90,20 @@ namespace AoC.Advent2019
             {
                 if (startPositions.Count == 1)
                 {
-                    var centrePoint = startPositions.First();
+                    var (x, y) = startPositions.First();
                     startPositions.Clear();
 
-                    startPositions.Add((centrePoint.x - 1, centrePoint.y - 1));
-                    startPositions.Add((centrePoint.x + 1, centrePoint.y - 1));
-                    startPositions.Add((centrePoint.x - 1, centrePoint.y + 1));
-                    startPositions.Add((centrePoint.x + 1, centrePoint.y + 1));
+                    startPositions.Add((x - 1, y - 1));
+                    startPositions.Add((x + 1, y - 1));
+                    startPositions.Add((x - 1, y + 1));
+                    startPositions.Add((x + 1, y + 1));
 
-                    Data[(centrePoint.x,centrePoint.y)] = '#';
+                    Data[(x,y)] = '#';
 
-                    Data[(centrePoint.x - 1,centrePoint.y)] = '#';
-                    Data[(centrePoint.x + 1,centrePoint.y)] = '#';
-                    Data[(centrePoint.x,centrePoint.y - 1)] = '#';
-                    Data[(centrePoint.x,centrePoint.y + 1)] = '#';
+                    Data[(x - 1,y)] = '#';
+                    Data[(x + 1,y)] = '#';
+                    Data[(x,y - 1)] = '#';
+                    Data[(x,y + 1)] = '#';
                 }
             }
 
@@ -160,125 +132,133 @@ namespace AoC.Advent2019
             {
                 // precalculate all possible paths (ignoring doors)
 
-                foreach (var player in startPositions)
-                {
-                    AllPlayers |= PlayerCode(startPositions.IndexOf(player));
-                }
+                for (int i = 0; i < startPositions.Count; i++) AllPlayers |= PlayerCode(i);
 
-                foreach (var k1 in Bits(AllKeys))
+                int[] keyIds = keyPositions.Keys.ToArray();
+                for (int i = 0; i < keyIds.Length; i++)
                 {
+                    int k1 = keyIds[i];
                     // path from start to k1's location
                     foreach (var player in startPositions)
                     {
+                        var path = this.FindPath(player, keyPositions[k1]);
                         int playerId = PlayerCode(startPositions.IndexOf(player));
-                        var path = AStar<(int x, int y)>.FindPath(this, player, keyPositions[k1]);
                         if (path.Any())
                         {
-                            Paths[playerId | k1] = new RoomPath(Data, path);
+                            Paths[playerId | k1] = new RoomPath(path.Select(pos => Data[pos]));
                         }
                     }
-                    foreach (var k2 in Bits(AllKeys))
+                    for(int j = i + 1; j < keyIds.Length; j++)
                     {
-                        if (k2 > k1)
+                        int k2 = keyIds[j];
+    
+                        // path from k1 to k2
+                        var path = this.FindPath(keyPositions[k1], keyPositions[k2]);
+                        if (path.Any())
                         {
-                            // path from k1 to k2
-                            var path = AStar<(int x, int y)>.FindPath(this, keyPositions[k1], keyPositions[k2]);
-                            if (path.Any())
-                            {
-                                Paths[k1 | k2] = new RoomPath(Data, path); // since we're using bitwise, we just store two bits for k1|k2 it doesn't matter which way around
-                            }
+                            Paths[k1 | k2] = new RoomPath(path.Select(pos => Data[pos])); // since we're using bitwise, we just store two bits for k1|k2 it doesn't matter which way around
                         }
                     }
                 }
+                Console.WriteLine($"Generated {Paths.Count} paths");
             }
         }
 
-        static Int64 GetKey(int players, int keys) => (Int64)players << 32 | (Int64)(uint)keys;
+        static long GetKey(int players, int keys) => (long)players << 32 | (long)keys;
 
-        public static int Solve(MapData map)
+        public static int Solve(MapData map, ILogger logger)
         {
             map.CalcPaths();
 
-            var queue = new Queue<(int, int, int)>();
+            logger.WriteLine("2");
 
-            queue.Enqueue((map.AllPlayers, 0, 0));
-            var cache = new Dictionary<Int64, int>() { { GetKey(map.AllPlayers, 0), 0 } };
+            var shortestPath = map.Paths.Values.Min(room => room.Count);
+
+            var queue = new PriorityQueue<(int positions, int heldKeys, int distance), int>();
+
+            queue.Enqueue((map.AllPlayers, 0, 0), 0);
+            var cache = new Dictionary<long, int>() { { GetKey(map.AllPlayers, 0), 0 } };
 
             int currentBest = int.MaxValue;
 
-            while (queue.Any())
+            logger.WriteLine("3");
+
+            queue.Operate((state, estimatedDistance) =>
             {
-                // take an item from the job queue
-                var item = queue.Dequeue();
+                var (positions, heldKeys, distance) = state;
 
-                var positions = item.Item1;
-                var heldKeys = item.Item2;
-                int distance = item.Item3;
-
-                int tryKeys = map.AllKeys - heldKeys;
-
-                if (tryKeys > 0)
+                if (estimatedDistance < currentBest)
                 {
                     foreach (var position in map.Bits(positions))
                     {
                         // check keys not held
-                        foreach (var key in map.Bits(tryKeys))
+
+                        var tryKeys = map.Bits(map.AllKeys - heldKeys);
+                        foreach (var key in tryKeys)
                         {
-                            if (map.Paths.TryGetValue(position | key, out var path))
+                            int remainingCount = tryKeys.Length - 1;
+
+                            if (map.Paths.TryGetValue(position | key, out var path) && path.IsWalkable(heldKeys) && (path.Count + distance) + (remainingCount * shortestPath) < currentBest)
                             {
-                                if (path.IsWalkable(heldKeys))
+                                // path isn't blocked - state holds all necessary keys
+
+                                // create new state, at location of next key
+                                var next = (positions: positions - position + key, heldKeys: heldKeys + key, distance: distance + path.Count);
+
+                                // check if we've visited this position with this set of keys before
+                                var cacheId = GetKey(next.positions, next.heldKeys);
+                                if (!cache.TryGetValue(cacheId, out int cachedBest) || cachedBest > next.distance)
                                 {
-                                    // path isn't blocked - state holds all necessary keys
-
-                                    // create new state, at location of next key
-                                    var next = ((positions - position) + (key), heldKeys + key, distance + path.Count);
-
-                                    // check if we've visited this position with this set of keys before
-                                    var cacheId = GetKey(next.Item1, next.Item2);
-                                    if (!cache.TryGetValue(cacheId, out int cachedBest))
-                                    {
-                                        cachedBest = int.MaxValue;
-                                    }
-
                                     // we've not visited, or our new path is shorter
-                                    if (cachedBest > next.Item3)
+                                    // cache the new shorter distance, and add the new state to our job queue
+                                    cache[cacheId] = next.distance;
+
+                                    var nextEstimatedDistance = next.distance + (remainingCount * shortestPath);
+
+                                    if (remainingCount == 0)
                                     {
-                                        // cache the new shorter distance, and add the new state to our job queue
-                                        cache[cacheId] = next.Item3;
-                                        queue.Enqueue(next);
+                                        // Collected all the keys, so this is a possible solution
+                                        currentBest = Math.Min(currentBest, next.distance);
+                                    }
+                                    else if (nextEstimatedDistance < currentBest)
+                                    {
+                                        queue.Enqueue(next, nextEstimatedDistance);
                                     }
                                 }
                             }
                         }
                     }
                 }
-                else
-                {
-                    // we have all the keys, so this is a possible solution
-                    currentBest = Math.Min(currentBest, distance);
-                }
-            }
+            });
+
+            Console.WriteLine($"examined {cache.Count} states");
+
+            logger.WriteLine("4");
 
             return currentBest;
         }
 
-        public static int Part1(string input)
+        public static int Part1(string input, ILogger logger)
         {
+            logger.WriteLine("0");
             var map = new MapData(input);
-            return Solve(map);
+            logger.WriteLine("1");
+            return Solve(map, logger);
         }
 
-        public static int Part2(string input)
+        public static int Part2(string input, ILogger logger)
         {
+            logger.WriteLine("0");
             var map = new MapData(input);
+            logger.WriteLine("1");
             map.AlterForPart2();
-            return Solve(map);
+            return Solve(map, logger);
         }
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - " + Part1(input));
-            logger.WriteLine("- Pt2 - " + Part2(input));
+            logger.WriteLine("- Pt1 - " + Part1(input, logger));
+            logger.WriteLine("- Pt2 - " + Part2(input, logger));
         }
     }
 }

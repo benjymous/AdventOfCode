@@ -1,5 +1,4 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,14 +24,14 @@ namespace AoC.Advent2020
             return treeCount;
         }
 
-        public static Int64 Part1(string input)
+        public static long Part1(string input)
         {
             var map = Util.Split(input).ToArray();
 
             return CountTrees(map, 3, 1);
         }
 
-        public static Int64 Part2(string input)
+        public static long Part2(string input)
         {
             var map = Util.Split(input).ToArray();
 

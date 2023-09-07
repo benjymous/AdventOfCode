@@ -9,17 +9,15 @@ namespace AoC.Advent2017
 
         static void Redistribute(ref int[] banks)
         {
-            int maxIndex = banks.MaxIndex();
+            int i = banks.MaxIndex();
 
-            int redistribute = banks[maxIndex];
-            banks[maxIndex] = 0;
+            int redistribute = banks[i];
+            banks[i] = 0;
 
-            int i = Util.WrapIndex(maxIndex + 1, banks.Length);
-            while (redistribute > 0)
+            while (redistribute-- > 0)
             {
-                banks[i]++;
-                redistribute--;
-                i = Util.WrapIndex(i + 1, banks.Length);
+                i = (i + 1) % banks.Length;
+                banks[i]++; 
             }
         }
 

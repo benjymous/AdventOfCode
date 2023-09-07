@@ -8,38 +8,18 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-25";
 
-        static IEnumerable<(int x, int y, ulong code)> NumberSequence()
+        static int FindCode(int row, int col)
         {
-            int x = 1;
-            int y = 1;
-            ulong code = 20151125;
-            yield return (x, y, code);
+            int iterTarget = (row + col - 2) * (row + col - 1) / 2 + col;
 
-            while (true)
-            {
-                y--;
-                if (y == 0)
-                {
-                    y = x + 1;
-                    x = 0;
-                }
-                x++;
-                code *= 252533;
-                code %= 33554393;
-                yield return (x, y, code);
-            }
+            return (int)(20151125 * System.Numerics.BigInteger.ModPow(252533, iterTarget - 1, 33554393) % 33554393);
         }
 
         public static int Part1(string input)
         {
             var numbers = Util.ExtractNumbers(input);
 
-            var row = numbers[0];
-            var col = numbers[1];
-
-            var code = NumberSequence().First(val => val.x == col && val.y == row).code;
-
-            return (int)code;
+            return FindCode(numbers[0], numbers[1]);
         }
 
         public void Run(string input, ILogger logger)

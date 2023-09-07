@@ -1,5 +1,4 @@
-﻿using AoC.Utils.Vectors;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace AoC.Advent2019
@@ -14,63 +13,54 @@ namespace AoC.Advent2019
             Shortest
         }
 
+        static IEnumerable<List<(int direction, int count)>> ParseData(string input)
+        {
+            var lines = Util.Split(input, '\n');
+            foreach (var line in lines)
+            {
+                List<(int, int)> lineRes = new();
+                var instructions = Util.Split(line);
+                foreach (var i in instructions)
+                {
+                    lineRes.Add((i[0] switch
+                    {
+                        'R' => 1,
+                        'L' => -1,
+                        'U' => -1 << 16,
+                        'D' => 1 << 16,
+                        _ => 0
+                    }, int.Parse(i[1..])));
+                }
+                yield return lineRes;
+            }
+        }
+
         public static int FindIntersection(string input, SearchMode mode)
         {
-            var lines = input.Split("\n");
+            var data = ParseData(input);
 
             var minDist = int.MaxValue;
 
-            Dictionary<(int x, int y), int> seen = new();
+            Dictionary<int, int> seen = null;
 
-            foreach (var line in lines)
+            foreach (var line in data)
             {
-                if (string.IsNullOrEmpty(line)) continue;
-                var instructions = line.Split(",");
-
-                var position = new ManhattanVector2(0, 0);
+                int position = 0x1000 + (0x1000 << 16);
                 int steps = 0;
-                Dictionary<(int x, int y), int> current = new();
+                Dictionary<int, int> current = new();
 
-                foreach (var i in instructions)
+                foreach (var (direction, count) in line)
                 {
-                    if (string.IsNullOrEmpty(i)) continue;
-                    var distance = int.Parse(i[1..]);
-
-                    for (var j = 0; j < distance; ++j)
+                    for (var j = 0; j < count; ++j)
                     {
-                        switch (i[0])
-                        {
-                            case 'R':
-                                position.X++;
-                                break;
-
-                            case 'L':
-                                position.X--;
-                                break;
-
-                            case 'U':
-                                position.Y--;
-                                break;
-
-                            case 'D':
-                                position.Y++;
-                                break;
-                        }
-
+                        position += direction;
                         steps++;
 
-                        if (seen.ContainsKey(position))
+                        if (seen != null && seen.ContainsKey(position))
                         {
-                            int dist = int.MaxValue;
-                            if (mode == SearchMode.Closest)
-                            {
-                                dist = position.Distance(ManhattanVector2.Zero);
-                            }
-                            else
-                            {
-                                dist = steps + seen[position];
-                            }
-                            minDist = Math.Min(minDist, dist);
+                            minDist = Math.Min(minDist, mode == SearchMode.Closest
+                                ? Math.Abs((position & 0xffff) - 0x1000) + Math.Abs((position >> 16) - 0x1000)
+                                : steps + seen[position]);
                         }
                         else
                         {
@@ -79,7 +69,7 @@ namespace AoC.Advent2019
                     }
                 }
 
-                foreach (var s in current) seen[s.Key] = s.Value;
+                seen = current;
             }
 
             return minDist;

@@ -43,7 +43,7 @@ namespace AoC.Advent2021
             {
                 for (int x = 0; x <= maxX; ++x)
                 {
-                    sb.Append(dots.Contains((x, y)) ? "#" : ".");
+                    sb.Append(dots.Contains((x, y)) ? "▊▊" : "  ");
                 }
                 sb.AppendLine();
             }
@@ -56,8 +56,8 @@ namespace AoC.Advent2021
             var bits = input.Split("\n\n");
             return
             (
-                Util.Parse<ManhattanVector2>(bits[0]).Select(v => ((int, int))v),
-                Util.RegexParse<Fold>(bits[1])
+                Util.Parse<ManhattanVector2>(bits[0]).Select(v => v.AsSimple()),
+                Util.RegexParse<Fold>(bits[1]).ToArray()
             );
         }
 

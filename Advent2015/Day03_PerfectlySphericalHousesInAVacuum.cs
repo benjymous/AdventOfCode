@@ -2,6 +2,7 @@
 using AoC.Utils.Vectors;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AoC.Advent2015
 {
@@ -13,25 +14,9 @@ namespace AoC.Advent2015
         {
             public ManhattanVector2 Position { get; set; } = new ManhattanVector2(0, 0);
 
-            public ManhattanVector2 Step(char c)
+            public ManhattanVector2 Step(Direction2 dir)
             {
-                switch (c)
-                {
-                    case '^':
-                        Position.Offset(0, -1);
-                        break;
-                    case 'v':
-                        Position.Offset(0, 1);
-                        break;
-                    case '>':
-                        Position.Offset(1, 0);
-                        break;
-                    case '<':
-                        Position.Offset(-1, 0);
-                        break;
-                    default:
-                        throw new Exception("unexpected char!");
-                }
+                Position += dir;
                 return Position;
             }
         }
@@ -42,9 +27,9 @@ namespace AoC.Advent2015
 
             var santa = new SantaStepper();
 
-            foreach (var c in input)
+            foreach (var dir in input.Select(c => new Direction2(c)))
             {                
-                visited.Add(santa.Step(c));
+                visited.Add(santa.Step(dir));
             }
 
             return visited.Count;
@@ -56,10 +41,10 @@ namespace AoC.Advent2015
 
             Queue<SantaStepper> santas = new() { new SantaStepper(), new SantaStepper() };
 
-            foreach (var c in input)
+            foreach (var dir in input.Select(c => new Direction2(c)))
             {
                 var santa = santas.Dequeue();
-                visited.Add(santa.Step(c));
+                visited.Add(santa.Step(dir));
                 santas.Enqueue(santa);
             }
 

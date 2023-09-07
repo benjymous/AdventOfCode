@@ -14,7 +14,7 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void KnotHash01Test(string input, int listSize, int expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day10.RunHash(listSize, Util.ParseNumbers<int>(input), 1).CheckSum());
+            Assert.AreEqual(expected, Day10.RunHash(listSize, Util.ParseNumbers<int>(input), 1).CheckSum());
         }
 
         [TestCategory("Test")]
@@ -26,21 +26,21 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void KnotHash02Test(string input, string expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day10.Part2(input));
+            Assert.AreEqual(expected, Day10.Part2(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void KnotHash_Part1_Regression()
         {
-            Assert.AreEqual(23874, Advent2017.Day10.Part1(input));
+            Assert.AreEqual(23874, Day10.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void KnotHash_Part2_Regression()
         {
-            Assert.AreEqual("e1a65bfb5a5ce396025fab5528c25a87", Advent2017.Day10.Part2(input));
+            Assert.AreEqual("e1a65bfb5a5ce396025fab5528c25a87", Day10.Part2(input));
         }
 
     }

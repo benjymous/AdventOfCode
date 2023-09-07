@@ -10,15 +10,14 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-09";
 
-        [Regex(@"(.) (.+)")]
-        public readonly record struct Instruction(Direction2 Direction, int Steps) {}
+        [Regex(@"(.) (.+)")] public readonly record struct Instruction(Direction2 Direction, int Steps) {}
 
-        public static bool UpdateTail(ManhattanVector2 head, ManhattanVector2 tail)
+        public static bool UpdateTail((int x, int y) head, ref (int x, int y) tail)
         {
-            var (dx, dy) = (head.X - tail.X, head.Y - tail.Y);
+            int dx = head.x - tail.x, dy = head.y - tail.y;
             if (Math.Abs(dx) > 1 || Math.Abs(dy) > 1)
             {
-                tail.Offset(Math.Sign(dx), Math.Sign(dy));
+                tail = tail.OffsetBy((Math.Sign(dx), Math.Sign(dy)));
                 return true;
             }
             return false;
@@ -26,26 +25,19 @@ namespace AoC.Advent2022
 
         private static int SimulateRope(string input, int numSegments)
         {
-            var instructions = Util.RegexParse<Instruction>(input);
-
-            ManhattanVector2[] rope = new ManhattanVector2[numSegments];
-            for (int i = 0; i < numSegments; ++i) rope[i] = new(0, 0);
-
-            var head = rope.First();
-            var tail = rope.Last();
-
+            (int x, int y)[] rope = new (int x, int y)[numSegments];
             HashSet<(int x, int y)> tailPositions = new();
 
-            foreach (var instr in instructions)
+            foreach (var instr in Util.RegexParse<Instruction>(input))
             {
                 for (int i = 0; i < instr.Steps; i++)
                 {
-                    head.Offset(instr.Direction);
+                    rope[0] = rope[0].OffsetBy(instr.Direction);
 
                     for (int j = 0; j < numSegments - 1; ++j)
-                        if (!UpdateTail(rope[j], rope[j + 1])) break;
+                        if (!UpdateTail(rope[j], ref rope[j + 1])) break;
 
-                    tailPositions.Add(tail);
+                    tailPositions.Add(rope[numSegments-1]);
                 }
             }
 

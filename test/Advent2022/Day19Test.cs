@@ -48,7 +48,7 @@ namespace AoC.Advent2022.Test
         {
             var bp = Util.RegexCreate<Day19.Blueprint>(input);
             
-            Assert.AreEqual(expected, Day19.RunBlueprint(bp, 24).score);
+            Assert.AreEqual(expected, bp.Run(24).score);
         }
 
         [TestCategory("Test")]
@@ -59,7 +59,7 @@ namespace AoC.Advent2022.Test
         {
             var bp = Util.RegexCreate<Day19.Blueprint>(input);
 
-            Assert.AreEqual(expected, Day19.RunBlueprint(bp, 32).geodes);
+            Assert.AreEqual(expected, bp.Run(32).geodes);
         }
 
         [TestCategory("Regression")]

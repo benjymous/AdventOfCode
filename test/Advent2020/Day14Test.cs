@@ -16,7 +16,8 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void MaskV1Test(Int64 value, string input, Int64 expected)
         {
-            Assert.AreEqual(expected, Advent2020.Day14.ApplyMaskV1(value, Day14.Mask(input)));
+            var statement = new Day14.Statement(input);
+            Assert.AreEqual(expected, Day14.ApplyMaskV1(value, statement.Mask));
         }
 
         [TestCategory("Test")]
@@ -27,7 +28,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Docking01Test(string input, Int64 expected)
         {
-            Assert.AreEqual(expected, Advent2020.Day14.Part1(input));
+            Assert.AreEqual(expected, Day14.Part1(input));
         }
 
         [TestCategory("Test")]
@@ -38,7 +39,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Docking02Test(string input, Int64 expected)
         {
-            Assert.AreEqual(expected, Advent2020.Day14.Part2(input));
+            Assert.AreEqual(expected, Day14.Part2(input));
         }
 
         [TestCategory("Regression")]

@@ -26,7 +26,7 @@ namespace AoC.Advent2020
                     return HaltType.Halt;
                 }
                 seen.Add(pc);
-                pc = cpu.Get(Elforola.RegisterId.pc);
+                pc = cpu.Get(RegisterId.pc);
                 if (seen.Contains(pc))
                 {
                     cyclesTested += cpu.CycleCount;
@@ -43,7 +43,7 @@ namespace AoC.Advent2020
             var seen = new HashSet<int>();
             int cycles = 0;
             CheckHalt(cpu, ref seen, ref cycles);
-            return cpu.Get(Elforola.RegisterId.acc);
+            return cpu.Get(RegisterId.acc);
         }
 
         public static int Part2(string input)

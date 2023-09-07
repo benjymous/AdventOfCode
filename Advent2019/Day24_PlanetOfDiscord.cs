@@ -1,8 +1,6 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2019
 {
@@ -39,43 +37,21 @@ namespace AoC.Advent2019
                 }
             }
 
-            public void Clear()
-            {
-                foreach (var level in cells.Keys.ToList())
-                {
-                    cells[level] = 0;
-                }
-            }
+            public void Clear() => cells.Clear();
 
-            public int Count()
-            {
-                int count = 0;
-                foreach (var cell in cells)
-                {
-                    count += cell.Value.BitSequence().Count();
-                }
-                return count;
-            }
+            public int Count() => cells.Sum(level => level.Value.CountBits());
 
-            public Dictionary<int, int> cells = new();
+            public Dictionary<int, uint> cells = new();
 
-            public static int Bit(int x, int y) => 1 << ((y * 5) + x);
+            public static uint Bit(int x, int y) => 1U << ((y * 5) + x);
 
             public void Set(int x, int y, int level = 0)
             {
-                if (!cells.ContainsKey(level)) cells[level] = 0;
-                cells[level] |= Bit(x, y);
+                if (cells.ContainsKey(level)) cells[level] |= Bit(x, y);
+                else cells[level] = Bit(x, y);
             }
 
-            public int Get(int x, int y, int level = 0)
-            {
-                if (!cells.ContainsKey(level)) return 0;
-                if (x < 0 || y < 0 || x >= 5 || y >= 5)
-                {
-                    return 0;
-                }
-                else return ((cells[level] & Bit(x, y)) > 0) ? 1 : 0;
-            }
+            public bool Get(int x, int y, int level = 0) => cells.ContainsKey(level) && x >= 0 && y >= 0 && x < 5 && y < 5 && (cells[level] & Bit(x, y)) > 0;
 
             static IEnumerable<(int x, int y, int level)> GetNeighboursFlat(int x, int y, int level)
             {
@@ -85,7 +61,10 @@ namespace AoC.Advent2019
                 yield return (x, y + 1, level);
             }
 
-            public IEnumerable<(int x, int y, int level)> GetNeighbours(int x, int y, int level)
+            readonly Dictionary<long, (int, int, int)[]> neighbourCache = new();
+            public IEnumerable<(int x, int y, int level)> GetNeighbours(int x, int y, int level) => neighbourCache.GetOrCalculate(x + (y << 3) + (level << 6), _ => GetNeighbours_(x, y, level).ToArray());
+
+            private IEnumerable<(int x, int y, int level)> GetNeighbours_(int x, int y, int level)
             {
                 if (Infinite)
                 {
@@ -148,7 +127,6 @@ namespace AoC.Advent2019
                             // top edge
                             yield return (2, 1, level - 1);
                         }
-
                         else if (n.y == 5)
                         {
                             // bottom edge
@@ -169,51 +147,18 @@ namespace AoC.Advent2019
                 }
             }
 
-            public int Neighbours(int x, int y, int level = 0) => GetNeighbours(x, y, level).Sum(n => Get(n.x, n.y, n.level));
+            public int Neighbours(int x, int y, int level = 0) => GetNeighbours(x, y, level).Count(n => Get(n.x, n.y, n.level));
 
-            public void Tick(State oldState, int x, int y, int level)
+            public void Tick(State oldState, int x, int y, int level = 0)
             {
                 int neighbours = oldState.Neighbours(x, y, level);
-                if (oldState.Get(x, y, level) == 1)
-                {
-                    //Console.Write($"#{neighbours} ");
-                    // bug at cell
-                    if (neighbours == 1)
-                    {
-                        Set(x, y, level);
-                    }
-                }
-                else
-                {
-                    // no bug at cell
-                    //Console.Write($".{neighbours} ");
-                    if (neighbours == 1 || neighbours == 2)
-                    {
-                        Set(x, y, level);
-                    }
-                }
-            }
 
-            public void Display()
-            {
-                var sb = new StringBuilder();
-                foreach (var kvp in cells.OrderBy(kvp => kvp.Key))
+                if (neighbours == 1 || neighbours == 2 && !oldState.Get(x, y, level))
                 {
-                    Console.WriteLine($"{kvp.Key} - {kvp.Value}");
-                    for (var y = 0; y < 5; ++y)
-                    {
-                        for (var x = 0; x < 5; ++x)
-                        {
-                            Console.Write((Get(x, y, kvp.Key) == 1) ? '#' : '.');
-                        }
-                        Console.WriteLine();
-                    }
-                    Console.WriteLine();
+                    Set(x, y, level);
                 }
-                Console.WriteLine("--------");
             }
         }
-
 
         public static void Tick1(State oldState, State newState)
         {
@@ -222,7 +167,7 @@ namespace AoC.Advent2019
             {
                 for (var x = 0; x < 5; ++x)
                 {
-                    newState.Tick(oldState, x, y, 0);
+                    newState.Tick(oldState, x, y);
                 }
             }
         }
@@ -248,68 +193,38 @@ namespace AoC.Advent2019
             }
         }
 
-
-        public static int Part1(string input)
+        public static uint Part1(string input)
         {
-            HashSet<int> seen = new();
+            HashSet<uint> seen = new();
 
-            Queue<State> states = new();
-            states.Enqueue(new State(input));
-            states.Enqueue(new State());
+            State s1 = new (input), s2 = new ();
 
             while (true)
             {
-                var oldState = states.Dequeue();
-                var newState = states.Dequeue();
+                if (seen.Contains(s1.cells[0])) return s1.cells[0];
+                seen.Add(s1.cells[0]);
+                Tick1(s1, s2);
 
-                if (seen.Contains(oldState.cells[0]))
-                {
-                    return oldState.cells[0];
-                }
-                seen.Add(oldState.cells[0]);
-                Tick1(oldState, newState);
-
-                states.Enqueue(newState);
-                states.Enqueue(oldState);
+                (s1, s2) = (s2, s1);
             }
         }
 
-
-
         public static int Part2(string input, int runs = 200)
         {
-            Queue<State> states = new();
-            states.Enqueue(new State(input) { Infinite = true });
-            states.Enqueue(new State() { Infinite = true });
+            State s1 = new(input) { Infinite = true }, s2 = new() { Infinite = true };
 
             for (var i = 0; i < runs; ++i)
             {
-                var oldState = states.Dequeue();
-                var newState = states.Dequeue();
+                Tick2(s1, s2);
 
-                //Console.WriteLine($"-------[{i}]--------");
-
-                //oldState.Display();
-
-                Tick2(oldState, newState);
-
-                //Console.WriteLine(newState.Count());
-
-                states.Enqueue(newState);
-                states.Enqueue(oldState);
+                (s1, s2) = (s2, s1);
             }
 
-            //var s = states.Dequeue();
-            //s.Display();
-            //return s.Count();
-            return states.Dequeue().Count();
+            return s1.Count();
         }
 
         public void Run(string input, ILogger logger)
         {
-
-            //logger.WriteLine(Part2("....#\n#..#.\n#..##\n..#..\n#....", 10));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input, 200));
         }

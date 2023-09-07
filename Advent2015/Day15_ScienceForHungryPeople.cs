@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2015
@@ -9,125 +8,52 @@ namespace AoC.Advent2015
         public string Name => "2015-15";
 
         const int Calories = 4;
+        static readonly int[] Sequence = new[] { 0, 1, 2, 3 };
 
-        class Ingredient
+        class Factory
         {
-            public string Name { get; private set; }
-
-            public int[] Qualities { get; private set; }
-
-            [Regex(@"(.+): capacity (.+), durability (.+), flavor (.+), texture (.+), calories (.+)")]
-            public Ingredient(string name, int capacity, int durability, int flavor, int texture, int calories)
-            {
-                Name = name;
-
-                Qualities = new int[] { capacity, durability, flavor, texture, calories };
-            }
+            [Regex(@".+: capacity (.+), durability (.+), flavor (.+), texture (.+), calories (.+)")]
+            public static int[] Ingredient(int capacity, int durability, int flavor, int texture, int calories) => new int[] { capacity, durability, flavor, texture, calories };
         }
 
-        static int CalcScore(int[] weights, List<Ingredient> ingredients)
+        static int CalcScore(int[] weights, int[][] ingredients, bool countCalories)
         {
+            if (countCalories)
+            {
+                int calories = 0;
+                for (int i = 0; i < 4; ++i) calories += ingredients[i][Calories] * weights[i];
+                if (calories != 500) return 0;
+            }
+
             int score = 1;
 
             for (int q = 0; q < 4; ++q)
             {
                 int qualScore = 0;
-                for (int i = 0; i < weights.Length; ++i)
-                {
-                    qualScore += ingredients[i].Qualities[q] * weights[i];
-                }
-                qualScore = Math.Max(0, qualScore);
+                for (int i = 0; i < 4; ++i) qualScore += ingredients[i][q] * weights[i];
+                if (qualScore <= 0) return 0;
                 score *= qualScore;
             }
 
             return score;
         }
 
-        static int CalcCalories(int[] weights, List<Ingredient> ingredients)
+        public static IEnumerable<int[]> IngredientCombinations()
         {
-            int calories = 0;
-
-            for (int i = 0; i < weights.Length; ++i)
-            {
-                calories += ingredients[i].Qualities[Calories] * weights[i];
-            }
-
-            return calories;
-        }
-
-        static IEnumerable<int[]> Neighbours(int[] weights)
-        {
-            if (weights[0] > 0)
-            {
-                yield return new int[] { weights[0] - 1, weights[1] + 1, weights[2], weights[3] };
-                yield return new int[] { weights[0] - 1, weights[1], weights[2] + 1, weights[3] };
-                yield return new int[] { weights[0] - 1, weights[1], weights[2], weights[3] + 1 };
-            }
-
-            if (weights[1] > 0)
-            {
-                yield return new int[] { weights[0] + 1, weights[1] - 1, weights[2], weights[3] };
-                yield return new int[] { weights[0], weights[1] - 1, weights[2] + 1, weights[3] };
-                yield return new int[] { weights[0], weights[1] - 1, weights[2], weights[3] + 1 };
-            }
-
-            if (weights[2] > 0)
-            {
-                yield return new int[] { weights[0] + 1, weights[1], weights[2] - 1, weights[3] };
-                yield return new int[] { weights[0], weights[1] + 1, weights[2] - 1, weights[3] };
-                yield return new int[] { weights[0], weights[1], weights[2] - 1, weights[3] + 1 };
-            }
-
-            if (weights[3] > 0)
-            {
-                yield return new int[] { weights[0] + 1, weights[1], weights[2], weights[3] - 1 };
-                yield return new int[] { weights[0], weights[1] + 1, weights[2], weights[3] - 1 };
-                yield return new int[] { weights[0], weights[1], weights[2] + 1, weights[3] - 1 };
-            }
+            for (int[] combination = new int[] { 1, 0, 0, 0 }; combination[0] <= 97; ++combination[0])
+                for (combination[1] = 1; combination[1] <= 97 - combination[0]; ++combination[1])
+                    for (combination[2] = 1; combination[2] <= 97 - (combination[0] + combination[1]); ++combination[2])
+                    {
+                        combination[3] = 100 - (combination[0] + combination[1] + combination[2]);
+                        yield return combination;
+                    }
         }
 
         public static int Solve(string input, bool countCalories)
         {
-            var ingredients = Util.RegexParse<Ingredient>(input).ToList();
+            var ingredients = Util.RegexFactory<int[], Factory>(input).ToArray();
 
-            var jobqueue = new Queue<(int[], int)>();
-            var initial = new int[4] { 25, 25, 25, 25 };
-            var initialCalories = countCalories ? CalcCalories(initial, ingredients) : 500;
-            var initialScore = initialCalories == 500 ? CalcScore(initial, ingredients) : 0;
-
-            jobqueue.Enqueue((initial, initialScore));
-            var cache = new Dictionary<string, int>();
-
-            int best = initialScore;
-
-            cache[string.Join(",", initial)] = initialScore;
-
-            while (jobqueue.Any())
-            {
-                var entry = jobqueue.Dequeue();
-
-                if (entry.Item2 > best) best = entry.Item2;
-
-                var neighbours = Neighbours(entry.Item1);
-
-                foreach (var neighbour in neighbours)
-                {
-                    var key = string.Join(",", neighbour);
-
-                    if (!cache.ContainsKey(key))
-                    {
-                        int calories = countCalories ? CalcCalories(neighbour, ingredients) : 500;
-                        int newScore = calories == 500 ? CalcScore(neighbour, ingredients) : 0;
-
-                        cache[key] = newScore;
-                        jobqueue.Enqueue((neighbour, newScore));
-
-                    }
-                }
-
-            }
-
-            return best;
+            return IngredientCombinations().Max(set => CalcScore(set, ingredients, countCalories));
         }
 
         public static int Part1(string input)

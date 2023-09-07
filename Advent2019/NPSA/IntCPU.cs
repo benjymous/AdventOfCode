@@ -2,18 +2,19 @@ using AoC.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace AoC.Advent2019.NPSA
 {
     public interface ICPUInterrupt
     {
-        void WillReadInput();
-        void HasPutOutput();
+        void RequestInput();
+        void OutputReady();
     }
 
     public class IntCPU
     {
-        enum Opcode : byte
+        enum Opcode
         {
             ADD = 1,
             MUL = 2,
@@ -32,55 +33,53 @@ namespace AoC.Advent2019.NPSA
             HALT = 99,
         }
 
-        static byte InstructionSize(Opcode code)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static byte InstructionSize(Opcode code) => code switch
         {
-            return code switch
-            {
-                Opcode.HALT => 1,
-                Opcode.GET or Opcode.OUT or Opcode.SETR => 2,
-                Opcode.JNZ or Opcode.JZ => 3,
-                Opcode.ADD or Opcode.MUL or Opcode.LT or Opcode.EQ => 4,
-                _ => throw new Exception("Bad instruction"),
-            };
-        }
+            Opcode.HALT => 1,
+            Opcode.GET or Opcode.OUT or Opcode.SETR => 2,
+            Opcode.JNZ or Opcode.JZ => 3,
+            Opcode.ADD or Opcode.MUL or Opcode.LT or Opcode.EQ => 4,
+            _ => throw new Exception("Bad instruction"),
+        };
 
-        enum ParamMode : byte
+        enum ParamMode
         {
             Position = 0,
             Immediate = 1,
-            Relative = 2,
+            Relative = 2
         }
 
-        Int64[] Memory;
-        readonly IEnumerable<Int64> initialState;
-        Int64 InstructionPointer = 0;
-        Int64 RelBase = 0;
-        public Queue<Int64> Input { get; set; } = new Queue<Int64>();
-        public Queue<Int64> Output { get; set; } = new Queue<Int64>();
+        long[] Memory;
+        readonly IEnumerable<long> initialState;
+        long InstructionPointer = 0;
+        long RelBase = 0;
+        public Queue<long> Input { get; set; } = new Queue<long>();
+        public Queue<long> Output { get; set; } = new Queue<long>();
 
         public ICPUInterrupt Interrupt { get; set; } = null;
 
-        int CycleCount = 0;
+        public int CycleCount { get; private set; } = 0;
         double speed = 0;
         double runTimeSecs = 0;
-
-        static IEnumerable<int> PossibleParamModes()
-        {
-            for (int x = 0; x < 3; ++x)
-                for (int y = 0; y < 3; ++y)
-                    for (int z = 0; z < 3; ++z)
-                        yield return (x * 100) + (y * 1000) + (z * 10000);
-        }
 
         public IntCPU(string program)
         {
             initialState = Util.ParseNumbers<long>(program);
             Reset();
 
-            lock (paramCache)
+            lock (paramLock)
             {
-                foreach (var c in PossibleParamModes())
-                    paramCache[c / 100] = DecodeParams(c);
+                if (paramCache == null)
+                {
+                    paramCache = new ParamMode[333][];
+
+                    for (int x = 0; x < 3; ++x)
+                        for (int y = 0; y < 3; ++y)
+                            for (int z = 0; z < 3; ++z)
+                                paramCache[(x * 1) + (y * 10) + (z * 100)] = new[] 
+                                    { (ParamMode)x, (ParamMode)y, (ParamMode)z };
+                }
             }
         }
 
@@ -95,43 +94,33 @@ namespace AoC.Advent2019.NPSA
         }
 
         public void Reserve(int memorySize) => Array.Resize(ref Memory, Math.Max(memorySize, Memory.Length));
-
-        Int64 GetValue(int paramIdx) => Memory[GetAddr(paramIdx)];
-        void PutValue(int paramIdx, Int64 value) => Memory[GetAddr(paramIdx)] = value;
-        Int64 GetAddr(int paramIdx)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        long GetValue(int paramIdx) => Memory[GetAddr(paramIdx)];
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void PutValue(int paramIdx, long value) => Memory[GetAddr(paramIdx)] = value;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        long GetAddr(int paramIdx)
         {
-            Int64 offset = InstructionPointer + paramIdx;
+            long offset = InstructionPointer + paramIdx;
             return paramMode[paramIdx - 1] switch
             {
                 ParamMode.Position => Memory[offset],
                 ParamMode.Immediate => offset,
-                ParamMode.Relative => (Memory[offset] + RelBase),
-                _ => throw new Exception($"Unexpected ParamMode {paramMode[paramIdx - 1]}"),
+                ParamMode.Relative => Memory[offset] + RelBase,
+                _ => throw new NotImplementedException(),
             };
         }
 
-        static readonly int[] mods = { 100, 1000, 10000, 100000 };
-        static readonly int MAX_PARAMS = 3;
-
-        static ParamMode[] DecodeParams(int raw)
-        {
-            ParamMode[] mode = new ParamMode[MAX_PARAMS];
-            for (var i = 0; i < MAX_PARAMS; ++i)
-            {
-                mode[i] = (ParamMode)((raw % mods[i + 1]) / mods[i]);
-            }
-            return mode;
-        }
-
-        static readonly ParamMode[][] paramCache = new ParamMode[333][];
+        static ParamMode[][] paramCache = null;
+        static readonly object paramLock = new();
 
         ParamMode[] paramMode;
 
-        Int64 ReadInput()
+        long ReadInput()
         {
             if (Input.Count == 0)
             {
-                Interrupt?.WillReadInput();
+                Interrupt?.RequestInput();
                 if (Input.Count == 0)
                 {
                     throw new Exception("Out of input!");
@@ -139,14 +128,14 @@ namespace AoC.Advent2019.NPSA
             }
             return Input.Dequeue();
         }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Step()
         {
             try
             {
                 CycleCount++;
 
-                Int64 raw = Memory[InstructionPointer];
+                long raw = Memory[InstructionPointer];
                 Opcode Code = (Opcode)(raw % 100);
                 paramMode = paramCache[raw / 100];
 
@@ -161,13 +150,13 @@ namespace AoC.Advent2019.NPSA
                         PutValue(3, GetValue(1) * GetValue(2));
                         break;
 
-                    case Opcode.GET: // takes a single integer as input and saves it to the address given by its only parameter                
+                    case Opcode.GET: // takes a single integer as input and saves it to the address given by its only parameter
                         PutValue(1, ReadInput());
                         break;
 
                     case Opcode.OUT: // output the value of its only parameter.
                         Output.Enqueue(GetValue(1));
-                        Interrupt?.HasPutOutput();
+                        Interrupt?.OutputReady();
                         break;
 
                     case Opcode.JNZ: // if the first parameter is non-zero, it sets the instruction pointer to the value from the second parameter. Otherwise, it does nothing.
@@ -223,11 +212,11 @@ namespace AoC.Advent2019.NPSA
             System.Diagnostics.Stopwatch sw = new();
             sw.Start();
 
-            while (Step()) ;
+            while (Step());
 
             sw.Stop();
             runTimeSecs = sw.Elapsed.TotalSeconds;
-            speed = (double)CycleCount / runTimeSecs;
+            speed = CycleCount / runTimeSecs;
         }
 
         public string Speed()
@@ -235,8 +224,8 @@ namespace AoC.Advent2019.NPSA
             return $"{CycleCount} cycles - {speed.ToEngineeringNotation()}hz [{runTimeSecs}S]";
         }
 
-        public void Poke(int addr, Int64 val) => Memory[addr] = val;
-        public Int64 Peek(int addr) => Memory[addr];
+        public void Poke(int addr, long val) => Memory[addr] = val;
+        public long Peek(int addr) => Memory[addr];
 
         public override string ToString() => string.Join(",", Memory);
     }

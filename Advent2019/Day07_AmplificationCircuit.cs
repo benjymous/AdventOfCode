@@ -1,5 +1,5 @@
-﻿using AoC.Utils;
-using System;
+﻿using AoC.Advent2019.NPSA;
+using AoC.Utils;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,9 +9,9 @@ namespace AoC.Advent2019
     {
         public string Name => "2019-07";
 
-        public static Int64 RunAmplifiers01(string program, IEnumerable<int> inputs)
+        public static long RunAmplifiers01(string program, IEnumerable<int> inputs)
         {
-            Int64 signal = 0;
+            long signal = 0;
 
             foreach (var phase in inputs)
             {
@@ -25,62 +25,41 @@ namespace AoC.Advent2019
             return signal;
         }
 
-        public static Int64 RunAmplifiers02(string program, IEnumerable<int> inputs)
+        public static long RunAmplifiers02(string program, IEnumerable<int> inputs)
         {
-            Int64 signal = 0;
-
-            var cpus = new List<NPSA.IntCPU>();
-
-            foreach (var phase in inputs)
-            {
-                var cpu = new NPSA.IntCPU(program);
-                cpu.Input.Enqueue(phase);
-
-                cpus.Add(cpu);
-            }
+            var cpus = inputs.Select(phase => new IntCPU(program) { Input = new() { phase } }).ToArray();
 
             var current = 0;
 
-            int steps = 0;
-
-            Int64 output = 0;
+            long signal = 0, output = 0;
 
             while (true)
             {
-                bool running = true;
                 cpus[current].Input.Enqueue(signal);
-                while (running && cpus[current].Output.Count == 0)
+                while (cpus[current].Output.Count == 0)
                 {
-                    running = cpus[current].Step();
-                }
-                if (!running)
-                {
-                    return output;
+                    if (!cpus[current].Step()) return output;
                 }
                 signal = cpus[current].Output.Dequeue();
 
-                if (current == cpus.Count - 1)
-                {
-                    output = signal;
-                }
+                if (current == cpus.Length - 1) output = signal;
 
-                current = (current + 1) % cpus.Count;
-                steps++;
+                current = (current + 1) % cpus.Length;
             }
         }
 
-        public static Int64 Part1(string input)
+        public static long Part1(string input)
         {
             var permutations = Enumerable.Range(0, 5).Permutations();
 
-            return permutations.Max(set => RunAmplifiers01(input, set));
+            return permutations.AsParallel().Max(set => RunAmplifiers01(input, set));
         }
 
-        public static Int64 Part2(string input)
+        public static long Part2(string input)
         {
             var permutations = Enumerable.Range(5, 5).Permutations();
 
-            return permutations.Max(set => RunAmplifiers02(input, set));
+            return permutations.AsParallel().Max(set => RunAmplifiers02(input, set));
         }
 
         public void Run(string input, ILogger logger)

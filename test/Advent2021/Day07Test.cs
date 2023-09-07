@@ -14,14 +14,14 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void Crabs01Test()
         {
-            Assert.AreEqual(37, Advent2021.Day07.Part1(test));
+            Assert.AreEqual(37, Day07.Part1(test));
         }
 
         [TestCategory("Test")]
         [DataTestMethod]
         public void Crabs02Test()
         {
-            Assert.AreEqual(168, Advent2021.Day07.Part2(test));
+            Assert.AreEqual(168, Day07.Part2(test));
         }
 
         [TestCategory("Regression")]

@@ -1,4 +1,5 @@
 ﻿using AoC.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,7 +21,13 @@ namespace AoC.Advent2022
             public readonly (int x, int y) Pos, Beacon;
             public readonly int Range;
 
-            public bool InRange((int x, int y) test) => test.Distance(Pos) <= Range;
+            public bool InRange(int x, int y) => Pos.Distance(x, y) <= Range;
+
+            public int Overlap(Sensor other)
+            {
+                int dist = Pos.Distance(other.Pos);
+                return other != this && dist <= Range + other.Range ? dist : int.MaxValue;
+            }
 
             public bool WithinRow(int row) => row >= Pos.y - Range && row <= Pos.y + Range;
 
@@ -38,31 +45,52 @@ namespace AoC.Advent2022
                     }
                 }
             }
+
+            public (int min, int max) RowMinMax(int row)
+            {
+                int halfWidth = (Range - Math.Abs(row - Pos.y));
+                int min = Pos.x - halfWidth;
+                int max = Pos.x + halfWidth + 1;
+                return (min, max);
+            }
         }
 
         public static int Part1(string input, int line = 2000000)
         {
-            var sensors = Util.RegexParse<Sensor>(input).Where(s => s.WithinRow(line)).ToArray();
+            var sensors = Util.RegexParse<Sensor>(input).ToArray().Where(s => s.WithinRow(line)).ToArray();
             var beacons = sensors.Select(s => s.Beacon).Where(p => p.y == line).Distinct();
 
-            var minX = sensors.Min(s => s.Pos.x - s.Range);
-            var maxX = sensors.Max(s => s.Pos.x + s.Range);
+            var minMax = sensors.Select(s => s.RowMinMax(line)).ToArray();
 
-            return Enumerable.Range(minX, maxX - minX)
-                             .Where(x => sensors.Any(s => s.InRange((x, line))))
-                             .Count() - beacons.Count();
+            var min = minMax.Min(v => v.min);
+            var max = minMax.Max(v => v.max);
+
+            return (max - min) - beacons.Count();
         }
 
         public static long Part2(string input, int max = 4000000)
         {
             var sensors = Util.RegexParse<Sensor>(input).ToArray();
 
-            var (x, y) = sensors.SelectMany(s => s.OuterBoundary())
-                               .Where(p => p.x >= 0 && p.x <= max && p.y >= 0 && p.y <= max)
-                               .Where(p => !sensors.Any(s => s.InRange(p)))
-                               .First();
+            foreach (var sensor in sensors)
+            {
+                var boundary = sensor.OuterBoundary();
+                var sensorsSorted = sensors.Select(s2 => (s2, sensor.Overlap(s2))).OrderBy(pair => pair.Item2).Take(8).Select(pair => pair.s2).ToArray();
+                foreach (var (x, y) in boundary)
+                {
+                    if (x >= 0 && x <= max && y >= 0 && y <= max)
+                    {
+                        foreach (var s2 in sensorsSorted)
+                        {
+                            if (s2.InRange(x, y)) goto next;
+                        }
+                        return (4000000L * x) + y;
+                        next:;
+                    }
+                }
+            }
 
-            return (4000000L * x) + y;
+            return 0;
         }
 
         public void Run(string input, ILogger logger)

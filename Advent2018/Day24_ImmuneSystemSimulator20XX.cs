@@ -9,157 +9,75 @@ namespace AoC.Advent2018
     {
         public string Name => "2018-24";
 
-        public enum AttackType
-        {
-            slashing,
-            fire,
-            radiation,
-            bludgeoning,
-            cold
-        }
-
         public class Group
         {
-            [Regex(@"(\d+) units each with (\d+) hit points \((.+)\) with an attack that does (\d+) (.+) damage at initiative (\d+)")]
-            public Group(uint unitCount, uint hitPoints, string attributes, uint attackDamage, AttackType damageType, uint initiative)
-            {
-                UnitCount = unitCount;
-                HP = hitPoints;
-                AttackDamage = attackDamage;
-                AttackType = damageType;
-                Initiative = initiative;
+            [Regex(@"(\d+) units each with (\d+) hit points with an attack that does (\d+) (.).+ damage at initiative (\d+)")]
+            public Group(uint unitCount, uint hitPoints, uint attackDamage, char damageType, uint initiative) => (UnitCount, HP, AttackDamage, AttackType, Initiative) = (unitCount, hitPoints, attackDamage, damageType, initiative);
 
+            [Regex(@"(\d+) units each with (\d+) hit points \(?(.+)?\)? with an attack that does (\d+) (.).+ damage at initiative (\d+)")]
+            public Group(uint unitCount, uint hitPoints, string attributes, uint attackDamage, char damageType, uint initiative)
+                : this(unitCount, hitPoints, attackDamage, damageType, initiative)
+            {
                 var bits = attributes.Replace(",", "").Split(';', StringSplitOptions.TrimEntries);
                 foreach (var bit in bits)
                 {
                     var bits2 = bit.Split(' ');
-                    var type = bits2[0];
-                    foreach (var attr in bits2.Skip(2))
-                    {
-                        AttackType atype = (AttackType)Enum.Parse(typeof(AttackType), attr);
-
-                        if (type == "weak")
-                            Weak.Add(atype);
-                        else
-                            Immune.Add(atype);
-                    }
+                    ((bits2[0] == "weak") ? Weak : Immune).UnionWith(bits2.Skip(2).Select(attr => attr[0]).ToHashSet());
                 }
-            }
-
-            [Regex(@"(\d+) units each with (\d+) hit points with an attack that does (\d+) (.+) damage at initiative (\d+)")]
-            public Group(uint unitCount, uint hitPoints, uint attackDamage, AttackType damageType, uint initiative)
-            {
-                UnitCount = unitCount;
-                HP = hitPoints;
-                AttackDamage = attackDamage;
-                AttackType = damageType;
-                Initiative = initiative;
             }
 
             public bool ImmuneSystem = true;
             public int Id = 0;
+            public Group target = null;
 
-            public uint UnitCount;
-            public uint HP;
-            public uint AttackDamage;
-            public AttackType AttackType;
-            public uint Initiative;
+            public uint UnitCount, HP, AttackDamage, Initiative;
+            public char AttackType;
             public uint EffectivePower => UnitCount * AttackDamage;
 
-            readonly HashSet<AttackType> Weak = new();
-            readonly HashSet<AttackType> Immune = new();
+            readonly HashSet<char> Weak = new(), Immune = new();
 
-            public long EstimateDamage(Group attacker)
+            public uint EstimateDamage(Group attacker) => Immune.Contains(attacker.AttackType) ? 0 : (attacker.EffectivePower * (Weak.Contains(attacker.AttackType) ? 2u : 1u));
+
+            public uint DoAttack()
             {
-                if (Immune.Contains(attacker.AttackType)) return 0;
-                if (Weak.Contains(attacker.AttackType)) return attacker.EffectivePower * 2;
-                return attacker.EffectivePower;
-            }
-
-            public int DoAttack()
-            {
-                long damage = target.EstimateDamage(this);
-                int killed = 0;
-
-                while (damage >= target.HP && target.UnitCount > 0)
-                {
-                    target.UnitCount--;
-                    damage -= target.HP;
-                    killed++;
-                }
-
+                if (target == null) return 0;
+                uint killed = Math.Min(target.EstimateDamage(this) / target.HP, target.UnitCount);
+                target.UnitCount -= killed;
                 return killed;
             }
 
-            public override string ToString()
-            {
-                return ImmuneSystem ? $"Immune group {Id}" : $"Infection group {Id}";
-            }
-
-            public Group target = null;
+            public override int GetHashCode() => Id;
         }
 
         private static (bool win, long res) Run(string input, uint boost = 0)
-        { 
-            IEnumerable<Group> groups = Parse(input, boost);
+        {
+            var groups = Parse(input, boost).OrderByDescending(g => g.Initiative).ToArray();
 
-            bool haveAttacked = false;
-            do
+            while (true)
             {
-                haveAttacked = false;
-
-                var targetable = groups.ToHashSet();
-
-                var targetOrder = groups.OrderByDescending(g => (g.EffectivePower, g.Initiative));
-                foreach (var g in targetOrder)
+                int targetted = 0;
+                foreach (var g in groups.OrderByDescending(g => g.EffectivePower))
                 {
-                    g.target = null;
-                    var enemies = targetable.Where(g2 => g2.ImmuneSystem != g.ImmuneSystem);
-
-                    var targetDamage = enemies.Select(g2 => (g2, g2.EstimateDamage(g))).OrderByDescending(res => res.Item2);
-
-                    if (targetDamage.Any())
-                    {
-                        long maxDamage = targetDamage.First().Item2;
-
-                        if (maxDamage > 0)
-                        {
-                            var targets = targetDamage.Where(res => res.Item2 == maxDamage)
-                                             .Select(res => res.g2)
-                                             .OrderByDescending(g2 => (g2.EstimateDamage(g), g2.EffectivePower, g2.Initiative));
-
-                            g.target = targets.FirstOrDefault();
-                            targetable.Remove(g.target);
-                        }
-                    }
+                    g.target = groups.Where(g2 => ((targetted & g2.Id) == 0) && g2.ImmuneSystem != g.ImmuneSystem).Select(g2 => (group: g2, damage: g2.EstimateDamage(g))).Where(res => res.damage > 0).OrderByDescending(res => (res.damage, res.group.EffectivePower, res.group.Initiative)).Select(t => t.group).FirstOrDefault();
+                    if (g.target != null) targetted |= g.target.Id;
                 }
 
-                foreach (var g in groups.OrderByDescending(g => g.Initiative))
-                {
-                    if (g.target == null) continue;
-
-                    if (g.DoAttack() > 0) haveAttacked = true;
-                }
+                if (groups.Sum(g => g.DoAttack()) == 0) break;
 
                 groups = groups.Where(g => g.UnitCount > 0).ToArray();
-
-            } while (haveAttacked);
+            }
 
             return (groups.All(g => g.ImmuneSystem), groups.Sum(g => g.UnitCount));
         }
 
         private static IEnumerable<Group> Parse(string input, uint boost)
         {
-            var (immuneData, infectionData) = input.Split("\n\n").Decompose2();
+            var (immune, infection) = input.Split("\n\n").Select(data => Util.RegexParse<Group>(data.Split("\n", StringSplitOptions.TrimEntries).Skip(1)).ToArray()).Decompose2();
 
-            var immune = Util.RegexParse<Group>(immuneData.Split("\n", StringSplitOptions.TrimEntries).Skip(1)).ToArray();
-            var infection = Util.RegexParse<Group>(infectionData.Split("\n", StringSplitOptions.TrimEntries).Skip(1)).ToArray();
-            immune.WithIndex().ForEach(g => g.Value.Id = g.Index + 1);
             immune.ForEach(g => g.AttackDamage += boost);
-            infection.WithIndex().ForEach(g => { g.Value.ImmuneSystem = false; g.Value.Id = g.Index + 1; });
+            infection.ForEach(g => g.ImmuneSystem = false);
 
-            IEnumerable<Group> groups = immune.Concat(infection);
-            return groups.ToArray();
+            return immune.Concat(infection).Select((g,id) => { g.Id = 1 << id; return g; });
         }
 
         public static long Part1(string input)
@@ -169,12 +87,7 @@ namespace AoC.Advent2018
 
         public static long Part2(string input)
         {
-            return Util.BinarySearch<uint, long>(1, boost =>
-            {
-                var res = Run(input, boost);
-                Console.WriteLine($"{boost} => {res}");
-                return res;
-            }).result;
+            return Util.BinarySearch<uint, long>(1, boost => Run(input, boost)).result;
         }
 
         public void Run(string input, ILogger logger)

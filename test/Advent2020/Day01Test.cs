@@ -13,7 +13,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Expenses01Test(string input, int expected)
         {
-            Assert.IsTrue(Advent2020.Day01.Part1(input) == expected);
+            Assert.IsTrue(Day01.Part1(input) == expected);
         }
 
         [TestCategory("Test")]
@@ -21,7 +21,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Expenses02Test(string input, int expected)
         {
-            Assert.IsTrue(Advent2020.Day01.Part2(input) == expected);
+            Assert.IsTrue(Day01.Part2(input) == expected);
         }
 
         [TestCategory("Regression")]

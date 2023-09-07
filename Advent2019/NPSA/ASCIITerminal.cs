@@ -18,12 +18,13 @@ namespace AoC.Advent2019.NPSA
 
         public bool Interactive { get; set; } = false;
 
-        public ASCIITerminal(string program)
+        public ASCIITerminal(string program, int reserve = 0)
         {
             cpu = new NPSA.IntCPU(program)
             {
                 Interrupt = this
             };
+            if (reserve > 0) cpu.Reserve(reserve);
         }
 
         public void SetDisplay(bool on)
@@ -31,7 +32,7 @@ namespace AoC.Advent2019.NPSA
             buffer.DisplayLive = on;
         }
 
-        public void HasPutOutput()
+        public void OutputReady()
         {
             Int64 v = cpu.Output.Dequeue();
 
@@ -47,7 +48,7 @@ namespace AoC.Advent2019.NPSA
 
         public abstract IEnumerable<string> AutomaticInput();
 
-        public void WillReadInput()
+        public void RequestInput()
         {
             var inputs = AutomaticInput().ToArray();
 
@@ -100,7 +101,7 @@ namespace AoC.Advent2019.NPSA
 
     public class ASCIIBuffer
     {
-        readonly Dictionary<(int x, int y), char> screenBuffer = new();
+        readonly Dictionary<int, char> screenBuffer = new();
 
         public ManhattanVector2 Cursor { get; } = new ManhattanVector2(0, 0);
 
@@ -113,6 +114,13 @@ namespace AoC.Advent2019.NPSA
 
         public ASCIIBuffer()
         {
+        }
+
+        public IEnumerable<string> Pop()
+        {
+            var lines = new List<string>(Lines);
+            Lines.Clear();
+            return lines;
         }
 
         public void Write(char c)
@@ -145,7 +153,7 @@ namespace AoC.Advent2019.NPSA
 
                 default:
                     sb.Append(c);
-                    screenBuffer[Cursor] = c;
+                    screenBuffer[Cursor.X + (Cursor.Y << 16)] = c;
                     Cursor.X++;
                     break;
             }
@@ -154,14 +162,16 @@ namespace AoC.Advent2019.NPSA
             Max.Y = Math.Max(Max.Y, Cursor.Y);
         }
 
-        public char GetAt(int x, int y) => screenBuffer.GetOrDefault((x, y));
+        public char GetAt(int x, int y) => screenBuffer.GetOrDefault(x + (y<<16));
 
-        public ManhattanVector2 FindCharacter(char c)
+        public (int x, int y) FindCharacter(char c)
         {
             var res = screenBuffer.Where(kvp => kvp.Value == c);
             if (res.Any())
             {
-                return res.First().Key;
+                var found = res.First().Key;
+                return (found & 0xffff, found >> 16);
+                // return res.First().Key;
             }
 
             throw new Exception("Not found");

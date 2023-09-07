@@ -55,7 +55,7 @@ namespace AoC.Advent2020
                 current = current.Next();
             }
 
-            return current.Find(1).Values().Skip(1);
+            return current.Find(1).Skip(1);
         }
 
         public static string Part1(string input, int rounds = 100)

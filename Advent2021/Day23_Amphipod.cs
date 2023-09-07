@@ -9,13 +9,13 @@ namespace AoC.Advent2021
     {
         public string Name => "2021-23";
 
-        static readonly Dictionary<byte, char> destinations = new() { { Convert(3, 2), 'A' }, { Convert(5, 2), 'B' }, { Convert(7, 2), 'C' }, { Convert(9, 2), 'D' }, { Convert(3, 3), 'A' }, { Convert(5, 3), 'B' }, { Convert(7, 3), 'C' }, { Convert(9, 3), 'D' }, { Convert(3, 4), 'A' }, { Convert(5, 4), 'B' }, { Convert(7, 4), 'C' }, { Convert(9, 4), 'D' }, { Convert(3, 5), 'A' }, { Convert(5, 5), 'B' }, { Convert(7, 5), 'C' }, { Convert(9, 5), 'D' } };
+        static readonly Dictionary<sbyte, char> destinations = new() { { Convert(3, 2), 'A' }, { Convert(5, 2), 'B' }, { Convert(7, 2), 'C' }, { Convert(9, 2), 'D' }, { Convert(3, 3), 'A' }, { Convert(5, 3), 'B' }, { Convert(7, 3), 'C' }, { Convert(9, 3), 'D' }, { Convert(3, 4), 'A' }, { Convert(5, 4), 'B' }, { Convert(7, 4), 'C' }, { Convert(9, 4), 'D' }, { Convert(3, 5), 'A' }, { Convert(5, 5), 'B' }, { Convert(7, 5), 'C' }, { Convert(9, 5), 'D' } };
         static readonly int[] destinationCol = new int[] { 3, 5, 7, 9 };
         static readonly int[] moveCosts = new int[] { 1, 10, 100, 1000 };
 
         static bool IsClear(int x1, int x2, State state) => !Util.RangeInclusive(Math.Min(x1, x2), Math.Max(x1, x2)).Any(x => !state.CellOpen(Convert(x, 1)));
-        static byte Convert(int x, int y) => (byte)(x - 1 + (y - 1) * 11);
-        static (int x, int y) Convert(byte pos) => (pos % 11 + 1, pos / 11 + 1);
+        static sbyte Convert(int x, int y) => (sbyte)(x - 1 + (y - 1) * 11);
+        static (int x, int y) Convert(sbyte pos) => (pos % 11 + 1, pos / 11 + 1);
 
         static void CloseCompleted(State state)
         {
@@ -25,7 +25,7 @@ namespace AoC.Advent2021
 
         struct State
         {
-            public State(ulong openCells, Dictionary<byte, char> critters, int score)
+            public State(ulong openCells, Dictionary<sbyte, char> critters, int score)
             {
                 (OpenCells, Critters, Score) = (openCells, critters, score);
                 Key = (Critters.Keys.Select(k => 1UL << k).Sum(), Critters.OrderBy(kvp => kvp.Key).Select(kvp => (uint)(kvp.Value - 'A')).Aggregate(0U, (p, v) => (p << 2) + v));
@@ -33,15 +33,15 @@ namespace AoC.Advent2021
             }
 
             public bool CellOpen(int bit) => ((OpenCells >> bit) & 1) == 1;
-            public bool CellOccupied(int cell) => Critters.ContainsKey((byte)cell);
+            public bool CellOccupied(int cell) => Critters.ContainsKey((sbyte)cell);
 
             public (ulong, uint) Key;
             public ulong OpenCells;
-            public Dictionary<byte, char> Critters;
+            public Dictionary<sbyte, char> Critters;
             public int Score, EstimatedScore;
         }
 
-        static IEnumerable<(KeyValuePair<byte, char> critter, byte destination, int spaces, bool home)> CritterMoves(State state, KeyValuePair<byte, char> critter)
+        static IEnumerable<(KeyValuePair<sbyte, char> critter, sbyte destination, int spaces, bool home)> CritterMoves(State state, KeyValuePair<sbyte, char> critter)
         {
             var critterPos = Convert(critter.Key);
             if (critterPos.y == 1 || state.CellOpen(critter.Key - 11)) // can this critter reach its home room?
@@ -93,7 +93,7 @@ namespace AoC.Advent2021
             {
                 foreach (var move in state.Critters.SelectMany(critter => CritterMoves(state, critter)))
                 {
-                    var newState = new State(state.OpenCells - (1UL << move.destination) + (1UL << move.critter.Key), new Dictionary<byte, char>(state.Critters).Minus(move.critter.Key).Plus(move.destination, move.critter.Value), state.Score + move.spaces * moveCosts[move.critter.Value - 'A']);
+                    var newState = new State(state.OpenCells - (1UL << move.destination) + (1UL << move.critter.Key), new Dictionary<sbyte, char>(state.Critters).Minus(move.critter.Key).Plus(move.destination, move.critter.Value), state.Score + move.spaces * moveCosts[move.critter.Value - 'A']);
                     if ((cache.TryGetValue(newState.Key, out var lastScore) && lastScore <= newState.Score) || (newState.Score >= bestScore) || (newState.EstimatedScore >= bestScore)) continue; else cache[newState.Key] = newState.Score;
 
                     CloseCompleted(newState);

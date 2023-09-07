@@ -34,11 +34,6 @@ namespace AoC.Advent2015
             }
         }
 
-        public static int Part1(string input)
-        {
-            return FindNumbers(input).Sum();
-        }
-
         static bool HasRed(dynamic jsonObj)
         {
             if (jsonObj.red != null) return true;
@@ -84,6 +79,11 @@ namespace AoC.Advent2015
                 }
                 return sum;
             }
+        }
+
+        public static int Part1(string input)
+        {
+            return FindNumbers(input).Sum();
         }
 
         public static int Part2(string input)

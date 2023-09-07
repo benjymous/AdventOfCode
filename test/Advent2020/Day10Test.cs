@@ -15,7 +15,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Adapters01Test(string input, Int64 expected)
         {
-            Assert.AreEqual(expected, Advent2020.Day10.Part1(input));
+            Assert.AreEqual(expected, Day10.Part1(input));
         }
 
         [TestCategory("Test")]
@@ -24,7 +24,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Adapters02Test(string input, Int64 expected)
         {
-            Assert.AreEqual(expected, Advent2020.Day10.Part2(input));
+            Assert.AreEqual(expected, Day10.Part2(input));
         }
 
         [TestCategory("Regression")]

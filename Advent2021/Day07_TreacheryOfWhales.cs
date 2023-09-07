@@ -12,10 +12,8 @@ namespace AoC.Advent2021
             var positions = Util.ParseNumbers<int>(input).Order().ToArray();
 
             return Enumerable.Range(positions.First(), positions.Last())
-                             .Select(x => positions.Select(crab => FuelCost(Math.Abs(crab - x))).Sum())
-                             .Min();
+                             .Min(x => positions.Sum(crab => FuelCost(Math.Abs(crab - x))));
         }
-
 
         public static int Part1(string input)
         {
@@ -29,9 +27,6 @@ namespace AoC.Advent2021
 
         public void Run(string input, ILogger logger)
         {
-            //var test = new Advent2019.NPSA.InteractiveTerminal(input);
-            //test.Run();
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

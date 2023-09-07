@@ -16,8 +16,7 @@ namespace AoC.Advent2020
                 Ingredients = bits[0].Split(" ").ToList();
                 Allergens = bits[1].Replace(")", "").Split(", ").ToList();
             }
-            public List<string> Ingredients;
-            public List<string> Allergens;
+            public List<string> Ingredients, Allergens;
         }
 
         class Foods
@@ -50,8 +49,7 @@ namespace AoC.Advent2020
                         if (Allergens.ContainsKey(allergen)) continue;
                         var d = Counts[allergen];
 
-                        var min = d.Values.Min();
-                        var max = d.Values.Max();
+                        var (min, max) = d.Values.MinMax();
 
                         if (max > min)
                         {
@@ -65,10 +63,7 @@ namespace AoC.Advent2020
 
                             foreach (var a1 in k)
                             {
-                                if (Counts[a1].ContainsKey(found))
-                                {
-                                    Counts[a1].Remove(found);
-                                }
+                                Counts[a1].Remove(found);
                             }
                         }
 

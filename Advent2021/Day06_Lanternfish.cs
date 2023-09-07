@@ -11,7 +11,7 @@ namespace AoC.Advent2021
             var data = Util.ParseNumbers<int>(input);
             var v = Enumerable.Range(0, 9).Select(i => (long)data.Count(v => v == i)).ToArray();
 
-            while ((days--) > 0)
+            while (days-- > 0)
                 (v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8]) =
                 (v[1], v[2], v[3], v[4], v[5], v[6], v[7] + v[0], v[8], v[0]);
 

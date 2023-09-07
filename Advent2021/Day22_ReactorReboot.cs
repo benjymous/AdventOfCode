@@ -31,15 +31,14 @@ namespace AoC.Advent2021
             var divX = GetDivisions(b1.MinX, b1.MaxX, b2.MinX, b2.MaxX);
             var divY = GetDivisions(b1.MinY, b1.MaxY, b2.MinY, b2.MaxY);
             var divZ = GetDivisions(b1.MinZ, b1.MaxZ, b2.MinZ, b2.MaxZ);
-            foreach (var (zpair, ypair, xpair) in divZ.OverlappingPairs().SelectMany(zpair => divY.OverlappingPairs().SelectMany(ypair => divX.OverlappingPairs().Select(xpair => (zpair, ypair, xpair)))))
-            {
-                var newBox = new Box(xpair.first, xpair.second, ypair.first, ypair.second, zpair.first, zpair.second);
-                // keep segments in b1 but not b2
-                if (Overlaps(newBox, b1) && !Overlaps(newBox, b2))
-                {
-                    yield return newBox;
-                }
-            }
+
+            for (int i=0; i<divX.Length-1; ++i)
+                for (int j=0; j<divY.Length-1; ++j)
+                    for (int k=0; k<divZ.Length-1; ++k)
+                    {
+                        var newBox = new Box(divX[i], divX[i + 1], divY[j], divY[j + 1], divZ[k], divZ[k + 1]);
+                        if (Overlaps(newBox, b1) && !Overlaps(newBox, b2)) yield return newBox;
+                    }   
         }
 
         static bool Overlaps(Box box1, Box box2) => (box1.MinX < box2.MaxX) && (box1.MaxX > box2.MinX) && (box1.MinY < box2.MaxY) && (box1.MaxY > box2.MinY) && (box1.MinZ < box2.MaxZ) && (box1.MaxZ > box2.MinZ);
@@ -48,11 +47,11 @@ namespace AoC.Advent2021
 
         public static long RunOperation(IEnumerable<Instruction> instructions)
         {
-            var data = Enumerable.Empty<Box>();
+            var data = new List<Box>();
 
             foreach (var instr in instructions)
             {
-                var newBoxes = new List<Box>();
+                var newBoxes = new List<Box>(data.Count+100);
                 if (instr.Action == Toggle.on) newBoxes.Add(instr.Box);
                 foreach (var box in data)
                 {
@@ -60,7 +59,7 @@ namespace AoC.Advent2021
                     else newBoxes.Add(box);
                 }
                 data = newBoxes;
-            }            
+            }
             return data.Sum(Volume);
         }
 

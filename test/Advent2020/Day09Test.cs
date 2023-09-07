@@ -14,7 +14,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Encoding01Test(string input, int preamble, int expected)
         {
-            Assert.IsTrue((int)Advent2020.Day09.Part1(input, preamble) == expected);
+            Assert.IsTrue((int)Day09.Part1(input, preamble) == expected);
         }
 
         [TestCategory("Test")]
@@ -22,7 +22,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Encoding02Test(string input, int preamble, int expected)
         {
-            Assert.IsTrue((int)Advent2020.Day09.Part2(input, preamble) == expected);
+            Assert.IsTrue((int)Day09.Part2(input, preamble) == expected);
         }
 
         [TestCategory("Regression")]

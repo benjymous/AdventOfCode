@@ -16,14 +16,12 @@ namespace AoC.Advent2022
 
         public static int Part1(string input)
         {
-            var pairs = Util.RegexParse<Pair>(input);
-            return pairs.Count(p => p.SubsetContained);
+            return Util.RegexParse<Pair>(input).Count(p => p.SubsetContained);
         }
 
         public static int Part2(string input)
         {
-            var pairs = Util.RegexParse<Pair>(input);
-            return pairs.Count(p => p.HasOverlap);
+            return Util.RegexParse<Pair>(input).Count(p => p.HasOverlap);
         }
 
         public void Run(string input, ILogger logger)

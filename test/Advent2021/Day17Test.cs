@@ -50,7 +50,7 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void TestPart1(string data, int expected)
         {
-            Assert.AreEqual(expected, Day17.Part1(data));
+            Assert.AreEqual(expected, Part1(data));
         }
 
         [TestCategory("Test")]
@@ -58,21 +58,21 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void TestPart2(string data, int expected)
         {
-            Assert.AreEqual(expected, Day17.Part2(data));
+            Assert.AreEqual(expected, Part2(data));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Trajectory_Part1_Regression()
         {
-            Assert.AreEqual(5565, Day17.Part1(input));
+            Assert.AreEqual(5565, Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Trajectory_Part2_Regression()
         {
-            Assert.AreEqual(2118, Day17.Part2(input));
+            Assert.AreEqual(2118, Part2(input));
         }
     }
 }

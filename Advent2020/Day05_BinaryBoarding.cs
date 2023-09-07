@@ -7,30 +7,16 @@ namespace AoC.Advent2020
     {
         public string Name => "2020-05";
 
-        public class BinSearch
+        public record class BinSearch
         {
-            public BinSearch(int min, int max)
-            {
-                Min = min;
-                Max = max;
-            }
+            public BinSearch(int min, int max) => (Min, Max) = (min, max);
 
-            public int Min;
-            public int Max;
+            public int Min, Max;
 
             int Range => Max - Min + 1;
 
-            public void Lower()
-            {
-                var split = Math.Max(1, Range / 2);
-                Max -= split;
-            }
-
-            public void Upper()
-            {
-                var split = Math.Max(1, Range / 2);
-                Min += split;
-            }
+            public void Lower() => Max -= Math.Max(1, Range / 2);
+            public void Upper() => Min += Math.Max(1, Range / 2);
         }
         public class BoardingPass
         {
@@ -57,8 +43,6 @@ namespace AoC.Advent2020
                             col.Upper();
                             break;
                     }
-
-                    //Console.WriteLine($"{row.Min} {row.Max} {col.Min} {col.Max}");
                 }
 
                 Row = row.Min;
@@ -68,7 +52,7 @@ namespace AoC.Advent2020
 
             readonly int Row;
             readonly int Col;
-            public int ID;
+            public readonly int ID;
         }
 
         public static int Part1(string input)

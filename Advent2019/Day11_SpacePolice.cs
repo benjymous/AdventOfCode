@@ -1,6 +1,5 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Vectors;
-using System;
 using System.Collections.Generic;
 
 namespace AoC.Advent2019
@@ -13,14 +12,8 @@ namespace AoC.Advent2019
         {
             readonly NPSA.IntCPU cpu;
             readonly ManhattanVector2 position = new(0, 0);
-            readonly Dictionary<(int x, int y), int> hullColours = new();
+            readonly Dictionary<(int x, int y), bool> hullColours = new();
             readonly Direction2 direction = new(0, -1);
-
-            int minx = 0;
-            int miny = 0;
-
-            int maxx = 0;
-            int maxy = 0;
 
             int readState = 0;
 
@@ -31,62 +24,28 @@ namespace AoC.Advent2019
                 cpu.Interrupt = this;
             }
 
+            void Forwards() => position.Offset(direction);
+            public void PaintHull(bool colour) => hullColours[position] = colour;
+            bool ReadCamera() => hullColours.GetOrDefault(position);
+            public int GetPaintedTileCount() => hullColours.Count;
 
-            void Forwards()
-            {
-                position.Offset(direction);
+            public void Run() => cpu.Run();
 
-                minx = Math.Min(minx, position.X);
-                miny = Math.Min(miny, position.Y);
+            public void RequestInput() => cpu.Input.Enqueue(ReadCamera() ? 1 : 0);
 
-                maxx = Math.Max(maxx, position.X);
-                maxy = Math.Max(maxy, position.Y);
-            }
-
-            public void PaintHull(int colour)
-            {
-                if (colour < 0 || colour > 1) throw new Exception("Unexpected hull colour!");
-                hullColours[position] = colour;
-            }
-            int ReadCamera()
-            {
-                return hullColours.GetOrDefault(position);
-            }
-
-            public int GetPaintedTileCount()
-            {
-                return hullColours.Count;
-            }
-
-
-            public void Run()
-            {
-                cpu.Run();
-            }
-
-            public void WillReadInput()
-            {
-                cpu.Input.Enqueue(ReadCamera());
-            }
-
-            public void HasPutOutput()
+            public void OutputReady()
             {
                 var data = cpu.Output.Dequeue();
 
                 if (readState == 0)
                 {
-                    PaintHull((int)data);
-                }
-                else if (readState == 1)
-                {
-                    if (data == 0) direction.TurnLeft();
-                    else if (data == 1) direction.TurnRight();
-                    else { throw new Exception("Unexpected turn direction!"); }
-                    Forwards();
+                    PaintHull(data == 1);
                 }
                 else
                 {
-                    throw new Exception("robot in wrong state!");
+                    if (data == 0) direction.TurnLeft();
+                    else direction.TurnRight();
+                    Forwards();
                 }
 
                 readState = (readState + 1) % 2;
@@ -96,13 +55,14 @@ namespace AoC.Advent2019
             {
                 var outStr = "";
 
+                var (minx, maxx) = hullColours.Keys.MinMax(v => v.x);
+                var (miny, maxy) = hullColours.Keys.MinMax(v => v.y);
+
                 for (var y = miny; y <= maxy; ++y)
                 {
                     for (var x = minx; x <= maxx; ++x)
                     {
-                        if (hullColours.GetOrDefault((x,y)) == 0) outStr += " ";
-                        else outStr += "#";
-
+                        outStr += hullColours.GetOrDefault((x, y)) ? "##" : "  ";
                     }
                     outStr += "\n";
                 }
@@ -121,11 +81,11 @@ namespace AoC.Advent2019
         public static string Part2(string input, ILogger logger)
         {
             var robot = new EmergencyHullPainterRobot(input);
-            robot.PaintHull(1);
+            robot.PaintHull(true);
             robot.Run();
             var image = robot.GetDrawnPattern();
-            logger.WriteLine("\n" + image.ToString());
-            return image.ToString().GetSHA256String();
+            logger.WriteLine("\n" + image);
+            return image.GetMD5String();
         }
 
         public void Run(string input, ILogger logger)

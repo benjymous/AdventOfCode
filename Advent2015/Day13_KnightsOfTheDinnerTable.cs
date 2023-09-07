@@ -8,71 +8,37 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-13";
 
-        public class Entry
+        public class Factory
         {
-            [Regex(@"(.+) would (.+) (.+) happiness units by sitting next to (.+)")]
-            public Entry(string name1, string factor, int units, string name2)
+            [Regex(@"(.).+ would (.).+ (.+) happiness units by sitting next to (.).+")]
+            public void Parse(char initial1, char factor, int units, char initial2)
             {
-                Initial1 = name1[0];
-                Initial2 = name2[0];
-                Score = units * ((factor == "lose") ? -1 : 1);
+                Names.Add(initial1);
+                Atlas.IncrementAtIndex(GetKey(initial1, initial2), units * ((factor == 'l') ? -1 : 1));
             }
 
-            public char Initial1, Initial2;
-            public int Score;
+            public readonly Dictionary<int, int> Atlas = new();
+            public readonly HashSet<char> Names = new();
         }
+     
+        public static int GetKey(char p1, char p2) => p1 * p2;
 
-        static int GetScore(char[] perm, Dictionary<int, int> scores)
+        static int TryPermutations(char first, char prev, IEnumerable<char> remaining, Dictionary<int, int> scores)
         {
-            int score = 0;
-            for (int i = 0; i < perm.Length; ++i)
-            {
-                int j = (i + 1) % perm.Length;
-                score += scores[GetKey(perm[i], perm[j])];
-            }
-            return score;
+            return !remaining.Any()
+                ? scores[GetKey(first, prev)]
+                : remaining.Max(next => scores[GetKey(prev, next)] + TryPermutations(first, next, remaining.Where(c => c != next).ToArray(), scores));
         }
-
-        public static int GetKey(char p1, char p2) => (p1 << 16) + p2;
 
         public static int Solve(string input, bool includeYou = false)
         {
-            var entries = Util.RegexParse<Entry>(input);
+            var data = Util.RegexFactory<Factory>(input);
 
-            HashSet<char> people = new();
+            char starter = includeYou ? '\0' : data.Names.First();
+            data.Atlas[0] = 0;
+            data.Names.Remove(starter);
 
-            Dictionary<int, int> scores = new();
-
-            foreach (var entry in entries)
-            {
-                people.Add(entry.Initial1);
-
-                var score = entry.Score;
-
-                scores.IncrementAtIndex(GetKey(entry.Initial1, entry.Initial2), score);
-                scores.IncrementAtIndex(GetKey(entry.Initial2, entry.Initial1), score);
-            }
-
-            var starter = '?';
-            if (includeYou)
-            {
-                starter = 'Y';
-                foreach (var other in people)
-                {
-                    scores[GetKey(starter, other)] = 0;
-                    scores[GetKey(other, starter)] = 0;
-                }
-            }
-            else
-            {
-                starter = people.First();
-                people.Remove(starter);
-            }
-
-            var perms = people.Permutations();
-
-            var additional = $"{starter}";
-            return perms.AsParallel().Select(p => GetScore(additional.Union(p).ToArray(), scores)).Max();
+            return TryPermutations(starter, starter, data.Names, data.Atlas);
         }
 
         public static int Part1(string input) => Solve(input);

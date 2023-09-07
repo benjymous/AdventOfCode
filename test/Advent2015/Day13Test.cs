@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AoC.Advent2015.Test
 {
     [TestCategory("2015")]
-    [TestCategory("RegexParse")]
+    [TestCategory("RegexFactory")]
     [TestClass]
     public class Day13Test
     {

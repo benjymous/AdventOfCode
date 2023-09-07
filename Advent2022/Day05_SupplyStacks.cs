@@ -9,7 +9,7 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-05";
 
-        record struct Instruction
+        readonly record struct Instruction
         {
             [Regex(@"move (\d+) from (\d+) to (\d+)")]
             public Instruction(int count, int from, int to) => (Count, From, To) = (count, from - 1, to - 1);
@@ -18,22 +18,20 @@ namespace AoC.Advent2022
 
             public void ApplyV1(Stack<char>[] stacks)
             {
-                for (int i=0; i<Count; ++i)
-                {
-                    stacks[To].Push(stacks[From].Pop());
-                }
+                Transfer(stacks[From], stacks[To], Count);
             }
 
             public void ApplyV2(Stack<char>[] stacks)
             {
                 Stack<char> grab = new();
 
-                for (int i = 0; i < Count; ++i)
-                {
-                    grab.Push(stacks[From].Pop());
-                }
+                Transfer(stacks[From], grab, Count);
+                Transfer(grab, stacks[To], Count);
+            }
 
-                while (grab.Any()) stacks[To].Push(grab.Pop());
+            static void Transfer(Stack<char> from, Stack<char> to, int count)
+            {
+                for (int i=0; i<count; ++i) to.Push(from.Pop());
             }
         }
 

@@ -11,14 +11,14 @@ namespace AoC.Advent2017.Test
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Part1_Regression()
+        public void TowerBalance_Part1_Regression()
         {
             Assert.AreEqual("aapssr", Day07.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Part2_Regression()
+        public void TowerBalance_Part2_Regression()
         {
             Assert.AreEqual(1458, Day07.Part2(input));
         }

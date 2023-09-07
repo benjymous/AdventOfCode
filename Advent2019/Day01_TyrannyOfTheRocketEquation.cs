@@ -12,13 +12,7 @@ namespace AoC.Advent2019
         public static int GetFullFuelRequirement(int moduleWeight)
         {
             int fuel = GetFuelRequirement(moduleWeight);
-
-            int additional = fuel;
-            while (additional > 0)
-            {
-                fuel += additional = GetFuelRequirement(additional);
-            }
-
+            if (fuel > 0) fuel += GetFullFuelRequirement(fuel);
             return fuel;
         }
 

@@ -12,13 +12,7 @@ namespace AoC.Advent2021
         {
             public Map(string input)
             {
-                var lines = Util.Split(input);
-
-                Data = lines.WithIndex()
-                            .Select(line => line.Value.WithIndex()
-                                                      .Select(cell => ((cell.Index, line.Index, cell.Value - '0'))))
-                            .SelectMany(v => v)
-                            .ToDictionary(v => (v.Item1, v.Item2), v => v.Item3);
+                Data = Util.ParseSparseMatrix<int>(input);
             }
 
             public int FloodFill((int x, int y) pos)

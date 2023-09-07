@@ -1,6 +1,5 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Pathfinding;
-using AoC.Utils.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,17 +10,20 @@ namespace AoC.Advent2016
     {
         public string Name => "2016-24";
 
-        static uint LocationCode(char c) => (1U << char.ToLower(c) - '0');
-        static long GetKey(uint location, uint visited) => (long)location << 32 | visited;
+        static uint LocationCode(char c) => 1U << (c - '0');
+        static readonly uint HOME = LocationCode('0');
+        static uint GetKey(uint location, uint visited) => location << 10 | visited;
 
-        public class MapData : GridMap<char>
+        public class MapData : IMap<int>
         {
-            public Dictionary<uint, (int x, int y)> Locations = new();
+            readonly HashSet<int> Data = new();
+            public Dictionary<uint, int> Locations = new();
             public Dictionary<uint, int> paths = new();
 
             public uint AllLocations = 0;
+            public int ShortestPath = 0;
 
-            public MapData(string input) : base(new Walkable())
+            public MapData(string input) 
             {
                 var lines = Util.Split(input);
 
@@ -32,14 +34,14 @@ namespace AoC.Advent2016
                     for (var x = 0; x < line.Length; ++x)
                     {
                         var c = line[x];
-                        if (c >= '0' && c <= '9')
+                        if (c is >= '0' and <= '9')
                         {
                             // location to visit
                             var code = LocationCode(c);
-                            Locations[code] = (x, y);
+                            Locations[code] = x + (y << 16);
                             AllLocations += code;
                         }
-                        Data[(x,y)] = c;
+                        if (c != '#') Data.Add(x + (y << 16));
                     }
                 }
 
@@ -48,84 +50,61 @@ namespace AoC.Advent2016
 
             public void BuildPaths()
             {
-                foreach (var loc1 in Locations)
+                foreach (var (loc1, loc2) in from loc1 in Locations
+                                             from loc2 in Locations
+                                             where loc1.Key < loc2.Key
+                                             select (loc1, loc2))
                 {
-                    foreach (var loc2 in Locations)
-                    {
-                        if (loc1.Key != loc2.Key)
-                        {
-                            var path = AStar<(int x, int y)>.FindPath(this, loc1.Value, loc2.Value);
-                            paths[loc1.Key + loc2.Key] = path.Count();
-                        }
-                    }
+                    paths[loc1.Key + loc2.Key] = this.FindPath(loc1.Value, loc2.Value).Length;
                 }
+
+                ShortestPath = paths.Min(kvp => kvp.Value);
             }
 
-            readonly Dictionary<uint, IEnumerable<uint>> BitCache = new();
-            public IEnumerable<uint> Bits(uint input)
-            {
-                if (BitCache.TryGetValue(input, out var output))
-                {
-                    return output;
-                }
+            readonly Dictionary<uint, uint[]> BitCache = new();
+            public uint[] Bits(uint input) => BitCache.GetOrCalculate(input, _ => input.BitSequence().ToArray());
 
-                var seq = input.BitSequence().ToArray();
-                BitCache[input] = seq;
-                return seq;
-            }
-
-            class Walkable : IIsWalkable<char>
+            public IEnumerable<int> GetNeighbours(int location)
             {
-                public bool IsWalkable(char cell)
-                {
-                    return cell != '#';
-                }
+                if (Data.Contains(location + 1)) yield return location + 1;
+                if (Data.Contains(location + (1 << 16))) yield return location + (1 << 16);
+                if (Data.Contains(location - 1)) yield return location - 1;
+                if (Data.Contains(location - (1 << 16))) yield return location - (1 << 16);
             }
         }
 
         public static int Solve(MapData map, bool returnHome)
         {
-            var queue = new PriorityQueue<(uint location, uint visited, int distance), uint>();
-            queue.Enqueue((LocationCode('0'), LocationCode('0'), 0), map.AllLocations);
+            var queue = new PriorityQueue<(uint location, uint visited, int distance), int>();
+            queue.Enqueue((HOME, HOME, 0), 0);
 
-            var cache = new Dictionary<long, int>() { { GetKey(LocationCode('0'), LocationCode('0')), 0 } };
+            var cache = new Dictionary<uint, int>() { { GetKey(HOME, HOME), 0 } };
 
             int currentBest = int.MaxValue;
 
-            while (queue.Count > 0)
+            queue.Operate(state =>
             {
-                // take an item from the job queue
-                var item = queue.Dequeue();
-
-                uint tryLocations = map.AllLocations - item.visited;
-
+                uint tryLocations = map.AllLocations - state.visited;
                 if (tryLocations > 0)
                 {
                     // check locations not visited
                     foreach (var location in map.Bits(tryLocations))
                     {
-                        if (map.paths.TryGetValue(item.location | location, out var pathDistance))
+                        if (map.paths.TryGetValue(state.location | location, out var pathDistance))
                         {
                             // create new state, at next location 
-                            uint visited = item.visited + location;
-                            int distance = item.distance + pathDistance;
-                            var next = (location, visited, distance);
+                            var next = (location, visited: state.visited + location, distance: state.distance + pathDistance);
 
-                            if (currentBest != int.MaxValue && distance > currentBest) continue;
+                            int remainingCount = (map.AllLocations - next.visited).CountBits();
+                            if (next.distance + (map.ShortestPath * remainingCount) > currentBest) continue;
 
                             // check if we've visited this position with this set of keys before
                             var cacheId = GetKey(next.location, next.visited);
-                            if (!cache.TryGetValue(cacheId, out int cachedBest))
-                            {
-                                cachedBest = int.MaxValue;
-                            }
-
-                            // we've not visited, or our new path is shorter
-                            if (cachedBest > next.distance)
+                            if (!cache.TryGetValue(cacheId, out int cachedBest) || cachedBest > next.distance)
                             {
                                 // cache the new shorter distance, and add the new state to our job queue
                                 cache[cacheId] = next.distance;
-                                queue.Enqueue(next, map.AllLocations - next.visited);
+                                queue.Enqueue(next, next.distance * remainingCount);
                             }
                         }
                     }
@@ -133,34 +112,28 @@ namespace AoC.Advent2016
                 else
                 {
                     // we have visited all the locations, so this is a possible solution
-                    int distance = item.distance;
-                    if (returnHome)
-                    {
-                        distance += map.paths[item.location + LocationCode('0')];
-                    }
+                    int distance = state.distance;
+                    if (returnHome) distance += map.paths[state.location + HOME];
                     currentBest = Math.Min(currentBest, distance);
+                    //Console.WriteLine(currentBest);
                 }
-            }
+            });
 
             return currentBest;
         }
 
         public static int Part1(string input)
         {
-            var map = new MapData(input);
-            return Solve(map, false);
+            return Solve(new MapData(input), false);
         }
 
         public static int Part2(string input)
         {
-            var map = new MapData(input);
-            return Solve(map, true);
+            return Solve(new MapData(input), true);
         }
 
         public void Run(string input, ILogger logger)
         {
-            //logger.WriteLine(Part1("###########\n#0.1.....2#\n#.#######.#\n#4.......3#\n###########"));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

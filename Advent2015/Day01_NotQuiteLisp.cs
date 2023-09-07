@@ -4,21 +4,7 @@
     {
         public string Name => "2015-01";
 
-        public static int Part1(string input)
-        {
-            var data = input.Trim();
-
-            int count = 0;
-            foreach (var c in data)
-            {
-                if (c == '(') count++;
-                if (c == ')') count--;
-            }
-
-            return count;
-        }
-
-        public static int Part2(string input)
+        private static int Solve(string input, QuestionPart part)
         {
             var data = input.Trim();
 
@@ -30,10 +16,20 @@
                 if (c == '(') count++;
                 if (c == ')') count--;
 
-                if (count == -1) return pos;
+                if (part.Two() && count == -1) return pos;
             }
 
-            return -1;
+            return count;
+        }
+
+        public static int Part1(string input)
+        {
+            return Solve(input, QuestionPart.Part1);
+        }
+
+        public static int Part2(string input)
+        {
+            return Solve(input, QuestionPart.Part2);
         }
 
         public void Run(string input, ILogger logger)

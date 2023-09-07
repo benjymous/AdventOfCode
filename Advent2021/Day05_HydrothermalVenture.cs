@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AoC.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,25 +9,23 @@ namespace AoC.Advent2021
     {
         public string Name => "2021-05";
 
-        struct Line
+        [Regex(@"(\d+),(\d+) -> (\d+),(\d+)")]
+        record struct Line(int X1, int Y1, int X2, int Y2)
         {
-            [Regex(@"(\d+),(\d+) -> (\d+),(\d+)")]
-            public Line(int x1, int y1, int x2, int y2) => (p1, p2) = ((x1, y1), (x2, y2));
-
             public IEnumerable<(int, int)> Points
             {
                 get
                 {
-                    var pos = (p1.X, p1.Y);
+                    var (x,y) = (X1, Y1);
 
-                    int dx = Math.Abs(p2.X - p1.X);
-                    int sx = Math.Sign(p2.X - p1.X);
-                    int dy = -Math.Abs(p2.Y - p1.Y);
-                    int sy = Math.Sign(p2.Y - p1.Y);
+                    int dx = Math.Abs(X2 - X1);
+                    int sx = Math.Sign(X2 - X1);
+                    int dy = -Math.Abs(Y2 - Y1);
+                    int sy = Math.Sign(Y2 - Y1);
 
                     int err = dx + dy;
 
-                    yield return pos;
+                    yield return (x, y);
 
                     do
                     {
@@ -34,32 +33,29 @@ namespace AoC.Advent2021
                         if (e2 >= dy)
                         {
                             err += dy;
-                            pos.X += sx;
+                            x += sx;
                         }
                         if (e2 <= dx)
                         {
                             err += dx;
-                            pos.Y += sy;
+                            y += sy;
                         }
 
-                        yield return pos;
+                        yield return (x, y);
 
-                    } while (pos != p2);
+                    } while (x != X2 || y != Y2);
                 }
             }
 
-            public bool IsAxial => p1.X == p2.X || p1.Y == p2.Y;
-
-            (int X, int Y) p1, p2;
+            public bool IsAxial => X1 == X2 || Y1 == Y2;
         }
 
         private static int Solve(string input, QuestionPart part)
         {
-            var lines = Util.RegexParse<Line>(input);
-            if (part.One()) lines = lines.Where(l => l.IsAxial);
+            var lines = Util.RegexParse<Line>(input).ToArray();
+            if (part.One()) lines = lines.Where(l => l.IsAxial).ToArray();
 
-            return lines.Select(line => line.Points)
-                        .SelectMany(p => p)
+            return lines.SelectMany(line => line.Points)
                         .GroupBy(p => p)
                         .Count(g => g.Count() >= 2);
         }

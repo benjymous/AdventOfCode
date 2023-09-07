@@ -1,4 +1,4 @@
-﻿using AoC.Utils;
+﻿using Advent.Utils.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,69 +8,66 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-23";
 
-        static bool HasNeighbour(HashSet<(int x, int y)> map, (int x, int y) pos)
+        static readonly int[] Neighbours = new[] { -1 - 10000, 0 - 10000, 1 - 10000, -1 + 0, 1 + 0, -1 + 10000, 0 + 10000, 1 + 10000 };
+        static bool HasNeighbour(HashSet<int> map, int pos)
         {
-            for (int y = pos.y - 1; y <= pos.y + 1; ++y)
-                for (int x = pos.x - 1; x <= pos.x + 1; ++x)
-                    if ((x != pos.x || y != pos.y) && map.Contains((x, y))) return true;
- 
+            for (int i = 0; i < Neighbours.Length; ++i)
+                if (map.Contains(pos + Neighbours[i])) return true;
             return false;
         }
 
-        static bool DirectionFree(HashSet<(int x, int y)> map, (int x, int y) pos, int direction)
+        static bool DirectionFree(HashSet<int> map, int pos, int direction, out int newPos)
         {
-            for (int i=0; i<3; ++i)
-                if (map.Contains(pos.Plus(CheckDirs[direction, i]))) return false;            
+            newPos = default;
+            for (int i = 0; i < 3; ++i)
+            {
+                var move = pos + CheckDirs[direction, i];
+                if (i == 0) newPos = move;
+                if (map.Contains(move)) return false;
+            }
             return true;
         }
 
-        static readonly (int x, int y)[,] CheckDirs = new (int x, int y)[,]
+        static readonly int[,] CheckDirs = new int[,]
         {
-            { (0,-1), (-1,-1), (1,-1) }, // check North
-            { (0,1), (-1,1),(1,1) }, // check South
-            { (-1,0), (-1,-1), (-1,1) }, // check West
-            { (1,0), (1,-1), (1,1) } // check East
+            { 0 -10000, -1 -10000, 1 -10000 }, // check North
+            { 0 + 10000, -1+ 10000, 1+ 10000 }, // check South
+            { -1 + 0, -1 -10000, -1 + 10000 }, // check West
+            { 1 + 0, 1 -10000, 1 + 10000 } // check East
         };
 
         private static int RunSimulation(string input, int maxSteps)
         {
-            var positions = Util.ParseSparseMatrix<bool>(input).Keys.ToHashSet();
-            int moveIndex = 0;
+            var positions = Util.ParseSparseMatrix<bool>(input).Keys.Select(v => v.x + 100 + (v.y + 100) * 10000).ToHashSet();
+            UniqueMap<int, int> potentialMoves = new(positions.Count);
 
-            while (true)
+            for (int moveIndex = 0; moveIndex < maxSteps; ++moveIndex)
             {
-                Dictionary<(int x, int y), List<(int x, int y)>> potentialMoves = new();
-
-                foreach (var key in positions.Where(p => HasNeighbour(positions, p)))
+                foreach (var currentPos in positions)
                 {
-                    for (int i = 0; i < 4; ++i)
+                    if (!HasNeighbour(positions, currentPos)) continue;
+                    for (int i = 0; i < 4; i++)
                     {
-                        int move = (moveIndex + i) % 4;
-                        if (DirectionFree(positions, key, move))
+                        if (DirectionFree(positions, currentPos, (moveIndex + i) % 4, out var newPos))
                         {
-                            var proposal = key.Plus(CheckDirs[move, 0]);
-                            if (!potentialMoves.ContainsKey(proposal)) potentialMoves[proposal] = new();
-                            potentialMoves[proposal].Add(key);
+                            potentialMoves.UniqueAdd(newPos, currentPos);
                             break;
                         }
                     }
                 }
-                moveIndex++;
-                if (!potentialMoves.Any()) break;
 
-                foreach (var proposal in potentialMoves.Where(kvp => kvp.Value.Count == 1))
-                {                    
-                    positions.Remove(proposal.Value.First());
-                    positions.Add(proposal.Key);
-                }
+                if (!potentialMoves.Any()) return moveIndex + 1;
 
-                if (moveIndex == maxSteps) return CountEmpty(positions);
+                positions.ExceptWith(potentialMoves.Values);
+                positions.UnionWith(potentialMoves.Keys);
+
+                potentialMoves.Reset();
             }
 
-            return moveIndex;
+            return CountEmpty(positions.Select(i => (x: i % 10000, y: i / 10000)));
         }
 
-        static int CountEmpty(HashSet<(int x, int y)> dots) => Util.Range2DInclusive(((int, int, int, int))(dots.Min(v => v.y), dots.Max(v => v.y), dots.Min(v => v.x), dots.Max(v => v.x))).Count(pos => !dots.Contains(pos));
+        static int CountEmpty(IEnumerable<(int x, int y)> positions) => ((positions.Max(v => v.x) - positions.Min(v => v.x) + 1) * (positions.Max(v => v.y) - positions.Min(v => v.y) + 1)) - positions.Count();
 
         public static int Part1(string input)
         {

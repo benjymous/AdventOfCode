@@ -1,8 +1,6 @@
-﻿using AoC.Utils;
-using AoC.Utils.Vectors;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace AoC.Advent2022
 {
@@ -10,48 +8,71 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-24";
 
-        static readonly (int dx, int dy)[] Directions = { (0, -1), (1, 0), (0, 1), (-1, 0), (0, 0) };
+        static int ToKey((int x, int y) v) => v.x + (v.y * 1000);
+        static int ToKey(char dir) => dir switch { '>' => 1, '<' => -1, '^' => -1000, 'v' => 1000, _ => 0 };
+
+        static readonly int[] Directions = { -1000, 1, 1000, -1, 0 };
+
+        static int Distance(int v) => Math.Abs(v % 1000) + Math.Abs(v / 1000);
 
         private static int Solve(string input, QuestionPart part)
         {
             var map = Util.ParseSparseMatrix<char>(input);
-            var walls = map.Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key).ToArray();
-            var blizzards = map.Where(kvp => !walls.Contains(kvp.Key) && kvp.Value != '.').Select(kvp => (pos: kvp.Key, dir: new Direction2(kvp.Value))).ToArray();
-            (int maxX, int maxY) = (walls.Max(v => v.x), walls.Max(v => v.y));
 
-            var (start, end) = ((pos: (x: 1, y: 0), 0),  (pos: (x: maxX - 1, y: maxY), part.One() ? 0 : 2));
-            int step = 0, maxScore = 0;
+            (int w, int h) = (map.Keys.Max(v => v.x)-1, map.Keys.Max(v => v.y)-1);
 
-            (int x, int y)[] destinations = new[] { end.pos, start.pos, end.pos };
+            var walls = map.Where(kvp => kvp.Value == '#').Select(kvp => ToKey(kvp.Key)).Append(ToKey((1, -1))).Append(ToKey((w, h+2))).ToHashSet();
+            var blizzards = map.Where(kvp => kvp.Value != '#' && kvp.Value != '.').Select(kvp => (pos: ToKey(kvp.Key), dir: ToKey(kvp.Value))).ToArray();
 
-            IEnumerable<((int x, int y) pos, int score)> generation = new ((int, int), int)[] { start };
-            while (true)
+            var blizH = blizzards.Where(b => b.dir == -1 || b.dir == 1).ToArray();
+            var blizV = blizzards.Except(blizH).ToArray();
+
+            HashSet<int>[] blizStepsH = new HashSet<int>[w+1], blizStepsV = new HashSet<int>[h+1];
+
+            for (int i = 0; i <= Math.Max(w, h); ++i)
             {
-                blizzards = StepBlizzards(blizzards, maxX, maxY);
-                var state = walls.Union(blizzards.Select(b => b.pos)).ToHashSet();
-                List<((int x, int y) pos, int score)> nextGen = new();
-                foreach (var entry in generation)
-                {
-                    if (entry == end) return step;
-                    foreach (var (dx, dy) in Directions)
+                if (i <= w) blizStepsH[i] = StepBlizzards(blizH, w, h);
+                if (i <= h) blizStepsV[i] = StepBlizzards(blizV, w, h);
+            }
+
+            var (start, end) = (ToKey((1, 0)),  ToKey((w, h+1)));
+            int currentWaypoint = 0, targetWaypoint = part.One() ? 0 : 2;
+            int[] waypoints = new[] { end, start, end };
+
+            var generation = new[] { start };
+            HashSet<int> nextGen = new(100);
+
+            for (int step = 0; ; ++step)
+            {
+                foreach (var newPos in generation.SelectMany(p => Directions.Select(dir => p + dir)))
+                { 
+                    if (newPos == waypoints[currentWaypoint])
                     {
-                        var test = (pos:(x: entry.pos.x + dx, y: entry.pos.y + dy), entry.score);
-
-                        if (!state.Contains(test.pos) && test.score == maxScore && test.pos.x >= 0 && test.pos.y >= 0 && test.pos.x <= maxX && test.pos.y <= maxY)
-                        {
-                            if (part.Two() && test.score < 2 && test.pos == destinations[test.score])
-                                maxScore = ++test.score;
-
-                            nextGen.Add(test);
-                        }
+                        if (++currentWaypoint > targetWaypoint) return step+1;
+                        nextGen.Clear();
+                        nextGen.Add(newPos);
+                        break;
                     }
+
+                    if (blizStepsH[step % w].Contains(newPos) || blizStepsV[step % h].Contains(newPos) || walls.Contains(newPos)) continue;
+
+                    nextGen.Add(newPos);
                 }
-                generation = nextGen.Where(s => s.score == maxScore).Distinct().OrderBy(e => e.pos.Distance(destinations[maxScore])).Take(50);
-                step++;
+
+                generation = nextGen.OrderBy(e => Distance(e - waypoints[currentWaypoint])).Take(50).ToArray();
+                nextGen.Clear();
             }
         }
 
-        private static ((int x, int y) pos, Direction2 dir)[] StepBlizzards(((int x, int y) pos, Direction2 dir)[] blizzards, int maxX, int maxY) => blizzards.Select(b => ((((b.pos.x + b.dir.DX + maxX - 2) % (maxX - 1)) + 1, ((b.pos.y + b.dir.DY + maxY - 2) % (maxY - 1)) + 1), b.dir)).ToArray();
+        private static HashSet<int> StepBlizzards((int pos, int dir)[] blizzards, int w, int h)
+        {
+            for (int i=0; i<blizzards.Length; ++i)
+            {
+                var pos = blizzards[i].pos + blizzards[i].dir;
+                blizzards[i].pos = ((pos % 1000 + w - 1) % w) + 1 + ((((pos / 1000 + h - 1) % h) + 1) * 1000);
+            }
+            return blizzards.Select(b => b.pos).ToHashSet();
+        }
 
         public static int Part1(string input)
         {

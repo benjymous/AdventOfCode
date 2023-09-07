@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2019
@@ -7,18 +6,6 @@ namespace AoC.Advent2019
     public class Day23 : IPuzzle
     {
         public string Name => "2019-23";
-
-        public class BigVec
-        {
-            public Int64 X;
-            public Int64 Y;
-
-            public BigVec(Int64 x, Int64 y)
-            {
-                X = x;
-                Y = y;
-            }
-        }
 
         public class NetworkNode : NPSA.ICPUInterrupt
         {
@@ -29,36 +16,28 @@ namespace AoC.Advent2019
             public NetworkNode(string program, int networkId, NetworkController networkController)
             {
                 NetworkId = networkId;
-                cpu = new NPSA.IntCPU(program);
+                cpu = new NPSA.IntCPU(program) { Interrupt = this };
                 cpu.Reserve(3000);
                 cpu.Input.Enqueue(networkId);
-                cpu.Interrupt = this;
                 controller = networkController;
             }
 
             public bool Step() => cpu.Step();
 
-            public void HasPutOutput()
+            public void OutputReady()
             {
-                Int64 id, x, y;
-
                 if (cpu.Output.Count == 3)
                 {
-                    id = cpu.Output.Dequeue();
-                    x = cpu.Output.Dequeue();
-                    y = cpu.Output.Dequeue();
-
-                    controller.QueuePacket((int)id, x, y);
-
+                    controller.QueuePacket((int)cpu.Output.Dequeue(), (cpu.Output.Dequeue(), cpu.Output.Dequeue()));
                 }
             }
 
-            public void WillReadInput()
+            public void RequestInput()
             {
                 if (controller.TryGetPacket(NetworkId, out var data))
                 {
-                    cpu.Input.Enqueue(data.X);
-                    cpu.Input.Enqueue(data.Y);
+                    cpu.Input.Enqueue(data.x);
+                    cpu.Input.Enqueue(data.y);
                 }
                 else
                 {
@@ -69,11 +48,11 @@ namespace AoC.Advent2019
 
         public class NAT
         {
-            public BigVec lastPacket = null;
+            public (long x, long y) lastPacket;
 
-            public Int64 LastY = -1;
+            public long LastY = -1;
             readonly NetworkController controller;
-            readonly Dictionary<int, int> IdleCount = new();
+            readonly int[] IdleCount = new int[256];
 
             public NAT(NetworkController networkController, int numNodes)
             {
@@ -98,16 +77,13 @@ namespace AoC.Advent2019
                     lastPacket = packet;
                 }
 
-                var idle = IdleCount.Count(v => v.Value > 2);
-
-                if (idle == 50)
+                if (IdleCount.Count(v => v > 2) == 50)
                 {
-                    //Console.WriteLine($"{idle} nodes idle");
-                    controller.QueuePacket(0, lastPacket.X, lastPacket.Y);
-                    for (int i = 0; i < IdleCount.Count; ++i) IdleCount[i] = 0;
+                    controller.QueuePacket(0, lastPacket);
+                    for (int i = 0; i < IdleCount.Length; ++i) IdleCount[i] = 0;
 
-                    if (lastPacket.Y == LastY) return false;
-                    LastY = lastPacket.Y;
+                    if (lastPacket.y == LastY) return false;
+                    LastY = lastPacket.y;
                 }
 
                 return true;
@@ -118,29 +94,28 @@ namespace AoC.Advent2019
         {
             readonly List<NetworkNode> nodes = new();
 
-            public Dictionary<int, Queue<BigVec>> messageQueue = new();
+            public Queue<(long x, long y)>[] messageQueue = new Queue<(long x, long y)>[256];
 
             public NAT Nat = null;
 
             public NetworkController(string program, int numNodes)
             {
-                messageQueue[255] = new Queue<BigVec>();
+                messageQueue[255] = new();
 
                 for (int i = 0; i < numNodes; ++i)
                 {
                     nodes.Add(new NetworkNode(program, i, this));
-                    messageQueue[i] = new Queue<BigVec>();
+                    messageQueue[i] = new();
                 }
             }
 
-            public void QueuePacket(int id, Int64 x, Int64 y)
+            public void QueuePacket(int id, (long x, long y) vec)
             {
-                //Console.WriteLine($"{id} - {x},{y}");
-                messageQueue[id].Enqueue(new BigVec(x, y));
+                messageQueue[id].Enqueue(vec);
                 Nat?.PacketSeen(id);
             }
 
-            public bool TryGetPacket(int id, out BigVec vec)
+            public bool TryGetPacket(int id, out (long x, long y) vec)
             {
                 if (!messageQueue[id].TryDequeue(out vec))
                 {
@@ -150,46 +125,28 @@ namespace AoC.Advent2019
                 return true;
             }
 
-            public bool Step()
-            {
-                bool running = true;
-                foreach (var node in nodes)
-                {
-                    running &= node.Step();
-                }
-                if (Nat == null)
-                {
-                    if (messageQueue[255].Any()) return false;
-                }
-                else
-                {
-                    running &= Nat.Step();
-                }
-                return running;
-            }
-
             public void Run()
             {
-                while (Step()) ;
+                while (nodes.All(n => n.Step()) && (Nat != null ? Nat.Step() : !messageQueue[255].Any()));
             }
         }
 
-        public static Int64 Part1(string input)
+        public static long Part1(string input)
         {
             var network = new NetworkController(input, 50);
             network.Run();
 
             network.TryGetPacket(255, out var answer);
 
-            return answer.Y;
+            return answer.y;
         }
 
-        public static Int64 Part2(string input)
+        public static long Part2(string input)
         {
             var network = new NetworkController(input, 50);
             network.Nat = new NAT(network, 50);
             network.Run();
-            return network.Nat.lastPacket.Y;
+            return network.Nat.lastPacket.y;
         }
 
         public void Run(string input, ILogger logger)

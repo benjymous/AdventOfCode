@@ -15,7 +15,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Password01Test(string input, int expected)
         {
-            Assert.IsTrue(Advent2020.Day02.Part1(input) == expected);
+            Assert.IsTrue(Day02.Part1(input) == expected);
         }
 
         [TestCategory("Test")]
@@ -23,7 +23,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Password02Test(string input, int expected)
         {
-            Assert.IsTrue(Advent2020.Day02.Part2(input) == expected);
+            Assert.IsTrue(Day02.Part2(input) == expected);
         }
 
         [TestCategory("Regression")]

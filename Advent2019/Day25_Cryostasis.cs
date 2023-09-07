@@ -1,4 +1,5 @@
-﻿using AoC.Utils;
+﻿using Advent.Utils.Collections;
+using AoC.Utils;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,354 +9,147 @@ namespace AoC.Advent2019
     {
         public string Name => "2019-25";
 
-        static readonly HashSet<string> traps = new()
-        {
-            "molten lava",
-            "infinite loop",
-            "photons",
-            "escape pod",
-            "giant electromagnet"
-        };
+        static readonly HashSet<string> traps = new() { "molten lava", "infinite loop", "photons", "escape pod", "giant electromagnet" };
 
         class SearchDroid : NPSA.ASCIITerminal
         {
-            //int commandCount = 0;
-            //int combosTried = 0;
-            //int skippedCombos = 0;
-            public SearchDroid(string program) : base(program)
-            {
-                //cpu.Reserve(5400);
-            }
+            public SearchDroid(string program) : base(program, 5500) {}
 
+            readonly Dictionary<string, Room> Rooms = new();
+            readonly Stack<(Room room, string exit)> UnvisitedNeighbours = new();
+
+            readonly Queue<string> Inputs = new();
+
+            Room CurrentRoom = null, LastRoom = null, CheckpointRoom = null;
+            IEnumerable<string[]> ItemCombos = null;
             readonly HashSet<string> HeldItems = new();
-
-            HashSet<string> LastCombo;
-
-            void TryCombo(IEnumerable<string> items)
-            {
-                LastCombo = new HashSet<string>(items);
-                //combosTried++;
-                foreach (var item in knownItems)
-                {
-                    if (HeldItems.Contains(item) && !LastCombo.Contains(item))
-                    {
-                        inputs.Enqueue($"drop {item}");
-                        HeldItems.Remove(item);
-                    }
-                }
-
-                foreach (var item in items)
-                {
-                    if (!HeldItems.Contains(item))
-                    {
-                        inputs.Enqueue($"take {item}");
-                        HeldItems.Add(item);
-                    }
-                }
-
-                inputs.Enqueue("south");
-            }
-
-            readonly Queue<string> inputs = new();
-            Queue<IEnumerable<string>> itemCombos = null;
-            readonly List<string> knownItems = new();
+            string LastTravelDirection = null;
 
             public string Run()
             {
                 cpu.Run();
-                //Console.WriteLine(cpu.Speed());
-                //Console.WriteLine($"{commandCount} commands, {combosTried} combos tried, {skippedCombos} combos skipped");
+                System.Console.WriteLine(cpu.Speed());
                 return buffer.Lines.Last();
             }
 
-            public static (string name, IEnumerable<string> exits, IEnumerable<string> items) ParseRoom(List<string> lines)
+            Room ParseRoom(IEnumerable<string> lines)
             {
-                // find LAST room header
-                var roomName = lines.Where(line => line.StartsWith("==")).LastOrDefault();
+                var roomName = lines.Where(line => line[0] == '=').LastOrDefault(); // find LAST room header
 
-                List<string> exits = new();
-                List<string> items = new();
-
-                if (roomName == null)
-                {
-                    return (null, exits, items);
-                }
-
-                var startIdx = lines.IndexOf(roomName) + 3;
-
-
-                List<string> current = null;
-
-
-                for (int i = startIdx; i < lines.Count; ++i)
-                {
-                    if (lines[i] == "Doors here lead:")
+                return (roomName == null) ? CurrentRoom : Rooms.GetOrCalculate(roomName, roomName =>
+                {                
+                    List<string> current = null, exits = new(), items = new();
+                    foreach (var line in lines.Skip(lines.IndexOf(roomName) + 2))
                     {
-                        current = exits;
+                        switch (line[0])
+                        {
+                            case 'D': current = exits; break;
+                            case 'I': current = items; break;
+                            case '-': current.Add(line[2..]); break;
+                        }
                     }
-                    else if (lines[i] == "Items here:")
-                    {
-                        current = items;
-                    }
-                    else if (lines[i].StartsWith("-"))
-                    {
-                        current.Add(lines[i][2..]);
-                    }
-                }
 
-                return (roomName, exits, items);
+                    var room = new Room(roomName, exits.ToBiMap<string, string, Room>(e => e, e => default));
+                    LastRoom?.Link(room, LastTravelDirection);
+                    UnvisitedNeighbours.PushRange(room.GetUnvisited().OrderByDescending(v => v.direction));
+                    items.Except(traps).ForEach(TakeItem);
+
+                    if (roomName == "== Security Checkpoint ==") CheckpointRoom = room;
+
+                    return room;
+                });
             }
 
-            readonly Dictionary<string, Room> rooms = new();
-
-            public class Room
+            record class Room(string Name, BiMap<string, Room> Exits)
             {
-                public Room(string r, IEnumerable<string> e)
-                {
-                    name = r;
-                    foreach (var exit in e)
-                    {
-                        exits[exit] = null;
-                    }
-                }
-                public string name;
-                public Dictionary<string, Room> exits = new();
-
-                public override string ToString()
-                {
-                    return name;
-                }
+                public bool DeadEnd => Exits.Count == 1;
+                public bool IsUnvisited(string direction) => Exits.TryGet(direction, out var r) && r == null;
+                public IEnumerable<(Room room, string direction)> GetUnvisited() => Exits.Entries().Where(kvp => kvp.Value == null).Select(kvp => (this, kvp.Key));
+                public void Link(Room other, string direction) => (Exits[direction], other.Exits[ReverseDir(direction)]) = (other, this);
             }
 
-            readonly Dictionary<string, string> reverseDir = new()
+            static string ReverseDir(string dir) => dir[0] switch
             {
-                {"north", "south"},
-                {"south", "north"},
-                {"east", "west"},
-                {"west", "east"}
+                'n' => "south",
+                's' => "north",
+                'e' => "west",
+                'w' => "east",
+                _ => throw new System.Exception("Unexpected direction")
             };
-            readonly Stack<(Room room, string exit)> unvisited = new();
-
-            Room currentRoom = null;
-            Room lastRoom = null;
-            string backtrack = null;
-            string lastTravel = null;
 
             public override IEnumerable<string> AutomaticInput()
             {
-                var l = buffer.Lines.ToList();
-                var (name, exits, items) = ParseRoom(l);
-                buffer.Clear();
+                var lines = buffer.Pop().WithoutNullOrWhiteSpace();
+                CurrentRoom = ParseRoom(lines);
+                //System.Console.WriteLine($"{CurrentRoom.Name} {cpu.CycleCount}");
 
-                if (name != null)
+                if (!Inputs.Any())
                 {
-
-                    if (!rooms.TryGetValue(name, out currentRoom))
+                    if (CurrentRoom == CheckpointRoom && UnvisitedNeighbours.Count == 0)
                     {
-                        //Console.WriteLine($"New room {roomData.name}");
-                        var newRoom = new Room(name, exits);
-
-                        rooms[name] = newRoom;
-
-                        foreach (var e in exits)
+                        ItemCombos ??= HeldItems.Combinations().Select(c => c.ToArray()).OrderBy(c => System.Math.Abs(c.Length - HeldItems.Count / 2)).ToArray();
+                        ItemCombos = lines.Where(line => line.Contains("robotic")).Select(line => line.Contains("lighter") ? 1 : -1).FirstOrDefault(0) switch
                         {
-                            if (e != backtrack)
-                            {
-                                //Console.WriteLine($"new destination, {e} from {roomData.name}");
-                                unvisited.Push((newRoom, e));
-                            }
-                        }
+                            /* too heavy */ > 0 => ItemCombos.Where(combo => !HeldItems.IsSubsetOf(combo)).ToArray(),
+                            /* too light */ < 0 when HeldItems.Count > 1 => ItemCombos.Where(combo => !HeldItems.IsSupersetOf(combo)).ToArray(),
+                            _ => ItemCombos
+                        };
 
-                        foreach (var item in items)
-                        {
-                            if (traps.Contains(item))
-                            {
-                                //Console.WriteLine($"Will ignore {item}");
-                            }
-                            else
-                            {
-                                //Console.WriteLine($"Will take {item}");
-                                inputs.Enqueue($"take {item}");
-                                knownItems.Add(item);
-                                HeldItems.Add(item);
-                            }
-                        }
-
-                        currentRoom = newRoom;
+                        TryNextItemCombo();
                     }
-
-                    if (backtrack != null && currentRoom.exits.ContainsKey(backtrack) && currentRoom.exits[backtrack] == null)
-                    {
-                        currentRoom.exits[backtrack] = lastRoom;
-                        lastRoom.exits[lastTravel] = currentRoom;
-                    }
-
-                    if (name == "== Security Checkpoint ==" && unvisited.Count == 0)
-                    {
-                        if (itemCombos == null)
-                        {
-                            //Console.WriteLine(commandCount);
-                            itemCombos = new Queue<IEnumerable<string>>();
-                            var perms = knownItems.Combinations().OrderBy(x => x.Count());
-                            foreach (var perm in perms)
-                            {
-                                if (perm.Any())
-                                {
-                                    itemCombos.Enqueue(perm);
-                                }
-                            }
-                            //Console.WriteLine($"{itemCombos.Count} combos to try");
-                        }
-                        else
-                        {
-                            var sensorResult = l.Where(line => line.Contains("robotic")).LastOrDefault();
-                            if (sensorResult.Contains("lighter"))
-                            {
-                                //Console.WriteLine($"Combo '{string.Join(",", LastCombo)}' is too heavy");
-
-                                Queue<IEnumerable<string>> filteredCombos = new();
-
-                                foreach (var combo in itemCombos)
-                                {
-                                    if (LastCombo.Intersect(combo).Count() == LastCombo.Count)
-                                    {
-                                        //Console.WriteLine($"Skip '{string.Join(",", combo)}'");
-                                        //skippedCombos++;
-                                    }
-                                    else
-                                    {
-                                        //Console.WriteLine($"Keep '{string.Join(",", combo)}'");
-                                        filteredCombos.Enqueue(combo);
-                                    }
-                                }
-
-                                itemCombos = filteredCombos;
-
-                                //
-                            }
-                        }
-                        if (inputs.Count == 0 && itemCombos.Count > 0)
-                        {
-                            var combo = itemCombos.Dequeue();
-                            TryCombo(combo);
-                        }
-                    }
+                    else TravelToNextDestination();
                 }
-
-                if (inputs.Count == 0)
-                {
-                    if (unvisited.Count > 0)
-                    {
-                        //Console.WriteLine($"{unvisited.Count} locations to visit");
-
-                        var location = unvisited.Pop();
-
-                        //Console.WriteLine($"Will next visit {location.room.name} and go {location.exit}");
-
-                        PathFind(location);
-                    }
-                    else
-                    {
-                        //Console.WriteLine("Have visited everywhere!");
-                        PathFind((rooms["== Security Checkpoint =="], null));
-                    }
-                }
-
-                if (inputs.Any())
-                {
-                    var command = inputs.Dequeue();
-
-                    if (reverseDir.ContainsKey(command))
-                    {
-                        lastTravel = command;
-                        lastRoom = currentRoom;
-                        backtrack = reverseDir[command];
-                    }
-
-                    //commandCount++;
-                    yield return command;
-
-                }
+                (LastTravelDirection, LastRoom) = (!CurrentRoom.DeadEnd && CurrentRoom.IsUnvisited(Inputs.Peek())) ? (Inputs.Peek(), CurrentRoom) : (null, null);
+                //System.Console.WriteLine($"> {Inputs.Peek()}");
+                yield return Inputs.Dequeue();
             }
 
-            private void GoDirection(string direction)
-            {
-                //Console.WriteLine($"Will go {direction}");
-                inputs.Enqueue(direction);
+            private void GoDirection(string direction) => Inputs.Enqueue(direction);
+            private void TakeItem(string item) { Inputs.Enqueue($"take {item}"); HeldItems.Add(item); }
+            private void DropItem(string item) { Inputs.Enqueue($"drop {item}"); HeldItems.Remove(item); }
 
+            void TryNextItemCombo()
+            {
+                var items = ItemCombos.First();
+                HeldItems.Except(items).ForEach(DropItem);
+                items.Except(HeldItems).ForEach(TakeItem);
+                GoDirection(CurrentRoom.GetUnvisited().First().direction);
             }
 
-            private void PathFind((Room room, string exit) location)
+            void TravelToNextDestination()
             {
-                if (location.room == currentRoom)
+                var (room, exit) = UnvisitedNeighbours.Any() ? UnvisitedNeighbours.Pop() : (CheckpointRoom, null);
+                if (room != CurrentRoom)
                 {
-                    GoDirection(location.exit);
+                    var route = RouteFind(CurrentRoom, room);
+                    //System.Console.WriteLine($"Travelling {route.Count()} steps to {room.Name}:{exit}");
+                    Inputs.EnqueueRange(route);
                 }
-                else
-                {
-                    var route = RouteFind(currentRoom, location.room);
-                    if (route.Count > 0)
-                    {
-                        foreach (var direction in route)
-                        {
-                            GoDirection(direction);
-                        }
-                        if (location.exit != null)
-                        {
-                            GoDirection(location.exit);
-                        }
-                    }
-                }
+                if (exit != null) GoDirection(exit);
             }
 
-            public List<string> RouteFind(Room from, Room to, HashSet<Room> tried = null)
+            IEnumerable<string> RouteFind(Room from, Room to, HashSet<string> tried = null)
             {
-                tried ??= new HashSet<Room>();
+                if (from.Exits.TryGet(to, out var found)) return found.ToEnumerable();
 
-                foreach (var exit in from.exits)
+                foreach (var exit in from.Exits.ValuesNonNull.Where(e => tried == null || !tried.Contains(e.Name)))
                 {
-                    if (exit.Value == to)
-                    {
-                        return new List<string>() { exit.Key };
-                    }
-                }
-
-                foreach (var exit in from.exits)
-                {
-                    if (exit.Value != null && !tried.Contains(exit.Value))
-                    {
-                        var newTried = new HashSet<Room>();
-                        foreach (var room in tried)
-                        {
-                            newTried.Add(room);
-                        }
-                        newTried.Add(from);
-
-                        var route = RouteFind(exit.Value, to, newTried);
-                        if (route != null)
-                        {
-                            var commands = new List<string> { exit.Key };
-                            commands.AddRange(route);
-                            return commands;
-                        }
-                    }
+                    var route = RouteFind(exit, to, (tried ??= new()).Append(from.Name).ToHashSet());
+                    if (route != null) return route.Prepend(from.Exits[exit]);
                 }
 
                 return null;
             }
-
         }
-
-
 
         public static int Part1(string input)
         {
             var droid = new SearchDroid(input);
 
-            bool interactive = false;
+            //bool interactive = false;
 
-            droid.SetDisplay(interactive);
-            droid.Interactive = interactive;
+            //droid.SetDisplay(interactive);
+            //droid.Interactive = interactive;
 
             var result = droid.Run();
 
@@ -364,9 +158,7 @@ namespace AoC.Advent2019
             //Console.WriteLine(result);
             //}
 
-            if (result.Contains("Oh, hello")) return int.Parse(result.Split()[11]);
-
-            return 0;
+            return int.Parse(result.Split()[11]);
         }
 
         public void Run(string input, ILogger logger)

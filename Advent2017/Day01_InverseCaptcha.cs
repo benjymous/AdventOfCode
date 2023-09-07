@@ -9,17 +9,7 @@ namespace AoC.Advent2017
         public static int Captcha(string input, int offset)
         {
             var data = input.Trim().Select(c => c - '0').ToArray();
-
-            int count = 0;
-            for (int i = 0; i < data.Length; ++i)
-            {
-                if (data[i] == data[(i + offset) % data.Length])
-                {
-                    count += data[i];
-                }
-            }
-
-            return count;
+            return data.Where((v, i) => v == data[(i + offset) % data.Length]).Sum();
         }
 
         public static int Part1(string input)

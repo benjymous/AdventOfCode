@@ -1,4 +1,5 @@
-﻿using AoC.Utils.Vectors;
+﻿using AoC.Utils;
+using AoC.Utils.Vectors;
 using System;
 using System.Linq;
 using System.Text;
@@ -11,8 +12,8 @@ namespace AoC.Advent2018
 
         public class Drone
         {
-            public ManhattanVector2 position;
-            public ManhattanVector2 velocity;
+            public (int X, int Y) position;
+            readonly (int X, int Y) velocity;
 
             [Regex(@"position=<(.+, .+)> velocity=<(.+, .+)>")]
             public Drone(ManhattanVector2 pos, ManhattanVector2 vel)
@@ -21,10 +22,9 @@ namespace AoC.Advent2018
                 velocity = vel;
             }
 
-            public void Step() => position += velocity;
+            public void Step() => position =  position.OffsetBy(velocity);
 
             public override string ToString() => $"{position} - {velocity}";
-
         }
 
         public static (int steps, string message) Solve(string input)
@@ -66,7 +66,6 @@ namespace AoC.Advent2018
                         }
                         sb.Append('\n');
                     }
-                    Console.WriteLine(sb.ToString());
                     return (steps, sb.ToString());
                 }
             }

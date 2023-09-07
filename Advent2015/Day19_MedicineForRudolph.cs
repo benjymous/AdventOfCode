@@ -1,5 +1,4 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,28 +7,6 @@ namespace AoC.Advent2015
     public class Day19 : IPuzzle
     {
         public string Name => "2015-19";
-
-        public static int Part1(string input)
-        {
-            var lines = Util.Split(input);
-
-            var rules = lines.Take(lines.Length - 1).Select(x => x.Split(" => "));
-            var molecule = lines.Last();
-
-            HashSet<string> results = new();
-
-            foreach (var rule in rules)
-            {
-                var indices = molecule.AllIndexesOf(rule[0]);
-                foreach (var i in indices)
-                {
-                    var newStr = molecule.ReplaceAtIndex(i, rule[0], rule[1]);
-                    results.Add(newStr);
-                }
-            }
-
-            return results.Count;
-        }
 
         public static bool ReduceSubPart(ref string molecule, ref int steps, IEnumerable<string[]> rules)
         {
@@ -53,35 +30,39 @@ namespace AoC.Advent2015
             }
         }
 
+        public static int Part1(string input)
+        {
+            var lines = Util.Split(input);
+
+            var rules = lines.Take(lines.Length - 1).Select(x => x.Split(" => "));
+            var molecule = lines.Last();
+
+            return rules.SelectMany(r => molecule.AllIndexesOf(r[0]).Select(i => molecule.ReplaceAtIndex(i, r[0], r[1]))).Distinct().Count();
+        }
+
         public static int Part2(string input)
         {
-            input = input.Replace("Rn", "(").Replace("Y", ",").Replace("Ar", ")");
-
-            var lines = Util.Split(input);
+            var lines = Util.Split(input.Replace("Rn", "(").Replace("Y", ",").Replace("Ar", ")"));
 
             var rules = lines.Take(lines.Length - 1).Select(x => x.Split(" => ")).OrderByDescending(x => x[1].Length).ToArray();
 
             var molecule = lines.Last();
-            var original = molecule;
 
             int steps = 0;
 
-            // first remove all the bracketed sections (Rn..Ar)
-            while (molecule.Contains('('))
+            while (molecule.Contains('(')) // first remove all the bracketed sections (Rn..Ar)
             {
                 int left = 0;
                 while (true)
                 {
-                    left = molecule.IndexOf("(", left + 1);
+                    left = molecule.IndexOf('(', left + 1);
                     if (left == -1) break;
 
                     int count = 1;
                     int i = left + 1;
-                    while (count > 0 && i != left)
+                    while (count > 0)
                     {
-                        if (molecule[i] == '(') count++;
-                        if (molecule[i] == ')') count--;
-                        i++;
+                        count += molecule[i++] switch { '(' => 1, ')' => -1, _ => 0 };
                     }
 
                     var substr = molecule[left..i];
@@ -94,17 +75,10 @@ namespace AoC.Advent2015
                 }
                 ReduceSubPart(ref molecule, ref steps, rules.Where(r => r[1].Contains('(')));
             }
-
-            // with brackets gone, rest should reduce
-            while (molecule != "e")
+         
+            while (molecule != "e") // with brackets gone, rest should reduce
             {
-                if (!ReduceSubPart(ref molecule, ref steps, rules))
-                {
-                    Console.WriteLine($"Stuck with {molecule} after {steps}");
-                    molecule = original;
-                    steps = 0;
-                    rules = rules.Shuffle().ToArray();
-                }
+                ReduceSubPart(ref molecule, ref steps, rules);
             }
             return steps;
         }

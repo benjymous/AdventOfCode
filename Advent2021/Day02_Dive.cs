@@ -5,14 +5,13 @@
         public string Name => "2021-02";
 
         [Regex(@"(.).+ (\d+)")]
-        record struct Instruction(char Command, int Distance) {}
+        record struct Instruction(char Command, int Distance);
 
         public static int Part1(string input)
         {
             var data = Util.RegexParse<Instruction>(input);
 
-            int x = 0;
-            int y = 0;
+            int x = 0, y = 0;
 
             foreach (var line in data)
             {
@@ -31,9 +30,7 @@
         {
             var data = Util.RegexParse<Instruction>(input);
 
-            int x = 0;
-            int y = 0;
-            int aim = 0;
+            int x = 0, y = 0, aim = 0;
 
             foreach (var line in data)
             {

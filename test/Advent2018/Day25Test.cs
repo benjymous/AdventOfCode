@@ -16,14 +16,14 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void Constellation01Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day25.Part1(input));
+            Assert.AreEqual(expected, Day25.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Constellation_Part1_Regression()
         {
-            Assert.AreEqual(381, Advent2018.Day25.Part1(input));
+            Assert.AreEqual(381, Day25.Part1(input));
         }
 
     }

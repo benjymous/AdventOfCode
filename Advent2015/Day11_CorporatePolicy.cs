@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AoC.Utils;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2015
@@ -7,17 +9,11 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-11";
 
-        static readonly char[] bads = new char[]
-        {
-            'i', 'o', 'l',
-        };
+        static readonly HashSet<char> bads = new () { 'i', 'o', 'l' };
 
-        public static bool IsBad(char c)
-        {
-            return bads.Contains(c);
-        }
+        public static bool IsBad(char c) => bads.Contains(c);
 
-        public static string Increment(string pwd)
+        public static char[] Increment(char[] pwd)
         {
             var newPwd = pwd.ToArray();
             int i = pwd.Length - 1;
@@ -26,21 +22,13 @@ namespace AoC.Advent2015
                 newPwd[i]++;
                 if (newPwd[i] <= 'z')
                 {
-                    if (!IsBad(newPwd[i]))
-                    {
-                        return String.Join("", newPwd);
-                    }
+                    if (!IsBad(newPwd[i])) return newPwd;
                 }
-                else
-                {
-                    newPwd[i] = 'a';
-                    i--;
-                }
-                if (i < 0) throw new Exception("Password roll under!");
+                else newPwd[i--] = 'a';
             }
         }
 
-        public static bool HasStraight(string line)
+        public static bool HasStraight(char[] line)
         {
             for (int i = 0; i < line.Length - 2; ++i)
             {
@@ -50,17 +38,9 @@ namespace AoC.Advent2015
         }
 
 
-        public static bool NoBads(string line)
-        {
-            foreach (var bad in bads)
-            {
-                if (line.Contains(bad)) return false;
-            }
+        public static bool NoBads(char[] line) => !bads.Any(line.Contains);
 
-            return true;
-        }
-
-        public static bool HasTwoNonOverlappingPairs(string line)
+        public static bool HasTwoNonOverlappingPairs(char[] line)
         {
             int pairs = 0;
             for (int i = 0; i < line.Length - 1; ++i)
@@ -74,48 +54,27 @@ namespace AoC.Advent2015
             return pairs > 1;
         }
 
-        public static bool IsValid1(string line)
-        {
-            return HasStraight(line) && HasTwoNonOverlappingPairs(line) && NoBads(line);
-        }
+        public static bool IsValid(char[] line) => HasStraight(line) && HasTwoNonOverlappingPairs(line) && NoBads(line);
 
-        public static string FindNextValid(string input)
+        public static char[] FindNextValid(char[] input)
         {
-            do
-            {
-                input = Increment(input);
-            } while (!IsValid1(input));
+            do input = Increment(input); while (!IsValid(input));
 
             return input;
         }
 
         public static string Part1(string input)
         {
-            return FindNextValid(input.Trim());
+            return FindNextValid(input.Trim().ToArray()).AsString();
         }
 
         public static string Part2(string input)
         {
-            return FindNextValid(FindNextValid(input.Trim()));
+            return FindNextValid(FindNextValid(input.Trim().ToArray())).AsString();
         }
 
         public void Run(string input, ILogger logger)
         {
-            //logger.WriteLine(Increment("aaaah"));
-            //logger.WriteLine(Increment("aaahz"));
-
-            //logger.WriteLine(IsValid1("hijklmmn"));
-            //logger.WriteLine(IsValid1("abbceffg"));
-            //logger.WriteLine(IsValid1("abbcegjk"));
-            //logger.WriteLine(IsValid1("abcdefgh"));
-            //logger.WriteLine(IsValid1("abcdffaa"));
-            //logger.WriteLine(IsValid1("abcdfffa"));
-            //logger.WriteLine(IsValid1("ghijklmn"));
-            //logger.WriteLine(IsValid1("ghjaabcc"));
-
-            //logger.WriteLine(FindNextValid("abcdefgh"));
-            //logger.WriteLine(FindNextValid("ghijklmn"));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

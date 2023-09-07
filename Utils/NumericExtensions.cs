@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace AoC.Utils
 {
@@ -23,10 +25,34 @@ namespace AoC.Utils
                     yield return k;
         }
 
-        public static IEnumerable<T> BinarySequence<T>(this T v) where T : IBinaryInteger<T>
+        public static IEnumerable<byte> BitSequence(this byte v)
         {
-            for (T k = T.One; k <= v; k <<= 1)
+            if ((v & 1) > 0) yield return 1;
+            if ((v & 2) > 0) yield return 2;
+            if ((v & 4) > 0) yield return 4;
+            if ((v & 8) > 0) yield return 8;
+            if ((v & 16) > 0) yield return 16;
+            if ((v & 32) > 0) yield return 32;
+            if ((v & 64) > 0) yield return 64;
+            if ((v & 128) > 0) yield return 128;
+        }
+
+        public static IEnumerable<T> BinarySequence<T>(this T v, T max=default) where T : IBinaryInteger<T>
+        {
+            max ??= v;
+            for (T k = T.One; k <= max; k <<= 1)
                 yield return ((v & k) > T.Zero) ? T.One : T.Zero;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int CountBits(this uint num)
+        {
+            return (int)System.Runtime.Intrinsics.X86.Popcnt.PopCount(num);
+        }
+
+        public static int CountBits(this ulong num)
+        {
+            return (int)System.Runtime.Intrinsics.X86.Popcnt.X64.PopCount(num);
         }
 
         public static int CountBits<T>(this T num) where T : IBinaryInteger<T>
@@ -34,7 +60,7 @@ namespace AoC.Utils
             int i = 0;
             while (num > T.Zero)
             {
-                if ((num & T.One) == T.One) { i++; }
+                if ((num & T.One) == T.One) i++;
                 num >>= 1;
             }
             return i;
@@ -94,19 +120,78 @@ namespace AoC.Utils
             }
         }
 
-        public static int ParseHex(this char c)
+        public static int SumOfFactors(this int n)
         {
-            if (c >= '0' && c <= '9') return c - '0';
-            if (c >= 'A' && c <= 'F') return c - 'A' + 10;
-            if (c >= 'a' && c <= 'f') return c - 'a' + 10;
-            throw new Exception("Bad hex");
+
+            // Traversing through all prime factors.
+            int res = 1;
+            for (int i = 2; i <= Math.Sqrt(n); i++)
+            {
+
+
+                int curr_sum = 1;
+                int curr_term = 1;
+
+                while (n % i == 0)
+                {
+
+                    // THE BELOW STATEMENT MAKES
+                    // IT BETTER THAN ABOVE METHOD
+                    // AS WE REDUCE VALUE OF n.
+                    n /= i;
+
+                    curr_term *= i;
+                    curr_sum += curr_term;
+                }
+
+                res *= curr_sum;
+            }
+
+            // This condition is to handle
+            // the case when n is a prime
+            // number greater than 2
+            if (n > 2)
+                res *= (1 + n);
+
+            return res;
         }
+
+        public static int ParseHex(this char c) => c switch
+        {
+            >= '0' and <= '9' => c - '0',
+            >= 'A' and <= 'F' => c - 'A' + 10,
+            >= 'a' and <= 'f' => c - 'a' + 10,
+            _ => throw new Exception("Bad hex")
+        };
 
 
         public static int Distance(this (int x, int y) a, (int x, int y) b) => Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
+        public static int Distance(this (int x, int y) a, int x, int y) => Math.Abs(a.x - x) + Math.Abs(a.y - y);
         public static int Distance(this (int x, int y, int z) a, (int x, int y, int z) b) => Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y) + Math.Abs(a.z - b.z);
+        public static int Distance(this (int x, int y, int z) a, int x, int y, int z) => Math.Abs(a.x - x) + Math.Abs(a.y - y) + Math.Abs(a.z - z);
         public static int Distance(this (int x, int y, int z, int w) a, (int x, int y, int z, int w) b) => Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y) + Math.Abs(a.z - b.z) + Math.Abs(a.w - b.w);
+        public static int Distance(this (int x, int y, int z, int w) a, int x, int y, int z, int w) => Math.Abs(a.x - x) + Math.Abs(a.y - y) + Math.Abs(a.z - z) + Math.Abs(a.w - w);
+        public static int Length(this (int x, int y) v) => Math.Abs(v.x) + Math.Abs(v.y);
+        public static int Length(this (int x, int y, int z) v) => Math.Abs(v.x) + Math.Abs(v.y) + Math.Abs(v.z);
+        public static int Length(this (int x, int y, int z, int w) v) => Math.Abs(v.x) + Math.Abs(v.y) + Math.Abs(v.z) + +Math.Abs(v.w);
 
-        public static (int x, int y) Plus(this (int x, int y) left, (int x, int y) right) => (left.x + right.x, left.y + right.y);
+        public static (int x, int y) OffsetBy(this (int x, int y) left, (int x, int y) right) => (left.x + right.x, left.y + right.y);
+        public static (int x, int y, int z) OffsetBy(this (int x, int y, int z) left, (int x, int y, int z) right) => (left.x + right.x, left.y + right.y, left.z + right.z);
+
+        public static (int x, int y) OffsetBy(this (int x, int y) left, Vectors.Direction2 right) => (left.x + right.DX, left.y + right.DY);
+
+        public static (int x, int y, int z) Subtract(this (int x, int y, int z) left, (int x, int y, int z) right) => (left.x - right.x, left.y - right.y, left.z - right.z);
+
+
+        public static T Sum<T>(this IEnumerable<T> elements) where T : ISummable<T>
+        {
+            return elements.Skip(1).Aggregate(elements.First(), (total, val) => (total+val));
+        }
     }
+
+    public interface ISummable<TSelf> where TSelf : ISummable<TSelf>
+    {
+        public abstract static TSelf operator +(TSelf lhs, TSelf rhs);
+    }
+
 }

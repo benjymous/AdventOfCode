@@ -13,72 +13,62 @@ namespace AoC.Advent2017
             public int Id { get; private set; }
             public int Range { get; private set; }
             public int Position { get; private set; } = 0;
-
-            public int Direction { get; private set; } = 1;
+            public int Frequency { get; private set; } = 1;
 
             public Scanner(string line)
             {
-                var bits = line.Split(":");
-                Id = int.Parse(bits[0]);
-                Range = int.Parse(bits[1]);
+                (Id, Range) = line.Split(":").Select(int.Parse).Decompose2();
+                Frequency = 2 * Range - 2;
             }
 
             public void Step()
             {
-                Position += Direction;
-                if (Position == 0) Direction = 1;
-                if (Position == Range - 1) Direction = -1;
+                Position = (Position + 1) % Frequency;
             }
-
         }
 
-        private static Dictionary<int, Scanner> GetScanners(string input)
-        {
-            return Util.Parse<Scanner>(input).ToDictionary(s => s.Id, s => s);
-        }
+        private static Dictionary<int, Scanner> GetScanners(string input) => Util.Parse<Scanner>(input).ToDictionary(s => s.Id, s => s);
 
-        private static (int severity, bool hit) RunScanners(string input, int delay = 0, bool earlyExit = false)
+        private static int CheckBlock((int Key, int Mod)[] scanners, int start, int size)
         {
-            var scanners = GetScanners(input);
-            int maxDepth = scanners.Keys.Max() + 1;
-
-            bool hit = false;
-            int severity = 0;
-            int packetDepth = -1;
-            while (packetDepth < maxDepth)
+            var collisions = new HashSet<int>(size);
+            foreach (var (Key, Mod) in scanners)
             {
-                if (delay-- <= 0)
-                {
-                    packetDepth++;
-                }
-                if (scanners.TryGetValue(packetDepth, out var scanner))
-                {
-                    // packet inside scanner
-                    if (scanner.Position == 0)
-                    {
-                        // detected!
-                        severity += packetDepth * scanner.Range;
-                        hit = true;
+                for (int i = start + (Mod + (Mod - (start + Key))) % Mod; i < (start + size); i += Mod)
+                    if (i>=start && i < start+ size) collisions.Add(i);
 
-                        if (earlyExit) return (packetDepth, true);
-                    }
-                }
-                scanners.ForEach(s => s.Value.Step());
+                if (collisions.Count == size) return -1;
             }
-
-            return (severity, hit);
+            return collisions.Count == size ? -1 : Enumerable.Range(start, size).Except(collisions).First();
         }
 
         public static int Part1(string input)
         {
-            return RunScanners(input, 0).severity;
+            var scanners = GetScanners(input);
+            int maxDepth = scanners.Keys.Max() + 1;
+
+            int severity = 0;
+            for (int packetDepth = 0; packetDepth < maxDepth; ++packetDepth)
+            {
+                if (scanners.TryGetValue(packetDepth, out var scanner) && scanner.Position == 0)
+                {
+                    severity += packetDepth * scanner.Range;
+                }
+                scanners.Values.ForEach(s => s.Step());
+            }
+
+            return severity;
         }
 
         public static int Part2(string input)
         {
-            var scanners = GetScanners(input).ToDictionary(s => s.Key, s => s.Value.Range);
-
-            return Util.Forever(0).First(delay => scanners.All(s => (delay + s.Key) % (2 * s.Value - 2) != 0));
+            (int Key, int Mod)[] scanners = GetScanners(input).Select(s => (s.Key, Mod: s.Value.Frequency)).ToArray();
+            int blockSize = 1000;
+            for (int i = 0; true; i += blockSize)
+            {
+                int res = CheckBlock(scanners, i, blockSize);
+                if (res != -1) return res;
+            }
         }
 
         public void Run(string input, ILogger logger)

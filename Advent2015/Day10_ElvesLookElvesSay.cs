@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace AoC.Advent2015
@@ -7,33 +9,25 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-10";
 
-        public static string SayIt(string input)
+        public static int[] SayIt(int[] input)
         {
-            StringBuilder builder = new();
-            int run;
-            for (int i = 0; i < input.Length; i += run)
+            List<int> result = new();
+            for (int i = 0, run; i < input.Length; i += run)
             {
                 run = 0;
 
-                while ((run + i < input.Length) && (input[i] == input[i + run]))
-                {
-                    run++;
-                }
-                run = Math.Max(1, run);
+                while ((run + i < input.Length) && (input[i] == input[i + run])) run++;
 
-                builder.Append($"{run}{input[i]}");
-
+                result.Add(run);
+                result.Add(input[i]);
             }
 
-            //Console.WriteLine($"{input} - {outStr}");
-
-            return builder.ToString();
+            return result.ToArray();
         }
 
         public static int GetNth(string input, int iterations)
         {
-
-            var result = input.Trim();
+            var result = input.Trim().Select(ch => ch-'0').ToArray();
 
             for (int i = 0; i < iterations; ++i)
             {

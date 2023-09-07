@@ -13,7 +13,7 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void Checksum01Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day02.Part1(input));
+            Assert.AreEqual(expected, Day02.Part1(input));
         }
 
         [TestCategory("Test")]
@@ -21,21 +21,21 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void Checksum02Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day02.Part2(input));
+            Assert.AreEqual(expected, Day02.Part2(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Checksum_Part1_Regression()
         {
-            Assert.AreEqual(46402, Advent2017.Day02.Part1(input));
+            Assert.AreEqual(46402, Day02.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Checksum_Part2_Regression()
         {
-            Assert.AreEqual(265, Advent2017.Day02.Part2(input));
+            Assert.AreEqual(265, Day02.Part2(input));
         }
 
     }

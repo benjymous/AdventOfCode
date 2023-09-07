@@ -37,20 +37,19 @@ namespace AoC.Advent2021
                 if (index.TryGetValue(num, out var pos))
                 {
                     numbers[pos.x, pos.y] = -1;
+                    index.Remove(num);
 
-                    Complete = CheckRow(pos.y) || CheckCol(pos.x);
+                    return CheckRow(pos.y) || CheckCol(pos.x);
                 }
 
-                return Complete;
+                return false;
             }
 
             bool CheckRow(int y) => numbers.Row(y).All(i => i == -1);
 
             bool CheckCol(int x) => numbers.Column(x).All(i => i == -1);
 
-            public int CalcScore(int turn) => numbers.Values().Where(i => i > -1).Sum() * turn;
-
-            public bool Complete { get; private set; } = false;
+            public int CalcScore(int turn) => index.Keys.Sum() * turn;
         }
 
         static int RunGame(string input, QuestionPart part)
@@ -58,17 +57,18 @@ namespace AoC.Advent2021
             var chunks = input.Split("\n\n");
             var rnd = Util.ParseNumbers<int>(chunks[0]);
 
-            var boards = Util.Parse<Board>(chunks.Skip(1));
+            var boards = Util.Parse<Board>(chunks.Skip(1)).ToHashSet();
 
             foreach (var num in rnd)
             {
-                foreach (var board in boards.Where(b => !b.Complete))
+                foreach (var board in boards)
                 {
                     if (board.PlayNumber(num))
                     {
-                        if (part.One() ||
-                            boards.Count(board => board.Complete) == boards.Count)
+                        if (part.One() || boards.Count == 1)
                             return board.CalcScore(num);
+
+                        boards.Remove(board);
                     }
                 }
             }

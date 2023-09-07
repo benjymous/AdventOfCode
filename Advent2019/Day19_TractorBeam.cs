@@ -1,4 +1,5 @@
-﻿using AoC.Utils.Vectors;
+﻿using AoC.Utils;
+using AoC.Utils.Vectors;
 using System;
 using System.Collections.Generic;
 
@@ -14,7 +15,7 @@ namespace AoC.Advent2019
 
             public int Scans { get; private set; } = 0;
 
-            readonly Dictionary<string, Int64> Cache = new();
+            readonly Dictionary<(int,int), long> Cache = new();
 
             public TestDrone(string program)
             {
@@ -22,25 +23,17 @@ namespace AoC.Advent2019
                 cpu.Reserve(1000);
             }
 
-            public Int64 Visit(ManhattanVector2 pos) => Visit(pos.X, pos.Y);
-
-            public Int64 Visit(int scanX, int scanY)
+            public long Visit(int scanX, int scanY) => Cache.GetOrCalculate((scanX, scanY), _ =>
             {
-                var key = $"{scanX},{scanY}";
-                if (Cache.TryGetValue(key, out long res))
-                {
-                    return res;
-                }
                 Scans++;
                 cpu.Input.Enqueue(scanX);
                 cpu.Input.Enqueue(scanY);
                 cpu.Run();
-                res = cpu.Output.Dequeue();
+                long res = cpu.Output.Dequeue();
                 cpu.Reset();
                 cpu.Reserve(1000);
-                Cache[key] = res;
                 return res;
-            }
+            });
 
             public void DrawDroneView(int xc, int yc, int size = 5, int boxSize = 1)
             {
@@ -75,10 +68,10 @@ namespace AoC.Advent2019
             }
         }
 
-        public static Int64 Part1(string input)
+        public static long Part1(string input)
         {
 
-            Int64 result = 0;
+            long result = 0;
             const int scanSize = 50;
 
             var drone = new TestDrone(input);
@@ -93,7 +86,7 @@ namespace AoC.Advent2019
 
                     if (res > 1) throw new Exception("Unexpected output");
 
-                    //Console.Write( res> 0 ? "##" : "  ");                    
+                    //Console.Write( res> 0 ? "##" : "  ");
                 }
                 //Console.WriteLine();
             }

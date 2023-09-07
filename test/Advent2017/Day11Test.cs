@@ -17,21 +17,21 @@ namespace AoC.Advent2017.Test
         [DataTestMethod]
         public void HexEd01Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2017.Day11.Part1(input));
+            Assert.AreEqual(expected, Day11.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void HexEd_Part1_Regression()
         {
-            Assert.AreEqual(747, Advent2017.Day11.Part1(input));
+            Assert.AreEqual(747, Day11.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void HexEd_Part2_Regression()
         {
-            Assert.AreEqual(1544, Advent2017.Day11.Part2(input));
+            Assert.AreEqual(1544, Day11.Part2(input));
         }
 
     }

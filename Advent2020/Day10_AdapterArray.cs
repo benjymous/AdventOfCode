@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AoC.Advent2020
@@ -37,14 +36,14 @@ namespace AoC.Advent2020
             return diff1 * diff3;
         }
 
-        static Dictionary<int, Int64> GetCombinations(IEnumerable<int> values)
+        static Dictionary<int, long> GetCombinations(IEnumerable<int> values)
         {
-            var results = new Dictionary<int, Int64> { { 0, 1 } };
+            var results = new Dictionary<int, long> { { 0, 1 } };
 
             var offsets = new int[] { 1, 2, 3 };
             foreach (var value in values)
             {
-                Int64 combinations = 0;
+                long combinations = 0;
                 foreach (var offset in offsets)
                 {
                     var testVal = value - offset;
@@ -60,7 +59,7 @@ namespace AoC.Advent2020
             return results;
         }
 
-        public static Int64 Part2(string input)
+        public static long Part2(string input)
         {
             var values = GetValues(input).Skip(1);
 

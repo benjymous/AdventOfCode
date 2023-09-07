@@ -30,7 +30,7 @@ namespace AoC.Advent2022
         private static int CountOuterEdges(IEnumerable<Node> cells) 
             => cells.SelectMany(cell => cell.Edges()).GetUniqueItems().Count();
 
-        static (int dx, int dy, int dz)[] Neighbours = new[] { (-1, 0, 0), (1, 0, 0), (0, -1, 0), (0, 1, 0), (0, 0, -1), (0, 0, 1) };
+        static readonly (int dx, int dy, int dz)[] Neighbours = new[] { (-1, 0, 0), (1, 0, 0), (0, -1, 0), (0, 1, 0), (0, 0, -1), (0, 0, 1) };
         static void FloodFill((int x, int y, int z) pos, HashSet<(int x, int y, int z)> matrix)
         {
             if (matrix.Contains(pos))

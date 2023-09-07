@@ -9,80 +9,43 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-03";
 
-        enum Direction
-        {
-            Right = 0,
-            Up = 1,
-            Left = 2,
-            Down = 3,
-        }
-
-        static void ApplyDirection(ManhattanVector2 v, Direction d)
-        {
-            switch (d)
-            {
-                case Direction.Right:
-                    v.Offset(1, 0);
-                    break;
-
-                case Direction.Up:
-                    v.Offset(0, -1);
-                    break;
-
-                case Direction.Left:
-                    v.Offset(-1, 0);
-                    break;
-
-                case Direction.Down:
-                    v.Offset(0, 1);
-                    break;
-            }
-        }
-
-        public static ManhattanVector2 Spiralize(int steps)
-        {
-            return Spiralize().Skip(steps - 1).First();
-        }
+        public static ManhattanVector2 Spiralize(int steps) => Spiralize().Skip(steps - 1).First();
 
         public static IEnumerable<(int x, int y)> Spiralize()
         {
             ManhattanVector2 position = new(0, 0);
+            Direction2 dir = new ('>');
 
-            Direction dir = Direction.Right;
             int step = 1;
             int repeat = 2;
             int currentStraight = step;
             while (true)
             {
                 yield return position;
-                //Console.WriteLine($"{i+1} - {position} - {dir}");
-                ApplyDirection(position, dir);
-                currentStraight--;
-                if (currentStraight == 0)
+
+                position.Offset(dir);
+                if (--currentStraight == 0)
                 {
-                    dir = (Direction)(((int)dir + 1) % 4);
-                    repeat--;
-                    if (repeat == 0)
+                    dir.TurnLeft();
+                    if (--repeat == 0)
                     {
                         repeat = 2;
                         step++;
                     }
                     currentStraight = step;
-
                 }
             }
         }
 
-        public static int Part1(string input) => Part1(int.Parse(input));
-        public static int Part1(int steps) => Spiralize(steps).Distance(ManhattanVector2.Zero);
-
-        public static int Part2(string input) => Part2(int.Parse(input));
-        public static int Part2(int input)
+        public static int Part1(string input)
         {
-            var cells = new Dictionary<(int x, int y), int>
-            {
-                {(0,0), 1}
-            };
+            return Spiralize(int.Parse(input)).Distance(ManhattanVector2.Zero);
+        }
+
+        public static int Part2(string input)
+        {
+            int target = int.Parse(input);
+            var cells = new Dictionary<int, int>{ {0, 1} };
 
             var spiral = Spiralize();
 
@@ -90,15 +53,12 @@ namespace AoC.Advent2017
             {
                 int sum = 0;
                 for (int y = -1; y <= 1; ++y)
-                {
                     for (int x = -1; x <= 1; ++x)
-                    {
-                        sum += cells.GetOrDefault((pos.x + x, pos.y + y));
-                    }
-                }
-                cells[pos] = sum;
+                        sum += cells.GetOrDefault(pos.x + x + ((pos.y + y)<<16));
 
-                if (sum > input) return sum;
+                cells[pos.x + (pos.y<<16)] = sum;
+
+                if (sum > target) return sum;
             }
             return -1;
         }

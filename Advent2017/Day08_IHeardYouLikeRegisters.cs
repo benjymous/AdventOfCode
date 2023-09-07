@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AoC.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OperatorFunc = System.Func<int, int, bool>;
@@ -30,14 +31,7 @@ namespace AoC.Advent2017
                 Instr = Decode(line);
             }
 
-            private int RegIndex(string name)
-            {
-                if (!RegLookup.ContainsKey(name))
-                {
-                    RegLookup[name] = RegLookup.Count;
-                }
-                return RegLookup[name];
-            }
+            private int RegIndex(string name) => RegLookup.GetOrCalculate(name, _ => RegLookup.Count);
 
             private (int RegToChange, int Amount, int RegToCheck, OperatorFunc Operator, int CheckValue) Decode(string line)
             {
@@ -47,13 +41,7 @@ namespace AoC.Advent2017
                 return (RegIndex(bits[0]), val, RegIndex(bits[4]), ParseOperator(bits[5]), int.Parse(bits[6]));
             }
 
-            public void Act(int[] regs)
-            {
-                if (Instr.Operator(regs[Instr.RegToCheck], Instr.CheckValue))
-                {
-                    regs[Instr.RegToChange] += Instr.Amount;
-                }
-            }
+            public void Act(int[] regs) => regs[Instr.RegToChange] += Instr.Operator(regs[Instr.RegToCheck], Instr.CheckValue) ? Instr.Amount : 0;
 
             private (int RegToChange, int Amount, int RegToCheck, OperatorFunc Operator, int CheckValue) Instr;
         }

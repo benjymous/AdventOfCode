@@ -7,26 +7,22 @@ namespace AoC.Advent2018
     {
         public string Name => "2018-14";
 
-        static IEnumerable<int> Parse(string input)
+        static IEnumerable<int> Combine(int sum)
         {
-            foreach (var c in input)
-            {
-                yield return c - '0';
-            }
+            if (sum > 9) yield return sum / 10;
+            yield return sum % 10;
         }
 
-        static IEnumerable<int> Combine(int r1, int r2)
+        private static void StepRecipe(List<int> recipe, ref int[] current, int required)
         {
-            int sum = r1 + r2;
-
-            return Parse(sum.ToString());
-        }
-
-        public static void MoveCurrent(List<int> recipe, ref int[] current)
-        {
-            for (int j = 0; j < 2; ++j)
+            while (recipe.Count < required)
             {
-                current[j] = (current[j] + 1 + recipe[current[j]]) % recipe.Count;
+                recipe.AddRange(Combine(recipe[current[0]] + recipe[current[1]]));
+
+                for (int j = 0; j < 2; ++j)
+                {
+                    current[j] = (current[j] + 1 + recipe[current[j]]) % recipe.Count;
+                }
             }
         }
 
@@ -36,20 +32,16 @@ namespace AoC.Advent2018
 
             int[] current = { 0, 1 };
 
-            while (recipe.Count < start + keep)
-            {
-                recipe.AddRange(Combine(recipe[current[0]], recipe[current[1]]));
-
-                MoveCurrent(recipe, ref current);
-            }
+            StepRecipe(recipe, ref current, start+keep);
 
             return string.Join("", recipe).Substring(start, keep);
         }
 
+
         public static int Part2(string input)
         {
             var recipe = new List<int> { 3, 7 };
-            var toFind = Parse(input.Trim()).ToArray();
+            var toFind = input.Trim().Select(c => c-'0').ToArray();
 
             int[] current = { 0, 1 };
 
@@ -57,12 +49,7 @@ namespace AoC.Advent2018
 
             while (true)
             {
-                while (recipe.Count < searchPos + toFind.Length)
-                {
-                    recipe.AddRange(Combine(recipe[current[0]], recipe[current[1]]));
-
-                    MoveCurrent(recipe, ref current);
-                }
+                StepRecipe(recipe, ref current, searchPos + toFind.Length);
 
                 bool found = true;
                 for (int i = 0; i < toFind.Length; ++i)

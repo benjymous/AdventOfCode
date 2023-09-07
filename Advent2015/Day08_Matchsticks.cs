@@ -73,11 +73,6 @@ namespace AoC.Advent2015
 
             var result = lines.Select(line => (line, Unescape(line)));
 
-            // foreach (var r in result)
-            // {
-            //     Console.WriteLine($"{r.Item1} - >{r.Item2}<");
-            // }
-
             return result.Sum(x => x.line.Length - x.Item2.Length);
         }
 
@@ -87,28 +82,11 @@ namespace AoC.Advent2015
 
             var result = lines.Select(line => (line, Escape(line)));
 
-            // foreach (var r in result)
-            // {
-            //     Console.WriteLine($"{r.Item1} - >{r.Item2}<");
-            // }
-
             return result.Sum(x => x.Item2.Length - x.line.Length);
         }
 
         public void Run(string input, ILogger logger)
         {
-            // Console.WriteLine(Unescape("\"\""));
-            // Console.WriteLine(Unescape("\"abc\""));
-            // Console.WriteLine(Unescape("\"aaa\\\"aaa\""));
-            // Console.WriteLine(Unescape("\"\\x27\""));
-
-            // Console.WriteLine(Part1("\"\"\n\"abc\"\n\"aaa\\\"aaa\"\n\"\\x27\"\n"));
-
-            //Console.WriteLine(Escape("\"\"").Length);
-            //Console.WriteLine(Escape("\"abc\"").Length);
-            //Console.WriteLine(Escape("\"aaa\\\"aaa\"").Length);
-            //Console.WriteLine(Escape("\"\\x27\"").Length);
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

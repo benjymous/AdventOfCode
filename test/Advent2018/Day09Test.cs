@@ -19,7 +19,7 @@ namespace AoC.Advent2018.Test
         [DataRow(30, 5807, 37305UL)] // 30 players; last marble is worth 5807 points: high score is 37305
         public void Marbles01Test(int numPlayers, int numMarbles, ulong expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day09.MarbleGame(numPlayers, numMarbles));
+            Assert.AreEqual(expected, Day09.MarbleGame(numPlayers, numMarbles));
         }
 
         [TestCategory("Regression")]

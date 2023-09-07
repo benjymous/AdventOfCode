@@ -21,9 +21,9 @@ namespace AoC.Utils.Vectors
         }
 
         // east/west sides
-        static readonly Dictionary<string, (int x, int y, int z)> directions_pointy = new()
+        public static readonly Dictionary<string, (int x, int y, int z)> directions_pointy = new()
         {
-            { "ne", (+1,-1, 0) },
+            { "ne", (+1,-1,  0) },
             { "e",  (+1, 0, -1) },
             { "se", (0, +1, -1) },
             { "sw", (-1, +1, 0) },
@@ -32,9 +32,9 @@ namespace AoC.Utils.Vectors
         };
 
         // flat topped north
-        static readonly Dictionary<string, (int x, int y, int z)> directions_flat = new()
+        public static readonly Dictionary<string, (int x, int y, int z)> directions_flat = new()
         {
-            { "ne", (+1,-1, 0) },
+            { "ne", (+1,-1,  0) },
             { "se", (+1, 0, -1) },
             { "s",  (0, +1, -1) },
             { "sw", (-1, +1, 0) },
@@ -47,14 +47,15 @@ namespace AoC.Utils.Vectors
             get => Pointy ? directions_pointy : directions_flat;
         }
 
-        public void Translate((int x, int y, int z) dir)
+        public HexVector Translate((int x, int y, int z) dir)
         {
             X += dir.x;
             Y += dir.y;
             Z += dir.z;
+            return this;
         }
 
-        public void TranslateHex(string dir) => Translate(Directions[dir]);
+        public HexVector TranslateHex(string dir) => Translate(Directions[dir]);
 
         private static (int X, int Y, int Z) Subtract(HexVector a, HexVector b) => (a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 

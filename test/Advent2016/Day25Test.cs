@@ -11,7 +11,7 @@ namespace AoC.Advent2016.Test
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Part1_Regression()
+        public void Signal_Part1_Regression()
         {
             Assert.AreEqual(189, Day25.Part1(input));
         }

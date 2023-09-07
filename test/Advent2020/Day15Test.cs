@@ -19,7 +19,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Sequence1Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2020.Day15.Part1(input));
+            Assert.AreEqual(expected, Day15.Part1(input));
         }
 
         [TestCategory("Test")]
@@ -33,7 +33,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Sequence2Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2020.Day15.Part2(input));
+            Assert.AreEqual(expected, Day15.Part2(input));
         }
 
         [TestCategory("Regression")]

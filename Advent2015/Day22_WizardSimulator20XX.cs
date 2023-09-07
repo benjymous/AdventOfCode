@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AoC.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -63,11 +64,11 @@ namespace AoC.Advent2015
             public bool PlayerTurn = true;
             public bool HardMode = false;
 
-            public List<(Spell effect, int duration)> ActiveEffects = new();
+            public Dictionary<Spell, int> ActiveEffects = new();
 
             public IEnumerable<State> Tick()
             {
-                foreach (var (effect, duration) in ActiveEffects)
+                foreach (var (effect, duration) in ActiveEffects.Select(kvp => (kvp.Key, kvp.Value - 1)))
                 {
                     switch (effect)
                     {
@@ -75,17 +76,16 @@ namespace AoC.Advent2015
                             BossHP -= 3;
                             break;
                         case Spell.Shield:
-                            if (duration == 1)
-                            {
-                                PlayerArmour -= 7;
-                            }
+                            if (duration == 0) PlayerArmour -= 7;
                             break;
                         case Spell.Recharge:
                             PlayerMana += 101;
                             break;
                     }
+     
+                    if (duration > 0) ActiveEffects[effect] = duration;
+                    else ActiveEffects.Remove(effect);
                 }
-                ActiveEffects = ActiveEffects.Select(kvp => (kvp.effect, kvp.duration - 1)).Where(kvp => kvp.Item2 > 0).ToList();
 
                 if (PlayerTurn)
                 {
@@ -93,11 +93,8 @@ namespace AoC.Advent2015
 
                     if (PlayerHP > 0)
                     {
-                        foreach (var spell in Spells)
+                        foreach (var spell in Spells.Where(spell => spell.Value.mana <= PlayerMana && !ActiveEffects.ContainsKey(spell.Key)))
                         {
-                            if (spell.Value.mana > PlayerMana) continue;
-                            if (ActiveEffects.Any(e => e.effect == spell.Key)) continue;
-
                             var newState = new State(this);
 
                             switch (spell.Key)
@@ -118,7 +115,7 @@ namespace AoC.Advent2015
 
                             if (spell.Value.duration > 0)
                             {
-                                newState.ActiveEffects.Add((spell.Key, spell.Value.duration));
+                                newState.ActiveEffects.Add(spell.Key, spell.Value.duration);
                             }
                             newState.PlayerMana -= spell.Value.mana;
                             newState.ManaSpend += spell.Value.mana;
@@ -131,8 +128,7 @@ namespace AoC.Advent2015
                 {
                     if (BossHP > 0)
                     {
-                        int attack = Math.Max(0, BossDamage - PlayerArmour);
-                        PlayerHP -= attack;
+                        PlayerHP -= Math.Max(0, BossDamage - PlayerArmour);
                         PlayerTurn = !PlayerTurn;
                         yield return this;
                     }
@@ -147,20 +143,21 @@ namespace AoC.Advent2015
 
             int bestScore = int.MaxValue;
 
-            Dictionary<(int PlayerHP, int PlayerArmour, int PlayerMana, int BossHP, int BossDamage), int> cache = new();
+            Dictionary<int, int> cache = new();
 
-            while (queue.TryDequeue(out var state, out var _))
+            queue.Operate(state =>
             {
-                if (state.ManaSpend >= bestScore) continue;
-                if (cache.TryGetValue((state.PlayerHP, state.PlayerArmour, state.PlayerMana, state.BossHP, state.BossDamage), out int prev) && prev <= state.ManaSpend) continue;
-                cache[(state.PlayerHP, state.PlayerArmour, state.PlayerMana, state.BossHP, state.BossDamage)] = state.ManaSpend;
+                if (state.ManaSpend >= bestScore) return;
+                int key = (state.PlayerHP, state.PlayerArmour, state.PlayerMana, state.BossHP).GetHashCode();
+                if (cache.TryGetValue(key, out int prev) && prev <= state.ManaSpend) return;
+                cache[key] = state.ManaSpend;
 
                 var nextStates = state.Tick().ToArray();
 
                 if (state.BossHP <= 0)
                 {
                     bestScore = Math.Min(bestScore, state.ManaSpend);
-                    continue;
+                    return;
                 }
 
                 if (state.PlayerHP > 0)
@@ -170,7 +167,7 @@ namespace AoC.Advent2015
                         queue.Enqueue(nextState, nextState.BossHP + nextState.ManaSpend);
                     }
                 }
-            }
+            });
 
             return bestScore;
         }

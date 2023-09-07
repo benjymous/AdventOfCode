@@ -34,8 +34,8 @@ namespace AoC.Advent2022
                 Data = Util.ParseSparseMatrix<char>(mapData).Where(kvp => kvp.Value != ' ').ToDictionary();
                 Tape = GetInstructions(tapeData.Trim()).ToList();
                 (maxX, maxY) = (Data.Max(kvp => kvp.Key.x), Data.Max(kvp => kvp.Key.y));
-                for (int y = 0; y <= maxY; ++y) (rowMin[y], rowMax[y]) = (Data.Where(kvp => kvp.Key.y == y).Min(kvp => kvp.Key.x), Data.Where(kvp => kvp.Key.y == y).Max(kvp => kvp.Key.x));
-                for (int x = 0; x <= maxX; ++x) (colMin[x], colMax[x]) = (Data.Where(kvp => kvp.Key.x == x).Min(kvp => kvp.Key.y), Data.Where(kvp => kvp.Key.x == x).Max(kvp => kvp.Key.y));
+                for (int y = 0; y <= maxY; ++y) (rowMin[y], rowMax[y]) = Data.Where(kvp => kvp.Key.y == y).MinMax(kvp => kvp.Key.x);
+                for (int x = 0; x <= maxX; ++x) (colMin[x], colMax[x]) = Data.Where(kvp => kvp.Key.x == x).MinMax(kvp => kvp.Key.y);
                 FaceSize = (int)Math.Sqrt(Data.Count / 6);
             }
 

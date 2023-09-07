@@ -13,7 +13,7 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void MetadataTest(string dataRow, int expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day08.Part1(dataRow));
+            Assert.AreEqual(expected, Day08.Part1(dataRow));
         }
 
         [TestCategory("Regression")]

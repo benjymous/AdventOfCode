@@ -204,28 +204,17 @@ namespace AoC.Advent2020
                 "#    ##    ##    ###\n" +
                 " #  #  #  #  #  #";
 
-            var lines = nessie.Split("\n");
-
-            var nessieMap = new HashSet<(int x, int y)>();
-            for (var y = 0; y < lines.Length; ++y)
-            {
-                for (var x = 0; x < lines[y].Length; ++x)
-                {
-                    if (lines[y][x] == '#') nessieMap.Add((x, y));
-                }
-            }
-
-            return nessieMap;
+            return Util.ParseSparseMatrix<bool>(nessie).Keys.ToHashSet();
         }
 
-        public static Int64 Part1(string input)
+        public static long Part1(string input)
         {
             var solver = new JigsawSolver(input);
 
             return solver.Corners.Product(t => t.ID);
         }
 
-        public static Int64 Part2(string input)
+        public static long Part2(string input)
         {
             var solver = new JigsawSolver(input);
 
@@ -273,11 +262,11 @@ namespace AoC.Advent2020
                     }
                 }
 
-
                 // Assemble the final image
                 var maxx = pos.x + 1;
                 var maxy = pos.y + 1;
-                char[,] bitmap = new char[maxx * 8, maxy * 8];
+                //char[,] bitmap = new char[maxx * 8, maxy * 8];
+                HashSet<int> bitmap = new();
 
                 for (var y = 0; y < maxy; ++y)
                 {
@@ -289,7 +278,7 @@ namespace AoC.Advent2020
                             {
                                 for (var tx = 0; tx < 8; ++tx)
                                 {
-                                    bitmap[(x * 8) + tx, (y * 8) + ty] = cell.GetCellTransformed(tx + 1, ty + 1);
+                                    if (cell.GetCellTransformed(tx + 1, ty + 1) == '#') bitmap.Add((x * 8) + tx + (((y * 8) + ty)<<16));
                                 }
                             }
                         }
@@ -312,7 +301,8 @@ namespace AoC.Advent2020
                         int nessieCount = 0;
                         foreach (var e in nessieMap)
                         {
-                            if (bitmap[x + e.x, y + e.y] == '.') break;
+                            if (!bitmap.Contains(x + e.x + ((y + e.y)<<16))) break;
+                            //if (bitmap[x + e.x, y + e.y] == '.') break;
                             nessieCount++;
                         }
 
@@ -320,7 +310,7 @@ namespace AoC.Advent2020
                         {
                             foreach (var e in nessieMap)
                             {
-                                bitmap[x + e.x, y + e.y] = 'O';
+                                bitmap.Remove(x + e.x + ((y + e.y) << 16));
                                 nessies++;
                             }
                         }
@@ -360,7 +350,8 @@ namespace AoC.Advent2020
                     //bmp.Save(@"nessie.png");       
 
                     // return remaining waves
-                    return bitmap.Values().Count(c => c == '#');
+                    //return bitmap.Values().Count(c => c == '#');
+                    return bitmap.Count();
                 };
                 tryCorner++;
             }

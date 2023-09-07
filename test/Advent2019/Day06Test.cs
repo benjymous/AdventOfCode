@@ -19,7 +19,7 @@ namespace AoC.Advent2019.Test
         public void DescendentsTest(string input, string root, int expected)
         {
             var t = Day06.ParseTree(input);
-            var count = t[root].GetDescendantCount();
+            var count = t[Day06.MakeId(root)].GetDescendantCount();
             Assert.AreEqual(expected, count);
         }
 
@@ -38,15 +38,6 @@ namespace AoC.Advent2019.Test
         {
             Assert.AreEqual(expected, Day06.Part2(input));
         }
-
-        // [DataRow("112233", true)]
-        // [DataRow("123444", false)]
-        // [DataRow("111122", true)]
-        // [DataTestMethod]
-        // public void SecureTest02(string input, bool expected)
-        // {
-        //     Assert.AreEqual(expected, Day04.CheckCriteria(input, true));
-        // }
 
         [TestCategory("Regression")]
         [DataTestMethod]

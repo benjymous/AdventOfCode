@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -28,7 +29,7 @@ namespace AoC
     {
         public static IEnumerable<IPuzzle> GetPuzzles()
         {
-            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes())
+            return Assembly.GetExecutingAssembly().GetTypes()
                 .Where(x => typeof(IPuzzle).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
                 .Select(x => (IPuzzle)Activator.CreateInstance(x))
                 .Where(p => p.ShouldRun())
@@ -65,7 +66,7 @@ namespace AoC
         public static List<T> Parse<T, C>(string input, C cache, string splitter = "\n")
         {
             return Parse<T, C>(input.Split(splitter)
-                                 .Where(x => !string.IsNullOrWhiteSpace(x)), cache);
+                                 .WithoutNullOrWhiteSpace(), cache);
         }
 
         public static List<T> Parse<T, C>(IEnumerable<string> input, C cache)
@@ -77,15 +78,15 @@ namespace AoC
         public static List<T> Parse<T>(string input, string splitter = "\n")
         {
             return Parse<T>(input.Split(splitter)
-                                 .Where(x => !string.IsNullOrWhiteSpace(x)));
+                                 .WithoutNullOrWhiteSpace());
         }
 
-        public static T RegexCreate<T>(string line)
+        public static IEnumerable<(ConstructorInfo tc, RegexAttribute attr)> EnumeratePotentialConstructors<T>()
         {
             if (typeof(T).GetCustomAttribute(typeof(RegexAttribute)) is RegexAttribute ownAttr)
             {
                 var typeConstructor = typeof(T).GetConstructors().First();
-                if (RegexCreateInternal(line, typeConstructor, ownAttr, out T result)) return result;
+                yield return (typeConstructor,  ownAttr);
             }
             else
             {
@@ -94,19 +95,19 @@ namespace AoC
                     if (typeConstructor?.GetCustomAttributes(typeof(RegexAttribute), true)
                         .FirstOrDefault() is not RegexAttribute attribute) continue; // skip constructor if it doesn't have attr
 
-                    if (RegexCreateInternal(line, typeConstructor, attribute, out T result)) return result;
-
-                    //var matches = attribute.Regex.Matches(line); // match this constructor against the input line
-
-                    //if (!matches.Any()) continue; // Try other constructors to see if they match
-
-                    //var paramInfo = typeConstructor.GetParameters();
-
-                    //object[] convertedParams = ConstructParams(matches, paramInfo);
-                    //return (T)Activator.CreateInstance(typeof(T), convertedParams);
+                    yield return (typeConstructor, attribute);
                 }
             }
-            throw new Exception("RegexParse failed to find suitable constructor for " + typeof(T).Name);
+        }
+
+        public static T RegexCreate<T>(string line, (ConstructorInfo tc, RegexAttribute attr)[] potentialConstructors=null)
+        {
+            potentialConstructors ??= EnumeratePotentialConstructors<T>().ToArray();
+            foreach (var (tc, attr) in potentialConstructors)
+            {
+                if (RegexCreateInternal(line, tc, attr, out T result)) return result;
+            }
+            throw new Exception($"RegexParse failed to find suitable constructor for '{line}' in {typeof(T).Name}");
         }
 
         static bool RegexCreateInternal<T>(string line, ConstructorInfo typeConstructor, RegexAttribute attr, out T result)
@@ -133,9 +134,9 @@ namespace AoC
             {
                 var elementType = type.GetElementType();
 
-                if (elementType == typeof(string)) return Util.Split(input);
-                if (elementType == typeof(int)) return Util.ParseNumbers<int>(input).ToArray();
-                if (elementType == typeof(long)) return Util.ParseNumbers<long>(input).ToArray();                
+                if (elementType == typeof(string)) return Split(input);
+                if (elementType == typeof(int)) return ParseNumbers<int>(input).ToArray();
+                if (elementType == typeof(long)) return ParseNumbers<long>(input).ToArray();
 
                 throw new Exception("Can't convert array type " + type);
             }
@@ -159,15 +160,18 @@ namespace AoC
                 .Select(kvp => ConvertFromString(kvp.First.ParameterType, kvp.Second)).ToArray(); // convert substrings to match constructor input
         }
 
-        public static IEnumerable<T> RegexParse<T>(IEnumerable<string> input) =>
-            input.Where(x => !string.IsNullOrWhiteSpace(x))
-                 .Select(RegexCreate<T>);//.ToList();
+        public static IEnumerable<T> RegexParse<T>(IEnumerable<string> input)
+        {
+            (ConstructorInfo tc, RegexAttribute attr)[] constructors = EnumeratePotentialConstructors<T>().ToArray();
+            return input.WithoutNullOrWhiteSpace()
+                 .Select(line => RegexCreate<T>(line, constructors));//.ToList();
+        }
 
         public static IEnumerable<T> RegexParse<T>(string input, string splitter = "\n") =>
             RegexParse<T>(input.Split(splitter));
 
 
-        public static T RegexFactoryCreate<T, FT>(string line)
+        public static T RegexFactoryCreate<T, FT>(string line, FT factory) where FT : class
         {
             foreach (var func in typeof(FT).GetMethods())
             {
@@ -182,67 +186,115 @@ namespace AoC
 
                 object[] convertedParams = ConstructParams(matches, paramInfo);
 
-                return (T)func.Invoke(null, convertedParams);
+                return (T)func.Invoke(factory, convertedParams);
 
             }
             throw new Exception($"RegexFactory failed to find suitable factory function for {line}");
         }
 
-        public static IEnumerable<T> RegexFactory<T, FT>(IEnumerable<string> input) => 
-            input.Where(x => !string.IsNullOrWhiteSpace(x))
-                 .Select(line => RegexFactoryCreate<T, FT>(line));
+        public static void RegexFactoryPerform<FT>(string line, FT factory) where FT : class
+        {
+            foreach (var func in typeof(FT).GetMethods())
+            {
+                if (func.GetCustomAttributes(typeof(RegexAttribute), true)
+                    .FirstOrDefault() is not RegexAttribute attribute) continue; // skip function if it doesn't have attr
 
-        public static IEnumerable<T> RegexFactory<T, FT>(string input, string splitter = "\n") =>
-            RegexFactory<T, FT>(input.Split(splitter));
+                var matches = attribute.Regex.Matches(line); // match this constructor against the input line
 
+                if (!matches.Any()) continue; // Try other constructors to see if they match
+
+                var paramInfo = func.GetParameters();
+
+                object[] convertedParams = ConstructParams(matches, paramInfo);
+
+                func.Invoke(factory, convertedParams);
+                return;
+
+            }
+            throw new Exception($"RegexFactory failed to find suitable factory function for {line}");
+        }
+
+        public static IEnumerable<T> RegexFactory<T, FT>(IEnumerable<string> input, FT factory) where FT : class =>
+            input.WithoutNullOrWhiteSpace()
+                 .Select(line => RegexFactoryCreate<T, FT>(line, factory));
+
+        public static IEnumerable<T> RegexFactory<T, FT>(string input, FT factory = null, string splitter = "\n") where FT : class =>
+            RegexFactory<T, FT>(input.Split(splitter), factory);
+
+
+        public static FT RegexFactory<FT>(string input, string splitter = "\n") where FT : class, new()
+        {
+            FT factory = new();
+
+            foreach (var line in input.Split(splitter).WithoutNullOrWhiteSpace())
+            {
+                RegexFactoryPerform(line, factory);
+            }
+
+            return factory;
+        }
+
+        public static List<T> CreateMultiple<T>(int count) where T : new() => Enumerable.Repeat(0, count).Select(_ => new T()).ToList();
 
         public static T[] ParseNumbers<T>(string input, char splitChar = '\0', System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Any) where T : INumberBase<T>
             => ParseNumbers<T>(Split(input, splitChar), style);
 
         public static T[] ParseNumbers<T>(IEnumerable<string> input, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Any) where T : INumberBase<T>
-            => input.Where(s => !string.IsNullOrWhiteSpace(s)).Select(line => T.Parse(line, style, null)).ToArray();
+            => input.WithoutNullOrWhiteSpace().Select(line => T.Parse(line, style, null)).ToArray();
 
 
-        interface IConvertomatic
+
+        public interface IConvertomatic
         {
             public abstract object Convert(char c);
             public abstract bool ShouldConvert(char c);
         }
 
-        class ConvertInt : IConvertomatic
+        public static class Convertomatic
         {
-            public object Convert(char c) => c - '0';
+            public class ConvertInt : IConvertomatic
+            {
+                public object Convert(char c) => c - '0';
 
-            public bool ShouldConvert(char c) => true;
-        }
-        class ConvertByte : IConvertomatic
-        {
-            public object Convert(char c) => (byte)(c - '0');
-            public bool ShouldConvert(char c) => true;
-        }
-        class ConvertBool : IConvertomatic
-        {
-            public object Convert(char c) => c == '#';
-            public bool ShouldConvert(char c) => c == '#';
-        }
-        class ConvertChar : IConvertomatic
-        {
-            public object Convert(char c) => c;
-            public bool ShouldConvert(char c) => true;
+                public bool ShouldConvert(char c) => true;
+            }
+            public class ConvertByte : IConvertomatic
+            {
+                public object Convert(char c) => (byte)(c - '0');
+                public bool ShouldConvert(char c) => true;
+            }
+            public class ConvertBool : IConvertomatic
+            {
+                public object Convert(char c) => c == '#';
+                public bool ShouldConvert(char c) => c == '#';
+            }
+            public class ConvertChar : IConvertomatic
+            {
+                public object Convert(char c) => c;
+                public bool ShouldConvert(char c) => true;
+            }
+
+            public class SkipSpaces : IConvertomatic
+            {
+                readonly char toSkip;
+                public SkipSpaces(char ch = ' ') => toSkip = ch;
+                public object Convert(char c) => c;
+                public bool ShouldConvert(char c) => c != toSkip;
+            }
         }
 
 
         static IConvertomatic GetConverter<T>()
         {
-            if (typeof(T) == typeof(int)) return new ConvertInt();
-            if (typeof(T) == typeof(byte)) return new ConvertByte();
-            if (typeof(T) == typeof(bool)) return new ConvertBool();
-            if (typeof(T) == typeof(char)) return new ConvertChar();
+            if (typeof(T) == typeof(int)) return new Convertomatic.ConvertInt();
+            if (typeof(T) == typeof(byte)) return new Convertomatic.ConvertByte();
+            if (typeof(T) == typeof(bool)) return new Convertomatic.ConvertBool();
+            if (typeof(T) == typeof(char)) return new Convertomatic.ConvertChar();
 
             throw new NotImplementedException(typeof(T).FullName);
         }
 
-        public static T[,] ParseMatrix<T>(string input) => ParseMatrix<T>(Util.Split(input));
+        public static T[,] ParseMatrix<T>(string input) => ParseMatrix<T>(Split(input));
 
         public static T[,] ParseMatrix<T>(IEnumerable<string> input)
         {
@@ -257,27 +309,19 @@ namespace AoC
             return mtx;
         }
 
-        public static Dictionary<(int x, int y), T> ParseSparseMatrix<T>(string input) => ParseSparseMatrix<T>(Util.Split(input));
+        public static Dictionary<(int x, int y), T> ParseSparseMatrix<T>(string input, IConvertomatic converter = null) => ParseSparseMatrix<T>(Split(input), converter);
 
-        public static Dictionary<(int x, int y), T> ParseSparseMatrix<T>(IEnumerable<string> input)
+        public static Dictionary<(int x, int y), T> ParseSparseMatrix<T>(IEnumerable<string> input, IConvertomatic converter = null)
         {
             int height = input.Count();
             int width = input.First().Length;
             var dic = new Dictionary<(int x, int y), T>();
 
-            var converter = GetConverter<T>();
+            converter ??= GetConverter<T>();
 
             input.WithIndex().ForEach(line => line.Value.WithIndex().Where(ch => converter.ShouldConvert(ch.Value)).ForEach(ch => dic[(ch.Index, line.Index)] = (T)converter.Convert(ch.Value)));
 
             return dic;
-        }
-
-        public static IEnumerable<IEnumerable<T>> Slice<T>(IEnumerable<T> source, int sliceSize)
-        {
-            return source
-                .Select((x, i) => new { Index = i, Value = x })
-                .GroupBy(x => x.Index / sliceSize)
-                .Select(x => x.Select(v => v.Value));
         }
 
         public static IEnumerable<(T1 item1, T2 item2)> Matrix<T1, T2>(IEnumerable<T1> set1, IEnumerable<T2> set2)
@@ -341,7 +385,7 @@ namespace AoC
 
         public static IEnumerable<X> For<T,X>(T start, T end, T step, Func<T, X> action) where T : IBinaryInteger<T>
         {
-            for (T i = start; i != end; i += step) yield return action(i);
+            for (T i = start; i < end; i += step) yield return action(i);
         }
 
         public static IEnumerable<T> RepeatWhile<T>(Func<T> generator, Func<T, bool> shouldContinue)
@@ -536,7 +580,8 @@ namespace AoC
                     yield return (item1, item2);
         }
 
-        public static ushort MakeTwoCC(string name) => (ushort)(name[0] + (name[1] << 8));
+        public static ushort MakeTwoCC(string name) => name.Length == 1 ? (ushort)(name[0]) : (ushort)(name[0] + (name[1] << 8));
+        public static ushort MakeTwoCC(char c1, char c2) => (ushort)(c1 + (c2 << 8));
 
         public static uint MakeFourCC(string name) => name[0] + ((uint)name[1] << 8) + ((uint)name[2] << 16) + ((uint)name[3] << 24);
 
@@ -544,6 +589,17 @@ namespace AoC
         {
             return (input.Min(), input.Max());
         }
+
+        public static T GCD<T>(T a, T b) where T : IBinaryInteger<T>
+        {
+            while (b != T.Zero)
+            {
+                (a, b) = (b, a % b);
+            }
+            return a;
+        }
+
+        public static T LCM<T>(T a, T b) where T : IBinaryInteger<T> => a * b / GCD(a, b);
 
     }
 
@@ -606,7 +662,7 @@ namespace AoC
 
         public override Encoding Encoding
         {
-            get => System.Text.Encoding.UTF8;
+            get => Encoding.UTF8;
         }
 
         public override string ToString()
@@ -617,24 +673,40 @@ namespace AoC
 
     public static class HashBreaker
     {
-        static public byte[] GetHash(int num, string baseStr)
+        public static (int foundIndex, IEnumerable<char> foundHash) FindHash(string baseStr, int numZeroes, int start = 0)
         {
-            return $"{baseStr}{num}".GetMD5();
-        }
+            if (numZeroes > 6 || numZeroes < 5) throw new NotImplementedException("numZeroes currently only 5 or 6");
+            byte[] inputBuffer = Encoding.Default.GetBytes($"{baseStr}{start}");
+            byte[] outputBuffer = GC.AllocateUninitializedArray<byte>(MD5.HashSizeInBytes);
+            var inputSpan = new ReadOnlySpan<byte>(inputBuffer);
+            var outputSpan = outputBuffer.AsSpan();
 
-        public static IEnumerable<char> GetHashChars(int num, string baseStr)
-        {
-            return $"{baseStr}{num}".GetMD5Chars();
-        }
+            int index = start;
+            int digits = index == 0 ? 0 : (int)Math.Log10(index);
+            while (true)
+            {
+                MD5.TryHashData(inputSpan, outputSpan, out var _);
 
-        static bool IsHash(int num, string baseStr, int numZeroes)
-        {
-            return GetHash(num, baseStr).AsNybbles().Take(numZeroes).All(v => v == 0);
-        }
+                //if (result.AsNybbles().Take(numZeroes).All(v => v == 0)) return index;
+                if (outputBuffer[0] == 0 && outputBuffer[1] == 0 && (numZeroes == 5 && ((outputBuffer[2] & 0xf0) == 0) || numZeroes == 6 && outputBuffer[2] == 0)) return (index, outputBuffer.GetHexChars());
 
-        public static int FindHash(string baseStr, int numZeroes, int start = 0)
-        {
-            return Util.Forever(start).Where(n => IsHash(n, baseStr, numZeroes)).First();
+                index++;
+                int newDigits = (int)Math.Log10(index);
+                if (newDigits != digits)
+                {
+                    digits = newDigits;
+                    inputBuffer = Encoding.Default.GetBytes($"{baseStr}{index}");
+                    inputSpan = new ReadOnlySpan<byte>(inputBuffer);
+                }
+                else
+                {
+                    int j = inputBuffer.Length - 1;
+                    while (++inputBuffer[j] > '9')
+                    {
+                        inputBuffer[j--] = (byte)'0';
+                    }
+                }
+            }
         }
     }
 
@@ -741,6 +813,18 @@ namespace AoC
         public static implicit operator Boxed<T>(T value) => new(value);
 
         public override string ToString() => value.ToString();
+    }
+
+    public static class Extensions
+    {
+        public static IEnumerable<TOut> While<TIn, TOut>(this TIn val, Func<TIn, bool> cont, Func<TIn, (TIn, TOut)> func)
+        {
+            while (cont(val))
+            {
+                (val, var res) = func(val);
+                yield return res;
+            }
+        }
     }
 
 }

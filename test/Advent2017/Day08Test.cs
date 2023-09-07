@@ -16,27 +16,27 @@ c inc -20 if c == 10";
         [DataTestMethod]
         public void Registers01Test()
         {
-            Assert.AreEqual(1, Advent2017.Day08.Part1(testInput));
+            Assert.AreEqual(1, Day08.Part1(testInput));
         }
 
         [DataTestMethod]
         public void Registers02Test()
         {
-            Assert.AreEqual(10, Advent2017.Day08.Part2(testInput));
+            Assert.AreEqual(10, Day08.Part2(testInput));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Registers_Part1_Regression()
         {
-            Assert.AreEqual(4647, Advent2017.Day08.Part1(input));
+            Assert.AreEqual(4647, Day08.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Registers_Part2_Regression()
         {
-            Assert.AreEqual(5590, Advent2017.Day08.Part2(input));
+            Assert.AreEqual(5590, Day08.Part2(input));
         }
 
     }

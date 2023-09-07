@@ -14,18 +14,18 @@ namespace AoC.Advent2021
 
         public class Group
         {
-            public Group(IEnumerable<ManhattanVector3> input, (int x, int y, int z) origin, int id = 0)
+            public Group(IEnumerable<(int x, int y, int z)> input, (int x, int y, int z) origin, int id)
             {
                 Id = id;
-                Origin = new ManhattanVector3(origin);
-                Points = input.Select(p => p.AsSimple());
-                input.ForEach(point => Offsets[point.AsSimple()] = input.Select(other => (point - other).AsSimple()).ToHashSet());
-                Fingerprint = input.Select(p1 => input.Where(p2 => p2 != p1).Select(p2 => p1.Distance(p2)).Order().Take(2).ToArray()).Select(a => (a[0], a[1])).ToHashSet();
+                Origin = origin;
+                Points = input.ToArray();
+                Offsets = Points.Select(point => (point, Points.Select(other => point.Subtract(other)).ToHashSet())).ToDictionary();
+                Fingerprint = Points.Select(p1 => Points.Where(p2 => p2 != p1).Select(p2 => p1.Distance(p2)).Order().Take(2).ToArray()).Select(a => a[0] + (a[1] << 16)).ToList();
             }
 
-            public (bool isOverlap, int transformIdx, ManhattanVector3 offset) TestOverlap(Group other)
+            public (bool isOverlap, int transformIdx, (int x, int y, int z) offset) TestOverlap(Group other)
             {
-                if (Fingerprint.Intersect(other.Fingerprint).Take(8).Count() == 8)
+                if (Fingerprint.Intersect(other.Fingerprint).Count() >= 8)
                 {
                     foreach (var theirs in other.Offsets)
                     {
@@ -34,40 +34,56 @@ namespace AoC.Advent2021
                             var test = Transform(transformIdx, theirs.Value);
                             foreach (var mine in Offsets)
                             {
-                                if (mine.Value.Intersect(test).Count() == 12) return (true, transformIdx, new ManhattanVector3(mine.Key) - new ManhattanVector3(Transforms[transformIdx](theirs.Key)));
+                                if (mine.Value.Intersect(test).Count() >= 12) return (true, transformIdx, mine.Key.Subtract(Transforms[transformIdx](theirs.Key)));
                             }
                         }
                     }
                 }
-                return (false, -1, ManhattanVector3.Zero);
+                return (false, -1, default);
             }
 
             public readonly int Id;
-            public readonly ManhattanVector3 Origin;
+            public readonly (int x, int y, int z) Origin;
             public readonly IEnumerable<(int x, int y, int z)> Points;
-            public readonly HashSet<(int v1, int v2)> Fingerprint;
-            readonly Dictionary<(int x, int y, int z), HashSet<(int x, int y, int z)>> Offsets = new();
+            public readonly List<int> Fingerprint;
+            readonly Dictionary<(int x, int y, int z), HashSet<(int x, int y, int z)>> Offsets;
 
             static HashSet<(int x, int y, int z)> Transform(int transformIdx, HashSet<(int x, int y, int z)> data) => data.Select(point => Transforms[transformIdx](point)).ToHashSet();
+
+            public override int GetHashCode() => Id;
         }
 
         private static IEnumerable<Group> AlignGroups(string input)
         {
-            var groups = input.Split("\n\n").Select(bit => Util.Parse<ManhattanVector3>(bit.Split("\n", StringSplitOptions.RemoveEmptyEntries).Skip(1)).ToArray()).ToArray().WithIndex().Select(item => new Group(item.Value, (0, 0, 0), item.Index)).ToArray();
+            var groups = input.Split("\n\n").Select(bit => Util.Parse<ManhattanVector3>(bit.Split("\n", StringSplitOptions.RemoveEmptyEntries).Skip(1)).Select(p => p.AsSimple()).ToArray()).ToArray().WithIndex().Select(item => new Group(item.Value, (0, 0, 0), item.Index)).ToArray();
 
-            HashSet<Group> aligned = groups.Take(1).ToHashSet();
-            HashSet<Group> unaligned = groups.Skip(1).ToHashSet();
+            Dictionary<int, int> overlaps = new();
+            for (int i=0; i<groups.Length; ++i)
+            {
+                overlaps[i] = 0;
+                for (int j = i + 1; j < groups.Length; ++j)
+                {
+                    overlaps[i] += groups[i].Fingerprint.Intersect(groups[j].Fingerprint).Count();
+                }
+            }
 
+            var mostMatches = overlaps.OrderByDescending(v => v.Value).First().Key;
+
+            HashSet<Group> aligned = new() { groups[mostMatches] };
+            HashSet<Group> unaligned = new(groups.Where(g => g.Id != mostMatches));
+
+            HashSet<int> tried = new();
             while (unaligned.Any())
             {
                 foreach (var group in unaligned)
                 {
                     foreach (var fixedGroup in aligned)
                     {
+                        if (tried.Add(group.Id + (fixedGroup.Id << 16)) == false) continue;
                         var (isOverlap, transformIdx, offset) = fixedGroup.TestOverlap(group);
                         if (isOverlap)
                         {
-                            aligned.Add(new Group(group.Points.Select(p => new ManhattanVector3(Transforms[transformIdx](p)) + offset), offset.AsSimple(), group.Id));
+                            aligned.Add(new Group(group.Points.Select(p => Transforms[transformIdx](p).OffsetBy(offset)), offset, group.Id));
                             unaligned.Remove(group);
                             break;
                         }
@@ -93,7 +109,7 @@ namespace AoC.Advent2021
         public void Run(string input, ILogger logger)
         {
             IEnumerable<Group> aligned = AlignGroups(input);
-
+      
             logger.WriteLine("- Pt1 - " + Part1(aligned));
             logger.WriteLine("- Pt2 - " + Part2(aligned));
         }

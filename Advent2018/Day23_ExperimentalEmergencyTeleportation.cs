@@ -1,6 +1,11 @@
-﻿using AoC.Utils.Vectors;
+﻿using AoC.Utils;
+using AoC.Utils.Vectors;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Data;
 using System.Linq;
+using static AoC.Advent2018.Day16;
 
 namespace AoC.Advent2018
 {
@@ -9,15 +14,18 @@ namespace AoC.Advent2018
         public string Name => "2018-23";
 
         [Regex(@"pos=<(.+,.+,.+)>, r=(.+)")]
-        record struct Entry(ManhattanVector3 position, int radius) {}
+        record struct Entry(ManhattanVector3 Position, int Radius) 
+        {
+            public bool Overlaps(Entry other) => Position.Distance(other.Position) <= Math.Max(Radius, other.Radius);
+        }
 
         public static int Part1(string input)
         {
             var data = Util.RegexParse<Entry>(input).ToArray();
 
-            var strongest = data.OrderBy(e => e.radius).LastOrDefault();
+            var strongest = data.OrderByDescending(e => e.Radius).First();
 
-            return data.Count(e => e.position.Distance(strongest.position) <= strongest.radius);
+            return data.Count(e => e.Position.Distance(strongest.Position) <= strongest.Radius);
         }
 
         public static int Part2(string input)
@@ -33,66 +41,71 @@ namespace AoC.Advent2018
 
             foreach (var e in data)
             {
-                maxx = Math.Max(maxx, e.position.X);
-                minx = Math.Min(minx, e.position.X);
-                maxy = Math.Max(maxy, e.position.Y);
-                miny = Math.Min(miny, e.position.Y);
-                maxz = Math.Max(maxz, e.position.Z);
-                minz = Math.Min(minz, e.position.Z);
+                maxx = Math.Max(maxx, e.Position.X);
+                minx = Math.Min(minx, e.Position.X);
+                maxy = Math.Max(maxy, e.Position.Y);
+                miny = Math.Min(miny, e.Position.Y);
+                maxz = Math.Max(maxz, e.Position.Z);
+                minz = Math.Min(minz, e.Position.Z);
             }
 
-            var weakest = data.OrderBy(e => e.radius).FirstOrDefault();
+            var weakest = data.OrderBy(e => e.Radius).First();
 
-            int step = Math.Max(1, weakest.radius / 2);
+            int step = Math.Max(1, weakest.Radius / 2);
 
-            ManhattanVector3 bestPos = null;
-            int bestDistance = int.MaxValue;
+            (int x, int y, int z) bestPos = (0,0,0);
+            int bestDistance = maxx+maxy+maxz;
             int bestScore = 0;
 
             while (step >= 1)
             {
-                //Console.WriteLine(step);
-
-                ManhattanVector3 pos = new(0, 0, 0);
-                for (pos.X = minx; pos.X <= maxx; pos.X += step)
+                int samples = 0;
+                for (var x = minx; x <= maxx; x += step)
                 {
-                    for (pos.Y = miny; pos.Y <= maxy; pos.Y += step)
+                    for (var y = miny; y<= maxy; y += step)
                     {
-                        for (pos.Z = minz; pos.Z <= maxz; pos.Z += step)
+                        for (var z = minz; z <= maxz; z += step)
                         {
-                            var count = data.Count(e => pos.Distance(e.position) <= e.radius);
+                            var pos = (x, y, z);
+                            var length = pos.Length();
+                            
+                            if (length > (bestDistance * 1.2f)) continue;
+
+                            samples++;
+
+                            var count = data.Count(e => e.Position.Distance(pos) <= e.Radius);
 
                             if (count > bestScore)
                             {
                                 bestScore = count;
-                                bestDistance = pos.Distance(ManhattanVector3.Zero);
-                                bestPos = new ManhattanVector3(pos.X, pos.Y, pos.Z);
+                                bestDistance = length;
+                                bestPos = pos;
                             }
                             else if (count == bestScore)
                             {
-                                var distance = pos.Distance(ManhattanVector3.Zero);
+                                var distance = length;
                                 if (distance < bestDistance)
                                 {
                                     bestDistance = distance;
-                                    bestPos = new ManhattanVector3(pos.X, pos.Y, pos.Z);
+                                    bestPos = pos;
                                 }
                             }
                         }
                     }
                 }
+                Console.WriteLine($"{step} {samples} {bestDistance} {bestScore}");
 
-                //Console.WriteLine($"{bestPos} {bestDistance} {step}");
+                step /= 3;
 
-                minx = bestPos.X - (step * 2);
-                miny = bestPos.Y - (step * 2);
-                minz = bestPos.Z - (step * 2);
+                minx = bestPos.x - step*2;
+                miny = bestPos.y - step*2;
+                minz = bestPos.z - step*2;
 
-                maxx = bestPos.X + (step * 2);
-                maxy = bestPos.Y + (step * 2);
-                maxz = bestPos.Z + (step * 2);
+                maxx = bestPos.x + step*2;
+                maxy = bestPos.y + step*2;
+                maxz = bestPos.z + step*2;
 
-                step /= 2;
-
+                
             }
 
             return bestDistance;
@@ -100,10 +113,6 @@ namespace AoC.Advent2018
 
         public void Run(string input, ILogger logger)
         {
-            //Console.WriteLine(Part1("pos=<0,0,0>, r=4\npos=<1,0,0>, r=1\npos=<4,0,0>, r=3\npos=<0,2,0>, r=1\npos=<0,5,0>, r=3\npos=<0,0,3>, r=1\npos=<1,1,1>, r=1\npos=<1,1,2>, r=1\npos=<1,3,1>, r=1"));
-
-            //Console.WriteLine(Part2("pos=<10,12,12>, r=2\npos=<12,14,12>, r=2\npos=<16,12,12>, r=4\npos=<14,14,14>, r=6\npos=<50,50,50>, r=200\npos=<10,10,10>, r=5"));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

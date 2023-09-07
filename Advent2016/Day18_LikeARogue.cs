@@ -1,7 +1,7 @@
 ﻿using AoC.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2016
 {
@@ -9,29 +9,32 @@ namespace AoC.Advent2016
     {
         public string Name => "2016-18";
 
-        private static string Step(string current)
+        private static int Step(bool[] current, bool[] next)
         {
-            current = $".{current}.";
-            var next = new StringBuilder(current.Length);
+            next[0] = current[1] == true;
             for (var i = 0; i < current.Length - 2; ++i)
             {
-                next.Append((current[i] == current[i + 2]) ? '.' : '^');
+                next[i + 1] = current[i] == current[i + 2];
             }
-            return next.ToString();
+            next[^1] = current[^2] == true;
+
+            return Count(next);
         }
 
-        static int Count(IEnumerable<char> line) => line.Count(x => x == '.');
+        static int Count(IEnumerable<bool> line) => line.Count(x => x);
 
         public static int BuildMap(string input, int numLines)
         {
-            var currentState = input.Trim();
+            var states = new bool[2][]
+            {
+                input.Select(c => c=='.').ToArray(),
+                new bool[input.Length]
+            };
 
-            int count = Count(currentState);
-
+            int count = Count(states[0]);
             for (int i = 1; i < numLines; ++i)
             {
-                currentState = Step(currentState);
-                count += Count(currentState);
+                count += Step(states[(i + 1) % 2], states[i % 2]);
             }
 
             return count;
@@ -39,12 +42,12 @@ namespace AoC.Advent2016
 
         public static int Part1(string input)
         {
-            return BuildMap(input, 40);
+            return BuildMap(input.Trim(), 40);
         }
 
         public static int Part2(string input)
         {
-            return BuildMap(input, 400000);
+            return BuildMap(input.Trim(), 400000);
         }
 
         public void Run(string input, ILogger logger)

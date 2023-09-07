@@ -1,4 +1,6 @@
-﻿using AoC.Utils.Collections;
+﻿using AoC.Utils;
+using AoC.Utils.Collections;
+using System;
 using System.Linq;
 
 namespace AoC.Advent2019
@@ -7,15 +9,16 @@ namespace AoC.Advent2019
     {
         public string Name => "2019-06";
 
-        public static Tree<string> ParseTree(string input)
+        public static int MakeId(string str) => str.Select((c, i) => (c - '0') << (i * 6)).Sum();
+
+        public static Tree<int> ParseTree(string input)
         {
-            var tree = new Tree<string>();
-            var data = input.Split();
+            var tree = new Tree<int>();
+            var data = Util.Split(input);
             foreach (var line in data)
             {
-                if (string.IsNullOrEmpty(line)) continue;
                 var bits = line.Split(')');
-                tree.AddPair(bits[0], bits[1]);
+                tree.AddPair(MakeId(bits[0]), MakeId(bits[1]));
             }
             return tree;
         }
@@ -23,19 +26,18 @@ namespace AoC.Advent2019
         public static int Part1(string input)
         {
             var tree = ParseTree(input);
-            return tree.GetNodes().Sum(n => n.GetDescendantCount());
+            return tree.Sum(n => n.GetDescendantCount());
         }
 
         public static int Part2(string input)
         {
             var tree = ParseTree(input);
-            var youUp = tree.TraverseToRoot("YOU").ToArray();
-            var santaUp = tree.TraverseToRoot("SAN").ToArray();
+            var youUp = tree.TraverseToRoot(MakeId("YOU")).ToArray();
+            var santaUp = tree.TraverseToRoot(MakeId("SAN")).ToArray();
 
-            return Util.Matrix(youUp.Length, santaUp.Length)
-                       .Where(val => youUp[val.x] == santaUp[val.y])
-                       .Select(val => val.x + val.y)
-                       .Min();
+            return youUp.Intersect(santaUp)
+                .Select(v => Array.IndexOf(youUp, v) + Array.IndexOf(santaUp, v))
+                .First();
         }
 
         public void Run(string input, ILogger logger)

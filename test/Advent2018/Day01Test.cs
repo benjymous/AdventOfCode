@@ -18,7 +18,7 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void Callibrate01Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day01.Part1(input));
+            Assert.AreEqual(expected, Day01.Part1(input));
         }
 
         [TestCategory("Test")]
@@ -29,21 +29,21 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void Callibrate02Test(string input, int expected)
         {
-            Assert.AreEqual(expected, Advent2018.Day01.Part2(input));
+            Assert.AreEqual(expected, Day01.Part2(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Callibration_Part1_Regression()
         {
-            Assert.AreEqual(553, Advent2018.Day01.Part1(input));
+            Assert.AreEqual(553, Day01.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Callibration_Part2_Regression()
         {
-            Assert.AreEqual(78724, Advent2018.Day01.Part2(input));
+            Assert.AreEqual(78724, Day01.Part2(input));
         }
 
     }

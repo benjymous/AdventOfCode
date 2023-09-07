@@ -1,4 +1,5 @@
-﻿using AoC.Utils.Vectors;
+﻿using AoC.Utils;
+using AoC.Utils.Vectors;
 using System;
 
 namespace AoC.Advent2017
@@ -13,10 +14,7 @@ namespace AoC.Advent2017
 
             var pos = new HexVector(0, 0, 0, false);
 
-            foreach (var step in steps)
-            {
-                pos.TranslateHex(step);
-            }
+            steps.ForEach(step => pos.TranslateHex(step));
 
             return pos.Distance(new HexVector(0, 0, 0, false));
         }
@@ -38,7 +36,6 @@ namespace AoC.Advent2017
             }
 
             return furthest;
-
         }
 
         public void Run(string input, ILogger logger)

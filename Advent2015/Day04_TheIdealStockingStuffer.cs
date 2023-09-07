@@ -6,19 +6,16 @@
 
         public static int Part1(string input)
         {
-            return HashBreaker.FindHash(input.Trim(), 5);
+            return HashBreaker.FindHash(input.Trim(), 5).foundIndex;
         }
 
         public static int Part2(string input)
         {
-            return HashBreaker.FindHash(input.Trim(), 6);
+            return HashBreaker.FindHash(input.Trim(), 6).foundIndex;
         }
 
         public void Run(string input, ILogger logger)
         {
-            //Console.WriteLine("abcdef609043".GetMD5String());
-            //Console.WriteLine(FindHashes("abcdef", 5).First());
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

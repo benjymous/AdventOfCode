@@ -1,6 +1,6 @@
-﻿using AoC.Utils.Vectors;
-using System;
-using System.Collections.Generic;
+﻿using AoC.Utils;
+using AoC.Utils.Vectors;
+using System.Linq;
 
 namespace AoC.Advent2017
 {
@@ -10,27 +10,9 @@ namespace AoC.Advent2017
 
         private static (string word, int length) FollowPath(string input)
         {
-            var lines = Util.Split(input);
-            //var grid = new char[lines[0].Length, lines.Length];
+            var grid = Util.ParseSparseMatrix<char>(input, new Util.Convertomatic.SkipSpaces());
 
-            var grid = new Dictionary<(int x, int y), char>();
-
-            ManhattanVector2 pos = null;
-
-            int y = 0;
-            foreach (var line in lines)
-            {
-                int x = 0;
-                foreach (var cell in line)
-                {
-                    grid[(x,y)] = cell;
-
-                    if (y == 0 && cell != ' ') pos = (x, y);
-
-                    ++x;
-                }
-                ++y;
-            }
+            var pos = grid.Where(kvp => kvp.Key.y == 0).First().Key;
 
             Direction2 dir = new(0, 1);
             string word = "";
@@ -38,50 +20,25 @@ namespace AoC.Advent2017
 
             while (true)
             {
-                //Console.WriteLine($"{pos} - {grid[pos.ToString()]}");
-                var next = pos + dir;
+                var next = pos.OffsetBy(dir);
                 count++;
 
-                var nextCh = grid[next];
+                if (!grid.TryGetValue(next, out var nextCh)) return (word, count);
 
                 switch (nextCh)
                 {
-                    case ' ':
-                        return (word, count);
-
-                    case '|':
-                    case '-':
-                        break;
-
                     case '+':
                         // turn a corner
-                        var d1 = new Direction2(dir); d1.TurnRight();
-                        var d2 = new Direction2(dir); d2.TurnLeft();
-                        if (grid[(next + d1)] != ' ')
-                        {
-                            dir = d1;
-                        }
-                        else if (grid[(next + d2)] != ' ')
-                        {
-                            dir = d2;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Lost!");
-                            break;
-                        }
-
-
+                        var d1 = dir + 1;
+                        dir = grid.ContainsKey(next.OffsetBy(d1)) ? d1 : dir - 1;
                         break;
 
-                    default:
+                    case >= 'A' and <= 'Z':
                         word += nextCh;
-                        //Console.WriteLine("fail");
                         break;
                 }
 
                 pos = next;
-
             }
         }
 
@@ -97,7 +54,6 @@ namespace AoC.Advent2017
 
         public void Run(string input, ILogger logger)
         {
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

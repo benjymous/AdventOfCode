@@ -11,14 +11,14 @@ namespace AoC.Advent2016.Test
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Part1_Regression()
+        public void Monorail_Part1_Regression()
         {
             Assert.AreEqual(318020, Day12.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Part2_Regression()
+        public void Monorail_Part2_Regression()
         {
             Assert.AreEqual(9227674, Day12.Part2(input));
         }

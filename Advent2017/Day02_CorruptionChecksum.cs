@@ -1,4 +1,4 @@
-﻿using System;
+﻿using AoC.Utils;
 using System.Linq;
 
 namespace AoC.Advent2017
@@ -16,20 +16,7 @@ namespace AoC.Advent2017
         public static int RowMultiple(string line)
         {
             var data = Util.ParseNumbers<int>(line, '\t');
-            for (var x = 0; x < data.Length; ++x)
-            {
-                for (var y = 0; y < data.Length; ++y)
-                {
-                    if (x != y)
-                    {
-                        if (data[x] % data[y] == 0)
-                        {
-                            return data[x] / data[y];
-                        }
-                    }
-                }
-            }
-            throw new Exception("Couldn't find multiple!");
+            return data.Pairs().Where(pair => pair.Item1 % pair.Item2 == 0).Select(pair => pair.Item1 / pair.Item2).First();
         }
 
         public static int Part1(string input)

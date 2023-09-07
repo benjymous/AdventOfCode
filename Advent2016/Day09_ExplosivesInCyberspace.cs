@@ -1,4 +1,4 @@
-﻿using System;
+﻿using AoC.Utils;
 
 namespace AoC.Advent2016
 {
@@ -6,15 +6,11 @@ namespace AoC.Advent2016
     {
         public string Name => "2016-09";
 
-        static (int numChars, int numRepeats) Parse32(string cmd)
-        {
-            var bits = Util.ParseNumbers<int>(cmd, 'x');
-            return (bits[0], bits[1]);
-        }
+        static (int numChars, int numRepeats) Parse(string cmd) => Util.ParseNumbers<int>(cmd, 'x').Decompose2();
 
-        static Int64 Decompress(string input, bool recurse)
+        static long Decompress(string input, bool recurse)
         {
-            Int64 length = 0;
+            long length = 0;
             int i = 0;
             while (i < input.Length)
             {
@@ -23,20 +19,12 @@ namespace AoC.Advent2016
                 if (c == '(')
                 {
                     int start = i;
-                    while (input[i++] != ')') ;
+                    while (input[i++] != ')');
 
-                    var (numChars, numRepeats) = Parse32(input.Substring(start + 1, i - start - 2));
+                    var (numChars, numRepeats) = Parse(input.Substring(start + 1, i - start - 2));
 
-                    if (recurse)
-                    {
-                        length += Decompress(input.Substring(i, numChars), true) * numRepeats;
-                    }
-                    else
-                    {
-                        length += numChars * numRepeats;
-                    }
+                    length += (recurse ? Decompress(input.Substring(i, numChars), true) : numChars) * numRepeats;
                     i += numChars;
-
                 }
                 else
                 {
@@ -47,29 +35,18 @@ namespace AoC.Advent2016
             return length;
         }
 
-        public static Int64 Part1(string input)
+        public static long Part1(string input)
         {
             return Decompress(input.Trim(), false);
         }
 
-        public static Int64 Part2(string input)
+        public static long Part2(string input)
         {
             return Decompress(input.Trim(), true);
         }
 
         public void Run(string input, ILogger logger)
         {
-            //Util.Test(Part1("ADVENT"), 6UL);
-            //Util.Test(Part1("A(1x5)BC"), 7UL);
-            //Util.Test(Part1("(3x3)XYZ"), 9UL);
-
-            //Util.Test(Part2("ADVENT"), 6UL);
-            //Util.Test(Part2("A(1x5)BC"), 7UL);
-            // Util.Test(Part2("(3x3)XYZ"), 9UL);
-            // Util.Test(Part2("X(8x2)(3x3)ABCY"), 20UL);
-            // Util.Test(Part2("(27x12)(20x12)(13x14)(7x10)(1x12)A"), 241920UL);
-            // Util.Test(Part2("(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN"), 445UL);
-
             logger.WriteLine("- Pt1 - " + Part1(input));  // 107035
             logger.WriteLine("- Pt2 - " + Part2(input));  // 11451628995
         }

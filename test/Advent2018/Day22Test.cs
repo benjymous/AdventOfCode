@@ -19,7 +19,7 @@ namespace AoC.Advent2018.Test
         public void GeologicIndexTest(int x, int y, int tx, int ty, int depth, int expected)
         {
             var c = new Day22.Cave(tx, ty, depth);
-            Assert.AreEqual(expected, c.GeologicIndex(new ManhattanVector2(x, y)));
+            Assert.AreEqual(expected, c.GeologicIndex((x, y)));
         }
 
         [TestCategory("Test")]
@@ -32,7 +32,7 @@ namespace AoC.Advent2018.Test
         public void ErosionLevelTest(int x, int y, int tx, int ty, int depth, int expected)
         {
             var c = new Day22.Cave(tx, ty, depth);
-            Assert.AreEqual(expected, c.ErosionLevel(new ManhattanVector2(x, y)));
+            Assert.AreEqual(expected, c.ErosionLevel((x, y)));
         }
 
         [TestCategory("Test")]
@@ -45,7 +45,7 @@ namespace AoC.Advent2018.Test
         public void TypeTest(int x, int y, int tx, int ty, int depth, char expected)
         {
             var c = new Day22.Cave(tx, ty, depth);
-            Assert.AreEqual(expected, c.TypeChar(new ManhattanVector2(x, y)));
+            Assert.AreEqual(expected, c.TypeChar((x, y)));
         }
 
         [TestCategory("Test")]
@@ -60,14 +60,14 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void Caves_Part1_Regression()
         {
-            Assert.AreEqual(7299, Advent2018.Day22.Part1(input));
+            Assert.AreEqual(7299, Day22.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Caves_Part2_Regression()
         {
-            Assert.AreEqual(1008, Advent2018.Day22.Part2(input));
+            Assert.AreEqual(1008, Day22.Part2(input));
         }
 
     }

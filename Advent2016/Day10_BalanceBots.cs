@@ -1,4 +1,4 @@
-﻿using System;
+﻿using AoC.Utils;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,39 +11,22 @@ namespace AoC.Advent2016
         class Entity
         {
             public string id;
-            public void Take(int num)
-            {
-                parts.Add(num);
-            }
-
+            public Entity High, Low;
             public List<int> parts = new();
 
-            public int Value()
-            {
-                if (parts.Count != 1) throw new Exception($"Too many values at {id}");
+            public void Take(int num) => parts.Add(num);
+            public int Value => parts.First();
 
-                return parts.First();
-            }
+            public bool CanPass() => parts.Count == 2;
 
-            public override string ToString() => $"{id} : [{string.Join(", ", parts)}]";
-        }
-
-        class Bot : Entity
-        {
-            public Entity High;
-            public Entity Low;
-
-            public bool CanPass() => (parts.Count == 2);
-
-            public string Pass()
+            public (int,int) Pass()
             {
                 var lowval = parts.Min();
                 var highval = parts.Max();
-                //Console.WriteLine($"{id}: sends {lowval} to {Low.id} and {highval} to {High.id}");
                 Low.Take(lowval);
                 High.Take(highval);
                 parts.Clear();
-                return $"{lowval},{highval}";
+                return (lowval, highval);
             }
 
             public override string ToString() => $"{id} : {Low.id} < [{string.Join(", ", parts)}] > {High.id}";
@@ -52,54 +35,27 @@ namespace AoC.Advent2016
         class Factory
         {
             public Dictionary<string, Entity> Entities = new();
-            public Dictionary<string, string> Log = new();
+            public Dictionary<(int,int), string> Log = new();
 
             public Factory(string input)
             {
-                var instructions = Util.Split(input);
-
-                foreach (var instr in instructions)
+                foreach (var instr in Util.Split(input))
                 {
-                    //var numbers = Util.ExtractNumbers(instr);
                     var bits = instr.Split(" ");
                     if (bits[0] == "bot")
                     {
-                        var bot = GetEntity($"{bits[0]} {bits[1]}") as Bot;
-                        var low = GetEntity($"{bits[5]} {bits[6]}");
-                        var high = GetEntity($"{bits[10]} {bits[11]}");
-
-                        bot.Low = low;
-                        bot.High = high;
+                        var bot = GetEntity($"{bits[0]} {bits[1]}");
+                        bot.Low = GetEntity($"{bits[5]} {bits[6]}");
+                        bot.High = GetEntity($"{bits[10]} {bits[11]}");
                     }
                     else if (bits[0] == "value")
                     {
-                        var bot = GetEntity($"{bits[4]} {bits[5]}");
-                        bot.Take(int.Parse(bits[1]));
+                        GetEntity($"{bits[4]} {bits[5]}").Take(int.Parse(bits[1]));
                     }
                 }
             }
 
-            public Entity GetEntity(string id)
-            {
-                if (Entities.TryGetValue(id, out var entity))
-                {
-                    return entity;
-                }
-                else
-                {
-                    Entity h;
-                    if (id.StartsWith("bot"))
-                    {
-                        h = new Bot() { id = id };
-                    }
-                    else
-                    {
-                        h = new Entity() { id = id };
-                    }
-                    Entities[id] = h;
-                    return h;
-                }
-            }
+            public Entity GetEntity(string id) => Entities.GetOrCalculate(id, _ => new Entity() { id = id });
 
             public void Run()
             {
@@ -107,14 +63,10 @@ namespace AoC.Advent2016
                 do
                 {
                     cont = false;
-                    foreach (var bot in Entities.Values.OfType<Bot>())
+                    foreach (var bot in Entities.Values.Where(b => b.CanPass()))
                     {
-                        if (bot.CanPass())
-                        {
-                            var msg = bot.Pass();
-                            Log[msg] = bot.id;
-                            cont = true;
-                        }
+                        Log[bot.Pass()] = bot.id;
+                        cont = true;
                     }
                 } while (cont);
             }
@@ -124,14 +76,14 @@ namespace AoC.Advent2016
         {
             var factory = new Factory(input);
             factory.Run();
-            return factory.Log["17,61"];
+            return factory.Log[(17,61)];
         }
 
         public static int Part2(string input)
         {
             var factory = new Factory(input);
             factory.Run();
-            return factory.GetEntity("output 0").Value() * factory.GetEntity("output 1").Value() * factory.GetEntity("output 2").Value();
+            return factory.GetEntity("output 0").Value * factory.GetEntity("output 1").Value * factory.GetEntity("output 2").Value;
         }
 
         public void Run(string input, ILogger logger)

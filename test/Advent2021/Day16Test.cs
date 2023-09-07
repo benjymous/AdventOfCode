@@ -20,7 +20,7 @@ namespace AoC.Advent2021.Test
         public void TestPacketDecode(string data, string expected)
         {
 
-            var packet = Day16.Packet.Parse(data);
+            var packet = Packet.Parse(data);
 
             string str = ToString(packet);
 
@@ -58,7 +58,7 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void TestPacketVersionSum(string data, int expected)
         {
-            Assert.AreEqual(expected, Day16.Part1(data));
+            Assert.AreEqual(expected, Part1(data));
         }
 
         [TestCategory("Test")]
@@ -73,7 +73,7 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void TestPacketValue(string data, int expected)
         {
-            Assert.AreEqual(expected, Day16.Part2(data));
+            Assert.AreEqual(expected, Part2(data));
         }
 
 
@@ -81,14 +81,14 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void Decoder_Part1_Regression()
         {
-            Assert.AreEqual(917, Day16.Part1(input));
+            Assert.AreEqual(917, Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Decoder_Part2_Regression()
         {
-            Assert.AreEqual(2536453523344, Day16.Part2(input));
+            Assert.AreEqual(2536453523344, Part2(input));
         }
     }
 }

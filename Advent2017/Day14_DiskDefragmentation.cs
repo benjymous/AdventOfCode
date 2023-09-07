@@ -8,37 +8,29 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-14";
 
-        public static IEnumerable<(int x, int y)> BuildBits(string input)
-        {
-            for (int y = 0; y < 128; ++y)
-            {
-                var hash = Day10.KnotHash($"{input}-{y}");
-                var row = hash.BitSequenceFromHex().ToArray();
-                for (int x = 0; x < 128; ++x)
-                {
-                    if (row[x]) yield return (x, y);
-                }
-            }
-        }
+        public static IEnumerable<int> BuildBits(string input) =>
+            ParallelEnumerable.Range(0, 128).SelectMany(y =>
+                 Day10.KnotHash($"{input}-{y}").SelectMany(h => h.BinarySequence(0xff).Reverse()).Select((v, x) => (v, x)).Where(d => d.v == 1).Select(d => d.x + (y<<16))
+            ).ToArray();
 
-        public static int Part1(string input)
-        {
-            return BuildBits(input).Count();
-        }
-
-        static void FloodFill((int x, int y) pos, HashSet<(int x, int y)> matrix)
+        static void FloodFill(int pos, HashSet<int> matrix)
         {
             if (!matrix.Contains(pos)) return;
             matrix.Remove(pos);
-            FloodFill((pos.x, pos.y + 1), matrix);
-            FloodFill((pos.x, pos.y - 1), matrix);
-            FloodFill((pos.x + 1, pos.y), matrix);
-            FloodFill((pos.x - 1, pos.y), matrix);
+            FloodFill(pos + (1 << 16), matrix);
+            FloodFill(pos - (1 << 16), matrix);
+            FloodFill(pos + 1, matrix);
+            FloodFill(pos - 1, matrix);
         }
 
-        public static int Part2(string input)
+        public static int Part1(IEnumerable<int> data)
         {
-            var matrix = BuildBits(input).ToHashSet();
+            return data.Count();
+        }
+
+        public static int Part2(IEnumerable<int> data)
+        {
+            var matrix = data.ToHashSet();
 
             int groups = 0;
 
@@ -52,10 +44,21 @@ namespace AoC.Advent2017
             return groups;
         }
 
+        public static int Part1(string input)
+        {
+            return Part1(BuildBits(input));
+        }
+
+        public static int Part2(string input)
+        {
+            return Part2(BuildBits(input));
+        }
+
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("- Pt1 - " + Part1(input));
-            logger.WriteLine("- Pt2 - " + Part2(input));
+            var data = BuildBits(input);
+            logger.WriteLine("- Pt1 - " + Part1(data));
+            logger.WriteLine("- Pt2 - " + Part2(data));
         }
     }
 }

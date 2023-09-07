@@ -37,14 +37,13 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Decoder1Test(string input, string expected)
         {
-            Assert.AreEqual(expected, Advent2020.Day16.TestDecode(input));
+            Assert.AreEqual(expected, Day16.TestDecode(input));
         }
 
-        [TestCategory("Regression")]
         [DataTestMethod]
         public void Decoder2Test()
         {
-            Assert.AreEqual("arrival location: 137, arrival platform: 139, arrival station: 157, arrival track: 127, class: 151, departure date: 131, departure location: 97, departure platform: 101, departure station: 113, departure time: 109, departure track: 149, duration: 73, price: 59, route: 67, row: 103, seat: 53, train: 163, type: 71, wagon: 61, zone: 107", Advent2020.Day16.TestDecode(input));
+            Assert.AreEqual("arrival location: 137, arrival platform: 139, arrival station: 157, arrival track: 127, class: 151, departure date: 131, departure location: 97, departure platform: 101, departure station: 113, departure time: 109, departure track: 149, duration: 73, price: 59, route: 67, row: 103, seat: 53, train: 163, type: 71, wagon: 61, zone: 107", Day16.TestDecode(input));
         }
 
         [TestCategory("Regression")]
