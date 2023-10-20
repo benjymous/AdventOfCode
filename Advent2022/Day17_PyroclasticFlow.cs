@@ -8,17 +8,13 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-17";
 
-        readonly static (int x, int y)[][] Shapes = Util.Values("####",".#.,###,.#.","###,..#,..#","#,#,#,#","##,##").Select(part => Util.ParseSparseMatrix<bool>(part).Keys.OrderByDescending(k => k.y).ToArray()).ToArray();
+        readonly static (int x, int y)[][] Shapes = Util.Values("####", ".#.,###,.#.", "###,..#,..#", "#,#,#,#", "##,##").Select(part => Util.ParseSparseMatrix<bool>(part).Keys.OrderByDescending(k => k.y).ToArray()).ToArray();
 
         class State
         {
-            public State(string input)
-            {
-                windData = input.Trim().Select(c => c == '<' ? -1 : 1).ToArray();
-            }
+            public State(string input) => windData = input.Trim().Select(c => c == '<' ? -1 : 1).ToArray();
 
-            readonly int[] map = new int[10000];
-            readonly int[] windData;
+            readonly int[] map = new int[10000], windData;
             public int WindIdx { get; private set; } = 0;
             public int MaxHeight { get; private set; } = 0;
 
@@ -29,13 +25,13 @@ namespace AoC.Advent2022
                 return res;
             }
 
-            bool Blocked((int x, int y) pos) => pos.y <= 0 || pos.x <= 0 || pos.x >= 8 || MaxHeight+1>pos.y && ((map[pos.y] & 1 << pos.x) != 0);
+            bool Blocked((int x, int y) pos) => pos.y <= 0 || pos.x <= 0 || pos.x >= 8 || MaxHeight + 1 > pos.y && ((map[pos.y] & 1 << pos.x) != 0);
             public bool CheckBlocked((int x, int y)[] shape, int dx, int dy) => shape.Any((pos) => Blocked((pos.x + dx, pos.y + dy)));
 
             public void FinishBlock((int x, int y)[] shape, (int x, int y) pos)
             {
                 MaxHeight = Math.Max(MaxHeight, shape[0].y + pos.y);
-                for (int i=0; i<shape.Length; ++i) map[pos.y + shape[i].y] |= 1 << (pos.x + shape[i].x);
+                for (int i = 0; i < shape.Length; ++i) map[pos.y + shape[i].y] |= 1 << (pos.x + shape[i].x);
             }
         }
 
@@ -85,9 +81,15 @@ namespace AoC.Advent2022
                 : benchmarkHeight + ((rounds - firstRepeatIndex) / secondRepeatIndex * repeatHeight) + ((ulong)state.MaxHeight - benchmarkHeight - repeatHeight);
         }
 
-        public static int Part1(string input) => (int)RunRocktris(input, 2022);
+        public static int Part1(string input)
+        {
+            return (int)RunRocktris(input, 2022);
+        }
 
-        public static ulong Part2(string input) => RunRocktris(input, 1000000000000);
+        public static ulong Part2(string input)
+        {
+            return RunRocktris(input, 1000000000000);
+        }
 
         public void Run(string input, ILogger logger)
         {

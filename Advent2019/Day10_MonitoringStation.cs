@@ -19,7 +19,7 @@ namespace AoC.Advent2019
         {
             var data = Util.ParseSparseMatrix<bool>(input).Keys;
 
-            return data.Select(a1 => data.GroupBy(a2 => AngleBetween(a1, a2), a2 => a2.x*100 + a2.y))
+            return data.Select(a1 => data.GroupBy(a2 => AngleBetween(a1, a2), a2 => a2.x * 100 + a2.y))
                 .MaxBy(e => e.Count())
                 .OrderBy(group => group.Key)
                 .Select(group => group.First())

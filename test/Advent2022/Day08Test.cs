@@ -25,7 +25,7 @@ namespace AoC.Advent2022.Test
         public void Treehouse02Test()
         {
             Assert.AreEqual(8, Day08.Part2(test));
-        }        
+        }
 
         [TestCategory("Regression")]
         [DataTestMethod]

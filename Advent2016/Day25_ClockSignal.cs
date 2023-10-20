@@ -1,5 +1,4 @@
 ﻿using AoC.Advent2016.BunniTek;
-using System;
 
 namespace AoC.Advent2016
 {
@@ -20,7 +19,7 @@ namespace AoC.Advent2016
             cpu.Run();
             //Console.WriteLine($"{Convert.ToString(input, 2).PadLeft(8, '0')} : {input} : {responseCount}");
             return responseCount;
-        }        
+        }
 
         public static int Part1(string input)
         {

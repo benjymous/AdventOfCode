@@ -9,7 +9,7 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-11";
 
-        static readonly HashSet<char> bads = new () { 'i', 'o', 'l' };
+        static readonly HashSet<char> bads = new() { 'i', 'o', 'l' };
 
         public static bool IsBad(char c) => bads.Contains(c);
 
@@ -36,7 +36,6 @@ namespace AoC.Advent2015
             }
             return false;
         }
-
 
         public static bool NoBads(char[] line) => !bads.Any(line.Contains);
 

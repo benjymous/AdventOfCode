@@ -8,7 +8,7 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-20";
 
-        private static long Shuffle(string input, long key=1, int repeats=1)
+        private static long Shuffle(string input, long key = 1, int repeats = 1)
         {
             var circle = Circle<Boxed<long>>.Create(Util.ParseNumbers<int>(input).Select(i => new Boxed<long>(key * i)));
             var elements = circle.Elements().ToArray();

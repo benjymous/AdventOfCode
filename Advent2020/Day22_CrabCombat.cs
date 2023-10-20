@@ -12,16 +12,8 @@ namespace AoC.Advent2020
         static Queue<int>[] ParseData(string input)
         {
             var groups = input.Split("\n\n");
-            var decks = new List<Queue<int>>();
 
-            foreach (var group in groups)
-            {
-                var data = group.Split("\n");
-                var deck = Util.ParseNumbers<int>(data.Skip(1)).ToQueue();
-                decks.Add(deck);
-            }
-
-            return decks.ToArray();
+            return groups.Select(group => Util.ParseNumbers<int>(group.Split("\n").Skip(1)).ToQueue()).ToArray();
         }
 
         static int GetKey(Queue<int>[] decks) => decks[0].Take(4).GetCombinedHashCode();
@@ -35,20 +27,15 @@ namespace AoC.Advent2020
                 if (subgame)
                 {
                     var key = GetKey(decks);
-                    if (seen.Contains(key))
-                    {
-                        return 0;
-                    }
+                    if (seen.Contains(key)) return 0;
                     seen.Add(key);
                 }
 
                 var taken = decks.Select(d => d.Dequeue()).ToArray();
 
-                if (recursive &&
-                    decks[0].Count >= taken[0] &&
-                    decks[1].Count >= taken[1])
+                if (recursive && decks[0].Count >= taken[0] && decks[1].Count >= taken[1])
                 {
-                    var result = PlayRound(new Queue<int>[]{
+                    var result = PlayRound(new []{
                         decks[0].Take(taken[0]).ToQueue(),
                         decks[1].Take(taken[1]).ToQueue()
                     }, true, true);

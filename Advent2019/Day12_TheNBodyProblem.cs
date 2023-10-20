@@ -51,7 +51,7 @@ namespace AoC.Advent2019
                 unchecked
                 {
                     int hash = 17;
-                    foreach (var b in bodies)  hash = hash * 31 + b.position[component];
+                    foreach (var b in bodies) hash = hash * 31 + b.position[component];
                     return hash;
                 }
             }
@@ -74,7 +74,7 @@ namespace AoC.Advent2019
 
             var starthash = system.GetState(component);
 
-            for (int step=1;true;++step)
+            for (int step = 1; true; ++step)
             {
                 system.Step(component);
                 if (system.GetState(component) == starthash) return step;

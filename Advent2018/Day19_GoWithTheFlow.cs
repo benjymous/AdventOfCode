@@ -47,7 +47,7 @@ namespace AoC.Advent2018
             HashSet<int> jumps = new();
 
             int r0 = 1, r1 = 0, r2 = 0, r3 = 0, r4 = 0, r5 = 0;
-            Int64 cycle = 0;
+            long cycle = 0;
             while (r1 < 36)
             {
                 cycle++;

@@ -19,7 +19,7 @@ namespace AoC.Advent2016
                 if (c == '(')
                 {
                     int start = i;
-                    while (input[i++] != ')');
+                    while (input[i++] != ')') ;
 
                     var (numChars, numRepeats) = Parse(input.Substring(start + 1, i - start - 2));
 

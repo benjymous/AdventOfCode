@@ -10,10 +10,7 @@ namespace AoC.Advent2019
 
         public class State
         {
-            public State()
-            {
-                cells[0] = 0;
-            }
+            public State() => cells[0] = 0;
 
             public bool Infinite = false;
 
@@ -26,15 +23,8 @@ namespace AoC.Advent2019
                 var lines = Util.Split(input);
 
                 for (var y = 0; y < lines.Length; ++y)
-                {
                     for (var x = 0; x < lines[y].Length; ++x)
-                    {
-                        if (lines[y][x] == '#')
-                        {
-                            Set(x, y);
-                        }
-                    }
-                }
+                        if (lines[y][x] == '#') Set(x, y);
             }
 
             public void Clear() => cells.Clear();
@@ -53,13 +43,7 @@ namespace AoC.Advent2019
 
             public bool Get(int x, int y, int level = 0) => cells.ContainsKey(level) && x >= 0 && y >= 0 && x < 5 && y < 5 && (cells[level] & Bit(x, y)) > 0;
 
-            static IEnumerable<(int x, int y, int level)> GetNeighboursFlat(int x, int y, int level)
-            {
-                yield return (x - 1, y, level);
-                yield return (x + 1, y, level);
-                yield return (x, y - 1, level);
-                yield return (x, y + 1, level);
-            }
+            static IEnumerable<(int x, int y, int level)> GetNeighboursFlat(int x, int y, int level) => new[] { (x - 1, y, level), (x + 1, y, level), (x, y - 1, level), (x, y + 1, level) };
 
             readonly Dictionary<long, (int, int, int)[]> neighbourCache = new();
             public IEnumerable<(int x, int y, int level)> GetNeighbours(int x, int y, int level) => neighbourCache.GetOrCalculate(x + (y << 3) + (level << 6), _ => GetNeighbours_(x, y, level).ToArray());
@@ -68,43 +52,37 @@ namespace AoC.Advent2019
             {
                 if (Infinite)
                 {
-                    var values = GetNeighboursFlat(x, y, level);
-
-                    foreach (var n in values)
+                    foreach (var n in GetNeighboursFlat(x, y, level))
                     {
                         if (n.x == 2 && n.y == 2)
                         {
                             // Centre cell, need to recurse in
-                            if (x == 1)
+                            if (x == 1) /* -> */
                             {
-                                // ->
                                 yield return (0, 0, level + 1);
                                 yield return (0, 1, level + 1);
                                 yield return (0, 2, level + 1);
                                 yield return (0, 3, level + 1);
                                 yield return (0, 4, level + 1);
                             }
-                            else if (x == 3)
-                            {
-                                // <-
+                            else if (x == 3) /* <- */
+                            {                              
                                 yield return (4, 0, level + 1);
                                 yield return (4, 1, level + 1);
                                 yield return (4, 2, level + 1);
                                 yield return (4, 3, level + 1);
                                 yield return (4, 4, level + 1);
                             }
-                            else if (y == 1)
+                            else if (y == 1) /* v */
                             {
-                                // V
                                 yield return (0, 0, level + 1);
                                 yield return (1, 0, level + 1);
                                 yield return (2, 0, level + 1);
                                 yield return (3, 0, level + 1);
                                 yield return (4, 0, level + 1);
                             }
-                            else if (y == 3)
+                            else if (y == 3) /* ^ */
                             {
-                                // ^
                                 yield return (0, 4, level + 1);
                                 yield return (1, 4, level + 1);
                                 yield return (2, 4, level + 1);
@@ -112,39 +90,14 @@ namespace AoC.Advent2019
                                 yield return (4, 4, level + 1);
                             }
                         }
-                        else if (n.x == -1)
-                        {
-                            // left edge
-                            yield return (1, 2, level - 1);
-                        }
-                        else if (n.x == 5)
-                        {
-                            // right edge
-                            yield return (3, 2, level - 1);
-                        }
-                        else if (n.y == -1)
-                        {
-                            // top edge
-                            yield return (2, 1, level - 1);
-                        }
-                        else if (n.y == 5)
-                        {
-                            // bottom edge
-                            yield return (2, 3, level - 1);
-                        }
-                        else
-                        {
-                            yield return n;
-                        }
+                        else if (n.x == -1) /* left edge */ yield return (1, 2, level - 1);
+                        else if (n.x == 5) /* right edge */ yield return (3, 2, level - 1);
+                        else if (n.y == -1) /* top edge */ yield return (2, 1, level - 1);
+                        else if (n.y == 5) /* bottom edge */ yield return (2, 3, level - 1);
+                        else yield return n;
                     }
                 }
-                else
-                {
-                    foreach (var n in GetNeighboursFlat(x, y, level))
-                    {
-                        yield return n;
-                    }
-                }
+                else foreach (var n in GetNeighboursFlat(x, y, level)) yield return n;
             }
 
             public int Neighbours(int x, int y, int level = 0) => GetNeighbours(x, y, level).Count(n => Get(n.x, n.y, n.level));
@@ -152,11 +105,7 @@ namespace AoC.Advent2019
             public void Tick(State oldState, int x, int y, int level = 0)
             {
                 int neighbours = oldState.Neighbours(x, y, level);
-
-                if (neighbours == 1 || neighbours == 2 && !oldState.Get(x, y, level))
-                {
-                    Set(x, y, level);
-                }
+                if (neighbours == 1 || neighbours == 2 && !oldState.Get(x, y, level)) Set(x, y, level);
             }
         }
 
@@ -164,12 +113,7 @@ namespace AoC.Advent2019
         {
             newState.Clear();
             for (var y = 0; y < 5; ++y)
-            {
-                for (var x = 0; x < 5; ++x)
-                {
-                    newState.Tick(oldState, x, y);
-                }
-            }
+                for (var x = 0; x < 5; ++x) newState.Tick(oldState, x, y);
         }
 
         public static void Tick2(State oldState, State newState)
@@ -182,22 +126,16 @@ namespace AoC.Advent2019
             int max = keys.Max() + 1;
 
             for (var level = min; level <= max; ++level)
-            {
                 for (var y = 0; y < 5; ++y)
-                {
                     for (var x = 0; x < 5; ++x)
-                    {
-                        if (x != 2 || y != 2) newState.Tick(oldState, x, y, level);
-                    }
-                }
-            }
+                        if (x != 2 || y != 2) newState.Tick(oldState, x, y, level); 
         }
 
         public static uint Part1(string input)
         {
             HashSet<uint> seen = new();
 
-            State s1 = new (input), s2 = new ();
+            State s1 = new(input), s2 = new();
 
             while (true)
             {

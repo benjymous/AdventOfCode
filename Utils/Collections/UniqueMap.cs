@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Advent.Utils.Collections
 {
@@ -36,7 +35,7 @@ namespace Advent.Utils.Collections
             values.Clear();
         }
 
-        public bool Any() => values.Any();
+        public bool Any() => values.Count != 0;
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => ((IEnumerable<KeyValuePair<TKey, TValue>>)values).GetEnumerator();
 

@@ -1,5 +1,5 @@
 ﻿using AoC.Utils.Vectors;
-using System;
+using System.Linq;
 
 namespace AoC.Advent2020
 {
@@ -7,88 +7,63 @@ namespace AoC.Advent2020
     {
         public string Name => "2020-12";
 
-        class Instruction
+        [Regex(@"(.)(\d+)")]
+        record class Instruction(char Cmd, int Val)
         {
-            public Instruction(string line)
-            {
-                cmd = line[0];
-                val = int.Parse(line[1..]);
-            }
-
-            readonly char cmd;
-            readonly int val;
-
-            public override string ToString()
-            {
-                return $"{cmd} {val}";
-            }
-
             public void Apply(ManhattanVector2 v, Direction2 d)
             {
-                // Action N means to move north by the given value.
-                // Action S means to move south by the given value.
-                // Action E means to move east by the given value.
-                // Action W means to move west by the given value.
-                // Action L means to turn left the given number of degrees.
-                // Action R means to turn right the given number of degrees.
-                // Action F means to move forward by the given value in the direction the ship is currently facing.
-                switch (cmd)
+                switch (Cmd)
                 {
                     case 'N':
-                        v.Offset(Direction2.North, val);
+                        v.Offset(Direction2.North, Val);
                         break;
                     case 'S':
-                        v.Offset(Direction2.South, val);
+                        v.Offset(Direction2.South, Val);
                         break;
                     case 'E':
-                        v.Offset(Direction2.East, val);
+                        v.Offset(Direction2.East, Val);
                         break;
                     case 'W':
-                        v.Offset(Direction2.West, val);
+                        v.Offset(Direction2.West, Val);
                         break;
 
                     case 'L':
-                        d.TurnLeftByDegrees(val);
+                        d.TurnLeftByDegrees(Val);
                         break;
-
                     case 'R':
-                        d.TurnRightByDegrees(val);
+                        d.TurnRightByDegrees(Val);
                         break;
-
                     case 'F':
-                        v.Offset(d, val);
+                        v.Offset(d, Val);
                         break;
-
                 }
             }
 
             public void Apply2(ManhattanVector2 ship, ManhattanVector2 wp)
             {
-                switch (cmd)
+                switch (Cmd)
                 {
                     case 'N':
-                        wp.Offset(Direction2.North, val);
+                        wp.Offset(Direction2.North, Val);
                         break;
                     case 'S':
-                        wp.Offset(Direction2.South, val);
+                        wp.Offset(Direction2.South, Val);
                         break;
                     case 'E':
-                        wp.Offset(Direction2.East, val);
+                        wp.Offset(Direction2.East, Val);
                         break;
                     case 'W':
-                        wp.Offset(Direction2.West, val);
+                        wp.Offset(Direction2.West, Val);
                         break;
 
                     case 'L':
-                        wp.TurnLeftBy(val);
+                        wp.TurnLeftBy(Val);
                         break;
-
                     case 'R':
-                        wp.TurnRightBy(val);
+                        wp.TurnRightBy(Val);
                         break;
-
                     case 'F':
-                        ship.Offset(wp, val);
+                        ship.Offset(wp, Val);
                         break;
                 }
             }
@@ -96,36 +71,20 @@ namespace AoC.Advent2020
 
         public static int Part1(string input)
         {
-            var instructions = Util.Parse<Instruction>(input);
-
             var position = new ManhattanVector2(0, 0);
             var direction = new Direction2(1, 0);
 
-            foreach (var i in instructions)
-            {
-                //Console.WriteLine(i);
-                i.Apply(position, direction);
-                //Console.WriteLine($"{position} {direction.AsChar()}");
-
-            }
+            Util.RegexParse<Instruction>(input).ToList().ForEach(i => i.Apply(position, direction));
 
             return position.Distance(ManhattanVector2.Zero);
         }
 
         public static int Part2(string input)
         {
-            var instructions = Util.Parse<Instruction>(input);
-
             var position = new ManhattanVector2(0, 0);
             var waypoint = new ManhattanVector2(10, -1);
 
-            foreach (var i in instructions)
-            {
-                //Console.WriteLine(i);
-                i.Apply2(position, waypoint);
-                //Console.WriteLine($"{position} {waypoint}");
-
-            }
+            Util.RegexParse<Instruction>(input).ToList().ForEach(i => i.Apply2(position, waypoint));
 
             return position.Distance(ManhattanVector2.Zero);
         }

@@ -16,7 +16,7 @@
 
         private static int FindAlignment(string input)
         {
-            int i = 0, inc=1;
+            int i = 0, inc = 1;
             foreach (var disc in Util.RegexParse<Disc>(input))
             {
                 while (!disc.CheckAlignment(i += inc)) ;

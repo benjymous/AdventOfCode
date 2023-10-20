@@ -13,7 +13,7 @@ namespace AoC.Advent2016
             var lines = Util.Split(input);
 
             var storage = new List<Dictionary<char, int>>();
-            for (int i= 0; i < lines.First().Length; ++i )
+            for (int i = 0; i < lines.First().Length; ++i)
             {
                 storage.Add(new Dictionary<char, int>());
             }

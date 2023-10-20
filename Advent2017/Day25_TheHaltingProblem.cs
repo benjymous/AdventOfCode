@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace AoC.Advent2017
 {
@@ -17,78 +18,25 @@ namespace AoC.Advent2017
         }
         class State
         {
-            int Parsing = 0;
-
             public readonly (Action action, int move, int next)[] Conditions = new (Action, int, int)[2];
 
-            public void Feed(string nextLine)
+            [Regex(@"In state .:\n.+If the current value is 0:\n.+- Write the value (.).\n.+- Move one slot to the (.).+\.\n.+- Continue with state (.).\n.+If the current value is 1:\n.+- Write the value (.).\n.+- Move one slot to the (.).+\.\n    - Continue with state (.).")]
+            public State(int write0, char move0, char continue0, int write1, char move1, char continue1)
             {
-                /*
-                - Write the value 1.
-                - Move one slot to the right.
-                - Continue with state B.
-                */
-
-                switch (nextLine[6])
-                {
-                    case 'W': // Write
-                        int val = nextLine[22] == '0' ? 0 : 1;
-                        Conditions[Parsing].action = val == Parsing ? Action.Skip : val == 1 ? Action.Set : Action.Clear;
-                        return;
-                    case 'M': // Move
-                        Conditions[Parsing].move = nextLine[27] == 'r' ? 1 : -1;
-                        return;
-                    case 'C': // Continue
-                        Conditions[Parsing].next = ToKey(nextLine[26]);
-                        Parsing++;
-                        return;
-                    default:
-                        Console.WriteLine("Parse fail!");
-                        break;
-                }
+                Conditions[0] = (write0 == 0 ? Action.Skip : Action.Set, move0 == 'r' ? 1 : -1, ToKey(continue0));
+                Conditions[1] = (write1 == 1 ? Action.Skip : Action.Clear, move1 == 'r' ? 1 : -1, ToKey(continue1));
             }
         }
 
         class Program
         {
+
             public Program(string input)
             {
-                List<State> states = new();
-                State state = null;
-                foreach (var line in input.Split("\n"))
-                {
-                    if (string.IsNullOrWhiteSpace(line))
-                    {
-                        if (state != null) states.Add(state);
-                        state = null;
-                        continue;
-                    }
-
-                    switch (line[0])
-                    {
-                        case 'B': //Begin in state A.
-                            Start = ToKey(line[15]);
-                            break;
-
-                        case 'P': //Perform a diagnostic checksum after 12399302 steps.
-                            Diagnostic = Util.ExtractNumbers(line)[0];
-                            break;
-
-                        case 'I':
-                            state = new State();
-                            break;
-
-                        case ' ':
-                            if (line[4] == '-') state.Feed(line);
-                            break;
-
-                        default:
-                            Console.WriteLine("Tokenization failed");
-                            break;
-                    }
-                }
-
-                States = states.ToArray();
+                var parts = input.Split("\n\n");
+                Start = ToKey(parts[0][15]);
+                Diagnostic = Util.ExtractNumbers(parts[0])[0];
+                States = Util.RegexParse<State>(parts.Skip(1)).ToArray();
             }
 
             public int Run()
@@ -124,8 +72,7 @@ namespace AoC.Advent2017
 
         public static int Part1(string input)
         {
-            var program = new Program(input);
-            return program.Run();
+            return new Program(input).Run();
         }
 
         public void Run(string input, ILogger logger)

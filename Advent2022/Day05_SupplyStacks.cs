@@ -30,8 +30,8 @@ namespace AoC.Advent2022
             }
 
             static void Transfer(Stack<char> from, Stack<char> to, int count)
-            {
-                for (int i=0; i<count; ++i) to.Push(from.Pop());
+            {                
+                for (int i = 0; i < count; ++i) to.Push(from.Pop());
             }
         }
 

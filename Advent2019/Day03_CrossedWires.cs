@@ -1,5 +1,7 @@
-﻿using System;
+﻿using AoC.Utils.Vectors;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AoC.Advent2019
 {
@@ -13,25 +15,12 @@ namespace AoC.Advent2019
             Shortest
         }
 
-        static IEnumerable<List<(int direction, int count)>> ParseData(string input)
+        static IEnumerable<IEnumerable<(int direction, int count)>> ParseData(string input)
         {
             var lines = Util.Split(input, '\n');
             foreach (var line in lines)
             {
-                List<(int, int)> lineRes = new();
-                var instructions = Util.Split(line);
-                foreach (var i in instructions)
-                {
-                    lineRes.Add((i[0] switch
-                    {
-                        'R' => 1,
-                        'L' => -1,
-                        'U' => -1 << 16,
-                        'D' => 1 << 16,
-                        _ => 0
-                    }, int.Parse(i[1..])));
-                }
-                yield return lineRes;
+                yield return Util.Split(line).Select(i => (new Direction2(i[0]), int.Parse(i[1..]))).Select(v => (v.Item1.DX + (v.Item1.DY << 16), v.Item2));
             }
         }
 
@@ -41,12 +30,11 @@ namespace AoC.Advent2019
 
             var minDist = int.MaxValue;
 
-            Dictionary<int, int> seen = null;
+            Dictionary<int, int> seen = new();
 
             foreach (var line in data)
             {
-                int position = 0x1000 + (0x1000 << 16);
-                int steps = 0;
+                int position = 0x1000 + (0x1000 << 16), steps = 0;
                 Dictionary<int, int> current = new();
 
                 foreach (var (direction, count) in line)
@@ -56,11 +44,11 @@ namespace AoC.Advent2019
                         position += direction;
                         steps++;
 
-                        if (seen != null && seen.ContainsKey(position))
+                        if (seen.TryGetValue(position, out int value))
                         {
                             minDist = Math.Min(minDist, mode == SearchMode.Closest
                                 ? Math.Abs((position & 0xffff) - 0x1000) + Math.Abs((position >> 16) - 0x1000)
-                                : steps + seen[position]);
+                                : steps + value);
                         }
                         else
                         {

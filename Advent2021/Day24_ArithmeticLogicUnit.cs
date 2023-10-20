@@ -33,7 +33,7 @@ namespace AoC.Advent2021
             z /= i;
             return (w != x) ? (z * 26) + w + k : z;
         }
-         
+
         private static long FindModelNumber(bool biggest)
         {
             var queue = new PriorityQueue<(int prevZ, int digit), int>();
@@ -59,7 +59,7 @@ namespace AoC.Advent2021
                     }
                 }
 
-                if ((step++ % 10000) == 0 && endStates.Any())
+                if ((step++ % 10000) == 0 && endStates.Count != 0)
                 {
                     var best = ReconstructAll(cache, endStates);
                     if (best == lastBest) return best;

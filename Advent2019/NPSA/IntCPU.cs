@@ -54,6 +54,8 @@ namespace AoC.Advent2019.NPSA
         readonly IEnumerable<long> initialState;
         long InstructionPointer = 0;
         long RelBase = 0;
+
+        public void AddInput(params long[] values) => Input.EnqueueRange(values);
         public Queue<long> Input { get; set; } = new Queue<long>();
         public Queue<long> Output { get; set; } = new Queue<long>();
 
@@ -63,10 +65,10 @@ namespace AoC.Advent2019.NPSA
         double speed = 0;
         double runTimeSecs = 0;
 
-        public IntCPU(string program)
+        public IntCPU(string program, int reserve=0)
         {
             initialState = Util.ParseNumbers<long>(program);
-            Reset();
+            Reset(reserve);
 
             lock (paramLock)
             {
@@ -77,13 +79,13 @@ namespace AoC.Advent2019.NPSA
                     for (int x = 0; x < 3; ++x)
                         for (int y = 0; y < 3; ++y)
                             for (int z = 0; z < 3; ++z)
-                                paramCache[(x * 1) + (y * 10) + (z * 100)] = new[] 
+                                paramCache[(x * 1) + (y * 10) + (z * 100)] = new[]
                                     { (ParamMode)x, (ParamMode)y, (ParamMode)z };
                 }
             }
         }
 
-        public void Reset()
+        public void Reset(int reserve = 0)
         {
             Memory = initialState.ToArray();
             InstructionPointer = 0;
@@ -91,6 +93,7 @@ namespace AoC.Advent2019.NPSA
             CycleCount = 0;
             Input.Clear();
             Output.Clear();
+            if (reserve > 0) Reserve(reserve);
         }
 
         public void Reserve(int memorySize) => Array.Resize(ref Memory, Math.Max(memorySize, Memory.Length));
@@ -198,7 +201,7 @@ namespace AoC.Advent2019.NPSA
 
                 return true;
             }
-            catch (System.IndexOutOfRangeException)
+            catch (IndexOutOfRangeException)
             {
                 // If the previous instruction failed, reserve more memory and try again!
                 // This is faster than checking for out of bounds errors on each access!
@@ -212,7 +215,7 @@ namespace AoC.Advent2019.NPSA
             System.Diagnostics.Stopwatch sw = new();
             sw.Start();
 
-            while (Step());
+            while (Step()) ;
 
             sw.Stop();
             runTimeSecs = sw.Elapsed.TotalSeconds;

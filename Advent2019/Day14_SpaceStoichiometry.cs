@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace AoC.Advent2019
 {
@@ -11,23 +12,11 @@ namespace AoC.Advent2019
 
         public class Component
         {
-            public long quantity;
-            public string type;
+            public long Quantity;
+            public string Type;
 
-            public Component(string input)
-            {
-                if (input.Contains(',')) throw new Exception("comma in input!");
-
-                var bits = input.Trim().Split(" ");
-                quantity = long.Parse(bits[0]);
-                type = bits[1];
-            }
-
-            public Component(string t, long q)
-            {
-                quantity = q;
-                type = t;
-            }
+            [Regex(@"(\d+) (\S+)")]
+            public Component(long q, string t) => (Quantity, Type) = (q, t);
         }
 
         public class Rule
@@ -35,56 +24,43 @@ namespace AoC.Advent2019
             public List<Component> inputs;
             public Component output;
 
-            public Rule(string input)
+            [Regex(@"(.+) => (.+)")]
+            public Rule(string inp, Component outp)
             {
-                var halves = input.Split("=>");
-
-                inputs = Util.Parse<Component>(halves[0], ",");
-                output = new Component(halves[1]);
+                inputs = Util.RegexParse<Component>(inp, ",").ToList();
+                output = outp;
             }
         }
 
-
         public static long Decompose(Component input, Dictionary<string, Rule> rules)
         {
+            Queue<Component> currentSet = new(new[] { input });
+            Dictionary<string, long> wasteHeap = new();
+
             long ore = 0;
-            Queue<Component> currentSet = new();
-            currentSet.Enqueue(input);
-
-            Dictionary<string, int> wasteHeap = new();
-
             while (currentSet.Count > 0)
             {
                 var component = currentSet.Dequeue();
-                if (component.type == "ORE")
-                {
-                    ore += component.quantity;
-                }
+                if (component.Type == "ORE") ore += component.Quantity;
                 else
                 {
-                    var rule = rules[component.type];
+                    var rule = rules[component.Type];
 
-                    if (wasteHeap.ContainsKey(component.type) && wasteHeap[component.type] > 0)
+                    if (wasteHeap.TryGetValue(component.Type, out long wasteAvailable) && wasteAvailable > 0)
                     {
-                        var wasteUsed = Math.Min(component.quantity, wasteHeap[component.type]);
-                        component.quantity -= wasteUsed;
-                        wasteHeap[component.type] -= (int)wasteUsed;
+                        var wasteUsed = Math.Min(component.Quantity, wasteAvailable);
+                        component.Quantity -= wasteUsed;
+                        wasteHeap[component.Type] -= wasteUsed;
                     }
 
-                    if (component.quantity > 0)
+                    if (component.Quantity > 0)
                     {
-                        var multiplier = (long)Math.Ceiling((double)component.quantity / rule.output.quantity);
+                        var multiplier = (long)Math.Ceiling((double)component.Quantity / rule.output.Quantity);
 
-                        var newElements = rule.inputs.Select(c => new Component(c.type, c.quantity * multiplier));
+                        currentSet.EnqueueRange(rule.inputs.Select(c => new Component(c.Quantity * multiplier, c.Type)));
 
-                        currentSet.EnqueueRange(newElements);
-
-                        var waste = rule.output.quantity * multiplier - component.quantity;
-
-                        if (waste > 0)
-                        {
-                            wasteHeap.IncrementAtIndex(component.type, (int)waste);
-                        }
+                        var waste = rule.output.Quantity * multiplier - component.Quantity;
+                        if (waste > 0) wasteHeap.IncrementAtIndex(component.Type, waste);
                     }
                 }
             }
@@ -93,24 +69,23 @@ namespace AoC.Advent2019
 
         public static long Part1(string input)
         {
-            var rules = Util.Parse<Rule>(input).ToDictionary(e => e.output.type, e => e);
+            var rules = Util.RegexParse<Rule>(input).ToDictionary(e => e.output.Type, e => e);
 
-            return Decompose(new Component("1 FUEL"), rules);
+            return Decompose(new Component(1, "FUEL"), rules);
         }
 
         public static long Part2(string input)
         {
-            var rules = Util.Parse<Rule>(input).ToDictionary(e => e.output.type, e => e);
+            var rules = Util.RegexParse<Rule>(input).ToDictionary(e => e.output.Type, e => e);
 
             long ore = 1000000000000;
-
-            long guess = (ore*1000) / Decompose(new Component("1000 FUEL"), rules);
+            long guess = ore * 1000 / Decompose(new Component(1000, "FUEL"), rules);
 
             return Util.BinarySearch(guess, fuel =>
-            {             
-                long actual = Decompose(new Component($"{fuel} FUEL"), rules);
+            {
+                long actual = Decompose(new Component(fuel, "FUEL"), rules);
                 return (actual > ore, actual);
-            }).input-1;
+            }).input - 1;
 
         }
 

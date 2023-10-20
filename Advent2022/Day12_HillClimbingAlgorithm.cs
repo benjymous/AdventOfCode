@@ -1,6 +1,7 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Pathfinding;
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,7 +18,7 @@ namespace AoC.Advent2022
             public MapData(string input)
             {
                 Grid = Util.ParseSparseMatrix<char>(input).ToDictionary(kvp => ToKey(kvp.Key), kvp => kvp.Value);
-                Index = Grid.Invert();
+                Index = Grid.InvertFrozen();
 
                 Start = Index['S'].First();
                 End = Index['E'].First();
@@ -27,20 +28,20 @@ namespace AoC.Advent2022
             }
 
             public readonly Dictionary<int, char> Grid;
-            public readonly Dictionary<char, IEnumerable<int>> Index;
+            public readonly FrozenDictionary<char, IEnumerable<int>> Index;
 
             public readonly int Start, End;
 
-            static readonly int[] neighbours = new[] { 1, -1, 1<<16, -1<<16 };
+            static readonly int[] neighbours = new[] { 1, -1, 1 << 16, -1 << 16 };
             public virtual IEnumerable<int> GetNeighbours(int center)
             {
-                var maxClimb = Grid[center]+1;
+                var maxClimb = Grid[center] + 1;
 
                 return neighbours.Select(delta => center + delta)
                                  .Where(pt => Grid.TryGetValue(pt, out var height) && height <= maxClimb);
             }
         }
-    
+
         public static int Part1(string input)
         {
             var map = new MapData(input);
@@ -60,7 +61,7 @@ namespace AoC.Advent2022
             goodStarts.Operate(pos =>
             {
                 var route = map.FindPath(pos, map.End);
-                if (!route.Any()) return;
+                if (route.Length == 0) return;
 
                 int routeLength = route.Length;
                 min = Math.Min(min, routeLength);

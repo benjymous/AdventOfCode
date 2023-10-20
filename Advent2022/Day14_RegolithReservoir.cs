@@ -20,8 +20,8 @@ namespace AoC.Advent2022
             foreach (var (first, second) in pairs)
             {
                 var delta = second.Delta(first);
-                for (var pos = first; pos != second; pos += delta) yield return pos.X + (pos.Y<<16);
-                yield return second.X + (second.Y <<16);
+                for (var pos = first; pos != second; pos += delta) yield return pos.X + (pos.Y << 16);
+                yield return second.X + (second.Y << 16);
             }
         }
 
@@ -32,7 +32,7 @@ namespace AoC.Advent2022
             {
                 foreach (var delta in moves)
                 {
-                    var next = pos + delta + (1<<16);
+                    var next = pos + delta + (1 << 16);
                     if (!map.Contains(next))
                     {
                         if (delta != 1) lastBranch.Push(pos);
@@ -48,7 +48,7 @@ namespace AoC.Advent2022
             var map = BuildMap(input).ToHashSet();
 
             int maxY = (map.Max(kvp => kvp >> 16) + 2) << 16;
-            int floor = part.Two() ? (maxY - (1<<16)) : int.MaxValue;
+            int floor = part.Two() ? (maxY - (1 << 16)) : int.MaxValue;
 
             int count = 0, source = 500, sandPos = source;
             Stack<int> lastBranch = new();

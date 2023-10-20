@@ -51,7 +51,7 @@ namespace AoC.Advent2018
 
             public char TypeChar((int x, int y) pos)
             {
-                if (pos.x < 0 || pos.y < 0 || pos.x > target.position.x+20 || pos.y > target.position.y+20) return BLOCKED;
+                if (pos.x < 0 || pos.y < 0 || pos.x > target.position.x + 20 || pos.y > target.position.y + 20) return BLOCKED;
                 return (ErosionLevel(pos) % 3) switch
                 {
                     0 => ROCKY,
@@ -229,7 +229,7 @@ namespace AoC.Advent2018
 
                             cache[neighbour.key] = newTime;
 
-                            nextGen.Add((neighbour, newTime, neighbour.Distance(cave.target) + newTime*100));
+                            nextGen.Add((neighbour, newTime, neighbour.Distance(cave.target) + newTime * 100));
                         }
                     }
                 }

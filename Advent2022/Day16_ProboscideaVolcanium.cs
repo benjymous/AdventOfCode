@@ -22,7 +22,7 @@ namespace AoC.Advent2022
             public int[] Neighbours;
         }
 
-        record MapData(Dictionary<int, int[]> Data) : IMap<int> { public IEnumerable<int> GetNeighbours(int location) => Data[location];}
+        record MapData(Dictionary<int, int[]> Data) : IMap<int> { public IEnumerable<int> GetNeighbours(int location) => Data[location]; }
 
         private static (Dictionary<uint, int> routes, Dictionary<uint, int> valveRates, uint availableNodes) Init(string input)
         {
@@ -36,11 +36,11 @@ namespace AoC.Advent2022
             for (int i = 0; i < valves.Length; i++)
             {
                 Valve v1 = valves[i];
-                yield return(1 | v1.BitIndex, map.FindPath(AA, v1.Id).Length+1);
+                yield return (1 | v1.BitIndex, map.FindPath(AA, v1.Id).Length + 1);
                 for (int j = i + 1; j < valves.Length; j++)
                 {
                     Valve v2 = valves[j];
-                    yield return(v1.BitIndex | v2.BitIndex, map.FindPath(v1.Id, v2.Id).Length+1);
+                    yield return (v1.BitIndex | v2.BitIndex, map.FindPath(v1.Id, v2.Id).Length + 1);
                 }
             }
         }
@@ -52,7 +52,7 @@ namespace AoC.Advent2022
             var generation = new List<(uint location, int mins, int open, int released, uint toVisit)>(Util.Values((1U, availableTime, 0, 0, availableNodes)));
             int best = 0;
 
-            while (generation.Any())
+            while (generation.Count != 0)
             {
                 List<(uint location, int mins, int open, int released, uint toVisit)> nextGen = new();
                 foreach (var entry in generation)
@@ -87,7 +87,7 @@ namespace AoC.Advent2022
             int minValves = (valveRates.Count / 2) - 1;
             int maxValves = (valveRates.Count / 2) + 1;
 
-            return Util.For<uint, (uint n1, uint n2)>(2, availableNodes/2, 2, i => (i, ~i & availableNodes))
+            return Util.For<uint, (uint n1, uint n2)>(2, availableNodes / 2, 2, i => (i, ~i & availableNodes))
                         .Where(i => i.n1.CountBits() >= minValves && i.n1.CountBits() <= maxValves).AsParallel().Max(p => Solve(routes, valveRates, p.n1, 26) + Solve(routes, valveRates, p.n2, 26));
         }
 

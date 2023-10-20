@@ -19,15 +19,15 @@ namespace AoC.Advent2022
         {
             var map = Util.ParseSparseMatrix<char>(input);
 
-            (int w, int h) = (map.Keys.Max(v => v.x)-1, map.Keys.Max(v => v.y)-1);
+            (int w, int h) = (map.Keys.Max(v => v.x) - 1, map.Keys.Max(v => v.y) - 1);
 
-            var walls = map.Where(kvp => kvp.Value == '#').Select(kvp => ToKey(kvp.Key)).Append(ToKey((1, -1))).Append(ToKey((w, h+2))).ToHashSet();
+            var walls = map.Where(kvp => kvp.Value == '#').Select(kvp => ToKey(kvp.Key)).Append(ToKey((1, -1))).Append(ToKey((w, h + 2))).ToHashSet();
             var blizzards = map.Where(kvp => kvp.Value != '#' && kvp.Value != '.').Select(kvp => (pos: ToKey(kvp.Key), dir: ToKey(kvp.Value))).ToArray();
 
             var blizH = blizzards.Where(b => b.dir == -1 || b.dir == 1).ToArray();
             var blizV = blizzards.Except(blizH).ToArray();
 
-            HashSet<int>[] blizStepsH = new HashSet<int>[w+1], blizStepsV = new HashSet<int>[h+1];
+            HashSet<int>[] blizStepsH = new HashSet<int>[w + 1], blizStepsV = new HashSet<int>[h + 1];
 
             for (int i = 0; i <= Math.Max(w, h); ++i)
             {
@@ -35,7 +35,7 @@ namespace AoC.Advent2022
                 if (i <= h) blizStepsV[i] = StepBlizzards(blizV, w, h);
             }
 
-            var (start, end) = (ToKey((1, 0)),  ToKey((w, h+1)));
+            var (start, end) = (ToKey((1, 0)), ToKey((w, h + 1)));
             int currentWaypoint = 0, targetWaypoint = part.One() ? 0 : 2;
             int[] waypoints = new[] { end, start, end };
 
@@ -45,10 +45,10 @@ namespace AoC.Advent2022
             for (int step = 0; ; ++step)
             {
                 foreach (var newPos in generation.SelectMany(p => Directions.Select(dir => p + dir)))
-                { 
+                {
                     if (newPos == waypoints[currentWaypoint])
                     {
-                        if (++currentWaypoint > targetWaypoint) return step+1;
+                        if (++currentWaypoint > targetWaypoint) return step + 1;
                         nextGen.Clear();
                         nextGen.Add(newPos);
                         break;
@@ -66,7 +66,7 @@ namespace AoC.Advent2022
 
         private static HashSet<int> StepBlizzards((int pos, int dir)[] blizzards, int w, int h)
         {
-            for (int i=0; i<blizzards.Length; ++i)
+            for (int i = 0; i < blizzards.Length; ++i)
             {
                 var pos = blizzards[i].pos + blizzards[i].dir;
                 blizzards[i].pos = ((pos % 1000 + w - 1) % w) + 1 + ((((pos / 1000 + h - 1) % h) + 1) * 1000);

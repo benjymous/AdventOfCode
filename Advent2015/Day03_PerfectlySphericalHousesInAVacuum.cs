@@ -1,6 +1,5 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Vectors;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,7 +27,7 @@ namespace AoC.Advent2015
             var santa = new SantaStepper();
 
             foreach (var dir in input.Select(c => new Direction2(c)))
-            {                
+            {
                 visited.Add(santa.Step(dir));
             }
 

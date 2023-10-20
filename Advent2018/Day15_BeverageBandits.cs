@@ -32,10 +32,7 @@ namespace AoC.Advent2018
                 var data = Util.ParseSparseMatrix<char>(input);
 
                 Walls = data.Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key).ToHashSet();
-                var gobins = data.Where(kvp => kvp.Value == 'G').ToDictionary(kvp => kvp.Key, _ => new Creature { type = CreatureType.Goblin });
-                var elves = data.Where(kvp => kvp.Value == 'E').ToDictionary(kvp => kvp.Key, _ => new Creature { type = CreatureType.Elf, AP = elfAP });
-
-                Creatures = gobins.Union(elves).ToSortedDictionary(this);
+                Creatures = data.Where(kvp => kvp.Value == 'G').ToDictionary(kvp => kvp.Key, _ => new Creature { type = CreatureType.Goblin }).Union(data.Where(kvp => kvp.Value == 'E').ToDictionary(kvp => kvp.Key, _ => new Creature { type = CreatureType.Elf, AP = elfAP })).ToSortedDictionary(this);
             }
 
             readonly HashSet<(int x, int y)> Walls;
@@ -43,24 +40,17 @@ namespace AoC.Advent2018
 
             public int ElfCount() => Creatures.Values.Count(c => c.type == CreatureType.Elf);
 
-            bool IsClear((int x, int y) pos)
-            {
-                return !Walls.Contains(pos) && !Creatures.ContainsKey(pos);
-            }
+            bool IsClear((int x, int y) pos) => !Walls.Contains(pos) && !Creatures.ContainsKey(pos);
 
             (bool hasTarget, (int x, int y) newPos) MoveUnit(KeyValuePair<(int x, int y), Creature> creature)
             {
-                var targets = Creatures.Where(c => c.Value.type != creature.Value.type).ToDictionary();
+                var potentialTargets = Creatures.Where(c => c.Value.type != creature.Value.type).ToDictionary();
 
-                if (!targets.Any()) return (false, (0, 0));
+                if (potentialTargets.Count == 0) return (false, (0, 0));
 
-                var target = FindTarget(creature, targets);
+                var target = FindTarget(creature, potentialTargets);
 
-                if (target != creature.Key)
-                {
-                    Creatures.Remove(creature.Key);
-                    Creatures.Add(target, creature.Value);
-                }
+                Creatures.Move(creature.Key, target);
                 return (true, target);
             }
 
@@ -68,24 +58,18 @@ namespace AoC.Advent2018
             {
                 foreach (var (dx, dy) in InRange)
                 {
-                    var pos = (x: creature.Key.x + dx, y: creature.Key.y + dy);
-                    if (targets.TryGetValue(pos, out var potential))
-                    {
-                        return (creature.Key);
-                    }
+                    if (targets.ContainsKey((x: creature.Key.x + dx, y: creature.Key.y + dy))) return creature.Key;
                 }
 
-                var potentialTargets = targets.SelectMany(target => InRange.Select(offset => (x: target.Key.x + offset.dx, y: target.Key.y + offset.dy))).Where(pos => IsClear(pos) || pos == creature.Key).Distinct();
 
-                var reachable = potentialTargets.Select(pos => (pos, path: this.FindPath(creature.Key, pos)))
-                                                 .Where(entry => entry.path.Any());                                                                                                  
+                var reachable = targets.SelectMany(target => InRange.Select(offset => (x: target.Key.x + offset.dx, y: target.Key.y + offset.dy))).Where(pos => IsClear(pos) || pos == creature.Key).Distinct()
+                                                 .Select(pos => (pos, path: this.FindPath(creature.Key, pos)))
+                                                 .Where(entry => entry.path.Length != 0);
 
                 if (!reachable.Any()) return creature.Key;
 
-                var targetPos = reachable.OrderBy(v => (v.path.Count(), v.pos.y, v.pos.x))
+                var targetPos = reachable.OrderBy(v => (v.path.Length, v.pos.y, v.pos.x))
                                          .First();
-
-                //return targetPos.path.First();
 
                 return ReadingOrderMove(creature.Key, targetPos.pos);
             }
@@ -100,7 +84,7 @@ namespace AoC.Advent2018
                     if (IsClear(newPos))
                     {
                         var path = this.FindPath(newPos, dest);
-                        if (path.Any()) readingOrder.Add((newPos, path.Count()));
+                        if (path.Length != 0) readingOrder.Add((newPos, path.Length));
                     }
                 }
 
@@ -115,32 +99,23 @@ namespace AoC.Advent2018
                 {
                     if (creature.Value.HP <= 0) continue;
 
-                    var (hasTarget, (x,y)) = MoveUnit(creature);
+                    var (hasTarget, (x, y)) = MoveUnit(creature);
                     if (!hasTarget) return false;
 
                     var targets = new List<((int x, int y) pos, Creature creature)>();
                     foreach (var (dx, dy) in InRange)
                     {
                         var pos = (x + dx, y + dy);
-                        if (Creatures.TryGetValue(pos, out var potential))
-                        {
-                            if (potential.type != creature.Value.type)
-                            {
-                                targets.Add((pos, potential));
-                            }
-                        }
+                        if (Creatures.TryGetValue(pos, out var potential) && potential.type != creature.Value.type) targets.Add((pos, potential));
                     }
 
-                    if (targets.Any())
+                    if (targets.Count != 0)
                     {
                         var target = targets.OrderBy(t => (t.creature.HP, t.pos.y, t.pos.x)).First();
 
                         target.creature.HP -= creature.Value.AP;
 
-                        if (target.creature.HP <= 0)
-                        {
-                            Creatures.Remove(target.pos);
-                        }
+                        if (target.creature.HP <= 0) Creatures.Remove(target.pos);
                     }
                 }
                 return true;
@@ -152,15 +127,13 @@ namespace AoC.Advent2018
                                                                                        select pos;
 
             public int Heuristic((int x, int y) location1, (int x, int y) location2) => Math.Abs(location1.x - location2.x) + Math.Abs(location1.y - location2.y);
-            public int GScore((int x, int y) location) => 1;
 
             public int Score() { return Creatures.Sum(c => c.Value.HP); }
 
             public int Compare((int x, int y) a, (int x, int y) b)
             {
                 int result = a.y.CompareTo(b.y);
-                if (result == 0)
-                    result = a.x.CompareTo(b.x);
+                if (result == 0) result = a.x.CompareTo(b.x);
                 return result;
             }
         }
@@ -176,14 +149,7 @@ namespace AoC.Advent2018
             while (true)
             {
                 if (!map.PerformTurn()) break;
-
-                if (endOnElfLoss)
-                {
-                    if (map.ElfCount() != initialElves)
-                    {
-                        return -1;
-                    }
-                }
+                if (endOnElfLoss && map.ElfCount() != initialElves) return -1;
                 turns++;
             }
 
@@ -205,7 +171,6 @@ namespace AoC.Advent2018
                 Console.WriteLine($"{elfAP} => {win}");
                 return (win, score);
             }).result;
-
         }
 
         public void Run(string input, ILogger logger)

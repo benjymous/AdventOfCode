@@ -1,6 +1,5 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Pathfinding;
-using AoC.Utils.Vectors;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -85,7 +84,7 @@ namespace AoC.Advent2016
                 }
             });
 
-            return distances.Values.Count(v => v < MaxDistance)+1;
+            return distances.Values.Count(v => v < MaxDistance) + 1;
         }
 
         public void Run(string input, ILogger logger)

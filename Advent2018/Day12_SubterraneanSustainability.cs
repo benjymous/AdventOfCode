@@ -30,23 +30,23 @@ namespace AoC.Advent2018
                 data.Add(index - Left);
             }
 
-            public int Slice(int pos)
+            public readonly int Slice(int pos)
             {
                 int val = 0;
                 for (int j = 0; j < 5; ++j) val = (val << 1) + (data.Contains(pos + j - Left) ? 1 : 0);
                 return val;
             }
 
-            public void Step(ref State next)
+            public readonly void Step(ref State next)
             {
                 next.data.Clear();
 
                 for (int i = Left - 2; i < Right + 2; ++i) if (Rules.Contains(Slice(i - 2))) next.Set(i);
             }
 
-            public bool Equivalent(State other) => data.SequenceEqual(other.data);
+            public readonly bool Equivalent(State other) => data.SequenceEqual(other.data);
 
-            public long Score(long offset = 0) => data.Sum() + ((Left+offset) * data.Count);
+            public readonly long Score(long offset = 0) => data.Sum() + ((Left + offset) * data.Count);
         }
 
         static int DecodeRule(string rule) => rule.Aggregate(0, (val, ch) => (val << 1) + (ch == '#' ? 1 : 0));
@@ -54,7 +54,7 @@ namespace AoC.Advent2018
         private static void ParseInput(string input, out State initialState)
         {
             var lines = Util.Split(input);
-            var rules = lines.Skip(1).Select(line => line.Split(" => ")).Where(bits => bits[1][0]=='#').Select(bits => DecodeRule(bits[0])).ToHashSet();
+            var rules = lines.Skip(1).Select(line => line.Split(" => ")).Where(bits => bits[1][0] == '#').Select(bits => DecodeRule(bits[0])).ToHashSet();
             initialState = new(rules, lines[0].Split(": ")[1].Select(ch => ch == '#' ? 1 : 0).ToArray());
         }
 

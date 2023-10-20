@@ -42,7 +42,7 @@ namespace AoC.Advent2022
             {
                 Score += Items.Count;
                 var (destinationIfTrue, destinationIfFalse) = (others[TargetIfTrue].Items, others[TargetIfFalse].Items);
-                Items.Select(i => Operation(i) / reduceWorry).ForEach(item => (item % Divisor == 0 ? destinationIfTrue: destinationIfFalse).Add((int)(item % filter)));
+                Items.Select(i => Operation(i) / reduceWorry).ForEach(item => (item % Divisor == 0 ? destinationIfTrue : destinationIfFalse).Add((int)(item % filter)));
                 Items.Clear();
             }
         }

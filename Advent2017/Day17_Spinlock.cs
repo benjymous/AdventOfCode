@@ -1,5 +1,4 @@
 ﻿using AoC.Utils.Collections;
-using System;
 
 namespace AoC.Advent2017
 {

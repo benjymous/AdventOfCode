@@ -32,13 +32,13 @@ namespace AoC.Advent2021
             var divY = GetDivisions(b1.MinY, b1.MaxY, b2.MinY, b2.MaxY);
             var divZ = GetDivisions(b1.MinZ, b1.MaxZ, b2.MinZ, b2.MaxZ);
 
-            for (int i=0; i<divX.Length-1; ++i)
-                for (int j=0; j<divY.Length-1; ++j)
-                    for (int k=0; k<divZ.Length-1; ++k)
+            for (int i = 0; i < divX.Length - 1; ++i)
+                for (int j = 0; j < divY.Length - 1; ++j)
+                    for (int k = 0; k < divZ.Length - 1; ++k)
                     {
                         var newBox = new Box(divX[i], divX[i + 1], divY[j], divY[j + 1], divZ[k], divZ[k + 1]);
                         if (Overlaps(newBox, b1) && !Overlaps(newBox, b2)) yield return newBox;
-                    }   
+                    }
         }
 
         static bool Overlaps(Box box1, Box box2) => (box1.MinX < box2.MaxX) && (box1.MaxX > box2.MinX) && (box1.MinY < box2.MaxY) && (box1.MaxY > box2.MinY) && (box1.MinZ < box2.MaxZ) && (box1.MaxZ > box2.MinZ);
@@ -51,7 +51,7 @@ namespace AoC.Advent2021
 
             foreach (var instr in instructions)
             {
-                var newBoxes = new List<Box>(data.Count+100);
+                var newBoxes = new List<Box>(data.Count + 100);
                 if (instr.Action == Toggle.on) newBoxes.Add(instr.Box);
                 foreach (var box in data)
                 {

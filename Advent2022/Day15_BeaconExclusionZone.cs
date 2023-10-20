@@ -48,10 +48,8 @@ namespace AoC.Advent2022
 
             public (int min, int max) RowMinMax(int row)
             {
-                int halfWidth = (Range - Math.Abs(row - Pos.y));
-                int min = Pos.x - halfWidth;
-                int max = Pos.x + halfWidth + 1;
-                return (min, max);
+                int halfWidth = Range - Math.Abs(row - Pos.y);
+                return (min: Pos.x - halfWidth, max: Pos.x + halfWidth + 1);
             }
         }
 
@@ -62,10 +60,7 @@ namespace AoC.Advent2022
 
             var minMax = sensors.Select(s => s.RowMinMax(line)).ToArray();
 
-            var min = minMax.Min(v => v.min);
-            var max = minMax.Max(v => v.max);
-
-            return (max - min) - beacons.Count();
+            return (minMax.Max(v => v.max) - minMax.Min(v => v.min)) - beacons.Count();
         }
 
         public static long Part2(string input, int max = 4000000)
@@ -78,15 +73,8 @@ namespace AoC.Advent2022
                 var sensorsSorted = sensors.Select(s2 => (s2, sensor.Overlap(s2))).OrderBy(pair => pair.Item2).Take(8).Select(pair => pair.s2).ToArray();
                 foreach (var (x, y) in boundary)
                 {
-                    if (x >= 0 && x <= max && y >= 0 && y <= max)
-                    {
-                        foreach (var s2 in sensorsSorted)
-                        {
-                            if (s2.InRange(x, y)) goto next;
-                        }
+                    if (x >= 0 && x <= max && y >= 0 && y <= max && !sensorsSorted.Any(s => s.InRange(x, y)))
                         return (4000000L * x) + y;
-                        next:;
-                    }
                 }
             }
 

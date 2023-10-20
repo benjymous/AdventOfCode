@@ -89,9 +89,8 @@ namespace AoC.Advent2022
 
         public void Run(string input, ILogger logger)
         {
-            logger.WriteLine("0");
             var monkey = GetRootMonkey(input, logger);
-            logger.WriteLine("1");
+
             logger.WriteLine("- Pt1 - " + Part1(monkey));
             logger.WriteLine("- Pt2 - " + Part2(monkey));
         }

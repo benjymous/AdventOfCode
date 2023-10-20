@@ -23,7 +23,7 @@ namespace AoC.Advent2018.Test
 ##.## => #
 ###.. => #
 ###.# => #
-####. => #".Replace("\r","");
+####. => #".Replace("\r", "");
 
         [TestMethod]
         public void Plants01Test()

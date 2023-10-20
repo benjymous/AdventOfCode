@@ -85,7 +85,7 @@ namespace AoC.Advent2016
         public static string Part2(string input, ILogger logger = null)
         {
             var display = new Display(input, 50, 6).ToString();
-            logger?.WriteLine("\n\n"+display);
+            logger?.WriteLine("\n\n" + display);
             return display.GetMD5String(false);
         }
 

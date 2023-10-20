@@ -29,7 +29,7 @@ namespace AoC.Advent2017.NorthCloud
     public class Variant
     {
         public Variant(string input) =>
-            (Value, IsReg) = (input.Length == 1 && input[0] >= 'a' && input[0] <= 'z') 
+            (Value, IsReg) = (input.Length == 1 && input[0] >= 'a' && input[0] <= 'z')
                 ? (input[0] - 'a', true)
                 : (long.Parse(input), false);
 
@@ -55,13 +55,15 @@ namespace AoC.Advent2017.NorthCloud
                 {
                     bus.Registers[v[0].Value] = v[1];
                     return 1;
-                });
+                }
+                );
 
                 yield return ("mul", (Variant[] v, DataBus bus) =>
                 {
                     bus.Registers[v[0].Value] *= v[1];
                     return 1;
-                });
+                }
+                );
             }
 
             if (isets.Contains("Day18"))
@@ -70,24 +72,28 @@ namespace AoC.Advent2017.NorthCloud
                 {
                     bus.Output.Write(v[0]);
                     return 1;
-                });
+                }
+                );
 
                 yield return ("add", (Variant[] v, DataBus bus) =>
                 {
                     bus.Registers[v[0].Value] += v[1];
                     return 1;
-                });
+                }
+                );
 
                 yield return ("mod", (Variant[] v, DataBus bus) =>
                 {
                     bus.Registers[v[0].Value] %= v[1];
                     return 1;
-                });
+                }
+                );
 
                 yield return ("jgz", (Variant[] v, DataBus bus) =>
                 {
                     return v[0] > 0 ? (int)v[1] : 1;
-                });
+                }
+                );
             }
 
             if (isets.Contains("Day18Part1"))
@@ -95,7 +101,8 @@ namespace AoC.Advent2017.NorthCloud
                 yield return ("rcv", (Variant[] v, DataBus bus) =>
                 {
                     return v[0] != 0 ? 9999 : 1; // halt execution
-                });
+                }
+                );
             }
 
             if (isets.Contains("Day18Part2"))
@@ -109,11 +116,12 @@ namespace AoC.Advent2017.NorthCloud
                         return 1;
                     }
                     else
-                    { 
+                    {
                         bus.Waiting = true;
                         return 0;
                     }
-                });
+                }
+                );
             }
 
             if (isets.Contains("Day23"))
@@ -121,13 +129,15 @@ namespace AoC.Advent2017.NorthCloud
                 yield return ("jnz", (Variant[] v, DataBus bus) =>
                 {
                     return v[0] != 0 ? (int)v[1] : 1;
-                });
+                }
+                );
 
                 yield return ("sub", (Variant[] v, DataBus bus) =>
                 {
                     bus.Registers[v[0].Value] -= v[1];
                     return 1;
-                });
+                }
+                );
             }
         }
     }

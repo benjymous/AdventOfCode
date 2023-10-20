@@ -37,21 +37,21 @@ namespace AoC.Advent2015
                         break;
 
                     case "jmp":
-                        programCounter += int.Parse(bits[1])-1;
+                        programCounter += int.Parse(bits[1]) - 1;
                         break;
 
                     case "jie":
                         if ((registers[reg] % 2) == 0)
                         {
-                            programCounter += int.Parse(bits[2])-1;
+                            programCounter += int.Parse(bits[2]) - 1;
                         }
- 
+
                         break;
 
                     case "jio":
                         if (registers[reg] == 1)
                         {
-                            programCounter += int.Parse(bits[2])-1;
+                            programCounter += int.Parse(bits[2]) - 1;
                         }
                         break;
 

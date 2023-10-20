@@ -181,7 +181,7 @@ noop".Replace("\r", "");
         [DataTestMethod]
         public void CRT_Part2_Regression()
         {
-            Assert.AreEqual("6DBA86D87D1C42C2DAE02CB537DA78C4", Day10.Part2(input, new ConsoleOut() ));
+            Assert.AreEqual("6DBA86D87D1C42C2DAE02CB537DA78C4", Day10.Part2(input, new ConsoleOut()));
         }
     }
 }

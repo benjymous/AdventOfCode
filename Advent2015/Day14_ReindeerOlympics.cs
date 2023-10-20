@@ -11,7 +11,7 @@ namespace AoC.Advent2015
         [Regex(@"(.+) can fly (.+) km\/s for (.+) seconds, but then must rest for (.+) seconds\.")]
         public record struct Reindeer(string Name, int Speed, int Sprint, int Rest)
         {
-            public IEnumerable<int> Distance()
+            public readonly IEnumerable<int> Distance()
             {
                 int total = 0;
                 yield return total;

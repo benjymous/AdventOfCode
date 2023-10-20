@@ -38,6 +38,7 @@ namespace AoC.Advent2015
         {
             if (jsonObj.red != null) return true;
 
+
             foreach (var child in jsonObj)
             {
                 if (child.Value.Type == JTokenType.String && child.Value == "red")
@@ -63,18 +64,15 @@ namespace AoC.Advent2015
                 return sum;
             }
 
-
             if (HasRed(jsonObj))
             {
                 return 0;
             }
             else
             {
-                //Console.WriteLine(jsonObj);
                 int sum = 0;
                 foreach (var child in jsonObj)
                 {
-                    //Console.WriteLine($"{child.Name}");
                     sum += GetSum(child.Value);
                 }
                 return sum;
@@ -88,25 +86,11 @@ namespace AoC.Advent2015
 
         public static int Part2(string input)
         {
-            dynamic jsonObj = JsonConvert.DeserializeObject(input);
-
-            return GetSum(jsonObj);
+            return GetSum((dynamic)JsonConvert.DeserializeObject(input));
         }
 
         public void Run(string input, ILogger logger)
         {
-
-            // var data = FindNumbers(input);
-            // foreach (var i in data)
-            // {
-            //     logger.WriteLine(i);
-            // }
-
-            // logger.WriteLine(Part2("[1,2,3]"));
-            // logger.WriteLine(Part2("[1,{\"c\":\"red\",\"b\":2},3"));
-            // logger.WriteLine(Part2("{\"d\":\"red\",\"e\":[1,2,3,4],\"f\":5}"));
-            // logger.WriteLine(Part2("[1,\"red\",5]"));
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

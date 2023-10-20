@@ -11,7 +11,7 @@ namespace AoC.Advent2019
 
         static readonly int[] initialPattern = new int[] { 0, 1, 0, -1 };
 
-        public static int SequenceAt(int iter, int pos) => initialPattern[((pos + 1) / (iter + 1) % 4)];
+        public static int SequenceAt(int iter, int pos) => initialPattern[(pos + 1) / (iter + 1) % 4];
 
         static IEnumerable<int> ApplyFFT(int[] input)
         {

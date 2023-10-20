@@ -34,7 +34,7 @@ namespace AoC.Advent2018
 
             public int CountGroups()
             {
-                List<HashSet<int>> foundGroups = new ();
+                List<HashSet<int>> foundGroups = new();
                 foreach (var node in Index)
                 {
                     var overlap = foundGroups.Where(g2 => g2.Overlaps(node.links)).ToHashSet();

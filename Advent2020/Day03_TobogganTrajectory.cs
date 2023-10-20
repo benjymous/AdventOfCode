@@ -7,7 +7,7 @@ namespace AoC.Advent2020
     public static class MapRowExtension
     {
         const char Tree = '#';
-        public static bool IsTree(this string row, int x) => row[x % row.Length] == Tree;
+        public static bool IsTree(this string[] map, int x, int y) => map[y][x % map[y].Length] == Tree;
     }
 
     public class Day03 : IPuzzle
@@ -19,7 +19,7 @@ namespace AoC.Advent2020
             int treeCount = 0;
             for (int x = 0, y = 0; y < map.Length; y += dy, x += dx)
             {
-                if (map[y].IsTree(x)) treeCount++;
+                if (map.IsTree(x,y)) treeCount++;
             }
             return treeCount;
         }

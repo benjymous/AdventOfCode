@@ -16,6 +16,11 @@ namespace AoC.Utils.Pathfinding
         bool IsWalkable(TCellDataType cell);
     }
 
+    public class WalkableBool : IIsWalkable<bool>
+    {
+        public bool IsWalkable(bool cell) => cell;
+    }
+
     public class GridMap<TCellDataType> : IMap<(int x, int y)>
     {
         public Dictionary<(int x, int y), TCellDataType> Data = new();
@@ -65,10 +70,9 @@ namespace AoC.Utils.Pathfinding
 
     public static class AStarExtension
     {
-        public static TCoordinateType[] FindPath<TCoordinateType>(this IMap<TCoordinateType> map, TCoordinateType start, TCoordinateType goal) 
+        public static TCoordinateType[] FindPath<TCoordinateType>(this IMap<TCoordinateType> map, TCoordinateType start, TCoordinateType goal)
             => AStar<TCoordinateType>.FindPath(map, start, goal);
     }
-
 
     public static class AStar<TCoordinateType>
     {

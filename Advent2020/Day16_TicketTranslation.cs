@@ -1,5 +1,4 @@
 ﻿using AoC.Utils;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,25 +8,19 @@ namespace AoC.Advent2020
     {
         public string Name => "2020-16";
 
-        class Range
+        [Regex(@"(\d+)\s?-\s?(\d+)")]
+        public record class Range(int Min, int Max)
         {
-            public Range(string input)
-            {
-                (Min, Max) = Util.ParseNumbers<int>(input, '-').Decompose2();
-            }
-
-            readonly int Min, Max;
-
             public bool InRange(int v) => (v >= Min && v <= Max);
         }
 
-        class TicketRule
+        public class TicketRule
         {
             public TicketRule(string input)
             {
                 var bits = input.Split(": ");
                 Class = bits[0];
-                Ranges = Util.Parse<Range>(bits[1], " or ");
+                Ranges = Util.RegexParse<Range>(bits[1], " or ").ToList();
             }
             public string Class;
             public List<Range> Ranges;
@@ -35,12 +28,9 @@ namespace AoC.Advent2020
             public bool Validate(int input) => Ranges.Any(r => r.InRange(input));
         }
 
-        class Ticket
+        public class Ticket
         {
-            public Ticket(string input)
-            {
-                Values = Util.ParseNumbers<int>(input);
-            }
+            public Ticket(string input) => Values = Util.ParseNumbers<int>(input);
 
             public bool Valid = true;
             public int[] Values;
@@ -48,9 +38,9 @@ namespace AoC.Advent2020
             public IEnumerable<(string, int)> Decode(Dictionary<string, int> lookup) => lookup.Select(kvp => (kvp.Key, Values[kvp.Value]));
         }
 
-        static IEnumerable<Ticket> ParseTickets(string input) => Util.Parse<Ticket>(input.Trim().Split("\n").Skip(1));
+        static List<Ticket> ParseTickets(string input) => Util.Parse<Ticket>(input.Trim().Split("\n").Skip(1));
 
-        class TicketScanner
+        public class TicketScanner
         {
             public TicketScanner(string input)
             {
@@ -63,17 +53,12 @@ namespace AoC.Advent2020
             public int ValidateNearbyTickets()
             {
                 int errorRate = 0;
-                foreach (var ticket in NearbyTickets)
+                foreach (var (ticket, val) in NearbyTickets.SelectMany(ticket => ticket.Values.Where(val => !Rules.Any(r => r.Validate(val))).Select(val => (ticket, val))))
                 {
-                    foreach (var val in ticket.Values)
-                    {
-                        if (!Rules.Any(r => r.Validate(val)))
-                        {
-                            ticket.Valid = false;
-                            errorRate += val;
-                        }
-                    }
+                    ticket.Valid = false;
+                    errorRate += val;
                 }
+
                 return errorRate;
             }
 
@@ -87,13 +72,7 @@ namespace AoC.Advent2020
                 {
                     classMatrix[rule.Class] = new HashSet<int>();
                     for (var i = 0; i < Rules.Count; ++i)
-                    {
-                        bool anyInvalid = validTickets.Any(t => !rule.Validate(t.Values[i]));
-                        if (!anyInvalid)
-                        {
-                            classMatrix[rule.Class].Add(i);
-                        }
-                    }
+                        if (!validTickets.Any(t => !rule.Validate(t.Values[i]))) classMatrix[rule.Class].Add(i);
                 }
 
                 Lookup = new Dictionary<string, int>();
@@ -109,13 +88,7 @@ namespace AoC.Advent2020
                             // Remove this value from all the other matrices
                             foreach (var entry2 in classMatrix)
                             {
-                                if (entry2.Key != entry1.Key)
-                                {
-                                    if (entry2.Value.Contains(found))
-                                    {
-                                        entry2.Value.Remove(found);
-                                    }
-                                }
+                                if (entry2.Key != entry1.Key) entry2.Value.Remove(found);
                             }
                         }
                     }
@@ -136,20 +109,12 @@ namespace AoC.Advent2020
             public Dictionary<string, int> Lookup;
         }
 
-        public static string TestDecode(string input)
-        {
-            var scanner = new TicketScanner(input);
-            scanner.DecodeTickets();
-            return string.Join(", ", scanner.DecodedTicket().OrderBy(kvp => kvp.Item1).Select(kvp => $"{kvp.Item1}: {kvp.Item2}"));
-        }
-
         public static int Part1(string input)
         {
-            var scanner = new TicketScanner(input);
-            return scanner.ValidateNearbyTickets();
+            return new TicketScanner(input).ValidateNearbyTickets();
         }
 
-        public static Int64 Part2(string input)
+        public static long Part2(string input)
         {
             var scanner = new TicketScanner(input);
             scanner.DecodeTickets();

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2015
 {
@@ -9,29 +7,26 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-10";
 
-        public static int[] SayIt(int[] input)
+        public static IEnumerable<int> SayIt(int[] input)
         {
-            List<int> result = new();
             for (int i = 0, run; i < input.Length; i += run)
             {
                 run = 0;
 
                 while ((run + i < input.Length) && (input[i] == input[i + run])) run++;
 
-                result.Add(run);
-                result.Add(input[i]);
+                yield return run;
+                yield return input[i];
             }
-
-            return result.ToArray();
         }
 
         public static int GetNth(string input, int iterations)
         {
-            var result = input.Trim().Select(ch => ch-'0').ToArray();
+            var result = input.Trim().Select(ch => ch - '0').ToArray();
 
             for (int i = 0; i < iterations; ++i)
             {
-                result = SayIt(result);
+                result = SayIt(result).ToArray();
             }
 
             return result.Length;
@@ -49,12 +44,6 @@ namespace AoC.Advent2015
 
         public void Run(string input, ILogger logger)
         {
-            //SayIt("1"); //11
-            //SayIt("11"); //21
-            //SayIt("21"); //1211
-            //SayIt("1211"); //111221
-            //SayIt("111221"); //312211
-
             logger.WriteLine("- Pt1 - " + Part1(input));
             logger.WriteLine("- Pt2 - " + Part2(input));
         }

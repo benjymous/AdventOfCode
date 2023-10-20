@@ -61,7 +61,7 @@ namespace AoC.Advent2018
             return Match(data, test.after);
         }
 
-        static Dictionary<Test, HashSet<IInstr>> RunTests(string[] lines, ILogger logger=null)
+        static Dictionary<Test, HashSet<IInstr>> RunTests(string[] lines, ILogger logger = null)
         {
             var tests = ParseTests(lines);
             logger?.WriteLine("1a");
@@ -115,7 +115,7 @@ namespace AoC.Advent2018
                     foreach (var other in testMatches)
                     {
                         other.Value.Remove(matched);
-                    }             
+                    }
                 }
             }
 

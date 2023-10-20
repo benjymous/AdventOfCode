@@ -38,24 +38,17 @@ namespace AoC.Advent2018
         public static int Run(string input, int iterations)
         {
             var currentState = Util.ParseMatrix<char>(input);
+            var (width, height) = currentState.Dimensions();
+            var newState = new char[width, height];
 
             var previous = new Dictionary<int, int>();
-
             int targetStep = iterations < 100 ? iterations : -1;
-
-            int width = currentState.Width();
-            int height = currentState.Height();
-
-            var newState = new char[width, height];
 
             for (var i = 0; i < iterations; ++i)
             {
-                if (targetStep == i)
-                {
-                    return Count(TREES, ref currentState) * Count(LUMBERYARD, ref currentState);
-                }
+                if (targetStep == i) break;
                 else if (targetStep == -1)
-                { 
+                {
                     var hash = CalcHash(ref currentState);
 
                     if (previous.TryGetValue(hash, out int idx))
@@ -68,13 +61,9 @@ namespace AoC.Advent2018
                 }
 
                 for (var y = 0; y < height; ++y)
-                {
                     for (var x = 0; x < width; ++x)
-                    {
-                        newState[x,y] = Step(currentState[x,y], GetNeighbours(currentState, x, y, width, height));
-                    }
+                        newState[x, y] = Step(currentState[x, y], GetNeighbours(currentState, x, y, width, height));
 
-                }
                 (currentState, newState) = (newState, currentState);
             }
 
@@ -83,17 +72,11 @@ namespace AoC.Advent2018
 
         private static IEnumerable<char> GetNeighbours(char[,] currentState, int x, int y, int width, int height)
         {
-            var minx = Math.Max(0, x - 1);
-            var miny = Math.Max(0, y - 1);
-            var maxx = Math.Min(height-1, x + 1);
-            var maxy = Math.Min(width-1, y + 1);
+            var (minx, miny) = (Math.Max(0, x - 1), Math.Max(0, y - 1));
+            var (maxx, maxy) = (Math.Min(height - 1, x + 1), Math.Min(width - 1, y + 1));
             for (var y1 = miny; y1 <= maxy; ++y1)
-            {
                 for (var x1 = minx; x1 <= maxx; ++x1)
-                {
-                    if (x != x1 || y != y1) yield return currentState[x1,y1];
-                }
-            }
+                    if (x != x1 || y != y1) yield return currentState[x1, y1];
         }
 
         public static int Part1(string input)

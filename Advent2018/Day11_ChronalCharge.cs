@@ -1,5 +1,4 @@
 ﻿using AoC.Utils.Vectors;
-using System;
 
 namespace AoC.Advent2018
 {
@@ -7,24 +6,35 @@ namespace AoC.Advent2018
     {
         public string Name => "2018-11";
 
-        public static int Power(int serial, int x, int y)
-        {
-            return ((((x + 10) * y) + serial) * (x + 10) / 100 % 10) - 5;
-        }
+        public static int Power(int serial, int x, int y) => ((((x + 10) * y) + serial) * (x + 10) / 100 % 10) - 5;
 
-        public static string Part1(string input)
+        private static int[,] InitGrid(string input)
         {
-            int SERIAL = int.Parse(input);
+            int serial = int.Parse(input);
 
             var grid = new int[301, 301];
 
             for (var y = 1; y <= 300; ++y)
-            {
                 for (var x = 1; x <= 300; ++x)
-                {
-                    grid[y, x] = Power(SERIAL, x, y);
-                }
-            }
+                    grid[y, x] = Power(serial, x, y);
+
+            return grid;
+        }
+
+        private static int CalcScore(int[,] grid, int size, int x, int y)
+        {
+            var score = 0;
+
+            for (var ya = 0; ya < size; ++ya)
+                for (var xa = 0; xa < size; ++xa)
+                    score += grid[y + ya, x + xa];
+
+            return score;
+        }
+
+        public static string Part1(string input)
+        {
+            int[,] grid = InitGrid(input);
 
             var max = 0;
             ManhattanVector2 pos = null;
@@ -33,15 +43,7 @@ namespace AoC.Advent2018
             {
                 for (var x = 1; x < 298; ++x)
                 {
-                    var score = 0;
-
-                    for (var ya = 0; ya < 3; ++ya)
-                    {
-                        for (var xa = 0; xa < 3; ++xa)
-                        {
-                            score += grid[y + ya, x + xa];
-                        }
-                    }
+                    int score = CalcScore(grid, 3, x, y);
 
                     if (score > max)
                     {
@@ -56,17 +58,7 @@ namespace AoC.Advent2018
 
         public static string Part2(string input)
         {
-            int SERIAL = int.Parse(input);
-
-            var grid = new int[301, 301];
-
-            for (var y = 1; y <= 300; ++y)
-            {
-                for (var x = 1; x <= 300; ++x)
-                {
-                    grid[y, x] = Power(SERIAL, x, y);
-                }
-            }
+            int[,] grid = InitGrid(input);
 
             var max = 0;
             var lastBest = 0;
@@ -75,20 +67,12 @@ namespace AoC.Advent2018
             for (var size = 1; size < 300; ++size)
             {
                 int sizeBest = 0;
-                
+
                 for (var y = 1; y < 300 - size; ++y)
                 {
                     for (var x = 1; x < 300 - size; ++x)
                     {
-                        var score = 0;
-
-                        for (var ya = 0; ya < size; ++ya)
-                        {
-                            for (var xa = 0; xa < size; ++xa)
-                            {
-                                score += grid[y + ya, x + xa];
-                            }
-                        }
+                        int score = CalcScore(grid, size, x, y);
 
                         if (score > max)
                         {
@@ -99,12 +83,8 @@ namespace AoC.Advent2018
                     }
                 }
 
-                if (sizeBest + 10 < lastBest)
-                {
-                    return pos.ToString();
-                }
+                if (sizeBest + 10 < lastBest) return pos.ToString();
                 lastBest = sizeBest;
-
             }
 
             return pos.ToString();

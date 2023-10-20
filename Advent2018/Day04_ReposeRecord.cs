@@ -29,7 +29,7 @@ namespace AoC.Advent2018
                 var bits = line.Split(" ");
                 if (line.Contains("Guard"))
                 {
-                    id = int.Parse(bits[3].Replace("#",""));
+                    id = int.Parse(bits[3].Replace("#", ""));
 
                     if (!d.guards.ContainsKey(id))
                     {

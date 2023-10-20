@@ -22,8 +22,8 @@ namespace AoC.Advent2018
             readonly Dictionary<char, HashSet<char>> dependencies = new();
             readonly HashSet<char> ready = new();
 
-            public bool WorkToDo => steps.Any();
-            public bool WorkReady => ready.Any();
+            public bool WorkToDo => steps.Count != 0;
+            public bool WorkReady => ready.Count != 0;
 
             public char GetNext()
             {
@@ -35,7 +35,7 @@ namespace AoC.Advent2018
             }
 
             public void UpdateDependencies() => ready.UnionWith(steps.Where(step => !dependencies.ContainsKey(step)));
-            public void CompleteTask(char task) => dependencies.Where(kvp => kvp.Value.Remove(task) && !kvp.Value.Any()).ForEach(kvp => dependencies.Remove(kvp.Key));
+            public void CompleteTask(char task) => dependencies.Where(kvp => kvp.Value.Remove(task) && kvp.Value.Count == 0).ForEach(kvp => dependencies.Remove(kvp.Key));
         }
 
         class Worker
@@ -51,7 +51,7 @@ namespace AoC.Advent2018
                     task = factory.GetNext();
                     timeRemaining = task - 4; // A = 61, B = 62, etc
                 }
-                if (timeRemaining > 0 && --timeRemaining==0) factory.CompleteTask(task);
+                if (timeRemaining > 0 && --timeRemaining == 0) factory.CompleteTask(task);
             }
         }
 

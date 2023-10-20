@@ -16,7 +16,7 @@ namespace AoC.Advent2018
         }
 
         public class TrainSim
-        {     
+        {
             readonly Dictionary<(int x, int y), Train> trains;
             readonly Dictionary<(int x, int y), char> map;
 

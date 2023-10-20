@@ -37,7 +37,7 @@ namespace AoC.Utils
             if ((v & 128) > 0) yield return 128;
         }
 
-        public static IEnumerable<T> BinarySequence<T>(this T v, T max=default) where T : IBinaryInteger<T>
+        public static IEnumerable<T> BinarySequence<T>(this T v, T max = default) where T : IBinaryInteger<T>
         {
             max ??= v;
             for (T k = T.One; k <= max; k <<= 1)
@@ -64,6 +64,14 @@ namespace AoC.Utils
                 num >>= 1;
             }
             return i;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T PushBit<T>(this T num, bool bit) where T: IBinaryInteger<T>
+        {
+            num <<= 1;
+            if (bit) num += T.One;
+            return num;
         }
 
         public static IEnumerable<T> BinarySequenceBigEndian<T>(this T v, T start) where T : IBinaryInteger<T>
@@ -180,13 +188,21 @@ namespace AoC.Utils
 
         public static (int x, int y) OffsetBy(this (int x, int y) left, Vectors.Direction2 right) => (left.x + right.DX, left.y + right.DY);
 
+        public static (int x, int y) Subtract(this (int x, int y) left, (int x, int y) right) => (left.x - right.x, left.y - right.y);
+
         public static (int x, int y, int z) Subtract(this (int x, int y, int z) left, (int x, int y, int z) right) => (left.x - right.x, left.y - right.y, left.z - right.z);
 
 
         public static T Sum<T>(this IEnumerable<T> elements) where T : ISummable<T>
         {
-            return elements.Skip(1).Aggregate(elements.First(), (total, val) => (total+val));
+            return elements.Skip(1).Aggregate(elements.First(), (total, val) => (total + val));
         }
+
+        public static uint Sum(this IEnumerable<uint> elements)
+        {
+            return elements.Skip(1).Aggregate(elements.First(), (total, val) => (total + val));
+        }
+        
     }
 
     public interface ISummable<TSelf> where TSelf : ISummable<TSelf>

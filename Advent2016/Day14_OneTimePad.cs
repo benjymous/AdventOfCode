@@ -9,7 +9,7 @@ namespace AoC.Advent2016
         public string Name => "2016-14";
 
         static IEnumerable<(int run, char repeat, string hash)> CheckRuns(int index, string input, bool stretch)
-        {            
+        {
             string hash = $"{input}{index}".GetMD5String(true);
             if (stretch)
             {
@@ -67,7 +67,7 @@ namespace AoC.Advent2016
                 last = FillCache(input, stretch, cache, last, index + 1000);
 
                 var triplet = runs[0].repeat;
-                if (cache.Where(v => v.index <= index+1000 && v.runs.Any(r => r.run >= 5 && r.repeat == triplet)).Any() && ++found == 64)
+                if (cache.Where(v => v.index <= index + 1000 && v.runs.Any(r => r.run >= 5 && r.repeat == triplet)).Any() && ++found == 64)
                     return index;
             }
         }

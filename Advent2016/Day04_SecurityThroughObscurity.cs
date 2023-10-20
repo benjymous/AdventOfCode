@@ -32,7 +32,7 @@ namespace AoC.Advent2016
 
             private bool DecryptedStartsWith(string input, string check)
             {
-                for(int i=0; i< check.Length; ++i)
+                for (int i = 0; i < check.Length; ++i)
                 {
                     if ((char)('a' + ((input[i] - 'a' + SectionID) % 26)) != check[i]) return false;
                 }

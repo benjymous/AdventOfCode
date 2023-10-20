@@ -9,7 +9,7 @@ namespace AoC.Advent2017
 
         public class Factory
         {
-            [Regex(@"(.+)\/(.+)")] public static (int x, int y, int s) Component(int x, int y) => (x, y, x+y);
+            [Regex(@"(.+)\/(.+)")] public static (int x, int y, int s) Component(int x, int y) => (x, y, x + y);
         }
 
         public static ((int length, int strength) longstrong, int strongest) GetChains(string input)

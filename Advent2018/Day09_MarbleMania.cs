@@ -16,7 +16,7 @@ namespace AoC.Advent2018
 
             var current = circle;
 
-            for(uint m = 1; m <= marbles; ++m)
+            for (uint m = 1; m <= marbles; ++m)
             {
                 if (m % 23 == 0)
                 {

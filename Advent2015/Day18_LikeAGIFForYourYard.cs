@@ -25,7 +25,7 @@ namespace AoC.Advent2015
                 if (stuckCorners) corners = new HashSet<int> { 0, Width, Height << 8, Width + (Height << 8) };
             }
 
-            readonly int[] neighbours = new[] { -1, +1, 1<<8, -1<<8, -1 + (1<<8), +1 + (1<<8), -1 - (1 << 8), +1 - (1 << 8), };
+            readonly int[] neighbours = new[] { -1, +1, 1 << 8, -1 << 8, -1 + (1 << 8), +1 + (1 << 8), -1 - (1 << 8), +1 - (1 << 8), };
             int Neighbours(int p)
             {
                 int count = 0;
@@ -36,7 +36,7 @@ namespace AoC.Advent2015
             public void Tick(State oldState)
             {
                 cells.Clear();
-                for (var y = 0; y <= Height<<8; y+=1<<8)
+                for (var y = 0; y <= Height << 8; y += 1 << 8)
                 {
                     for (var key = y; key <= Width + y; ++key)
                     {
@@ -52,7 +52,7 @@ namespace AoC.Advent2015
 
         public static int Run(string input, int steps, bool stuckCorners = false)
         {
-            State s1 = new (input, stuckCorners), s2 = new (s1);
+            State s1 = new(input, stuckCorners), s2 = new(s1);
 
             for (int i = 0; i < steps; ++i)
             {

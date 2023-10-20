@@ -10,14 +10,14 @@ namespace AoC.Advent2016
 
         const string direction = "UDLR";
 
-        static readonly int[] offsets = new [] { -4, 4, -1, 1 };
+        static readonly int[] offsets = new[] { -4, 4, -1, 1 };
 
         static readonly bool[][] availableDoors = GetAvailableDoors();
 
         static bool[][] GetAvailableDoors()
         {
             bool[][] result = new bool[16][];
-            for (int i=0; i<16; ++i)
+            for (int i = 0; i < 16; ++i)
             {
                 int x = i % 4, y = i / 4;
                 result[i] = new bool[] { y > 0, y < 3, x > 0, x < 3 };
@@ -44,7 +44,7 @@ namespace AoC.Advent2016
             string best = "";
             var dest = 15; // bottom right cell
 
-            while (jobqueue.Any())
+            while (jobqueue.Count != 0)
             {
                 var entry = jobqueue.Dequeue();
 

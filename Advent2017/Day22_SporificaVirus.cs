@@ -1,7 +1,5 @@
-﻿using AoC.Utils;
-using AoC.Utils.Vectors;
+﻿using AoC.Utils.Vectors;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace AoC.Advent2017
 {
@@ -9,19 +7,15 @@ namespace AoC.Advent2017
     {
         public string Name => "2017-22";
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ToKey(int x, int y) => x + (y << 16);
 
         public static int Part1(string input)
         {
             var data = Util.ParseSparseMatrix<bool>(input);
-
-            var width = data.Max(kvp => kvp.Key.x);
-            var height = data.Max(kvp => kvp.Key.y);
+            var (width, height) = (data.Max(kvp => kvp.Key.x), data.Max(kvp => kvp.Key.y));
 
             var pos = ToKey(x: width / 2, y: height / 2);
-            var dir = new Direction2(0, 0);
-            dir.FaceNorth();
+            var dir = new Direction2(Direction2.North);
 
             var grid = data.Where(kvp => kvp.Value == true).Select(kvp => ToKey(kvp.Key.x, kvp.Key.y)).ToHashSet();
 
@@ -47,25 +41,22 @@ namespace AoC.Advent2017
             return infections;
         }
 
+        const char Clean = '.';
+        const char Infected = '#';
+        const char Weakened = 'W';
+        const char Flagged = 'F';
+
         public static int Part2(string input)
         {
             var data = Util.ParseSparseMatrix<char>(input);
-
-            var width = data.Max(kvp => kvp.Key.x);
-            var height = data.Max(kvp => kvp.Key.y);
+            var (width, height) = (data.Max(kvp => kvp.Key.x), data.Max(kvp => kvp.Key.y));
 
             var pos = ToKey(x: width / 2, y: height / 2);
-            var dir = new Direction2(0, 0);
-            dir.FaceNorth();
+            var dir = new Direction2(Direction2.North);
 
-            var grid = data.Where(kvp => kvp.Value == '#').ToDictionary(kvp => ToKey(kvp.Key.x, kvp.Key.y), kvp => kvp.Value);
+            var grid = data.Where(kvp => kvp.Value == Infected).ToDictionary(kvp => ToKey(kvp.Key.x, kvp.Key.y), kvp => kvp.Value);
 
             int infections = 0;
-
-            const char Clean = '.';
-            const char Infected = '#';
-            const char Weakened = 'W';
-            const char Flagged = 'F';
 
             for (int i = 0; i < 10000000; ++i)
             {

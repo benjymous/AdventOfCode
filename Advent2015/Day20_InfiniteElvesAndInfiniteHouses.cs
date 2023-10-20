@@ -1,11 +1,4 @@
-﻿using AoC.Utils;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Numerics;
-
-namespace AoC.Advent2015
+﻿namespace AoC.Advent2015
 {
     public class Day20 : IPuzzle
     {

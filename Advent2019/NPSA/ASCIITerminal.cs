@@ -3,24 +3,23 @@ using AoC.Utils.Vectors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AoC.Advent2019.NPSA
 {
 
-    abstract class ASCIITerminal : NPSA.ICPUInterrupt
+    abstract class ASCIITerminal : ICPUInterrupt
     {
-        protected NPSA.IntCPU cpu;
+        protected IntCPU cpu;
 
-        protected NPSA.ASCIIBuffer buffer = new();
+        protected ASCIIBuffer buffer = new();
 
-        protected Int64 finalOutput;
+        protected long finalOutput;
 
         public bool Interactive { get; set; } = false;
 
         public ASCIITerminal(string program, int reserve = 0)
         {
-            cpu = new NPSA.IntCPU(program)
+            cpu = new IntCPU(program)
             {
                 Interrupt = this
             };
@@ -34,7 +33,7 @@ namespace AoC.Advent2019.NPSA
 
         public void OutputReady()
         {
-            Int64 v = cpu.Output.Dequeue();
+            long v = cpu.Output.Dequeue();
 
             if (v <= 255)
             {
@@ -52,7 +51,7 @@ namespace AoC.Advent2019.NPSA
         {
             var inputs = AutomaticInput().ToArray();
 
-            if (inputs.Any())
+            if (inputs.Length != 0)
             {
                 foreach (var line in inputs)
                 {
@@ -62,9 +61,9 @@ namespace AoC.Advent2019.NPSA
                     }
                     foreach (var c in line)
                     {
-                        cpu.Input.Enqueue(c);
+                        cpu.AddInput(c);
                     }
-                    cpu.Input.Enqueue('\n');
+                    cpu.AddInput('\n');
                 }
             }
             else
@@ -73,17 +72,14 @@ namespace AoC.Advent2019.NPSA
                 {
                     Console.Write("?> ");
                     var input = Console.ReadLine();
-                    foreach (var c in input.ToArray())
-                    {
-                        cpu.Input.Enqueue(c);
-                    }
-                    cpu.Input.Enqueue('\n');
+                    cpu.AddInput(input.Select(c => (long)c).ToArray());
+                    cpu.AddInput('\n');
                 }
             }
         }
     }
 
-    class InteractiveTerminal : Advent2019.NPSA.ASCIITerminal
+    class InteractiveTerminal : ASCIITerminal
     {
         public InteractiveTerminal(string program) : base(program)
         {
@@ -110,11 +106,7 @@ namespace AoC.Advent2019.NPSA
         public bool DisplayLive { get; set; } = false;
 
         public List<string> Lines { get; set; } = new List<string>();
-        private StringBuilder sb = new();
-
-        public ASCIIBuffer()
-        {
-        }
+        private readonly List<char> sb = new();
 
         public IEnumerable<string> Pop()
         {
@@ -125,65 +117,54 @@ namespace AoC.Advent2019.NPSA
 
         public void Write(char c)
         {
-            if (DisplayLive)
+            if (DisplayLive) Console.Write(c);
+
+            if (c == '\n')
             {
-                Console.Write(c);
-            }
+                Lines.Add(sb.AsString());
+                sb.Clear();
 
-            switch (c)
-            {
-                case '\n':
-
-                    Lines.Add(sb.ToString());
-                    sb = new StringBuilder();
-
-                    if (Cursor.X == 0)
-                    {
-                        Cursor.Y = 0;
-                        Cursor.X = 0;
-                        if (DisplayLive)
-                        {
-                            Console.WriteLine();
-                        }
-                    }
-
+                if (Cursor.X == 0)
+                {
+                    Cursor.Y = 0;
                     Cursor.X = 0;
-                    Cursor.Y++;
-                    break;
+                    if (DisplayLive) Console.WriteLine();
+                }
 
-                default:
-                    sb.Append(c);
-                    screenBuffer[Cursor.X + (Cursor.Y << 16)] = c;
-                    Cursor.X++;
-                    break;
+                Cursor.X = 0;
+                Cursor.Y++;
+            }
+            else
+            { 
+                sb.Add(c);
+                screenBuffer[Cursor.X + (Cursor.Y << 16)] = c;
+                Cursor.X++;
             }
 
             Max.X = Math.Max(Max.X, Cursor.X);
             Max.Y = Math.Max(Max.Y, Cursor.Y);
         }
 
-        public char GetAt(int x, int y) => screenBuffer.GetOrDefault(x + (y<<16));
+        public char GetAt(int x, int y) => screenBuffer.GetOrDefault(x + (y << 16));
 
-        public (int x, int y) FindCharacter(char c)
+        public int FindCharacter(char c)
         {
-            var res = screenBuffer.Where(kvp => kvp.Value == c);
-            if (res.Any())
+            var res = FindAll(c);
+            if (res.Count != 0)
             {
-                var found = res.First().Key;
-                return (found & 0xffff, found >> 16);
-                // return res.First().Key;
+                return res.First();
             }
 
             throw new Exception("Not found");
         }
 
-        public void Clear()
+        public HashSet<int> FindAll(char c)
         {
-            Max.Set(0, 0);
-            screenBuffer.Clear();
-            Lines.Clear();
-            sb = new StringBuilder();
+            return screenBuffer.Where(kvp => kvp.Value == c).Select(kvp => kvp.Key).ToHashSet();
         }
 
+        static public (int x, int y) DecodePos(int i) => (i & 0xffff, i >> 16);
+        static public int EncodePos(int x, int y) => x + (y << 16);
+        static public int EncodePos((int x, int y) p) => p.x + (p.y << 16);
     }
 }

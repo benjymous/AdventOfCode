@@ -77,7 +77,7 @@ namespace AoC.Advent2018
             immune.ForEach(g => g.AttackDamage += boost);
             infection.ForEach(g => g.ImmuneSystem = false);
 
-            return immune.Concat(infection).Select((g,id) => { g.Id = 1 << id; return g; });
+            return immune.Concat(infection).Select((g, id) => { g.Id = 1 << id; return g; });
         }
 
         public static long Part1(string input)

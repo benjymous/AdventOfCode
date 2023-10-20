@@ -1,5 +1,4 @@
-﻿using AoC.Utils;
-using AoC.Utils.Vectors;
+﻿using AoC.Utils.Vectors;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,20 +10,14 @@ namespace AoC.Advent2020
 
         static IEnumerable<string> SplitCommands(string line)
         {
-            for (int i = 0; i < line.Length; ++i)
-            {
-                yield return line[i] == 'w' || line[i] == 'e' ? line.Substring(i, 1) : line.Substring(i++, 2);
-            }
+            for (int i = 0; i < line.Length; ++i) yield return line[i] == 'w' || line[i] == 'e' ? line.Substring(i, 1) : line.Substring(i++, 2);
         }
 
         static HexVector FollowPath(string path) => SplitCommands(path).Aggregate(new HexVector(0, 0, 0), (prev, step) => prev.TranslateHex(step));
 
         public class State
         {
-            public State(int reserve)
-            {
-                Cells = new HashSet<int>(reserve);
-            }
+            public State(int reserve) => Cells = new HashSet<int>(reserve);
 
             public State(HashSet<HexVector> initialState)
             {
@@ -35,26 +28,16 @@ namespace AoC.Advent2020
             public void Reset()
             {
                 Cells.Clear();
-                XRange.Reset();
-                YRange.Reset();
+                Range.Reset();
             }
 
-            readonly Accumulator<int> XRange = new();
-            readonly Accumulator<int> YRange = new();
+            public readonly Accumulator2D<int> Range = new();
             public HashSet<int> Cells { get; private set; }
-
-            public IEnumerable<(int x, int y)> Range()
-            {
-                foreach (var y in YRange.RangeBuffered(1))
-                    foreach (var x in XRange.RangeBuffered(1))
-                        yield return (x, y);
-            }
 
             public void Set(int x, int y)
             {
-                XRange.Add(x);
-                YRange.Add(y);
-                Cells.Add(x + (y<<16));
+                Range.Add(x,y);
+                Cells.Add(x + (y << 16));
             }
 
             public bool Get(int x, int y) => Cells.Contains(x + (y << 16));
@@ -77,52 +60,32 @@ namespace AoC.Advent2020
             }
         }
 
-        public static void Tick(State oldState, State newState)
+        public static (State, State) Tick(State oldState, State newState)
         {
             newState.Reset();
-            foreach (var (x, y) in oldState.Range())
-            {
-                newState.Tick(oldState, x, y);
-            }
+            foreach (var (x, y) in oldState.Range.RangeBuffered(1)) newState.Tick(oldState, x, y);
+            return (oldState, newState);
         }
 
         public static int Run(HashSet<HexVector> initialState, int cycles)
         {
-            State s1 = new (initialState), s2 = new(initialState.Count);
+            State s1 = new(initialState), s2 = new(initialState.Count);
 
-            while (cycles-- > 0)
-            {
-                Tick(s1, s2);
-
-                (s1, s2) = (s2, s1);
-            }
+            while (cycles-- > 0) (s2, s1) = Tick(s1, s2);
 
             return s1.Cells.Count;
         }
 
-        static HashSet<HexVector> GetInitialState(string input)
-        {
-            var data = input.Trim().Split("\n");
-
-            var counts = new Dictionary<HexVector, int>();
-
-            foreach (var line in data)
-            {
-                counts.IncrementAtIndex(FollowPath(line));
-            }
-            return new HashSet<HexVector>(counts.Where(kvp => kvp.Value % 2 == 1).Select(kvp => kvp.Key));
-        }
+        static HashSet<HexVector> GetInitialState(string input) => input.Trim().Split("\n").Select(line => FollowPath(line)).GroupBy(v => v).Where(group => group.Count() % 2 == 1).Select(group => group.First()).ToHashSet();
 
         public static int Part1(string input)
         {
-            var state = GetInitialState(input);
-            return state.Count;
+            return GetInitialState(input).Count;
         }
 
         public static int Part2(string input)
         {
-            var state = GetInitialState(input);
-            return Run(state, 100);
+            return Run(GetInitialState(input), 100);
         }
 
         public void Run(string input, ILogger logger)

@@ -20,7 +20,7 @@ namespace AoC.Advent2015
             public readonly Dictionary<int, int> Atlas = new();
             public readonly HashSet<char> Names = new();
         }
-     
+
         public static int GetKey(char p1, char p2) => p1 * p2;
 
         static int TryPermutations(char first, char prev, IEnumerable<char> remaining, Dictionary<int, int> scores)

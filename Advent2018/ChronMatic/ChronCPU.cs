@@ -2,7 +2,6 @@ using AoC.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace AoC.Advent2018.ChronMatic
 {
@@ -130,7 +129,7 @@ namespace AoC.Advent2018.ChronMatic
         public IInstr instr;
         public int[] values;
 
-        internal string Dump() => instr.Dump(values[0], values[1], values[2]);
+        internal readonly string Dump() => instr.Dump(values[0], values[1], values[2]);
     }
 
     public class ChronCPU

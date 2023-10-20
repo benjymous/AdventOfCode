@@ -17,7 +17,7 @@ namespace AoC.Advent2018
             var width = data.Max(pos => pos.x);
             var height = data.Max(pos => pos.y);
 
-            var grid = new int[height,width];
+            var grid = new int[height, width];
 
             Dictionary<int, int> counts = new();
 
@@ -52,20 +52,20 @@ namespace AoC.Advent2018
 
                     if (smallestCount == 1)
                     {
-                        grid[y,x] = smallestIdx;
+                        grid[y, x] = smallestIdx;
                         counts.IncrementAtIndex(smallestIdx);
                     }
                     else
                     {
-                        grid[y,x] = -1;
+                        grid[y, x] = -1;
                     }
                 }
             }
-          
+
             for (var x = 0; x < width; ++x)
             {
                 counts.Remove(grid[0, x]);
-                counts.Remove(grid[height - 1,x]);
+                counts.Remove(grid[height - 1, x]);
             }
 
             for (var y = 0; y < height; ++y)

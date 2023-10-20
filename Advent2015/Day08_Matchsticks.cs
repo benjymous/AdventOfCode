@@ -18,7 +18,7 @@ namespace AoC.Advent2015
                 {
                     string hex = $"{input[i + 2]}{input[i + 3]}";
 
-                    if (Int32.TryParse(hex, System.Globalization.NumberStyles.HexNumber, null, out int parsed))
+                    if (int.TryParse(hex, System.Globalization.NumberStyles.HexNumber, null, out int parsed))
                     {
                         var decoded = (char)parsed;
 
@@ -64,7 +64,7 @@ namespace AoC.Advent2015
 
         public static string Escape(string input)
         {
-            return '\"' + String.Join("", input.Select(Encode)) + '\"';
+            return '\"' + string.Join("", input.Select(Encode)) + '\"';
         }
 
         public static int Part1(string input)

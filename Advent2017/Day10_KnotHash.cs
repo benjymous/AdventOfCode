@@ -13,7 +13,7 @@ namespace AoC.Advent2017
         {
             public Loop(Circle<int> val) => (first, current) = (val, val);
 
-            public int CheckSum() => first * first.Next();
+            public readonly int CheckSum() => first * first.Next();
 
             public void PerformCycles(IEnumerable<int> instructions, int cycles)
             {
@@ -27,7 +27,7 @@ namespace AoC.Advent2017
                 }
             }
 
-            public IEnumerable<int> KnotHash()
+            public readonly IEnumerable<int> KnotHash()
             {
                 return first.Partition(16).Select(g => g.Xor());
             }
@@ -61,7 +61,7 @@ namespace AoC.Advent2017
 
         public static string Part2(string input)
         {
-            return string.Join("",KnotHash(input).Select(i => i.ToHex()));
+            return string.Join("", KnotHash(input).Select(i => i.ToHex()));
         }
 
         public void Run(string input, ILogger logger)

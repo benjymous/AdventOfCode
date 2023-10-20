@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace AoC.Advent2017
 {
@@ -26,7 +25,7 @@ namespace AoC.Advent2017
                 values.Enqueue(value);
             }
 
-            public bool HasData() => values.Any();
+            public bool HasData() => values.Count != 0;
 
             public long Read() => values.Dequeue();
         }

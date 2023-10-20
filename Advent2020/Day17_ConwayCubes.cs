@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Advent.Utils;
+using AoC.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,63 +18,32 @@ namespace AoC.Advent2020
                 Dimensions = dimensions;
             }
 
-            public State(string input, int dimensions)
-            {
-                directions = Directions(dimensions).ToList();
-                Dimensions = dimensions;
-
-                Cells = Util.ParseSparseMatrix<char>(input).Where(kvp => kvp.Value == '#').Select(kvp => (kvp.Key.x, kvp.Key.y, 0, 0)).ToHashSet();
-            }
-
-            public void Reset() => Cells.Clear();
+            public State(string input, int dimensions) : this(dimensions) => Cells = Util.ParseSparseMatrix<char>(input).Where(kvp => kvp.Value == '#').Select(kvp => (kvp.Key.x, kvp.Key.y, 0, 0)).ToHashSet();
 
             readonly int Dimensions;
             public HashSet<(int x, int y, int z, int w)> Cells { get; private set; } = new();
 
-            public (int minx, int miny, int minz, int minw, int maxx, int maxy, int maxz, int maxw) Range()
+            public IEnumerable<(int x, int y, int z, int w)> Positions()
             {
                 var range = Cells.Aggregate((minx: 0, miny: 0, minz: 0, minw: 0, maxx: 0, maxy: 0, maxz: 0, maxw: 0), (curr, next) =>
                     (Math.Min(curr.minx, next.x), Math.Min(curr.miny, next.y), Math.Min(curr.minz, next.z), Math.Min(curr.minw, next.w),
                      Math.Max(curr.maxx, next.x), Math.Max(curr.maxy, next.y), Math.Max(curr.maxz, next.z), Math.Max(curr.maxw, next.w)));
 
-                if (Dimensions == 4)
-                {
-                    range.minw--; range.maxw++;
-                }
+                if (Dimensions == 4) { range.minw--; range.maxw++; }
                 range.minz--; range.maxz++;
                 range.miny--; range.maxy++;
                 range.minx--; range.maxx++;
 
-               return range;
+                return range.Iterate();
             }
-
             readonly IEnumerable<(int x, int y, int z, int w)> directions;
 
-            public static IEnumerable<(int x, int y, int z, int w)> Directions(int dimensions)
-            {
-                int minw = dimensions == 4 ? -1 : 0;
-                int maxw = dimensions == 4 ? 1 : 0;
-                for (var w = minw; w <= maxw; ++w)
-                {
-                    for (var z = -1; z <= 1; ++z)
-                    {
-                        for (var y = -1; y <= 1; ++y)
-                        {
-                            for (var x = -1; x <= 1; ++x)
-                            {
-                                if (x == 0 && y == 0 && z == 0 && w == 0) continue;
-                                yield return (x, y, z, w);
-                            }
-                        }
-                    }
-                }
-            }
+            public static IEnumerable<(int x, int y, int z, int w)> Directions(int dimensions) => (-1, -1, -1, dimensions == 4 ? -1 : 0, 1, 1, 1, dimensions == 4 ? 1 : 0).Iterate().Where(pos => pos.x != 0 || pos.y != 0 || pos.z != 0 || pos.w != 0);
 
             public bool CheckDirection((int x, int y, int z, int w) pos, (int x, int y, int z, int w) dir) =>
                 Cells.Contains((pos.x + dir.x, pos.y + dir.y, pos.z + dir.z, pos.w + dir.w));
 
-            public int Neighbours((int x, int y, int z, int w) pos) =>
-                directions.Count(d => CheckDirection(pos, d));
+            public int Neighbours((int x, int y, int z, int w) pos) => directions.Count(d => CheckDirection(pos, d));
 
             public void Tick(State oldState, (int x, int y, int z, int w) pos)
             {
@@ -81,38 +52,20 @@ namespace AoC.Advent2020
             }
         }
 
-
-        static void Tick(State oldState, State newState)
+        static (State, State) Tick(State oldState, State newState)
         {
-            newState.Reset();
+            newState.Cells.Clear();
 
-            var (minx, miny, minz, minw, maxx, maxy, maxz, maxw) = oldState.Range();
+            oldState.Positions().ToArray().ForEach(pos => newState.Tick(oldState, pos));
 
-            for (int w = minw; w <= maxw; ++w)
-            {
-                for (int z = minz; z <= maxz; ++z)
-                {
-                    for (int y = miny; y <= maxy; ++y)
-                    {
-                        for (int x = minx; x <= maxx; ++x)
-                        {
-                            newState.Tick(oldState, (x, y, z, w));
-                        }
-                    }
-                }
-            }
+            return (oldState, newState);
         }
 
         public static int Run(string input, int cycles, int dimensions)
         {
-            State s1 = new (input, dimensions), s2 = new (dimensions);
+            State s1 = new(input, dimensions), s2 = new(dimensions);
 
-            while (cycles-- > 0)
-            {
-                Tick(s1, s2);
-
-                (s1, s2) = (s2, s1);
-            }
+            while (cycles-- > 0) (s2, s1) = Tick(s1, s2);
 
             return s1.Cells.Count;
         }

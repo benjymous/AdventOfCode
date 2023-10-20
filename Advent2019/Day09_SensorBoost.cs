@@ -6,9 +6,8 @@
 
         public static string Run(string program, int input)
         {
-            var cpu = new NPSA.IntCPU(program);
-            cpu.Reserve(8000);
-            cpu.Input.Enqueue(input);
+            var cpu = new NPSA.IntCPU(program, 8000);
+            cpu.AddInput(input);
             cpu.Run();
             return string.Join(",", cpu.Output);
         }

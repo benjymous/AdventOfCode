@@ -1,4 +1,3 @@
-using AoC.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 

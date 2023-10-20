@@ -1,6 +1,7 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Vectors;
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,7 +32,7 @@ namespace AoC.Advent2022
             public Map(string input)
             {
                 var (mapData, tapeData) = input.Split("\n\n").Decompose2();
-                Data = Util.ParseSparseMatrix<char>(mapData).Where(kvp => kvp.Value != ' ').ToDictionary();
+                Data = Util.ParseSparseMatrix<char>(mapData).Where(kvp => kvp.Value != ' ').ToFrozenDictionary();
                 Tape = GetInstructions(tapeData.Trim()).ToList();
                 (maxX, maxY) = (Data.Max(kvp => kvp.Key.x), Data.Max(kvp => kvp.Key.y));
                 for (int y = 0; y <= maxY; ++y) (rowMin[y], rowMax[y]) = Data.Where(kvp => kvp.Key.y == y).MinMax(kvp => kvp.Key.x);
@@ -46,7 +47,7 @@ namespace AoC.Advent2022
             public Dictionary<char, Face> faceIndex = null;
             public Dictionary<char, (int x, int y)> faceLocationIndex = null;
 
-            public readonly Dictionary<(int x, int y), char> Data;
+            public FrozenDictionary<(int x, int y), char> Data;
             public readonly IEnumerable<string> Tape;
 
             public readonly Dictionary<int, int> rowMin = new(), rowMax = new(), colMin = new(), colMax = new();

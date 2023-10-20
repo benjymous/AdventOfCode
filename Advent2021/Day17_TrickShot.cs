@@ -13,9 +13,9 @@ namespace AoC.Advent2021
         {
             public static TargetRect Create(string input) => Util.RegexCreate<TargetRect>(input);
 
-            public bool Contains((int X, int Y) point, bool ignoreX) => ignoreX ? point.Y >= Y1 && point.Y <= Y2 : point.X >= X1 && point.Y >= Y1 && point.X <= X2 && point.Y <= Y2;
+            public readonly bool Contains((int X, int Y) point, bool ignoreX) => ignoreX ? point.Y >= Y1 && point.Y <= Y2 : point.X >= X1 && point.Y >= Y1 && point.X <= X2 && point.Y <= Y2;
 
-            public bool Missed((int X, int Y) point, bool ignoreX) => ignoreX ? point.Y < Y1 : point.X > X2 || point.Y < Y1;
+            public readonly bool Missed((int X, int Y) point, bool ignoreX) => ignoreX ? point.Y < Y1 : point.X > X2 || point.Y < Y1;
         }
 
         public static (bool hit, int maxY) TestShot(TargetRect rect, (int DX, int DY) vel, bool ignoreX = false)

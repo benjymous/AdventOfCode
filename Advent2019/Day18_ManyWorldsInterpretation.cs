@@ -81,7 +81,7 @@ namespace AoC.Advent2019
                             // door
                             doors[KeyCode(c)] = (x, y);
                         }
-                        Data[(x,y)] = c;
+                        Data[(x, y)] = c;
                     }
                 }
             }
@@ -98,33 +98,12 @@ namespace AoC.Advent2019
                     startPositions.Add((x - 1, y + 1));
                     startPositions.Add((x + 1, y + 1));
 
-                    Data[(x,y)] = '#';
+                    Data[(x, y)] = '#';
 
-                    Data[(x - 1,y)] = '#';
-                    Data[(x + 1,y)] = '#';
-                    Data[(x,y - 1)] = '#';
-                    Data[(x,y + 1)] = '#';
-                }
-            }
-
-            public void DrawMap()
-            {
-                for (var y = 0; y < 7; ++y)
-                {
-                    for (var x = 0; x < 7; ++x)
-                    {
-                        var c = Data[(x,y)];
-
-                        var pos = (x, y);
-
-                        if (startPositions.Contains(pos))
-                        {
-                            c = (char)('1' + startPositions.IndexOf(pos));
-                        }
-
-                        Console.Write(c);
-                    }
-                    Console.WriteLine();
+                    Data[(x - 1, y)] = '#';
+                    Data[(x + 1, y)] = '#';
+                    Data[(x, y - 1)] = '#';
+                    Data[(x, y + 1)] = '#';
                 }
             }
 
@@ -143,24 +122,23 @@ namespace AoC.Advent2019
                     {
                         var path = this.FindPath(player, keyPositions[k1]);
                         int playerId = PlayerCode(startPositions.IndexOf(player));
-                        if (path.Any())
+                        if (path.Length != 0)
                         {
                             Paths[playerId | k1] = new RoomPath(path.Select(pos => Data[pos]));
                         }
                     }
-                    for(int j = i + 1; j < keyIds.Length; j++)
+                    for (int j = i + 1; j < keyIds.Length; j++)
                     {
                         int k2 = keyIds[j];
-    
+
                         // path from k1 to k2
                         var path = this.FindPath(keyPositions[k1], keyPositions[k2]);
-                        if (path.Any())
+                        if (path.Length != 0)
                         {
                             Paths[k1 | k2] = new RoomPath(path.Select(pos => Data[pos])); // since we're using bitwise, we just store two bits for k1|k2 it doesn't matter which way around
                         }
                     }
                 }
-                Console.WriteLine($"Generated {Paths.Count} paths");
             }
         }
 
@@ -170,8 +148,6 @@ namespace AoC.Advent2019
         {
             map.CalcPaths();
 
-            logger.WriteLine("2");
-
             var shortestPath = map.Paths.Values.Min(room => room.Count);
 
             var queue = new PriorityQueue<(int positions, int heldKeys, int distance), int>();
@@ -180,8 +156,6 @@ namespace AoC.Advent2019
             var cache = new Dictionary<long, int>() { { GetKey(map.AllPlayers, 0), 0 } };
 
             int currentBest = int.MaxValue;
-
-            logger.WriteLine("3");
 
             queue.Operate((state, estimatedDistance) =>
             {
@@ -231,26 +205,18 @@ namespace AoC.Advent2019
                 }
             });
 
-            Console.WriteLine($"examined {cache.Count} states");
-
-            logger.WriteLine("4");
-
             return currentBest;
         }
 
         public static int Part1(string input, ILogger logger)
         {
-            logger.WriteLine("0");
             var map = new MapData(input);
-            logger.WriteLine("1");
             return Solve(map, logger);
         }
 
         public static int Part2(string input, ILogger logger)
         {
-            logger.WriteLine("0");
             var map = new MapData(input);
-            logger.WriteLine("1");
             map.AlterForPart2();
             return Solve(map, logger);
         }

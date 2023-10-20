@@ -1,5 +1,6 @@
 ﻿using AoC.Utils;
 using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,9 +10,10 @@ namespace AoC.Advent2021
     {
         public string Name => "2021-23";
 
-        static readonly Dictionary<sbyte, char> destinations = new() { { Convert(3, 2), 'A' }, { Convert(5, 2), 'B' }, { Convert(7, 2), 'C' }, { Convert(9, 2), 'D' }, { Convert(3, 3), 'A' }, { Convert(5, 3), 'B' }, { Convert(7, 3), 'C' }, { Convert(9, 3), 'D' }, { Convert(3, 4), 'A' }, { Convert(5, 4), 'B' }, { Convert(7, 4), 'C' }, { Convert(9, 4), 'D' }, { Convert(3, 5), 'A' }, { Convert(5, 5), 'B' }, { Convert(7, 5), 'C' }, { Convert(9, 5), 'D' } };
+        static readonly FrozenDictionary<sbyte, char> destinations = (new Dictionary<sbyte, char>() { { Convert(3, 2), 'A' }, { Convert(5, 2), 'B' }, { Convert(7, 2), 'C' }, { Convert(9, 2), 'D' }, { Convert(3, 3), 'A' }, { Convert(5, 3), 'B' }, { Convert(7, 3), 'C' }, { Convert(9, 3), 'D' }, { Convert(3, 4), 'A' }, { Convert(5, 4), 'B' }, { Convert(7, 4), 'C' }, { Convert(9, 4), 'D' }, { Convert(3, 5), 'A' }, { Convert(5, 5), 'B' }, { Convert(7, 5), 'C' }, { Convert(9, 5), 'D' } }).ToFrozenDictionary();
         static readonly int[] destinationCol = new int[] { 3, 5, 7, 9 };
         static readonly int[] moveCosts = new int[] { 1, 10, 100, 1000 };
+        private static readonly string[] elements = new string[] { "  #D#C#B#A#", "  #D#B#A#C#" };
 
         static bool IsClear(int x1, int x2, State state) => !Util.RangeInclusive(Math.Min(x1, x2), Math.Max(x1, x2)).Any(x => !state.CellOpen(Convert(x, 1)));
         static sbyte Convert(int x, int y) => (sbyte)(x - 1 + (y - 1) * 11);
@@ -32,8 +34,8 @@ namespace AoC.Advent2021
                 EstimatedScore = Score + Critters.Select(c => (Pos: Convert(c.Key), c.Value)).Sum(v => v.Pos.x != destinationCol[v.Value - 'A'] ? (v.Pos.y - 1 + Math.Abs(v.Pos.x - destinationCol[v.Value - 'A'])) * moveCosts[v.Value - 'A'] : 0);
             }
 
-            public bool CellOpen(int bit) => ((OpenCells >> bit) & 1) == 1;
-            public bool CellOccupied(int cell) => Critters.ContainsKey((sbyte)cell);
+            public readonly bool CellOpen(int bit) => ((OpenCells >> bit) & 1) == 1;
+            public readonly bool CellOccupied(int cell) => Critters.ContainsKey((sbyte)cell);
 
             public (ulong, uint) Key;
             public ulong OpenCells;
@@ -98,7 +100,7 @@ namespace AoC.Advent2021
 
                     CloseCompleted(newState);
 
-                    if (newState.Critters.Any()) queue.Enqueue(newState, newState.EstimatedScore);
+                    if (newState.Critters.Count != 0) queue.Enqueue(newState, newState.EstimatedScore);
                     else bestScore = Math.Min(bestScore, newState.Score);
                 }
             });
@@ -113,7 +115,7 @@ namespace AoC.Advent2021
 
         public static int Part2(string input)
         {
-            return ShrimpStacker(input.Split('\n').InsertRangeAt(new string[] { "  #D#C#B#A#", "  #D#B#A#C#" }, 3));
+            return ShrimpStacker(input.Split('\n').InsertRangeAt(elements, 3));
         }
 
         public void Run(string input, ILogger logger)

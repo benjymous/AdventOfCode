@@ -83,14 +83,19 @@ namespace AoC
 
         public static IEnumerable<(ConstructorInfo tc, RegexAttribute attr)> EnumeratePotentialConstructors<T>()
         {
-            if (typeof(T).GetCustomAttribute(typeof(RegexAttribute)) is RegexAttribute ownAttr)
+            return EnumeratePotentialConstructors(typeof(T));
+        }
+
+        public static IEnumerable<(ConstructorInfo tc, RegexAttribute attr)> EnumeratePotentialConstructors(Type t)
+        {
+            if (t.GetCustomAttribute(typeof(RegexAttribute)) is RegexAttribute ownAttr)
             {
-                var typeConstructor = typeof(T).GetConstructors().First();
-                yield return (typeConstructor,  ownAttr);
+                var typeConstructor = t.GetConstructors().First();
+                yield return (typeConstructor, ownAttr);
             }
             else
             {
-                foreach (var typeConstructor in typeof(T).GetConstructors())
+                foreach (var typeConstructor in t.GetConstructors())
                 {
                     if (typeConstructor?.GetCustomAttributes(typeof(RegexAttribute), true)
                         .FirstOrDefault() is not RegexAttribute attribute) continue; // skip constructor if it doesn't have attr
@@ -100,7 +105,7 @@ namespace AoC
             }
         }
 
-        public static T RegexCreate<T>(string line, (ConstructorInfo tc, RegexAttribute attr)[] potentialConstructors=null)
+        public static T RegexCreate<T>(string line, (ConstructorInfo tc, RegexAttribute attr)[] potentialConstructors = null)
         {
             potentialConstructors ??= EnumeratePotentialConstructors<T>().ToArray();
             foreach (var (tc, attr) in potentialConstructors)
@@ -110,11 +115,39 @@ namespace AoC
             throw new Exception($"RegexParse failed to find suitable constructor for '{line}' in {typeof(T).Name}");
         }
 
+        public static object RegexCreate(Type t, string line, (ConstructorInfo tc, RegexAttribute attr)[] potentialConstructors = null)
+        {
+            potentialConstructors ??= EnumeratePotentialConstructors(t).ToArray();
+            foreach (var (tc, attr) in potentialConstructors)
+            {
+                if (RegexCreateInternal(t, line, tc, attr, out object result)) return result;
+            }
+            throw new Exception($"RegexParse failed to find suitable constructor for '{line}' in {t.Name}");
+        }
+
+        static bool RegexCreateInternal(Type t, string line, ConstructorInfo typeConstructor, RegexAttribute attr, out object result)
+        {
+            var matches = attr.Regex.Matches(line); // match this constructor against the input line
+
+            if (matches.Count == 0)
+            {
+                result = default;
+                return false;
+            }// Try other constructors to see if they match
+
+            var paramInfo = typeConstructor.GetParameters();
+
+            object[] convertedParams = ConstructParams(matches, paramInfo);
+            result = Activator.CreateInstance(t, convertedParams);
+
+            return true;
+        }
+
         static bool RegexCreateInternal<T>(string line, ConstructorInfo typeConstructor, RegexAttribute attr, out T result)
         {
             var matches = attr.Regex.Matches(line); // match this constructor against the input line
 
-            if (!matches.Any())
+            if (matches.Count == 0)
             {
                 result = default;
                 return false;
@@ -128,6 +161,7 @@ namespace AoC
             return true;
         }
 
+
         private static object ConvertFromString(Type type, string input)
         {
             if (type.IsArray)
@@ -138,11 +172,26 @@ namespace AoC
                 if (elementType == typeof(int)) return ParseNumbers<int>(input).ToArray();
                 if (elementType == typeof(long)) return ParseNumbers<long>(input).ToArray();
 
+                if (elementType.IsClass)
+                {
+                    var arr = RegexParse(elementType, Split(input)).ToList();
+                    var dat = arr.Select(o => Convert.ChangeType(o, elementType)).ToArray();
+                    return Convert.ChangeType(arr, type);
+                }
+
                 throw new Exception("Can't convert array type " + type);
             }
             else
             {
-                return TypeDescriptor.GetConverter(type).ConvertFromString(input);
+
+                if (type == typeof(string)) return input;
+                if (type == typeof(int)) return int.Parse(input);
+                if (type == typeof(long)) return long.Parse(input);
+
+                var conv = TypeDescriptor.GetConverter(type);
+                if (conv.CanConvertFrom(typeof(string))) return conv.ConvertFromString(input);
+
+                return RegexCreate(type, input);
             }
         }
 
@@ -167,6 +216,13 @@ namespace AoC
                  .Select(line => RegexCreate<T>(line, constructors));//.ToList();
         }
 
+        public static IEnumerable<object> RegexParse(Type t, IEnumerable<string> input)
+        {
+            (ConstructorInfo tc, RegexAttribute attr)[] constructors = EnumeratePotentialConstructors(t).ToArray();
+            return input.WithoutNullOrWhiteSpace()
+                 .Select(line => RegexCreate(t, line, constructors));//.ToList();
+        }
+
         public static IEnumerable<T> RegexParse<T>(string input, string splitter = "\n") =>
             RegexParse<T>(input.Split(splitter));
 
@@ -180,7 +236,7 @@ namespace AoC
 
                 var matches = attribute.Regex.Matches(line); // match this constructor against the input line
 
-                if (!matches.Any()) continue; // Try other constructors to see if they match
+                if (matches.Count == 0) continue; // Try other constructors to see if they match
 
                 var paramInfo = func.GetParameters();
 
@@ -201,7 +257,7 @@ namespace AoC
 
                 var matches = attribute.Regex.Matches(line); // match this constructor against the input line
 
-                if (!matches.Any()) continue; // Try other constructors to see if they match
+                if (matches.Count == 0) continue; // Try other constructors to see if they match
 
                 var paramInfo = func.GetParameters();
 
@@ -383,7 +439,7 @@ namespace AoC
             for (int i = 0; i < count; ++i) yield return generator();
         }
 
-        public static IEnumerable<X> For<T,X>(T start, T end, T step, Func<T, X> action) where T : IBinaryInteger<T>
+        public static IEnumerable<X> For<T, X>(T start, T end, T step, Func<T, X> action) where T : IBinaryInteger<T>
         {
             for (T i = start; i < end; i += step) yield return action(i);
         }
@@ -410,7 +466,20 @@ namespace AoC
             }
         }
 
-        public static IEnumerable<T> Values<T>(params T[] input) => input;
+        public static T[] Values<T>(params T[] input) => input;
+
+        public static int CountTrue(params bool[] input) => input.Count(v => v);
+
+        public static int CountTrue(Func<int, bool> check, Action action=null)
+        {
+            int i = 0;
+            while (check(i))
+            {
+                action?.Invoke();
+                i++;
+            }
+            return i;
+        }
 
         public static void Test<T>(T actual, T expected)
         {
@@ -573,7 +642,7 @@ namespace AoC
             }
         }
 
-        public static IEnumerable<(T1, T2)> Combinations<T1,T2>(IEnumerable<T1> set1, IEnumerable<T2> set2)
+        public static IEnumerable<(T1, T2)> Combinations<T1, T2>(IEnumerable<T1> set1, IEnumerable<T2> set2)
         {
             foreach (var item1 in set1)
                 foreach (var item2 in set2)
@@ -585,7 +654,7 @@ namespace AoC
 
         public static uint MakeFourCC(string name) => name[0] + ((uint)name[1] << 8) + ((uint)name[2] << 16) + ((uint)name[3] << 24);
 
-        public static (T min, T max) MinMax<T>(params T[] input) where T: IBinaryInteger<T>
+        public static (T min, T max) MinMax<T>(params T[] input) where T : IBinaryInteger<T>
         {
             return (input.Min(), input.Max());
         }
@@ -745,6 +814,32 @@ namespace AoC
         public ConsoleOut() : base(Console.Out)
         {
         }
+    }
+
+    public class Accumulator2D<T> where T : INumber<T>, IMinMaxValue<T>
+    {
+        public Accumulator<T> X = new();
+        public Accumulator<T> Y = new();
+
+        public void Reset()
+        {
+            X.Reset();
+            Y.Reset();
+        }
+
+        public void Add(T x, T y)
+        {
+            X.Add(x);
+            Y.Add(y);
+        }
+
+        public IEnumerable<(T x, T y)> RangeBuffered(T buffer)
+        {
+            foreach (var y in Y.RangeBuffered(buffer))
+                foreach (var x in X.RangeBuffered(buffer))
+                    yield return (x, y);
+        }
+
     }
 
     public class Accumulator<T> where T : INumber<T>, IMinMaxValue<T>

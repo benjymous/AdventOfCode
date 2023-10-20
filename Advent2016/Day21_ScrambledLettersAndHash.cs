@@ -35,7 +35,7 @@ namespace AoC.Advent2016
             [Regex(@"UNROTATE (.)")]
             public static CharFunc Unrotate(char letter) => pwd =>
             {
-                for (int i=1; i<=8; ++i)
+                for (int i = 1; i <= 8; ++i)
                 {
                     if (i != 5)
                     {

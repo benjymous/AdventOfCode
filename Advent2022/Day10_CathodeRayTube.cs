@@ -25,7 +25,7 @@ namespace AoC.Advent2022
             }
         }
 
-        public static IEnumerable<char> SimulateCRT(IEnumerable<(int cycle, int x)> watch) 
+        public static IEnumerable<char> SimulateCRT(IEnumerable<(int cycle, int x)> watch)
             => watch.Select(v => (beamPos: v.cycle % 40, v.x))
                     .Select(v => (v.beamPos == 0 ? '\n' : (v.beamPos >= v.x && v.beamPos <= v.x + 2) ? '▊' : ' '));
 

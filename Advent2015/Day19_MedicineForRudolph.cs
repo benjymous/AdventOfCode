@@ -75,7 +75,7 @@ namespace AoC.Advent2015
                 }
                 ReduceSubPart(ref molecule, ref steps, rules.Where(r => r[1].Contains('(')));
             }
-         
+
             while (molecule != "e") // with brackets gone, rest should reduce
             {
                 ReduceSubPart(ref molecule, ref steps, rules);

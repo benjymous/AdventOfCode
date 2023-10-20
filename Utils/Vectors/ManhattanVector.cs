@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
@@ -28,13 +29,13 @@ namespace AoC.Utils.Vectors
 
         public void Set(params int[] newVal)
         {
-            if (newVal.Length != ComponentCount) throw new System.Exception("Incompatible vectors");
+            if (newVal.Length != ComponentCount) throw new Exception("Incompatible vectors");
             Component = newVal;
         }
 
         public void Offset(params int[] offset)
         {
-            if (offset.Length != ComponentCount) throw new System.Exception("Incompatible vectors");
+            if (offset.Length != ComponentCount) throw new Exception("Incompatible vectors");
             for (int i = 0; i < offset.Length; ++i)
             {
                 Component[i] += offset[i];
@@ -48,7 +49,7 @@ namespace AoC.Utils.Vectors
 
         public static ManhattanVectorN operator +(ManhattanVectorN a, ManhattanVectorN b)
         {
-            if (a.ComponentCount != b.ComponentCount) throw new System.Exception("Incompatible vectors");
+            if (a.ComponentCount != b.ComponentCount) throw new Exception("Incompatible vectors");
             int[] newVal = (int[])(a.Component.Clone());
             for (int i = 0; i < a.ComponentCount; ++i)
             {
@@ -59,7 +60,7 @@ namespace AoC.Utils.Vectors
 
         public static ManhattanVectorN operator -(ManhattanVectorN a, ManhattanVectorN b)
         {
-            if (a.ComponentCount != b.ComponentCount) throw new System.Exception("Incompatible vectors");
+            if (a.ComponentCount != b.ComponentCount) throw new Exception("Incompatible vectors");
             int[] newVal = (int[])(a.Component.Clone());
             for (int i = 0; i < a.ComponentCount; ++i)
             {
@@ -121,7 +122,6 @@ namespace AoC.Utils.Vectors
 
     }
 
-    [TypeConverter(typeof(ManhattanVector2TypeConverter))]
     public class ManhattanVector2 : ManhattanVectorN
     {
         public ManhattanVector2(params int[] vals)
@@ -130,6 +130,8 @@ namespace AoC.Utils.Vectors
             if (ComponentCount != 2) throw new Exception("Invalid component count for Vector2");
         }
 
+
+        [Regex("(.+)")]
         public ManhattanVector2(string val)
             : base(val)
         {
@@ -143,7 +145,7 @@ namespace AoC.Utils.Vectors
         }
 
         public ManhattanVector2((int x, int y) val)
-            : base(new int[] {val.x, val.y})
+            : base(new int[] { val.x, val.y })
         {
         }
 
@@ -217,7 +219,7 @@ namespace AoC.Utils.Vectors
         public ManhattanVector2 Delta(ManhattanVector2 other)
         {
             var delta = this - other;
-            for(int i=0; i<2; ++i)
+            for (int i = 0; i < 2; ++i)
             {
                 delta.Component[i] = Math.Sign(delta.Component[i]);
             }
@@ -227,7 +229,6 @@ namespace AoC.Utils.Vectors
         public static readonly ManhattanVector2 Zero = new(0, 0);
     }
 
-    [TypeConverter(typeof(ManhattanVector3TypeConverter))]
     public class ManhattanVector3 : ManhattanVectorN
     {
         public ManhattanVector3(params int[] vals)
@@ -242,6 +243,7 @@ namespace AoC.Utils.Vectors
             if (ComponentCount != 3) throw new Exception("Invalid component count for Vector3");
         }
 
+        [Regex("(.+)")]
         public ManhattanVector3(string val)
             : base(val)
         {
@@ -268,7 +270,6 @@ namespace AoC.Utils.Vectors
         public static readonly ManhattanVector3 Zero = new(0, 0, 0);
     }
 
-    [TypeConverter(typeof(ManhattanVector4TypeConverter))]
     public class ManhattanVector4 : ManhattanVectorN
     {
         public ManhattanVector4(params int[] vals)
@@ -277,6 +278,7 @@ namespace AoC.Utils.Vectors
             if (ComponentCount != 4) throw new Exception("Invalid component count for Vector4");
         }
 
+        [Regex("(.+)")]
         public ManhattanVector4(string val)
             : base(val)
         {
@@ -305,33 +307,6 @@ namespace AoC.Utils.Vectors
     }
 
 
-    #region typeconverters
-    public class ManhattanVector2TypeConverter : TypeConverter
-    {
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value) => new ManhattanVector2(value as string);
-    }
-
-    public class ManhattanVector3TypeConverter : TypeConverter
-    {
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value) => new ManhattanVector3(value as string);
-    }
-
-    public class ManhattanVector4TypeConverter : TypeConverter
-    {
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType); 
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value) => new ManhattanVector4(value as string);
-    }
-
-    public class Direction2TypeConverter : TypeConverter
-    {
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value) => new Direction2((value as string)[0]);
-    }
-    #endregion
-
-    [TypeConverter(typeof(Direction2TypeConverter))]
     public class Direction2
     {
         public int DX { get; set; } = 0;
@@ -349,6 +324,7 @@ namespace AoC.Utils.Vectors
             DY = dy;
         }
 
+        [Regex("(.)")]
         public Direction2(char dir)
         {
             SetDirection(dir switch
@@ -511,4 +487,27 @@ namespace AoC.Utils.Vectors
             return HashCode.Combine(DX, DY);
         }
     }
+
+
+    public static class VectorCollectionExtensions
+    {
+        public static (int minZ, int maxZ, int minY, int maxY, int minX, int maxX) GetRange(this IEnumerable<ManhattanVector3> input)
+        {
+            var (minX, minY, minZ) = (int.MaxValue, int.MaxValue, int.MaxValue);
+            var (maxX, maxY, maxZ) = (int.MinValue, int.MinValue, int.MinValue);
+
+            foreach (var e in input)
+            {
+                maxX = Math.Max(maxX, e.X);
+                minX = Math.Min(minX, e.X);
+                maxY = Math.Max(maxY, e.Y);
+                minY = Math.Min(minY, e.Y);
+                maxZ = Math.Max(maxZ, e.Z);
+                minZ = Math.Min(minZ, e.Z);
+            }
+
+            return (minZ, maxZ, minY, maxY, minX, maxX);
+        }
+    }
+
 }

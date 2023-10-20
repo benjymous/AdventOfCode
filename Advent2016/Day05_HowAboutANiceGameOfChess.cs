@@ -55,18 +55,6 @@ namespace AoC.Advent2016
 
         public void Run(string input, ILogger logger)
         {
-            // var watch = new System.Diagnostics.Stopwatch();        
-            // watch.Start();
-            // for(int i=0; i<10; ++i)
-            // {
-            //     HashBreaker.FindHash("abcdefg", 4);
-            //     logger.WriteLine(watch.ElapsedMilliseconds/(i+1));
-            // }
-
-            //Console.WriteLine(CrackPassword("abc"));
-
-            //Console.WriteLine(CrackPassword2("abc"));
-
             logger.WriteLine("- Pt1 - " + Part1(input, logger));
             logger.WriteLine("- Pt2 - " + Part2(input, logger));
         }

@@ -13,7 +13,7 @@ namespace AoC.Advent2018
             int doubles = 0;
             int triples = 0;
 
-            foreach(var id in keys)
+            foreach (var id in keys)
             {
                 var grp = id.GroupBy(c => c);
                 doubles += grp.Any(g => g.Count() == 2) ? 1 : 0;

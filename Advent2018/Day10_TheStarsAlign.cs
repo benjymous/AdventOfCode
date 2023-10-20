@@ -22,7 +22,7 @@ namespace AoC.Advent2018
                 velocity = vel;
             }
 
-            public void Step() => position =  position.OffsetBy(velocity);
+            public void Step() => position = position.OffsetBy(velocity);
 
             public override string ToString() => $"{position} - {velocity}";
         }

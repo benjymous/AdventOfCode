@@ -8,10 +8,10 @@ namespace AoC.Advent2022
 
         [Regex(@"(\d+)-(\d+),(\d+)-(\d+)")]
         record struct Pair(int Min1, int Max1, int Min2, int Max2)
-        { 
-            public bool SubsetContained => Min1 >= Min2 && Max1 <= Max2 || Min2 >= Min1 && Max2 <= Max1;
+        {
+            public readonly bool SubsetContained => Min1 >= Min2 && Max1 <= Max2 || Min2 >= Min1 && Max2 <= Max1;
 
-            public bool HasOverlap => Min1 <= Max2 && Min2 <= Max1;
+            public readonly bool HasOverlap => Min1 <= Max2 && Min2 <= Max1;
         }
 
         public static int Part1(string input)

@@ -8,7 +8,7 @@ namespace AoC.Advent2017.Test
     {
         readonly string input = Util.GetInput<Day25>();
 
-        readonly string test = 
+        readonly string test =
 @"Begin in state A.
 Perform a diagnostic checksum after 6 steps.
 
@@ -31,7 +31,7 @@ In state B:
     - Write the value 1.
     - Move one slot to the right.
     - Continue with state A.
-".Replace("\r","");
+".Replace("\r", "");
 
         [TestCategory("Test")]
         [DataTestMethod]

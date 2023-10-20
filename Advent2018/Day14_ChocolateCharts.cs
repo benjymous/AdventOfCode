@@ -32,7 +32,7 @@ namespace AoC.Advent2018
 
             int[] current = { 0, 1 };
 
-            StepRecipe(recipe, ref current, start+keep);
+            StepRecipe(recipe, ref current, start + keep);
 
             return string.Join("", recipe).Substring(start, keep);
         }
@@ -41,7 +41,7 @@ namespace AoC.Advent2018
         public static int Part2(string input)
         {
             var recipe = new List<int> { 3, 7 };
-            var toFind = input.Trim().Select(c => c-'0').ToArray();
+            var toFind = input.Trim().Select(c => c - '0').ToArray();
 
             int[] current = { 0, 1 };
 

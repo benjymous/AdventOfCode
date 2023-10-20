@@ -15,9 +15,8 @@ namespace AoC.Advent2019
 
             foreach (var phase in inputs)
             {
-                var cpu = new NPSA.IntCPU(program);
-                cpu.Input.Enqueue(phase);
-                cpu.Input.Enqueue(signal);
+                var cpu = new IntCPU(program);
+                cpu.AddInput(phase, signal);
                 cpu.Run();
                 signal = cpu.Output.First();
             }
@@ -35,7 +34,7 @@ namespace AoC.Advent2019
 
             while (true)
             {
-                cpus[current].Input.Enqueue(signal);
+                cpus[current].AddInput(signal);
                 while (cpus[current].Output.Count == 0)
                 {
                     if (!cpus[current].Step()) return output;
@@ -50,16 +49,12 @@ namespace AoC.Advent2019
 
         public static long Part1(string input)
         {
-            var permutations = Enumerable.Range(0, 5).Permutations();
-
-            return permutations.AsParallel().Max(set => RunAmplifiers01(input, set));
+            return Enumerable.Range(0, 5).Permutations().AsParallel().Max(set => RunAmplifiers01(input, set));
         }
 
         public static long Part2(string input)
         {
-            var permutations = Enumerable.Range(5, 5).Permutations();
-
-            return permutations.AsParallel().Max(set => RunAmplifiers02(input, set));
+            return Enumerable.Range(5, 5).Permutations().AsParallel().Max(set => RunAmplifiers02(input, set));
         }
 
         public void Run(string input, ILogger logger)

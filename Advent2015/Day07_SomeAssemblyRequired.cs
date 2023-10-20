@@ -33,7 +33,7 @@ namespace AoC.Advent2015
             public int IntValue => intValue.Value;
             public string StringValue => strValue;
 
-            public static implicit operator Variant(string str) => new (str);
+            public static implicit operator Variant(string str) => new(str);
 
             public override string ToString() => IsNumeric ? $"'{IntValue}' [int]" : $"'{StringValue}' [str]";
         }
@@ -71,7 +71,7 @@ namespace AoC.Advent2015
                     Operator.NOT => 65535 - Solve(comp.Input1),
                     _ => throw new NotImplementedException(),
                 };
-               
+
                 return comp.Resolved.Value;
             }
 

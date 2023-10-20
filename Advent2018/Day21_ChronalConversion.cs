@@ -22,7 +22,7 @@ namespace AoC.Advent2018
 
 
             long /*r0 = 0,*/ r1 = 0, r2 = 0, r3 = 0, r4 = 0, r5 = 0;
-            Int64 cycle = 0;
+            long cycle = 0;
             while (true)
             {
                 cycle++;
@@ -149,7 +149,7 @@ namespace AoC.Advent2018
             HashSet<long> seen = new();
 
             long r0 = 0, r1 = 0, r2 = 0, r3 = 0, r4 = 0, r5 = 0;
-            Int64 cycle = 0;
+            long cycle = 0;
             int seenLast = 0;
             long lastValue = 0;
             while (true)
@@ -181,7 +181,7 @@ namespace AoC.Advent2018
                     case 3: r3 += r1; break;
 
                     // seti 0 0 3
-                    case 4: r3 = 0+1; goto case 1;
+                    case 4: r3 = 0 + 1; goto case 1;
 
                     // seti 0 7 1
                     case 5: r1 = 0; r3++; goto case 6;
@@ -217,7 +217,7 @@ namespace AoC.Advent2018
                     case 15: r3++; break;
 
                     // seti 27 6 3
-                    case 16: r3 = 27+1; goto case 28;
+                    case 16: r3 = 27 + 1; goto case 28;
 
                     // seti 0 2 5
                     case 17: r5 = 0; r3++; goto case 18;
@@ -244,13 +244,13 @@ namespace AoC.Advent2018
                     case 24: r5++; goto case 25;
 
                     // seti 17 1 3
-                    case 25: r3 = 17+1; goto case 18;
+                    case 25: r3 = 17 + 1; goto case 18;
 
                     // setr 5 6 4
                     case 26: r4 = r5; goto case 27;
 
                     // seti 7 8 3
-                    case 27: r3 = 7+1; goto case 8;
+                    case 27: r3 = 7 + 1; goto case 8;
 
                     // eqrr 1 0 5
                     case 28:

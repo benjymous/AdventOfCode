@@ -9,182 +9,86 @@ namespace AoC.Advent2015
     {
         public string Name => "2015-22";
 
-        public enum Spell
-        {
-            MagicMissile,
-            Drain,
-            Shield,
-            Poison,
-            Recharge,
-        }
-
-        static readonly Dictionary<Spell, (int mana, int duration)> Spells = new()
-        {
-            { Spell.MagicMissile,  (53,0) },
-            { Spell.Drain,  (73,0) },
-            { Spell.Shield,  (113,6) },
-            { Spell.Poison,  (173,6) },
-            { Spell.Recharge, (229,5) }
+        static readonly List<(int mana, int duration, Action<State> cast, Action<State, int> tick)> Spells = new()
+        { 
+            /* Magic Missile */ { ( 53,0, (State s) => { s.BossHP -= 4; },                  (State s, int duration) => { }) }, 
+            /* Drain         */ { ( 73,0, (State s) => { s.BossHP -= 2; s.PlayerHP += 2; }, (State s, int duration) => { }) }, 
+            /* Shield        */ { (113,6, (State s) => { s.PlayerArmour += 7; },            (State s, int duration) => { if (duration == 0) s.PlayerArmour -= 7;}) }, 
+            /* Poison        */ { (173,6, (State s) => { },                                 (State s, int duration) => { s.BossHP -= 3; }) }, 
+            /* Recharge      */ { (229,5, (State s) => { },                                 (State s, int duration) => { s.PlayerMana += 101; }) } 
         };
 
         public class State
         {
             [Regex(@"Hit Points: (\d+)\nDamage: (\d+)")]
-            public State(int bossHP, int bossDamage)
+            public State(int bossHP, int bossDamage) => (BossHP, BossDamage) = (bossHP, bossDamage);
+
+            State(State state, (int mana, int duration, Action<State> cast, Action<State, int> tick) spell)
             {
-                (BossHP, BossDamage) = (bossHP, bossDamage);
-                PlayerHP = 50;
-                PlayerArmour = 0;
-                PlayerMana = 500;
+                (PlayerHP, PlayerArmour, PlayerMana, BossHP, BossDamage, ManaSpend, PlayerTurn, ActiveEffects) = (state.PlayerHP, state.PlayerArmour, state.PlayerMana - spell.mana, state.BossHP, state.BossDamage, state.ManaSpend + spell.mana, !state.PlayerTurn, new Dictionary<int, (Action<State, int> effect, int remaining)>(state.ActiveEffects).Plus(spell.mana, (spell.tick, spell.duration)));
+                spell.cast(this);
             }
 
-            public State(State state)
+            public int PlayerHP = 50, PlayerArmour = 0, PlayerMana = 500, ManaSpend = 0, BossHP, BossDamage;
+
+            bool PlayerTurn = true;
+
+            public Dictionary<int, (Action<State, int> effect, int remaining)> ActiveEffects = new();
+
+            public int Priority => BossHP + ManaSpend;
+
+            public IEnumerable<(State, int)> Tick(bool hardMode)
             {
-                PlayerHP = state.PlayerHP;
-                PlayerArmour = state.PlayerArmour;
-                PlayerMana = state.PlayerMana;
-                BossHP = state.BossHP;
-                BossDamage = state.BossDamage;
-                ManaSpend = state.ManaSpend;
-                PlayerTurn = !state.PlayerTurn;
-                HardMode = state.HardMode;
-
-                ActiveEffects = new(state.ActiveEffects);
-            }
-
-            public int PlayerHP;
-            public int PlayerArmour;
-            public int PlayerMana;
-
-            public int BossHP;
-            public int BossDamage;
-
-            public int ManaSpend = 0;
-
-            public bool PlayerTurn = true;
-            public bool HardMode = false;
-
-            public Dictionary<Spell, int> ActiveEffects = new();
-
-            public IEnumerable<State> Tick()
-            {
-                foreach (var (effect, duration) in ActiveEffects.Select(kvp => (kvp.Key, kvp.Value - 1)))
+                foreach (var (key, effect, remaining) in ActiveEffects.Select(kvp => (kvp.Key, kvp.Value.effect, kvp.Value.remaining - 1)))
                 {
-                    switch (effect)
-                    {
-                        case Spell.Poison:
-                            BossHP -= 3;
-                            break;
-                        case Spell.Shield:
-                            if (duration == 0) PlayerArmour -= 7;
-                            break;
-                        case Spell.Recharge:
-                            PlayerMana += 101;
-                            break;
-                    }
-     
-                    if (duration > 0) ActiveEffects[effect] = duration;
-                    else ActiveEffects.Remove(effect);
-                }
+                    effect(this, remaining);
 
+                    if (remaining > 0) ActiveEffects[key] = (effect, remaining);
+                    else ActiveEffects.Remove(key);
+                }
+          
                 if (PlayerTurn)
                 {
-                    if (HardMode) PlayerHP--;
-
+                    if (hardMode) PlayerHP--;
                     if (PlayerHP > 0)
-                    {
-                        foreach (var spell in Spells.Where(spell => spell.Value.mana <= PlayerMana && !ActiveEffects.ContainsKey(spell.Key)))
-                        {
-                            var newState = new State(this);
-
-                            switch (spell.Key)
-                            {
-                                case Spell.MagicMissile:
-                                    newState.BossHP -= 4;
-                                    break;
-
-                                case Spell.Drain:
-                                    newState.BossHP -= 2;
-                                    newState.PlayerHP += 2;
-                                    break;
-
-                                case Spell.Shield:
-                                    newState.PlayerArmour += 7;
-                                    break;
-                            }
-
-                            if (spell.Value.duration > 0)
-                            {
-                                newState.ActiveEffects.Add(spell.Key, spell.Value.duration);
-                            }
-                            newState.PlayerMana -= spell.Value.mana;
-                            newState.ManaSpend += spell.Value.mana;
-
-                            yield return newState;
-                        }
-                    }
+                        foreach (var newState in Spells.Where(spell => spell.mana <= PlayerMana && !ActiveEffects.ContainsKey(spell.mana)).Select(s => new State(this, s)))
+                            yield return (newState, newState.Priority);
                 }
-                else
-                {
-                    if (BossHP > 0)
-                    {
-                        PlayerHP -= Math.Max(0, BossDamage - PlayerArmour);
-                        PlayerTurn = !PlayerTurn;
-                        yield return this;
-                    }
+                else if (BossHP > 0)
+                { 
+                    PlayerHP -= Math.Max(0, BossDamage - PlayerArmour);
+                    PlayerTurn = !PlayerTurn;
+                    yield return (this, Priority);
                 }
             }
         }
 
-        public static int Run(State initialState)
+        public static int Run(State initialState, bool hardMode=false)
         {
-            PriorityQueue<State, int> queue = new();
-            queue.Enqueue(initialState, 0);
-
-            int bestScore = int.MaxValue;
-
             Dictionary<int, int> cache = new();
-
-            queue.Operate(state =>
+            return initialState.OperatePriority(int.MaxValue, (State state, int best) =>
             {
-                if (state.ManaSpend >= bestScore) return;
-                int key = (state.PlayerHP, state.PlayerArmour, state.PlayerMana, state.BossHP).GetHashCode();
-                if (cache.TryGetValue(key, out int prev) && prev <= state.ManaSpend) return;
+                if (state.ManaSpend >= best) return (int.MaxValue, default);
+                int key = (state.PlayerMana << 8) + state.BossHP;
+                if (cache.TryGetValue(key, out int prev) && prev <= state.ManaSpend) return (int.MaxValue, default);
                 cache[key] = state.ManaSpend;
 
-                var nextStates = state.Tick().ToArray();
+                var nextStates = state.Tick(hardMode).ToArray();
 
-                if (state.BossHP <= 0)
-                {
-                    bestScore = Math.Min(bestScore, state.ManaSpend);
-                    return;
-                }
-
-                if (state.PlayerHP > 0)
-                {
-                    foreach (var nextState in nextStates)
-                    {
-                        queue.Enqueue(nextState, nextState.BossHP + nextState.ManaSpend);
-                    }
-                }
-            });
-
-            return bestScore;
+                if (state.BossHP <= 0) return (state.ManaSpend, default);
+                else if (state.PlayerHP > 0) return (best, nextStates);
+                else return (int.MaxValue, default);
+            }, Math.Min);
         }
 
         public static int Part1(string input)
         {
-            var state = Util.RegexCreate<State>(input);
-
-            return Run(state);
+            return Run(Util.RegexCreate<State>(input));
         }
 
         public static int Part2(string input)
         {
-            var state = Util.RegexCreate<State>(input);
-            state.HardMode = true;
-
-            return Run(state);
+            return Run(Util.RegexCreate<State>(input), true);
         }
 
         public void Run(string input, ILogger logger)

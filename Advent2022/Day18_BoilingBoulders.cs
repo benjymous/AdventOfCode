@@ -27,7 +27,7 @@ namespace AoC.Advent2022
             };
         }
 
-        private static int CountOuterEdges(IEnumerable<Node> cells) 
+        private static int CountOuterEdges(IEnumerable<Node> cells)
             => cells.SelectMany(cell => cell.Edges()).GetUniqueItems().Count();
 
         static readonly (int dx, int dy, int dz)[] Neighbours = new[] { (-1, 0, 0), (1, 0, 0), (0, -1, 0), (0, 1, 0), (0, 0, -1), (0, 0, 1) };
@@ -58,9 +58,9 @@ namespace AoC.Advent2022
             var range = GetRange(cells);
             var airPositions = Util.Range3DInclusive(range).Except(cells.Select(c => c.Pos)).ToHashSet();
             var boundaries = airPositions.Where(c => c.x == range.minX || c.x == range.maxX || c.y == range.minY || c.y == range.maxY || c.z == range.minZ || c.z == range.maxZ);
-            
+
             while (boundaries.Any()) FloodFill(boundaries.First(), airPositions);
-            
+
             return CountOuterEdges(cells.Union(airPositions.Select(p => new Node(p))));
         }
 

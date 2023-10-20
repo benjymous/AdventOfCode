@@ -11,7 +11,7 @@ namespace AoC.Advent2022
         [Regex("Blueprint (.+): Each ore robot costs (.) ore. Each clay robot costs (.) ore. Each obsidian robot costs (.) ore and (.+) clay. Each geode robot costs (.) ore and (.+) obsidian.")]
         public record struct Blueprint(int Id, int OreCostOre, int ClayCostOre, int ObsidianCostOre, int ObsidianCostClay, int GeodeCostOre, int GeodeCostObsidian)
         {
-            public IEnumerable<State> PossibleMoves(State current)
+            public readonly IEnumerable<State> PossibleMoves(State current)
             {
                 if (current.Mins-- > 0)
                 {
@@ -38,12 +38,12 @@ namespace AoC.Advent2022
                 yield return current;
             }
 
-            public (int score, int geodes) Run(int initialMinutes)
+            public readonly (int score, int geodes) Run(int initialMinutes)
             {
                 int best = 0;
                 var self = this;
                 State[] generation = { new State(initialMinutes) };
-                while (generation.Any())
+                while (generation.Length != 0)
                 {
                     best = generation.Max(state => state.NumGeode);
                     generation = generation.SelectMany(s => s.PossibleMoves(self)).Distinct().OrderByDescending(state => state.GetResourceScore(self)).Take(64).ToArray();
@@ -52,9 +52,9 @@ namespace AoC.Advent2022
             }
         }
 
-        public record struct State(int Mins, int NumOre=0, int NumClay=0, int NumObsidian=0, int NumGeode=0, int NumOreRobots=1, int NumClayRobots=0, int NumObsidianRobots=0, int NumGeodeRobots=0)
+        public record struct State(int Mins, int NumOre = 0, int NumClay = 0, int NumObsidian = 0, int NumGeode = 0, int NumOreRobots = 1, int NumClayRobots = 0, int NumObsidianRobots = 0, int NumGeodeRobots = 0)
         {
-            public IEnumerable<State> PossibleMoves(Blueprint bp)
+            public readonly IEnumerable<State> PossibleMoves(Blueprint bp)
             {
                 var self = this;
                 return Mins == 0 ? Enumerable.Empty<State>() : bp.PossibleMoves(this).Select(m => m.Tick(self));
@@ -69,7 +69,7 @@ namespace AoC.Advent2022
                 return this;
             }
 
-            public int GetResourceScore(Blueprint bp) => NumOre + (NumOreRobots * Mins) +
+            public readonly int GetResourceScore(Blueprint bp) => NumOre + (NumOreRobots * Mins) +
                        (NumClay + (NumClayRobots * Mins)) * bp.ClayCostOre +
                        (NumObsidian + (NumObsidianRobots * Mins)) * bp.ObsidianCostClay * bp.ClayCostOre +
                        (NumGeode + (NumGeodeRobots * Mins)) * bp.GeodeCostObsidian * bp.ObsidianCostClay * bp.ClayCostOre;

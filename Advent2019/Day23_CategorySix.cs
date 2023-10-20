@@ -16,9 +16,8 @@ namespace AoC.Advent2019
             public NetworkNode(string program, int networkId, NetworkController networkController)
             {
                 NetworkId = networkId;
-                cpu = new NPSA.IntCPU(program) { Interrupt = this };
-                cpu.Reserve(3000);
-                cpu.Input.Enqueue(networkId);
+                cpu = new NPSA.IntCPU(program, 3000) { Interrupt = this };
+                cpu.AddInput(networkId);
                 controller = networkController;
             }
 
@@ -26,23 +25,13 @@ namespace AoC.Advent2019
 
             public void OutputReady()
             {
-                if (cpu.Output.Count == 3)
-                {
-                    controller.QueuePacket((int)cpu.Output.Dequeue(), (cpu.Output.Dequeue(), cpu.Output.Dequeue()));
-                }
+                if (cpu.Output.Count == 3) controller.QueuePacket((int)cpu.Output.Dequeue(), (cpu.Output.Dequeue(), cpu.Output.Dequeue()));
             }
 
             public void RequestInput()
             {
-                if (controller.TryGetPacket(NetworkId, out var data))
-                {
-                    cpu.Input.Enqueue(data.x);
-                    cpu.Input.Enqueue(data.y);
-                }
-                else
-                {
-                    cpu.Input.Enqueue(-1);
-                }
+                if (controller.TryGetPacket(NetworkId, out var data)) cpu.AddInput(data.x, data.y);
+                else cpu.AddInput(-1);
             }
         }
 
@@ -65,17 +54,11 @@ namespace AoC.Advent2019
                 if (id < 255) IdleCount[id]++;
             }
 
-            public void PacketSeen(int id)
-            {
-                IdleCount[id] = 0;
-            }
+            public void PacketSeen(int id) => IdleCount[id] = 0;
 
             public bool Step()
             {
-                while (controller.TryGetPacket(255, out var packet))
-                {
-                    lastPacket = packet;
-                }
+                while (controller.TryGetPacket(255, out var packet)) lastPacket = packet;
 
                 if (IdleCount.Count(v => v > 2) == 50)
                 {
@@ -127,7 +110,7 @@ namespace AoC.Advent2019
 
             public void Run()
             {
-                while (nodes.All(n => n.Step()) && (Nat != null ? Nat.Step() : !messageQueue[255].Any()));
+                while (nodes.All(n => n.Step()) && (Nat != null ? Nat.Step() : messageQueue[255].Count == 0)) ;
             }
         }
 

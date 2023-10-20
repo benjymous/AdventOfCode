@@ -19,7 +19,7 @@ namespace AoC.Advent2016
 
             public bool CanPass() => parts.Count == 2;
 
-            public (int,int) Pass()
+            public (int, int) Pass()
             {
                 var lowval = parts.Min();
                 var highval = parts.Max();
@@ -35,7 +35,7 @@ namespace AoC.Advent2016
         class Factory
         {
             public Dictionary<string, Entity> Entities = new();
-            public Dictionary<(int,int), string> Log = new();
+            public Dictionary<(int, int), string> Log = new();
 
             public Factory(string input)
             {
@@ -76,7 +76,7 @@ namespace AoC.Advent2016
         {
             var factory = new Factory(input);
             factory.Run();
-            return factory.Log[(17,61)];
+            return factory.Log[(17, 61)];
         }
 
         public static int Part2(string input)

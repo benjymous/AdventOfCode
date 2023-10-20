@@ -2,7 +2,6 @@
 using AoC.Utils.Vectors;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AoC.Advent2022
 {
@@ -10,7 +9,7 @@ namespace AoC.Advent2022
     {
         public string Name => "2022-09";
 
-        [Regex(@"(.) (.+)")] public readonly record struct Instruction(Direction2 Direction, int Steps) {}
+        [Regex(@"(.) (.+)")] public readonly record struct Instruction(Direction2 Direction, int Steps) { }
 
         public static bool UpdateTail((int x, int y) head, ref (int x, int y) tail)
         {
@@ -37,7 +36,7 @@ namespace AoC.Advent2022
                     for (int j = 0; j < numSegments - 1; ++j)
                         if (!UpdateTail(rope[j], ref rope[j + 1])) break;
 
-                    tailPositions.Add(rope[numSegments-1]);
+                    tailPositions.Add(rope[numSegments - 1]);
                 }
             }
 

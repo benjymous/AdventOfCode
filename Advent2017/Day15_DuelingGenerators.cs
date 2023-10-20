@@ -9,7 +9,7 @@ namespace AoC.Advent2017
         private static int RunDuel(string input, int pairs, bool picky)
         {
             var (valueA, valueB) = Util.ExtractNumbers(input).Decompose2();
-            var (multipleA, multipleB) = picky ? (4,8) : (1,1);
+            var (multipleA, multipleB) = picky ? (4, 8) : (1, 1);
             int count = 0;
             while (pairs-- > 0)
             {

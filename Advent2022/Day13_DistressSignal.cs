@@ -34,14 +34,14 @@ namespace AoC.Advent2022
                 foreach (var c in data[1..^1]) // strip outer []s
                 {
                     if (c == '[') // open bracket, so we're a level deeper
-                        depth++; 
+                        depth++;
                     else if (c == ']') // close bracket, so back up a level
-                        depth--; 
+                        depth--;
 
                     if (c == ',' && depth == 0) // comma at the top level, so return next element
                         yield return new(token.Pop());
                     else // append to our current token
-                        token.Append(c); 
+                        token.Append(c);
                 }
                 if (token.Length > 0) yield return new(token.Pop());
             }
@@ -50,10 +50,10 @@ namespace AoC.Advent2022
 
             public int CompareTo(Element other) => (IsList, other.IsList) switch
             {
-                (true,  true)  => CompareList(Children, other.Children), // both lists
+                (true, true) => CompareList(Children, other.Children), // both lists
                 (false, false) => Value - other.Value,                   // both numbers
-                (true,  false) => CompareTo(other.Promote()),            // list, non-list
-                (false, true)  => Promote().CompareTo(other),            // non-list, list
+                (true, false) => CompareTo(other.Promote()),            // list, non-list
+                (false, true) => Promote().CompareTo(other),            // non-list, list
             };
 
             static int CompareList(Element[] lhs, Element[] rhs)
@@ -79,7 +79,7 @@ namespace AoC.Advent2022
         public static int Part2(string input)
         {
             return (int)Util.Parse<Element>(input.Replace("\n\n", "\n"))
-                            .AppendMultiple(new ("[[2]]") { IsMarker = true }, new ("[[6]]") { IsMarker = true })
+                            .AppendMultiple(new("[[2]]") { IsMarker = true }, new("[[6]]") { IsMarker = true })
                             .Order()
                             .WithIndex(1)
                             .Where(e => e.Value.IsMarker)

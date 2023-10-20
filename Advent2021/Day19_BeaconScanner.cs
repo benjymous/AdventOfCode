@@ -58,7 +58,7 @@ namespace AoC.Advent2021
             var groups = input.Split("\n\n").Select(bit => Util.Parse<ManhattanVector3>(bit.Split("\n", StringSplitOptions.RemoveEmptyEntries).Skip(1)).Select(p => p.AsSimple()).ToArray()).ToArray().WithIndex().Select(item => new Group(item.Value, (0, 0, 0), item.Index)).ToArray();
 
             Dictionary<int, int> overlaps = new();
-            for (int i=0; i<groups.Length; ++i)
+            for (int i = 0; i < groups.Length; ++i)
             {
                 overlaps[i] = 0;
                 for (int j = i + 1; j < groups.Length; ++j)
@@ -73,7 +73,7 @@ namespace AoC.Advent2021
             HashSet<Group> unaligned = new(groups.Where(g => g.Id != mostMatches));
 
             HashSet<int> tried = new();
-            while (unaligned.Any())
+            while (unaligned.Count != 0)
             {
                 foreach (var group in unaligned)
                 {
@@ -109,7 +109,7 @@ namespace AoC.Advent2021
         public void Run(string input, ILogger logger)
         {
             IEnumerable<Group> aligned = AlignGroups(input);
-      
+
             logger.WriteLine("- Pt1 - " + Part1(aligned));
             logger.WriteLine("- Pt2 - " + Part2(aligned));
         }

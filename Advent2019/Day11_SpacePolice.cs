@@ -17,12 +17,7 @@ namespace AoC.Advent2019
 
             int readState = 0;
 
-            public EmergencyHullPainterRobot(string program)
-            {
-                cpu = new NPSA.IntCPU(program);
-                cpu.Reserve(1200);
-                cpu.Interrupt = this;
-            }
+            public EmergencyHullPainterRobot(string program) => cpu = new NPSA.IntCPU(program, 1200) { Interrupt = this };
 
             void Forwards() => position.Offset(direction);
             public void PaintHull(bool colour) => hullColours[position] = colour;
@@ -31,16 +26,13 @@ namespace AoC.Advent2019
 
             public void Run() => cpu.Run();
 
-            public void RequestInput() => cpu.Input.Enqueue(ReadCamera() ? 1 : 0);
+            public void RequestInput() => cpu.AddInput(ReadCamera() ? 1 : 0);
 
             public void OutputReady()
             {
                 var data = cpu.Output.Dequeue();
 
-                if (readState == 0)
-                {
-                    PaintHull(data == 1);
-                }
+                if (readState == 0) PaintHull(data == 1);
                 else
                 {
                     if (data == 0) direction.TurnLeft();

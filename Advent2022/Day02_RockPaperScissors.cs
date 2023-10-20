@@ -12,7 +12,7 @@ namespace AoC.Advent2022
         struct MoveP2 { internal const char Rock = 'X', Paper = 'Y', Scissors = 'Z'; }
         struct Result { internal const char Lose = 'X', Draw = 'Y', Win = 'Z'; }
 
-        [Regex("(.) (.)")] record struct Rule(char Theirs, char Yours) {}
+        [Regex("(.) (.)")] record struct Rule(char Theirs, char Yours) { }
 
         static int Score(char theirs, char yours) => (theirs, yours) switch
         {

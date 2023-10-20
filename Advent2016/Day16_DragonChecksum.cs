@@ -42,7 +42,7 @@ namespace AoC.Advent2016
             {
                 if (data.Length % 2 != 0) return data;
 
-                List<bool> result = new(data.Length/2);
+                List<bool> result = new(data.Length / 2);
 
                 for (int i = 0; i < data.Length; i += 2)
                 {

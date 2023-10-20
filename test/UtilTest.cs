@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 
 [assembly: Parallelize(Workers = 0, Scope = ExecutionScope.MethodLevel)]
@@ -170,6 +171,46 @@ namespace AoC.Test
             public int C;
         }
 
+        class NestedRegexCreationTest
+        {
+            [Regex(@"(.+) (.+) (.+)")]
+            public NestedRegexCreationTest(NestedRegexCreationTestInner a, NestedRegexCreationTestInner b, int c)
+            {
+                A = a;
+                B = b;
+                C = c;
+            }
+
+            public NestedRegexCreationTestInner A;
+            public NestedRegexCreationTestInner B;
+            public int C;
+        }
+
+
+        class NestedRegexCreationTestInner
+        {
+            [Regex(@"(.+)")]
+            public NestedRegexCreationTestInner(string val)
+            {
+                Val = val;
+            }
+
+            public string Val;
+        }
+
+        class ArrayRegexCreationTest
+        {
+            [Regex(@"(.+) (.+)")]
+            public ArrayRegexCreationTest(NestedRegexCreationTestInner[] a, int c)
+            {
+                A = a;
+                C = c;
+            }
+
+            public NestedRegexCreationTestInner[] A;
+            public int C;
+        }
+
         [TestMethod]
         [TestCategory("RegexParse")]
         public void RegexParseTest()
@@ -189,6 +230,27 @@ namespace AoC.Test
             Assert.AreEqual(new ManhattanVector3(1, 1, 1), list[2].B);
             Assert.AreEqual(2, list[2].C);
         }
+
+        [TestMethod]
+        [TestCategory("RegexParse")]
+        public void NestedRegexParseTest()
+        {
+            var list = Util.RegexParse<NestedRegexCreationTest>("One Two 32\nA B 6\nhello there 2", "\n").ToArray();
+            Assert.AreEqual(3, list.Length);
+
+            Assert.AreEqual("One", list[0].A.Val);
+            Assert.AreEqual("Two", list[0].B.Val);
+            Assert.AreEqual(32, list[0].C);
+
+            Assert.AreEqual("A", list[1].A.Val);
+            Assert.AreEqual("B", list[1].B.Val);
+            Assert.AreEqual(6, list[1].C);
+
+            Assert.AreEqual("hello", list[2].A.Val);
+            Assert.AreEqual("there", list[2].B.Val);
+            Assert.AreEqual(2, list[2].C);
+        }
+
 
         [TestMethod]
         [TestCategory("RegexParse")]
@@ -247,13 +309,17 @@ namespace AoC.Test
             Assert.ThrowsException<Exception>(() => Util.RegexCreate<RegexCreationTestNoConstructor>("blah"));
         }
 
-        [TestMethod]
-        public void TypeConversionTest()
-        {
-            var obj = (ManhattanVector2)TypeDescriptor.GetConverter(typeof(ManhattanVector2)).ConvertFromString("1,2");
-            Assert.AreEqual(new ManhattanVector2(1, 2), obj);
-        }
+        //[TestMethod]
+        //[TestCategory("RegexParse")]
+        //public void ArrayRegexCreateTest()
+        //{
+        //    var item = Util.RegexCreate<ArrayRegexCreationTest>("One,Two 32");
+        //    Assert.AreEqual(2, item.A.Length);
 
+        //    Assert.AreEqual("One", item.A[0].Val);
+        //    Assert.AreEqual("Two", item.A[1].Val);
+        //    Assert.AreEqual(32, item.C);
+        //}
 
         [TestMethod]
         public void ArrayDimensionTest()

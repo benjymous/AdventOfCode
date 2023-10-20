@@ -1,7 +1,6 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace AoC.Advent2021
 {
@@ -28,7 +27,7 @@ namespace AoC.Advent2021
         public static bool Contains(uint seen, int nodeId) => (seen & (1U << nodeId)) != 0;
 
         public static int Solve(Tree<string> map, bool revisit = false)
-        { 
+        {
             var startNode = map["start"];
             var endNode = map["end"];
 
@@ -37,7 +36,7 @@ namespace AoC.Advent2021
 
             int routes = 0;
 
-            while (queue.Any())
+            while (queue.Count != 0)
             {
                 var item = queue.Dequeue();
                 foreach (var neighbour in item.location.Children)

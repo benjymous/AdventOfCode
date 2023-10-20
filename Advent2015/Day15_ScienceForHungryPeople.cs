@@ -8,7 +8,6 @@ namespace AoC.Advent2015
         public string Name => "2015-15";
 
         const int Calories = 4;
-        static readonly int[] Sequence = new[] { 0, 1, 2, 3 };
 
         class Factory
         {
@@ -49,12 +48,7 @@ namespace AoC.Advent2015
                     }
         }
 
-        public static int Solve(string input, bool countCalories)
-        {
-            var ingredients = Util.RegexFactory<int[], Factory>(input).ToArray();
-
-            return IngredientCombinations().Max(set => CalcScore(set, ingredients, countCalories));
-        }
+        public static int Solve(string input, bool countCalories) => IngredientCombinations().Max(set => CalcScore(set, Util.RegexFactory<int[], Factory>(input).ToArray(), countCalories));
 
         public static int Part1(string input)
         {

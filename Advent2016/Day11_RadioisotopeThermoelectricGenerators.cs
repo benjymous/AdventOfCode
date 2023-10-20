@@ -97,10 +97,10 @@ namespace AoC.Advent2016
 
             queue.Operate((state) =>
             {
-                foreach (var move in state.GetMoves().Where(move => move.Steps < bestScore && move.Remaining - closest <=2))
+                foreach (var move in state.GetMoves().Where(move => move.Steps < bestScore && move.Remaining - closest <= 2))
                 {
                     if (move.Remaining == 0 && bestScore > move.Steps) bestScore = move.Steps;
-                    else 
+                    else
                     {
                         if (cache.NotSeenHigher(move.Key(), move.Steps)) continue;
 

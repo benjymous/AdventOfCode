@@ -17,7 +17,7 @@ namespace AoC.Advent2017
             while (redistribute-- > 0)
             {
                 i = (i + 1) % banks.Length;
-                banks[i]++; 
+                banks[i]++;
             }
         }
 

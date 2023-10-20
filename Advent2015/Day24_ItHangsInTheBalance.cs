@@ -17,14 +17,14 @@ namespace AoC.Advent2015
                     yield return new[] { first };
                     if (available.Length == 1) yield break;
                 }
-                else 
+                else
                 {
                     int restTarget = target - first;
                     var remaining = available.Where(x => x < first && x <= restTarget).ToArray();
 
                     int shortest = int.MaxValue;
                     long QE = long.MaxValue;
-                    
+
                     foreach (var child in Groupings(remaining, restTarget))
                     {
                         if (child.Length <= shortest)

@@ -41,7 +41,7 @@ namespace AoC.Advent2018
                         {
                             if (depth == 1)
                             {
-                                parts.Add(part.ToArray()); 
+                                parts.Add(part.ToArray());
                                 part.Clear();
                             }
                             else part.Add(c);
@@ -97,7 +97,7 @@ namespace AoC.Advent2018
                     map.GetOrCalculate(newPos, _ => new Cell()).Exits[(forward + 2) % 4] = true;
 
                     queue.Enqueue((newPos, state.tape[1..]));
-                  
+
                 }
             }
 

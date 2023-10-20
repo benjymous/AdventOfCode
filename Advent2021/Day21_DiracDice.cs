@@ -26,7 +26,7 @@ namespace AoC.Advent2021
             if (p1Score >= 21) return (1, 0);
             if (p2Score >= 21) return (0, 1);
 
-            return (cache ??= new()).GetOrCalculate(p1Pos + (p2Pos<<4) + (p1Score<<8) + (p2Score<<13) + (turn<<18), _ =>
+            return (cache ??= new()).GetOrCalculate(p1Pos + (p2Pos << 4) + (p1Score << 8) + (p2Score << 13) + (turn << 18), _ =>
             {
                 long p1Won = 0, p2Won = 0;
 

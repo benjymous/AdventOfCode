@@ -13,7 +13,7 @@ namespace AoC.Advent2018
         [Regex(@"#(\d+) @ (\d+),(\d+): (\d+)x(\d+)")]
         record struct Shape(string ID, int Left, int Top, int Width, int Height)
         {
-            public IEnumerable<int> Squares()
+            public readonly IEnumerable<int> Squares()
             {
                 for (var y = Top; y < Top + Height; ++y)
                 {

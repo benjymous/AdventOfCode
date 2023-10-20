@@ -20,7 +20,7 @@ namespace AoC.Advent2022.Test
 1,2,5
 3,2,5
 2,1,5
-2,3,5".Replace("\r","");
+2,3,5".Replace("\r", "");
 
         [TestCategory("Test")]
         [DataTestMethod]

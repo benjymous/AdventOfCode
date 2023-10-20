@@ -8,77 +8,42 @@ namespace AoC.Advent2019
     {
         public string Name => "2019-08";
 
+        readonly static int Width = 25, Height = 6;
+
         class Image
         {
-            public Image(string data, int width, int height)
-            {
-                (Width, Height) = (width, height);
-
-                groups = data.Trim().Select(ch => ch - '0').ToArray().Chunk(width * height).ToArray();
-            }
-
-            private void Decode()
-            {
-                pixelData = new();
-                foreach (var layer in groups.Reverse())
-                {
-                    if (pixelData.Count == 0)
-                    {
-                        pixelData.AddRange(layer);
-                    }
-                    else
-                    {
-                        for (var i = 0; i < layer.Length; ++i)
-                        {
-                            if (layer[i] != 2)
-                            {
-                                pixelData[i] = layer[i];
-                            }
-                        }
-                    }
-                }
-            }
-
-            public readonly int Width, Height;
+            public Image(string data) => groups = data.Trim().Select(ch => ch - '0').Chunk(Width * Height).ToArray();
 
             readonly int[][] groups;
-            List<int> pixelData = null;
 
             public int GetChecksum()
             {
-                int leastZeros = int.MaxValue;
-                int onesByTwos = 0;
-
-                foreach (var g in groups)
-                {
-                    var zeroes = g.Count(i => i == 0);
-
-                    if (zeroes < leastZeros)
-                    {
-                        leastZeros = zeroes;
-                        onesByTwos = g.Count(i => i == 1) * g.Count(i => i == 2);
-                    }
-                }
-
-                return onesByTwos;
+                var lowestZeroes = groups.OrderBy(g => g.Count(i => i == 0)).First();
+                return lowestZeroes.Count(i => i == 1) * lowestZeroes.Count(i => i == 2);
             }
 
             public override string ToString()
             {
-                if (pixelData == null) Decode();
+                var pixelData = new List<int>();
+                foreach (var layer in groups.Reverse())
+                    if (pixelData.Count == 0) pixelData.AddRange(layer);
+                    else
+                        for (var i = 0; i < layer.Length; ++i)
+                            if (layer[i] != 2)
+                                pixelData[i] = layer[i];
 
-                return string.Join('\n',pixelData.SelectMany(c => c == 1 ? "##" : "  ").Chunk(Width*2).Select(line => line.AsString()));
+                return string.Join('\n', pixelData.SelectMany(c => c == 1 ? "##" : "  ").Chunk(Width * 2).Select(line => line.AsString()));
             }
         }
 
         public static int Part1(string input)
         {
-            return new Image(input, 25, 6).GetChecksum();
+            return new Image(input).GetChecksum();
         }
 
         public static string Part2(string input, ILogger logger)
         {
-            var image = new Image(input, 25, 6).ToString();
+            var image = new Image(input).ToString();
             logger.WriteLine("\n" + image);
             return image.GetMD5String();
         }

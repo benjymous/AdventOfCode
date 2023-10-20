@@ -29,7 +29,7 @@ namespace AoC.Advent2022
         {
             DirNode current = new();
             List<DirNode> index = new() { current };
-            
+
             foreach (var tokens in Util.Split(input).Select(line => line.Split(' ')))
             {
                 if (tokens[0] == "$" && tokens[1] == "cd")

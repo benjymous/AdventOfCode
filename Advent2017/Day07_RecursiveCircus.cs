@@ -44,7 +44,7 @@ namespace AoC.Advent2017
         }
 
         static int GetChildScore(TreeNode<string, int> node) => node.Value + node.Children.Sum(GetChildScore);
-        
+
         public static string Part1(string input)
         {
             return ParseTree(input).GetRootKey();
@@ -59,7 +59,7 @@ namespace AoC.Advent2017
                                      .ToHashSet();
 
             // Find any leaves that have a missmatched weight
-            while (currentParents.Any())
+            while (currentParents.Count != 0)
             {
                 var newParents = new HashSet<TreeNode<string, int>>();
                 foreach (var node in currentParents)

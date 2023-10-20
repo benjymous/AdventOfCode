@@ -12,11 +12,11 @@ namespace AoC.Advent2021
         [Regex(@"(\d+),(\d+) -> (\d+),(\d+)")]
         record struct Line(int X1, int Y1, int X2, int Y2)
         {
-            public IEnumerable<(int, int)> Points
+            public readonly IEnumerable<(int, int)> Points
             {
                 get
                 {
-                    var (x,y) = (X1, Y1);
+                    var (x, y) = (X1, Y1);
 
                     int dx = Math.Abs(X2 - X1);
                     int sx = Math.Sign(X2 - X1);
@@ -47,7 +47,7 @@ namespace AoC.Advent2021
                 }
             }
 
-            public bool IsAxial => X1 == X2 || Y1 == Y2;
+            public readonly bool IsAxial => X1 == X2 || Y1 == Y2;
         }
 
         private static int Solve(string input, QuestionPart part)

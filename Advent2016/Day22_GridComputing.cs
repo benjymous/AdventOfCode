@@ -21,7 +21,7 @@ namespace AoC.Advent2016
 
         record struct Walkable(int MaxMovable) : IIsWalkable<Node>
         {
-            public bool IsWalkable(Node cell) => cell.Used <= MaxMovable;
+            public readonly bool IsWalkable(Node cell) => cell.Used <= MaxMovable;
         }
 
         public static int Part1(string input)

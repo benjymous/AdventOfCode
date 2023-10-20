@@ -27,7 +27,7 @@ namespace AoC.Utils.Collections
 
     public class Tree<TKeyType> : Tree<TKeyType, object> { }
 
-    public class Tree<TKeyType, TDataType> : IEnumerable<TreeNode<TKeyType, TDataType>> 
+    public class Tree<TKeyType, TDataType> : IEnumerable<TreeNode<TKeyType, TDataType>>
     {
         readonly Dictionary<TKeyType, TreeNode<TKeyType, TDataType>> index = new();
 

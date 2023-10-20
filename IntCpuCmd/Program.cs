@@ -1,5 +1,5 @@
-﻿using System;
-using AoC.Advent2019.NPSA;
+﻿using AoC.Advent2019.NPSA;
+using System;
 
 namespace IntCpuCmd
 {
@@ -28,7 +28,7 @@ namespace IntCpuCmd
             {
                 Console.Write("?> ");
                 var input = Console.ReadLine();
-                cpu.Input.Enqueue(Int64.Parse(input));
+                cpu.Input.Enqueue(long.Parse(input));
             }
         }
 

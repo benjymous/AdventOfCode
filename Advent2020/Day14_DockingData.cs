@@ -26,7 +26,7 @@ namespace AoC.Advent2020
         public static long ApplyMaskV1(long value, (long Value, long QuantumBits) mask)
         {
             for (var b = 1L; b <= 1L << 35; b <<= 1)
-            { 
+            {
                 if ((mask.QuantumBits & b) == 0)
                 {
                     if ((mask.Value & b) == 0) value &= ~b;

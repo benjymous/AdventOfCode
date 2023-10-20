@@ -24,7 +24,7 @@ namespace AoC.Advent2016.BunniTek
     {
         public static implicit operator Value(int intVal) => new(intVal, true);
         public static implicit operator Value(RegisterId regIndex) => new((int)regIndex, false);
-        public static implicit operator Value(string input) => input[0] >= 'a' ? new Value(input[0]-'a', false) : new Value(int.Parse(input), true);
+        public static implicit operator Value(string input) => input[0] >= 'a' ? new Value(input[0] - 'a', false) : new Value(int.Parse(input), true);
     }
 
     public class Instruction

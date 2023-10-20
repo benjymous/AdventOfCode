@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace AoC.Advent2020.Test
 {
@@ -7,6 +8,15 @@ namespace AoC.Advent2020.Test
     public class Day16Test
     {
         readonly string input = Util.GetInput<Day16>();
+
+        public static string TestDecode(string input)
+        {
+            var scanner = new Day16.TicketScanner(input);
+            scanner.DecodeTickets();
+            return string.Join(", ", scanner.DecodedTicket()
+                                            .OrderBy(kvp => kvp.Item1)
+                                            .Select(kvp => $"{kvp.Item1}: {kvp.Item2}"));
+        }
 
         [TestCategory("Test")]
         [DataRow("class: 1-3 or 5-7\n" +
@@ -37,13 +47,13 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Decoder1Test(string input, string expected)
         {
-            Assert.AreEqual(expected, Day16.TestDecode(input));
+            Assert.AreEqual(expected, TestDecode(input));
         }
 
         [DataTestMethod]
         public void Decoder2Test()
         {
-            Assert.AreEqual("arrival location: 137, arrival platform: 139, arrival station: 157, arrival track: 127, class: 151, departure date: 131, departure location: 97, departure platform: 101, departure station: 113, departure time: 109, departure track: 149, duration: 73, price: 59, route: 67, row: 103, seat: 53, train: 163, type: 71, wagon: 61, zone: 107", Day16.TestDecode(input));
+            Assert.AreEqual("arrival location: 137, arrival platform: 139, arrival station: 157, arrival track: 127, class: 151, departure date: 131, departure location: 97, departure platform: 101, departure station: 113, departure time: 109, departure track: 149, duration: 73, price: 59, route: 67, row: 103, seat: 53, train: 163, type: 71, wagon: 61, zone: 107", TestDecode(input));
         }
 
         [TestCategory("Regression")]

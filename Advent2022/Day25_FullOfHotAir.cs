@@ -30,7 +30,7 @@ namespace AoC.Advent2022
         readonly sbyte[] components;
         bool balanced = true;
 
-        public static Snafu operator +(Snafu a, Snafu b) => new (a.components.ZipLongest(b.components).Select(pair => (sbyte)(pair.Item1 + pair.Item2)));
+        public static Snafu operator +(Snafu a, Snafu b) => new(a.components.ZipLongest(b.components).Select(pair => (sbyte)(pair.Item1 + pair.Item2)));
 
         Snafu Balance()
         {

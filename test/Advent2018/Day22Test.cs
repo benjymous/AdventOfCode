@@ -1,4 +1,3 @@
-using AoC.Utils.Vectors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AoC.Advent2018.Test

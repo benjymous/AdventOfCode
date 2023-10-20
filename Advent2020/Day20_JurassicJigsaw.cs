@@ -278,7 +278,7 @@ namespace AoC.Advent2020
                             {
                                 for (var tx = 0; tx < 8; ++tx)
                                 {
-                                    if (cell.GetCellTransformed(tx + 1, ty + 1) == '#') bitmap.Add((x * 8) + tx + (((y * 8) + ty)<<16));
+                                    if (cell.GetCellTransformed(tx + 1, ty + 1) == '#') bitmap.Add((x * 8) + tx + (((y * 8) + ty) << 16));
                                 }
                             }
                         }
@@ -301,7 +301,7 @@ namespace AoC.Advent2020
                         int nessieCount = 0;
                         foreach (var e in nessieMap)
                         {
-                            if (!bitmap.Contains(x + e.x + ((y + e.y)<<16))) break;
+                            if (!bitmap.Contains(x + e.x + ((y + e.y) << 16))) break;
                             //if (bitmap[x + e.x, y + e.y] == '.') break;
                             nessieCount++;
                         }

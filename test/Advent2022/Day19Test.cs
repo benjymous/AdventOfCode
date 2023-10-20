@@ -47,7 +47,7 @@ namespace AoC.Advent2022.Test
         public void Minerals01Test(string input, int expected)
         {
             var bp = Util.RegexCreate<Day19.Blueprint>(input);
-            
+
             Assert.AreEqual(expected, bp.Run(24).score);
         }
 

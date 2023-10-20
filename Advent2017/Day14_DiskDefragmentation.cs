@@ -10,7 +10,7 @@ namespace AoC.Advent2017
 
         public static IEnumerable<int> BuildBits(string input) =>
             ParallelEnumerable.Range(0, 128).SelectMany(y =>
-                 Day10.KnotHash($"{input}-{y}").SelectMany(h => h.BinarySequence(0xff).Reverse()).Select((v, x) => (v, x)).Where(d => d.v == 1).Select(d => d.x + (y<<16))
+                 Day10.KnotHash($"{input}-{y}").SelectMany(h => h.BinarySequence(0xff).Reverse()).Select((v, x) => (v, x)).Where(d => d.v == 1).Select(d => d.x + (y << 16))
             ).ToArray();
 
         static void FloodFill(int pos, HashSet<int> matrix)
@@ -34,7 +34,7 @@ namespace AoC.Advent2017
 
             int groups = 0;
 
-            while (matrix.Any())
+            while (matrix.Count != 0)
             {
                 var pos = matrix.First();
                 FloodFill(pos, matrix);

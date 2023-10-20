@@ -13,58 +13,48 @@ namespace AoC.Advent2020
             public Food(string input)
             {
                 var bits = input.Split(" (contains ");
-                Ingredients = bits[0].Split(" ").ToList();
-                Allergens = bits[1].Replace(")", "").Split(", ").ToList();
+                Ingredients = bits[0].Split(" ");
+                Allergens = bits[1].Replace(")", "").Split(", ");
             }
-            public List<string> Ingredients, Allergens;
+            public string[] Ingredients, Allergens;
         }
 
         class Foods
         {
             public Foods(string input)
             {
-                FoodList = Util.Parse<Food>(input);
+                var FoodList = Util.Parse<Food>(input).WithIndex();
 
-                int foodIdx = 0;
-                foreach (var food in FoodList)
+                foreach (var (foodIdx, food) in FoodList)
                 {
                     foreach (var allergen in food.Allergens)
                     {
-                        if (!Counts.ContainsKey(allergen)) Counts[allergen] = new Dictionary<string, int>();
+                        if (!Counts.ContainsKey(allergen)) Counts[allergen] = new();
                         foreach (var ingredient in food.Ingredients)
                         {
                             Counts[allergen].IncrementAtIndex(ingredient);
-                            if (!Ingredients.ContainsKey(ingredient)) Ingredients[ingredient] = new HashSet<int>();
+                            if (!Ingredients.ContainsKey(ingredient)) Ingredients[ingredient] = new();
                             Ingredients[ingredient].Add(foodIdx);
                         }
                     }
-                    foodIdx++;
                 }
 
-                var k = Counts.Keys.ToArray();
-                while (Allergens.Count < k.Length)
+                var allergenNames = Counts.Keys.ToArray();
+                while (Allergens.Count < allergenNames.Length)
                 {
-                    foreach (var allergen in k)
+                    foreach (var allergen in allergenNames.Where(a => !Allergens.ContainsKey(a)))
                     {
-                        if (Allergens.ContainsKey(allergen)) continue;
                         var d = Counts[allergen];
 
                         var (min, max) = d.Values.MinMax();
 
-                        if (max > min)
-                        {
-                            d = d.Where(kvp => kvp.Value > min).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-                        }
+                        if (max > min) d = d.Where(kvp => kvp.Value > min).ToDictionary();
 
                         if (d.Values.Count == 1)
                         {
-                            var found = d.Keys.First();
-                            Allergens[allergen] = found;
-
-                            foreach (var a1 in k)
-                            {
-                                Counts[a1].Remove(found);
-                            }
+                            var foundIngredient = d.Keys.First();
+                            Allergens[allergen] = foundIngredient;
+                            allergenNames.ForEach(a1 => Counts[a1].Remove(foundIngredient));
                         }
 
                         Counts[allergen] = d;
@@ -72,7 +62,6 @@ namespace AoC.Advent2020
                 }
             }
 
-            readonly List<Food> FoodList;
             readonly Dictionary<string, Dictionary<string, int>> Counts = new();
 
             public Dictionary<string, HashSet<int>> Ingredients = new();
@@ -85,10 +74,7 @@ namespace AoC.Advent2020
 
             var ingredients = foods.Ingredients;
 
-            foreach (var kvp in foods.Allergens)
-            {
-                ingredients.Remove(kvp.Value);
-            }
+            foreach (var kvp in foods.Allergens) ingredients.Remove(kvp.Value);
 
             return ingredients.Values.Sum(h => h.Count);
         }

@@ -62,7 +62,7 @@ namespace AoC.Advent2016
                     }
                     else
                     {
-                        abas.Add(address.Substring(i+1, 2));
+                        abas.Add(address.Substring(i + 1, 2));
                     }
                 }
             }

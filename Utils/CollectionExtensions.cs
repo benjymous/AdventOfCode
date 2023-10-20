@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Xml.Linq;
 
 namespace AoC.Utils
 {
@@ -22,6 +24,17 @@ namespace AoC.Utils
                 dict[key] = val;
             }
         }
+
+        public static void Move<T1, T2>(this IDictionary<T1, T2> dict, T1 from, T1 to)
+        {
+            if (!EqualityComparer<T1>.Default.Equals(from, to))
+            {
+                T2 element = dict[from];
+                dict[to] = element;
+                dict.Remove(from);
+            }
+        }
+
 
         public static T2 GetOrDefault<T1, T2>(this Dictionary<T1, T2> dict, T1 key) => dict.TryGetValue(key, out T2 val) ? val : default;
 
@@ -44,6 +57,17 @@ namespace AoC.Utils
 
         public static string AsString(this IEnumerable<char> input) => string.Concat(input);
         public static string AsString(this IEnumerable<string> input) => string.Concat(input);
+
+
+        public static T AsNumber<T>(this IEnumerable<bool> input) where T : IBinaryInteger<T>
+        {
+            T res = T.Zero;
+
+            foreach (var v in input)
+                res = res.PushBit(v);
+
+            return res;
+        }
 
 
         public static IEnumerable<byte> AsNybbles(this IEnumerable<byte> bytes)
@@ -87,6 +111,16 @@ namespace AoC.Utils
         public static (T, T) TakePair<T>(this IEnumerable<T> set)
         {
             return set.Pairs().First();
+        }
+
+        public static (T, T) TakeTwo<T>(this Queue<T> queue)
+        {
+            return (queue.Dequeue(), queue.Dequeue());
+        }
+
+        public static (T, T, T) TakeThree<T>(this Queue<T> queue)
+        {
+            return (queue.Dequeue(), queue.Dequeue(), queue.Dequeue());
         }
 
         public static IEnumerable<T> Sandwich<T>(this IEnumerable<T> items, T firstlast)
@@ -138,13 +172,7 @@ namespace AoC.Utils
         public static IEnumerable<(T first, T second)> OverlappingPairs<T>(this IEnumerable<T> input)
         {
             return input.Windows(2).Select(win => (win[0], win[1]));
-        }
-
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> items)
-        {
-            var rnd = new Random();
-            return items.OrderBy(_ => rnd.Next());
-        }
+        }        
 
         public static IEnumerable<IEnumerable<T>> DuplicateSequence<T>(this IEnumerable<T> input)
         {
@@ -259,16 +287,6 @@ namespace AoC.Utils
             return dict;
         }
 
-        public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> enumerable)
-        {
-            return enumerable.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-        }
-
-        public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> enumerable)
-        {
-            return enumerable.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-        }
-
         public static SortedDictionary<TKey, TValue> ToSortedDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> enumerable, IComparer<TKey> comparer)
         {
             var dict = new SortedDictionary<TKey, TValue>(comparer);
@@ -283,6 +301,8 @@ namespace AoC.Utils
 
         public static int Height<T>(this T[,] array2d) => array2d.GetLength(1);
         public static int Width<T>(this T[,] array2d) => array2d.GetLength(0);
+
+        public static (int, int) Dimensions<T>(this T[,] array2d) => (array2d.Width(), array2d.Height());
 
         public static long Product(this IEnumerable<int> vals)
         {
@@ -381,6 +401,28 @@ namespace AoC.Utils
             return val;
         }
 
+        public static TResult OperatePriority<TElement, TPriority, TResult>(this TElement initialElement, TResult initial, Func<TElement, TResult, (TResult res, IEnumerable<(TElement state, TPriority priority)> newStates)> action, Func<TResult, TResult, TResult> filter)
+        {
+            PriorityQueue<TElement, TPriority> queue = new();
+            queue.Enqueue(initialElement, default);
+            return queue.Operate(initial, action, filter);
+        }
+
+        public static TResult Operate<TElement, TPriority, TResult>(this PriorityQueue<TElement, TPriority> queue, TResult initial, Func<TElement, TResult, (TResult res, IEnumerable<(TElement state, TPriority priority)> newStates)>action, Func<TResult, TResult, TResult> filter)
+        {
+            TResult best = initial;
+            while (queue.TryDequeue(out var element, out var _))
+            {
+                var res = action(element, best);
+                best = filter(best, res.res);
+                if (res.newStates != null) foreach (var (state, priority) in res.newStates)
+                {
+                    queue.Enqueue(state, priority);
+                }
+            }
+            return best;
+        }
+
         public static void Operate<TElement, TPriority>(this PriorityQueue<TElement, TPriority> queue, Action<TElement> action)
         {
             while (queue.TryDequeue(out var element, out var _))
@@ -407,7 +449,7 @@ namespace AoC.Utils
 
         public static void Operate<TElement>(this HashSet<TElement> set, Action<TElement> action)
         {
-            while (set.Any())
+            while (set.Count != 0)
             {
                 var element = set.First();
                 set.Remove(element);
@@ -518,6 +560,16 @@ namespace AoC.Utils
         public static Dictionary<TVal, IEnumerable<TKey>> Invert<TKey, TVal>(this Dictionary<TKey, TVal> dict)
         {
             return dict.Where(kvp => kvp.Value != null).GroupBy(kvp => kvp.Value).ToDictionary(g => g.Key, g => g.Select(kvp => kvp.Key));
+        }
+
+        public static FrozenDictionary<TVal, IEnumerable<TKey>> InvertFrozen<TKey, TVal>(this Dictionary<TKey, TVal> dict)
+        {
+            return dict.Where(kvp => kvp.Value != null).GroupBy(kvp => kvp.Value).ToFrozenDictionary(g => g.Key, g => g.Select(kvp => kvp.Key));
+        }
+
+        public static FrozenDictionary<TVal, IEnumerable<TKey>> Invert<TKey, TVal>(this FrozenDictionary<TKey, TVal> dict)
+        {
+            return dict.Where(kvp => kvp.Value != null).GroupBy(kvp => kvp.Value).ToFrozenDictionary(g => g.Key, g => g.Select(kvp => kvp.Key));
         }
 
         public static Dictionary<TVal, TKey> InvertSolo<TKey, TVal>(this Dictionary<TKey, TVal> dict)
@@ -705,6 +757,22 @@ namespace AoC.Utils
         public static T[] ToArray<T>(this (T, T) pair)
         {
             return new T[] { pair.Item1, pair.Item1 };
+        }
+
+        public static void AddValues<T>(this List<T> list, params T[] input)
+        {
+            list.AddRange(input);
+        }
+
+        public static IEnumerable<(int x, int y, char c)> Chars(this string[] lines)
+        {
+            for (int y=0; y < lines.Length; ++y)
+            {
+                for (int x=0; x < lines[y].Length; ++x)
+                {
+                    yield return (x, y, lines[y][x]);
+                }
+            }
         }
 
     }

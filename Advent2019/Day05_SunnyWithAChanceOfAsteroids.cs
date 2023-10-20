@@ -7,7 +7,7 @@
         public static string RunProgram(string program, int input)
         {
             var cpu = new NPSA.IntCPU(program);
-            cpu.Input.Enqueue(input);
+            cpu.AddInput(input);
             cpu.Run();
             return string.Join(",", cpu.Output);
         }

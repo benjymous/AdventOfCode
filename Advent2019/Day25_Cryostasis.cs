@@ -13,7 +13,7 @@ namespace AoC.Advent2019
 
         class SearchDroid : NPSA.ASCIITerminal
         {
-            public SearchDroid(string program) : base(program, 5500) {}
+            public SearchDroid(string program) : base(program, 5500) { }
 
             readonly Dictionary<string, Room> Rooms = new();
             readonly Stack<(Room room, string exit)> UnvisitedNeighbours = new();
@@ -21,14 +21,13 @@ namespace AoC.Advent2019
             readonly Queue<string> Inputs = new();
 
             Room CurrentRoom = null, LastRoom = null, CheckpointRoom = null;
-            IEnumerable<string[]> ItemCombos = null;
+            string[][] ItemCombos = null;
             readonly HashSet<string> HeldItems = new();
             string LastTravelDirection = null;
 
             public string Run()
             {
                 cpu.Run();
-                System.Console.WriteLine(cpu.Speed());
                 return buffer.Lines.Last();
             }
 
@@ -37,7 +36,7 @@ namespace AoC.Advent2019
                 var roomName = lines.Where(line => line[0] == '=').LastOrDefault(); // find LAST room header
 
                 return (roomName == null) ? CurrentRoom : Rooms.GetOrCalculate(roomName, roomName =>
-                {                
+                {
                     List<string> current = null, exits = new(), items = new();
                     foreach (var line in lines.Skip(lines.IndexOf(roomName) + 2))
                     {
@@ -70,10 +69,7 @@ namespace AoC.Advent2019
 
             static string ReverseDir(string dir) => dir[0] switch
             {
-                'n' => "south",
-                's' => "north",
-                'e' => "west",
-                'w' => "east",
+                'n' => "south", 's' => "north", 'e' => "west", 'w' => "east",
                 _ => throw new System.Exception("Unexpected direction")
             };
 
@@ -81,9 +77,8 @@ namespace AoC.Advent2019
             {
                 var lines = buffer.Pop().WithoutNullOrWhiteSpace();
                 CurrentRoom = ParseRoom(lines);
-                //System.Console.WriteLine($"{CurrentRoom.Name} {cpu.CycleCount}");
 
-                if (!Inputs.Any())
+                if (Inputs.Count == 0)
                 {
                     if (CurrentRoom == CheckpointRoom && UnvisitedNeighbours.Count == 0)
                     {
@@ -100,7 +95,6 @@ namespace AoC.Advent2019
                     else TravelToNextDestination();
                 }
                 (LastTravelDirection, LastRoom) = (!CurrentRoom.DeadEnd && CurrentRoom.IsUnvisited(Inputs.Peek())) ? (Inputs.Peek(), CurrentRoom) : (null, null);
-                //System.Console.WriteLine($"> {Inputs.Peek()}");
                 yield return Inputs.Dequeue();
             }
 
@@ -118,17 +112,12 @@ namespace AoC.Advent2019
 
             void TravelToNextDestination()
             {
-                var (room, exit) = UnvisitedNeighbours.Any() ? UnvisitedNeighbours.Pop() : (CheckpointRoom, null);
-                if (room != CurrentRoom)
-                {
-                    var route = RouteFind(CurrentRoom, room);
-                    //System.Console.WriteLine($"Travelling {route.Count()} steps to {room.Name}:{exit}");
-                    Inputs.EnqueueRange(route);
-                }
+                var (room, exit) = UnvisitedNeighbours.Count != 0 ? UnvisitedNeighbours.Pop() : (CheckpointRoom, null);
+                if (room != CurrentRoom) Inputs.EnqueueRange(RouteFind(CurrentRoom, room));
                 if (exit != null) GoDirection(exit);
             }
 
-            IEnumerable<string> RouteFind(Room from, Room to, HashSet<string> tried = null)
+            static IEnumerable<string> RouteFind(Room from, Room to, HashSet<string> tried = null)
             {
                 if (from.Exits.TryGet(to, out var found)) return found.ToEnumerable();
 
@@ -145,19 +134,7 @@ namespace AoC.Advent2019
         public static int Part1(string input)
         {
             var droid = new SearchDroid(input);
-
-            //bool interactive = false;
-
-            //droid.SetDisplay(interactive);
-            //droid.Interactive = interactive;
-
             var result = droid.Run();
-
-            //if (!interactive)
-            //{
-            //Console.WriteLine(result);
-            //}
-
             return int.Parse(result.Split()[11]);
         }
 

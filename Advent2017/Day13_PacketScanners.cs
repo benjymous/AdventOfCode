@@ -35,7 +35,7 @@ namespace AoC.Advent2017
             foreach (var (Key, Mod) in scanners)
             {
                 for (int i = start + (Mod + (Mod - (start + Key))) % Mod; i < (start + size); i += Mod)
-                    if (i>=start && i < start+ size) collisions.Add(i);
+                    if (i >= start && i < start + size) collisions.Add(i);
 
                 if (collisions.Count == size) return -1;
             }

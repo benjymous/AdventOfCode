@@ -11,14 +11,14 @@ namespace AoC.Advent2017.Test
         [DataRow("s1,x3/4,pe/b", "abcde", "baedc")]
         [DataRow("s1,x3/4,pe/b", "baedc", "ceadb")]
 
-        [DataRow("s12", "bfligcohnadkmjpe", "gcohnadkmjpebfli"     )]
-        [DataRow("x3/13", "gcohnadkmjpebfli", "gcofnadkmjpebhli"   )]
-        [DataRow("pf/d", "bhgilcofnadkmjpe", "bhgilcodnafkmjpe"    )]
-        [DataRow("x13/15", "bhgilcodnafkmjpe", "bhgilcodnafkmepj"  )]
-        [DataRow("x7/4", "gbnokfaecmphdilj", "gbnoefakcmphdilj"    )]
-        [DataRow("x14/6", "bgejikfdolnahpcm", "bgejikcdolnahpfm"   )]
-        [DataRow("s4", "nidogjbhpclmaefk", "aefknidogjbhpclm"      )]
-        [DataRow("pn/e", "pecinkdagjbhoflm", "pnciekdagjbhoflm"    )]
+        [DataRow("s12", "bfligcohnadkmjpe", "gcohnadkmjpebfli")]
+        [DataRow("x3/13", "gcohnadkmjpebfli", "gcofnadkmjpebhli")]
+        [DataRow("pf/d", "bhgilcofnadkmjpe", "bhgilcodnafkmjpe")]
+        [DataRow("x13/15", "bhgilcodnafkmjpe", "bhgilcodnafkmepj")]
+        [DataRow("x7/4", "gbnokfaecmphdilj", "gbnoefakcmphdilj")]
+        [DataRow("x14/6", "bgejikfdolnahpcm", "bgejikcdolnahpfm")]
+        [DataRow("s4", "nidogjbhpclmaefk", "aefknidogjbhpclm")]
+        [DataRow("pn/e", "pecinkdagjbhoflm", "pnciekdagjbhoflm")]
 
         [DataTestMethod]
         public void Dance01Test(string input, string start, string expected)

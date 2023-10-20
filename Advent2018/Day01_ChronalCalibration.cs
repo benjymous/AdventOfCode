@@ -21,7 +21,7 @@ namespace AoC.Advent2018
             int freq = 0;
 
             while (true)
-            { 
+            {
                 foreach (var num in nums)
                 {
                     seen.Add(freq);
