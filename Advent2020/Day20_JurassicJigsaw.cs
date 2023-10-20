@@ -137,7 +137,7 @@ namespace AoC.Advent2020
         {
             public JigsawSolver(string input)
             {
-                Tiles = Util.Parse<Tile>(input.Split("\n\n"));
+                Tiles = Util.Parse<Tile>(input.Trim().Split("\n\n"));
 
                 // Build map of all edges and which tiles they belong to
                 Map = new Dictionary<string, List<Tile>>();

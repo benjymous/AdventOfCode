@@ -4,6 +4,12 @@ namespace AoC.Utils
     {
         public static string[] args;
 
+        public static string DataURL(this IPuzzle puzzle)
+        {
+            var bits = puzzle.Name.Split('-');
+            return $"https://adventofcode.com/{bits[0]}/day/{bits[1].TrimStart('0')}/input";
+        }
+
         public static bool ShouldRun(this IPuzzle puzzle)
         {
             if (args.Length == 0) return true;

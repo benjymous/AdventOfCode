@@ -4,7 +4,10 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Numerics;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -427,7 +430,38 @@ namespace AoC
 
         public static IEnumerable<(int x, int y)> Matrix(int maxX, int maxY) => Matrix(Enumerable.Range(0, maxX), Enumerable.Range(0, maxY));
 
-        public static string GetInput(IPuzzle puzzle) => System.IO.File.ReadAllText(System.IO.Path.Combine("Data", puzzle.Name + ".txt")).Replace("\r", "");
+        static string sessionCookie = null;
+        static object DataLock = new object();
+
+        public static string Download(string url)
+        {
+            sessionCookie ??= File.ReadAllText(".session");
+
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(new Uri("https://adventofcode.com"), new Cookie("session", sessionCookie));
+            using var handler = new HttpClientHandler() { CookieContainer = cookieContainer };
+            using var client = new HttpClient(handler);
+
+            var content = client.GetStringAsync(url).Result;
+            return content;
+        }
+
+        public static string GetInput(IPuzzle puzzle)
+        {
+            var expectedFile = Path.Combine("Data", puzzle.Name + ".txt");
+
+            lock (DataLock)
+            {
+                if (!File.Exists(expectedFile))
+                {
+                    string puzzleData = Download(puzzle.DataURL());
+                    File.WriteAllText(expectedFile, puzzleData);
+                    return puzzleData;
+                }
+
+                return File.ReadAllText(expectedFile).Replace("\r", "");
+            }
+        }
 
         public static string GetInput<T>() where T : IPuzzle, new() => GetInput(new T());
 

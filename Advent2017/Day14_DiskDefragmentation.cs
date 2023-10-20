@@ -46,12 +46,12 @@ namespace AoC.Advent2017
 
         public static int Part1(string input)
         {
-            return Part1(BuildBits(input));
+            return Part1(BuildBits(input.Trim()));
         }
 
         public static int Part2(string input)
         {
-            return Part2(BuildBits(input));
+            return Part2(BuildBits(input.Trim()));
         }
 
         public void Run(string input, ILogger logger)
