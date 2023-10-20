@@ -1,0 +1,41 @@
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace AoC.Advent{{ Year }}.Test
+{
+    [TestCategory("{{ Year }}")]
+    [TestClass]
+    public class Day{{ Day }}Test
+    {
+        string input = ""; // Util.GetInput<Day{{ Day }}>();
+
+        [TestCategory("Test")]
+        [DataRow("???", 0)]
+        [DataTestMethod]
+        public void _01Test(string input, int expected)
+        {
+            Assert.IsTrue(Day{{ Day }}.Part1(input) == expected);
+        }
+
+        [TestCategory("Test")]
+        [DataRow("???", 0)]
+        [DataTestMethod]
+        public void _02Test(string input, int expected)
+        {
+            Assert.IsTrue(Day{{ Day }}.Part2(input) == expected);
+        }
+
+        [TestCategory("Regression")]
+        [DataTestMethod]
+        public void _Part1_Regression()
+        {
+            Assert.AreEqual(0, Day{{ Day }}.Part1(input));
+        }
+
+        [TestCategory("Regression")]
+        [DataTestMethod]
+        public void _Part2_Regression()
+        {
+            Assert.AreEqual(0, Day{{ Day }}.Part2(input));
+        }
+    }
+}
