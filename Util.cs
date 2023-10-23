@@ -448,10 +448,14 @@ namespace AoC
 
         public static string GetInput(IPuzzle puzzle)
         {
-            var expectedFile = Path.Combine("Data", puzzle.Name + ".txt");
-
             lock (DataLock)
             {
+                var dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AoCData");
+                if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
+                var expectedFile = Path.Combine(dataPath, puzzle.Name + ".txt");
+
+                Console.WriteLine(expectedFile);
+
                 if (!File.Exists(expectedFile))
                 {
                     string puzzleData = Download(puzzle.DataURL());
@@ -504,7 +508,7 @@ namespace AoC
 
         public static int CountTrue(params bool[] input) => input.Count(v => v);
 
-        public static int CountTrue(Func<int, bool> check, Action action=null)
+        public static int CountTrue(Func<int, bool> check, Action action = null)
         {
             int i = 0;
             while (check(i))
