@@ -32,7 +32,6 @@ namespace AoC.Advent2017.Test
             Assert.AreEqual(expected, Day09.StripGarbage(input).stripped);
         }
 
-
         [DataRow("{}", 1)] //  1 group.
         [DataRow("{{{}}}", 3)] //  3 groups.
         [DataRow("{{},{}}", 3)] //  also 3 groups.
@@ -46,7 +45,6 @@ namespace AoC.Advent2017.Test
         {
             Assert.AreEqual(expected, Day09.GetGroups(input).Count());
         }
-
 
         [DataRow("{}", 1)] // score of 1.
         [DataRow("{{{}}}", 6)] // score of 1 + 2 + 3 = 6.
@@ -62,8 +60,6 @@ namespace AoC.Advent2017.Test
             Assert.AreEqual(expected, Day09.GetScore(input));
         }
 
-
-
         [DataRow("<>", 0)]
         [DataRow("<random characters>", 17)]
         [DataRow("<<<<>", 3)]
@@ -76,7 +72,6 @@ namespace AoC.Advent2017.Test
         {
             Assert.AreEqual(expected, Day09.CountGarbage(input));
         }
-
 
         [TestCategory("Regression")]
         [DataTestMethod]
@@ -91,6 +86,5 @@ namespace AoC.Advent2017.Test
         {
             Assert.AreEqual(4903, Day09.Part2(input));
         }
-
     }
 }

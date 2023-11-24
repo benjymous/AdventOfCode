@@ -17,7 +17,6 @@ namespace AoC.Advent2022.Test
     6-6,4-6
     2-6,4-8".Replace("\r", "");
 
-
         [TestCategory("Test")]
         [DataTestMethod]
         public void Cleanup01Test()

@@ -62,6 +62,5 @@ namespace AoC.Advent2022.Test
         {
             Assert.AreEqual("20=2-02-0---02=22=21", Day25.Part1(input).ToString());
         }
-
     }
 }

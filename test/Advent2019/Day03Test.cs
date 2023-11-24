@@ -42,6 +42,5 @@ namespace AoC.Advent2019.Test
         {
             Assert.AreEqual(27306, Day03.FindIntersection(input, Day03.SearchMode.Shortest));
         }
-
     }
 }

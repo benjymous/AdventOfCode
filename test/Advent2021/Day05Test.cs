@@ -21,7 +21,6 @@ namespace AoC.Advent2021.Test
 0,0 -> 8,8
 5,5 -> 8,2";
 
-
         [TestCategory("Test")]
         [DataTestMethod]
         public void Vents01Test()

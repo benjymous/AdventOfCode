@@ -76,7 +76,6 @@ namespace AoC.Advent2021.Test
             Assert.AreEqual(expected, Part2(data));
         }
 
-
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Decoder_Part1_Regression()

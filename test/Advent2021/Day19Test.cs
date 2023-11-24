@@ -161,14 +161,14 @@ namespace AoC.Advent2021.Test
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Beacons_Part1_Regression()
+        public void BeaconScanner_Part1_Regression()
         {
             Assert.AreEqual(396, Day19.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Beacons_Part2_Regression()
+        public void BeaconScanner_Part2_Regression()
         {
             Assert.AreEqual(11828, Day19.Part2(input));
         }

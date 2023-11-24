@@ -28,17 +28,16 @@ namespace AoC.Advent2015.Test
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Encoding_Part1_Regression()
+        public void MatchstickEncoding_Part1_Regression()
         {
             Assert.AreEqual(1342, Day08.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Encoding_Part2_Regression()
+        public void MatchStickEncoding_Part2_Regression()
         {
             Assert.AreEqual(2074, Day08.Part2(input));
         }
-
     }
 }

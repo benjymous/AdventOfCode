@@ -42,6 +42,5 @@ namespace AoC.Advent2017.Test
         {
             Assert.AreEqual("e1a65bfb5a5ce396025fab5528c25a87", Day10.Part2(input));
         }
-
     }
 }

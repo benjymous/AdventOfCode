@@ -4,11 +4,9 @@ using AoC.Utils.Vectors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 
-[assembly: Parallelize(Workers = 0, Scope = ExecutionScope.MethodLevel)]
+[assembly: Parallelize(Workers = 64, Scope = ExecutionScope.ClassLevel)]
 
 namespace AoC.Test
 {
@@ -136,7 +134,6 @@ namespace AoC.Test
             Assert.AreEqual("0,1,2,7,6,5,4,3,8,9", string.Join(',', circle));
         }
 
-
         [DataTestMethod]
         public void XorTest()
         {
@@ -144,7 +141,6 @@ namespace AoC.Test
 
             Assert.AreEqual(64, nums.Xor());
         }
-
 
         [DataTestMethod]
         [DataRow(1, "01")]
@@ -156,59 +152,27 @@ namespace AoC.Test
             Assert.AreEqual(expected, val.ToHex());
         }
 
-        class RegexCreationTest1
+        [method: Regex(@"(.+,.+) (.+,.+,.+) (.+)")]
+        class RegexCreationTest1(ManhattanVector2 a, ManhattanVector3 b, int c)
         {
-            [Regex(@"(.+,.+) (.+,.+,.+) (.+)")]
-            public RegexCreationTest1(ManhattanVector2 a, ManhattanVector3 b, int c)
-            {
-                A = a;
-                B = b;
-                C = c;
-            }
-
-            public ManhattanVector2 A;
-            public ManhattanVector3 B;
-            public int C;
+            public ManhattanVector2 A = a;
+            public ManhattanVector3 B = b;
+            public int C = c;
         }
 
-        class NestedRegexCreationTest
+        [method: Regex(@"(.+) (.+) (.+)")]
+        class NestedRegexCreationTest(NestedRegexCreationTestInner a, NestedRegexCreationTestInner b, int c)
         {
-            [Regex(@"(.+) (.+) (.+)")]
-            public NestedRegexCreationTest(NestedRegexCreationTestInner a, NestedRegexCreationTestInner b, int c)
-            {
-                A = a;
-                B = b;
-                C = c;
-            }
-
-            public NestedRegexCreationTestInner A;
-            public NestedRegexCreationTestInner B;
-            public int C;
+            public NestedRegexCreationTestInner A = a;
+            public NestedRegexCreationTestInner B = b;
+            public int C = c;
         }
 
+        [method: Regex(@"(.+)")]
 
-        class NestedRegexCreationTestInner
+        class NestedRegexCreationTestInner(string val)
         {
-            [Regex(@"(.+)")]
-            public NestedRegexCreationTestInner(string val)
-            {
-                Val = val;
-            }
-
-            public string Val;
-        }
-
-        class ArrayRegexCreationTest
-        {
-            [Regex(@"(.+) (.+)")]
-            public ArrayRegexCreationTest(NestedRegexCreationTestInner[] a, int c)
-            {
-                A = a;
-                C = c;
-            }
-
-            public NestedRegexCreationTestInner[] A;
-            public int C;
+            public string Val = val;
         }
 
         [TestMethod]
@@ -251,38 +215,29 @@ namespace AoC.Test
             Assert.AreEqual(2, list[2].C);
         }
 
-
         [TestMethod]
         [TestCategory("RegexParse")]
         public void RegexCreateTest()
         {
-            var obj = Util.RegexCreate<RegexCreationTest1>("10,10 20,20,5 32");
+            var obj = Util.FromString<RegexCreationTest1>("10,10 20,20,5 32");
             Assert.AreEqual(new ManhattanVector2(10, 10), obj.A);
             Assert.AreEqual(new ManhattanVector3(20, 20, 5), obj.B);
             Assert.AreEqual(32, obj.C);
         }
 
-        class RegexCreationTest2
+        [method: Regex(@"(.+) (.+) (.+)")]
+        class RegexCreationTest2(int[] a1, long[] a2, string[] a3)
         {
-            [Regex(@"(.+) (.+) (.+)")]
-            public RegexCreationTest2(int[] a1, long[] a2, string[] a3)
-            {
-                A1 = a1;
-                A2 = a2;
-                A3 = a3;
-            }
-
-            public int[] A1;
-            public long[] A2;
-            public string[] A3;
+            public int[] A1 = a1;
+            public long[] A2 = a2;
+            public string[] A3 = a3;
         }
-
 
         [TestMethod]
         [TestCategory("RegexParse")]
         public void RegexCreateTest2()
         {
-            var obj = Util.RegexCreate<RegexCreationTest2>("1,2,3 100,200,300 tom,dick,harry");
+            var obj = Util.FromString<RegexCreationTest2>("1,2,3 100,200,300 tom,dick,harry");
             Assert.AreEqual(3, obj.A1.Length);
             Assert.AreEqual(1, obj.A1[0]);
             Assert.AreEqual(2, obj.A1[1]);
@@ -306,20 +261,61 @@ namespace AoC.Test
         [TestCategory("RegexParse")]
         public void RegexCreateFailTest()
         {
-            Assert.ThrowsException<Exception>(() => Util.RegexCreate<RegexCreationTestNoConstructor>("blah"));
+            Assert.ThrowsException<Exception>(() => Util.FromString<RegexCreationTestNoConstructor>("blah"));
         }
 
-        //[TestMethod]
-        //[TestCategory("RegexParse")]
-        //public void ArrayRegexCreateTest()
-        //{
-        //    var item = Util.RegexCreate<ArrayRegexCreationTest>("One,Two 32");
-        //    Assert.AreEqual(2, item.A.Length);
+        [method: Regex(@"(.+) (.+)")]
+        class ArrayRegexCreationTest([Split(",")] NestedRegexCreationTestInner[] a, int c)
+        {
+            public NestedRegexCreationTestInner[] A = a;
+            public int C = c;
+        }
 
-        //    Assert.AreEqual("One", item.A[0].Val);
-        //    Assert.AreEqual("Two", item.A[1].Val);
-        //    Assert.AreEqual(32, item.C);
-        //}
+        [TestMethod]
+        [TestCategory("RegexParse")]
+        public void ArrayRegexCreateTest()
+        {
+            var item = Util.FromString<ArrayRegexCreationTest>("One,Two 32");
+            Assert.AreEqual(2, item.A.Length);
+
+            Assert.AreEqual("One", item.A[0].Val);
+            Assert.AreEqual("Two", item.A[1].Val);
+            Assert.AreEqual(32, item.C);
+        }
+
+        [method: Regex(@"(.) (.+)")]
+        class RegexCreationDictionary(int a1, [Split(", ", @"(?<key>.+): (?<value>.+)")] Dictionary<int, int> a2)
+        {
+            public int A1 = a1;
+            public Dictionary<int, int> A2 = a2;
+        }
+
+        [TestMethod]
+        [TestCategory("RegexParse")]
+        public void RegexCreateDictionary()
+        {
+            var obj = Util.FromString<RegexCreationDictionary>("1 2: 3, 4: 5, 6: 7");
+            Assert.AreEqual(1, obj.A1);
+            Assert.AreEqual(3, obj.A2.Count);
+            Assert.IsTrue(obj.A2.TryGetValue(2, out var v) && v == 3);
+            Assert.IsTrue(obj.A2.TryGetValue(4, out v) && v == 5);
+            Assert.IsTrue(obj.A2.TryGetValue(6, out v) && v == 7);
+        }
+
+        [Regex(@"(.+)")]
+        record class BoolsRegexCreationTest([Split(",")] bool[] bools);
+
+        [TestMethod]
+        [TestCategory("RegexParse")]
+        public void RegexParseBooleans()
+        {
+            var bools = Util.FromString<BoolsRegexCreationTest>("true, false, True, False, TRUE, FALSE, t, f, T, F, yes, no, Yes, No, YES, NO, y, n, Y, N");
+            Assert.AreEqual(20, bools.bools.Length);
+            for (int i = 0; i < bools.bools.Length; ++i)
+            {
+                Assert.AreEqual(i % 2 == 0, bools.bools[i], $"wrong boolean at {i}");
+            }
+        }
 
         [TestMethod]
         public void ArrayDimensionTest()
@@ -335,13 +331,13 @@ namespace AoC.Test
             var arr = new int[10, 5];
             for (int x = 0; x < arr.Width(); ++x)
                 for (int y = 0; y < arr.Height(); ++y)
-                    arr[x, y] = x + y * 100;
+                    arr[x, y] = x + (y * 100);
 
             var col = arr.Column(1).ToArray();
             Assert.AreEqual(5, col.Length);
             for (int i = 0; i < col.Length; ++i)
             {
-                Assert.AreEqual(i * 100 + 1, col[i]);
+                Assert.AreEqual((i * 100) + 1, col[i]);
             }
         }
 
@@ -351,13 +347,13 @@ namespace AoC.Test
             var arr = new int[10, 5];
             for (int x = 0; x < arr.Width(); ++x)
                 for (int y = 0; y < arr.Height(); ++y)
-                    arr[x, y] = x * 100 + y;
+                    arr[x, y] = (x * 100) + y;
 
             var row = arr.Row(1).ToArray();
             Assert.AreEqual(10, row.Length);
             for (int i = 0; i < row.Length; ++i)
             {
-                Assert.AreEqual(i * 100 + 1, row[i]);
+                Assert.AreEqual((i * 100) + 1, row[i]);
             }
         }
 

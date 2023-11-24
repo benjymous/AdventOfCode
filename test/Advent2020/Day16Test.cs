@@ -12,10 +12,9 @@ namespace AoC.Advent2020.Test
         public static string TestDecode(string input)
         {
             var scanner = new Day16.TicketScanner(input);
-            scanner.DecodeTickets();
-            return string.Join(", ", scanner.DecodedTicket()
-                                            .OrderBy(kvp => kvp.Item1)
-                                            .Select(kvp => $"{kvp.Item1}: {kvp.Item2}"));
+            var res = scanner.DecodeTickets();
+            return string.Join(", ", res.OrderBy(kvp => kvp.key)
+                                        .Select(kvp => $"{kvp.key}: {kvp.value}"));
         }
 
         [TestCategory("Test")]

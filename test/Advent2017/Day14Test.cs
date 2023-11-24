@@ -4,6 +4,7 @@ namespace AoC.Advent2017.Test
 {
     [TestCategory("2017")]
     [TestCategory("FloodFill")]
+    [TestCategory("PackedVect")]
     [TestClass]
     public class Day14Test
     {
@@ -34,6 +35,5 @@ namespace AoC.Advent2017.Test
         {
             Assert.AreEqual(1164, Day14.Part2(input));
         }
-
     }
 }

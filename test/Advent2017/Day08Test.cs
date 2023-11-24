@@ -38,6 +38,5 @@ c inc -20 if c == 10";
         {
             Assert.AreEqual(5590, Day08.Part2(input));
         }
-
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace AoC.Advent2019.Test
 {
     [TestCategory("2019")]
+    [TestCategory("Non-Optimal")]
     [TestClass]
     public class Day22Test
     {
@@ -11,11 +12,11 @@ namespace AoC.Advent2019.Test
 
         public static IEnumerable<object[]> GetData()
         {
-            yield return new object[] { new Day22.Deck(10), "0, 1, 2, 3, 4, 5, 6, 7, 8, 9" };
-            yield return new object[] { new Day22.Deck(10).Stack(), "9, 8, 7, 6, 5, 4, 3, 2, 1, 0" };
-            yield return new object[] { new Day22.Deck(10).Cut(3), "3, 4, 5, 6, 7, 8, 9, 0, 1, 2" };
-            yield return new object[] { new Day22.Deck(10).Cut(-4), "6, 7, 8, 9, 0, 1, 2, 3, 4, 5" };
-            yield return new object[] { new Day22.Deck(10).Deal(3), "0, 7, 4, 1, 8, 5, 2, 9, 6, 3" };
+            yield return [new Day22.Deck(10), "0, 1, 2, 3, 4, 5, 6, 7, 8, 9"];
+            yield return [new Day22.Deck(10).Stack(), "9, 8, 7, 6, 5, 4, 3, 2, 1, 0"];
+            yield return [new Day22.Deck(10).Cut(3), "3, 4, 5, 6, 7, 8, 9, 0, 1, 2"];
+            yield return [new Day22.Deck(10).Cut(-4), "6, 7, 8, 9, 0, 1, 2, 3, 4, 5"];
+            yield return [new Day22.Deck(10).Deal(3), "0, 7, 4, 1, 8, 5, 2, 9, 6, 3"];
         }
 
         [TestCategory("Test")]
@@ -37,7 +38,6 @@ namespace AoC.Advent2019.Test
             var shuffled = Day22.DoShuffle(10, input);
             Assert.AreEqual(expected, shuffled.ToString());
         }
-
 
         [TestCategory("Regression")]
         [DataTestMethod]

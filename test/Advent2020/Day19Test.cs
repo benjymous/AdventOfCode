@@ -8,9 +8,6 @@ namespace AoC.Advent2020.Test
     {
         readonly string input = Util.GetInput<Day19>();
 
-
-
-
         [TestCategory("Test")]
         [DataRow("0: 4 1 5\n" +
                 "1: 2 3 | 3 2\n" +
@@ -102,7 +99,6 @@ namespace AoC.Advent2020.Test
         {
             Assert.AreEqual(expected, Day19.Part2(input));
         }
-
 
         [TestCategory("Regression")]
         [DataTestMethod]

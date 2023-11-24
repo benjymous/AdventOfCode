@@ -31,7 +31,6 @@ namespace AoC.Advent2018.Test
             Assert.AreEqual(325, Day12.Part1(test));
         }
 
-
         [TestCategory("Regression")]
         [DataTestMethod]
         public void PlantPropgation_Part1_Regression()
@@ -45,6 +44,5 @@ namespace AoC.Advent2018.Test
         {
             Assert.AreEqual(1700000000011, Day12.Part2(input));
         }
-
     }
 }

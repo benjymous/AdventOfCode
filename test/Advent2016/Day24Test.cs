@@ -3,6 +3,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AoC.Advent2016.Test
 {
     [TestCategory("2016")]
+    [TestCategory("Solver")]
+    [TestCategory("PackedVect")]
     [TestClass]
     public class Day24Test
     {

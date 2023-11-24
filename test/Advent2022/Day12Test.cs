@@ -4,6 +4,8 @@ namespace AoC.Advent2022.Test
 {
     [TestCategory("2022")]
     [TestCategory("AStar")]
+    [TestCategory("Solver")]
+    [TestCategory("PackedVect")]
     [TestClass]
     public class Day12Test
     {

@@ -48,6 +48,5 @@ namespace AoC.Advent2018.Test
         {
             Assert.AreEqual("Last train at (116, 25)", Day13.Part2(input));
         }
-
     }
 }

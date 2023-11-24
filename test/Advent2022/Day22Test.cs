@@ -3,6 +3,7 @@
 namespace AoC.Advent2022.Test
 {
     [TestCategory("2022")]
+    [TestCategory("Non-Optimal")]
     [TestClass]
     public class Day22Test
     {

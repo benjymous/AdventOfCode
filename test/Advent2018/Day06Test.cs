@@ -37,6 +37,5 @@ namespace AoC.Advent2018.Test
         {
             Assert.AreEqual(40284, Day06.Part2(input));
         }
-
     }
 }

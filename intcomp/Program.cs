@@ -16,7 +16,7 @@ namespace intcomp
 
             Console.WriteLine(file);
 
-            Dictionary<string, int> variables = new();
+            Dictionary<string, int> variables = [];
             Dictionary<string, int> keywords = new()
             {
                 ["ADD"] = 1,
@@ -34,7 +34,7 @@ namespace intcomp
             foreach (var line in file)
             {
                 Console.WriteLine(line);
-                if (line.Trim().StartsWith(";"))
+                if (line.Trim().StartsWith(';'))
                     continue; // comment
 
                 var instr = line.Trim().Split(" ").Where(i => i.Length > 0);
@@ -69,8 +69,7 @@ namespace intcomp
                 }
             }
 
-
-            Dictionary<int, string> backmap = new();
+            Dictionary<int, string> backmap = [];
             foreach (var kvp in variables)
             {
                 backmap[kvp.Value] = kvp.Key;

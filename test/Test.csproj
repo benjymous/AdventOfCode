@@ -16,6 +16,7 @@
     <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Advent.csproj" />
+    <ProjectReference Include="..\AoC.Utils\AoC.Utils.csproj" />
+    <ProjectReference Include="..\AoC\AoC.csproj" />
   </ItemGroup>
 </Project>

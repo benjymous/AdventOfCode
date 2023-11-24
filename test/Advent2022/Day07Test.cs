@@ -47,14 +47,14 @@ $ ls
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Filesystem_Part1_Regression()
+        public void FilesystemSpace_Part1_Regression()
         {
             Assert.AreEqual(1908462, Day07.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Filesystem_Part2_Regression()
+        public void FilesystemSpace_Part2_Regression()
         {
             Assert.AreEqual(3979145, Day07.Part2(input));
         }

@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AoC.Advent2021.Test
 {
     [TestCategory("2021")]
+    [TestCategory("PackedVect")]
     [TestClass]
     public class Day20Test
     {
@@ -32,14 +33,14 @@ namespace AoC.Advent2021.Test
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Enhancement_Part1_Regression()
+        public void TrenchEnhancement_Part1_Regression()
         {
             Assert.AreEqual(5339, Day20.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
-        public void Enhancement_Part2_Regression()
+        public void TrenchEnhancement_Part2_Regression()
         {
             Assert.AreEqual(18395, Day20.Part2(input));
         }

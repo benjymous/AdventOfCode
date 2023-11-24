@@ -16,7 +16,6 @@ namespace AoC.Advent2021.Test
 
         [TestCategory("Test")]
 
-
         [DataRow("[[[[[9,8],1],2],3],4]", "[[[[0,9],2],3],4]")]
         [DataRow("[7,[6,[5,[4,[3,2]]]]]", "[7,[6,[5,[7,0]]]]")]
         [DataRow("[[6,[5,[4,[3,2]]]],1]", "[[6,[5,[7,0]]],3]")]
@@ -96,7 +95,6 @@ namespace AoC.Advent2021.Test
         , "[[[[4,2],2],6],[8,7]]"
         }, "[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]")]
 
-
         [DataRow(new string[]{"[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]",
                             "[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]",
                             "[[2,[[0,8],[3,4]]],[[[6,7],1],[7,[1,6]]]]",
@@ -122,7 +120,7 @@ namespace AoC.Advent2021.Test
                 Console.WriteLine($"+ {v}");
                 Assert.AreEqual(next, AsString(v));
 
-                number = number + v;
+                number += v;
 
                 Console.WriteLine($"= {number}");
                 Console.WriteLine();
@@ -133,7 +131,6 @@ namespace AoC.Advent2021.Test
             var result = AsString(number);
             Assert.AreEqual(expected, result);
         }
-
 
         [DataRow("[[1,2],[[3,4],5]]", 143)]
         [DataRow("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]", 1384)]

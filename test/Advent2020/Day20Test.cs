@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Text;
 
 namespace AoC.Advent2020.Test
 {
@@ -161,8 +162,22 @@ namespace AoC.Advent2020.Test
                 tile.Twizzle();
             }
             Assert.AreEqual(orientation % 8, tile.Orientation);
-            Assert.AreEqual(expected, tile.Transformed().Trim().Replace("\r", ""));
-            Assert.AreEqual(tile.Edges[0], tile.Transformed()[..3]); // top edge should match transform
+            Assert.AreEqual(expected, ToString(tile).Trim().Replace("\r", ""));
+            Assert.AreEqual(tile.Edges[0], ToString(tile)[..3]); // top edge should match transform
+        }
+
+        public static string ToString(Day20.Tile tile)
+        {
+            StringBuilder sb = new();
+            for (int y = 0; y < tile.Grid.Length; ++y)
+            {
+                for (int x = 0; x < tile.Grid[0].Length; ++x)
+                {
+                    sb.Append(tile.GetCellTransformed(x, y));
+                }
+                sb.AppendLine();
+            }
+            return sb.ToString();
         }
 
         [TestCategory("Regression")]

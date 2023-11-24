@@ -4,6 +4,7 @@ namespace AoC.Advent2021.Test
 {
     [TestCategory("2021")]
     [TestCategory("AStar")]
+    [TestCategory("PackedVect")]
     [TestClass]
     public class Day15Test
     {

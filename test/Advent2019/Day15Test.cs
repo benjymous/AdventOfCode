@@ -14,7 +14,7 @@ namespace AoC.Advent2019.Test
         [DataTestMethod]
         public void Oxygen_Part1_Regression()
         {
-            Assert.AreEqual(380, Day15.Part1(input, new ConsoleOut()));
+            Assert.AreEqual(380, Day15.Part1(input));
         }
 
         [TestCategory("Regression")]
@@ -23,6 +23,5 @@ namespace AoC.Advent2019.Test
         {
             Assert.AreEqual(410, Day15.Part2(input));
         }
-
     }
 }

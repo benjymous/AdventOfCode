@@ -55,7 +55,7 @@ namespace AoC.Advent2021.Test
 
                 for (int l = 0; l < 30; ++l)
                 {
-                    Assert.AreEqual((k == l), Day12.Contains(hash, l));
+                    Assert.AreEqual(k == l, Day12.Contains(hash, l));
                 }
             }
         }

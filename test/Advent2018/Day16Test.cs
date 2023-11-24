@@ -9,7 +9,6 @@ namespace AoC.Advent2018.Test
     {
         readonly string input = Util.GetInput<Day16>();
 
-
         [TestCategory("Regression")]
         [DataTestMethod]
         public void ReverseEngineer_Part1_Regression()
@@ -21,8 +20,7 @@ namespace AoC.Advent2018.Test
         [DataTestMethod]
         public void ReverseEngineer_Part2_Regression()
         {
-            Assert.AreEqual(525, Day16.Part2(input, new ConsoleOut()));
+            Assert.AreEqual(525, Day16.Part2(input));
         }
-
     }
 }

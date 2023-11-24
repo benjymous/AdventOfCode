@@ -46,6 +46,5 @@ In state B:
         {
             Assert.AreEqual(2794, Day25.Part1(input));
         }
-
     }
 }

@@ -19,8 +19,6 @@ namespace AoC.Advent2019.Test
             Assert.AreEqual(expected, cpu.ToString());
         }
 
-
-
         // Using position mode, consider whether the input is equal to 8;
         // output 1 (if it is) or 0 (if it is not).
         [DataRow("3,9,8,9,10,9,4,9,99,-1,8", 8, "1")]

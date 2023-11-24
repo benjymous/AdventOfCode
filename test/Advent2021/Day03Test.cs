@@ -21,7 +21,6 @@ namespace AoC.Advent2021.Test
 00010
 01010";
 
-
         [TestCategory("Test")]
         [DataTestMethod]
         public void Diagnostic01Test()

@@ -1,0 +1,15 @@
+﻿global using AoC.Utils;
+global using AoC.Utils.Collections;
+global using AoC.Utils.Memoize;
+global using AoC.Utils.Pathfinding;
+global using AoC.Utils.Solver;
+global using AoC.Utils.Vectors;
+global using System;
+global using System.Collections.Frozen;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Numerics;
+global using System.Runtime.CompilerServices;
+global using System.Text;
+global using System.Text.RegularExpressions;
+global using PackedPos32 = AoC.Utils.Vectors.PackedVect2<int, AoC.Utils.Vectors.Pack16_16>;

@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DebugType>Full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="init\**" />
+    <Compile Remove="test\**" />
+    <EmbeddedResource Remove="init\**" />
+    <EmbeddedResource Remove="test\**" />
+    <None Remove="init\**" />
+    <None Remove="test\**" />
+    <Compile Remove="intcomp\**" />
+    <EmbeddedResource Remove="intcomp\**" />
+    <None Remove="intcomp\**" />
+    <Compile Remove="IntCpuCmd\**" />
+    <EmbeddedResource Remove="IntCpuCmd\**" />
+    <None Remove="IntCpuCmd\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Advent2023\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AoC.Utils\AoC.Utils.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update=".session">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

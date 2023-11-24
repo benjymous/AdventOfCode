@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace AoC.Advent2020.Test
 {
@@ -29,14 +28,14 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void Encoding_Part1_Regression()
         {
-            Assert.AreEqual((long)1124361034, Day09.Part1(input));
+            Assert.AreEqual(1124361034, Day09.Part1(input));
         }
 
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Encoding_Part2_Regression()
         {
-            Assert.AreEqual((long)129444555, Day09.Part2(input));
+            Assert.AreEqual(129444555, Day09.Part2(input));
         }
     }
 }

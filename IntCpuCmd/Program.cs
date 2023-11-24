@@ -6,23 +6,13 @@ namespace IntCpuCmd
     class Program
     {
 
-        class Runner : ICPUInterrupt
+        class Runner(string program) : ICPUInterrupt
         {
-            readonly IntCPU cpu;
-            public Runner(string program)
-            {
-                cpu = new(program)
-                {
-                    Interrupt = this
-                };
-            }
+            readonly IntCPU cpu = new(program);
 
             public void Run() => cpu.Run();
 
-            public void OutputReady()
-            {
-                Console.WriteLine($"- {cpu.Output.Dequeue()}");
-            }
+            public void OutputReady() => Console.WriteLine($"- {cpu.Output.Dequeue()}");
 
             public void RequestInput()
             {

@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AoC.Advent2020.Test
 {
     [TestCategory("2020")]
+    [TestCategory("PackedVect")]
     [TestClass]
     public class Day11Test
     {
@@ -77,7 +78,6 @@ namespace AoC.Advent2020.Test
         {
             Assert.AreEqual(expected, Day11.Part2(input));
         }
-
 
         [TestCategory("Regression")]
         [DataTestMethod]

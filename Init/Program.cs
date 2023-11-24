@@ -2,8 +2,8 @@
 using Fluid;
 
 var year = "2023";
-var yearFolder = $"Advent{year}";
-var testFolder = Path.Combine("test", yearFolder);
+var yearFolder = Path.Combine("AoC", $"Advent{year}");
+var testFolder = Path.Combine("test", $"Advent{year}");
 
 var parser = new FluidParser();
 var daySolutionTemplate = File.ReadAllText("SolutionTemplate.txt");
@@ -13,8 +13,8 @@ Console.WriteLine(Directory.GetCurrentDirectory());
 Directory.SetCurrentDirectory(@"..\..\..\..");
 Console.WriteLine(Directory.GetCurrentDirectory());
 
-if (!Directory.Exists(yearFolder)) Directory.CreateDirectory(yearFolder);
-if (!Directory.Exists(testFolder)) Directory.CreateDirectory(testFolder);
+if (!Directory.Exists(yearFolder)) _ = Directory.CreateDirectory(yearFolder);
+if (!Directory.Exists(testFolder)) _ = Directory.CreateDirectory(testFolder);
 
 for (int day = 1; day <= 25; ++day)
 {
@@ -29,7 +29,7 @@ for (int day = 1; day <= 25; ++day)
 
             var rendered = template.Render(context);
 
-            File.WriteAllText(Path.Combine(i == 0 ? yearFolder : testFolder, $"Day{model.Day}{(i==0 ? "_" : "Test")}.cs"), rendered, System.Text.Encoding.UTF8);
+            File.WriteAllText(Path.Combine(i == 0 ? yearFolder : testFolder, $"Day{model.Day}{(i == 0 ? "_" : "Test")}.cs"), rendered, System.Text.Encoding.UTF8);
         }
         else
         {
@@ -37,6 +37,4 @@ for (int day = 1; day <= 25; ++day)
             break;
         }
     }
-
-
 }

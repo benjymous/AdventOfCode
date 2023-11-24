@@ -118,7 +118,6 @@ off x=-93533..-4276,y=-16170..68771,z=-104985..-24507";
             Assert.AreEqual(expected, Day22.RunOperation(Day22.ParseData(input.Replace("\r", ""))));
         }
 
-
         [TestCategory("Regression")]
         [DataTestMethod]
         public void Reactor_Part1_Regression()

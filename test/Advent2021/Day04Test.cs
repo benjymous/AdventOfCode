@@ -28,7 +28,6 @@ namespace AoC.Advent2021.Test
 22 11 13  6  5
  2  0 12  3  7";
 
-
         [TestCategory("Test")]
         [DataTestMethod]
         public void Squid01Test()

@@ -14,14 +14,14 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void Fishes01Test()
         {
-            Assert.AreEqual((long)5934, Day06.Part1(test));
+            Assert.AreEqual(5934, Day06.Part1(test));
         }
 
         [TestCategory("Test")]
         [DataTestMethod]
         public void Fishes02Test()
         {
-            Assert.AreEqual((long)26984457539, Day06.Part2(test));
+            Assert.AreEqual(26984457539, Day06.Part2(test));
         }
 
         [TestCategory("Regression")]

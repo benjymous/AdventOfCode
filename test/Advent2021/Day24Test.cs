@@ -27,7 +27,6 @@ namespace AoC.Advent2021.Test
             }
         }
 
-
         [TestCategory("Test")]
         [DataTestMethod]
         [DataRow(49917929934999)]
