@@ -4,7 +4,7 @@ namespace AoC.Utils
     {
         public static string Name(this IPuzzle puzzle) => $"{puzzle.GetYear()}-{puzzle.GetDay()}";
 
-        public static string GetYear(this IPuzzle puzzle) => PuzzleHelpers.GetDay(puzzle.GetType());
+        public static string GetYear(this IPuzzle puzzle) => PuzzleHelpers.GetYear(puzzle.GetType());
 
         public static string GetDay(this IPuzzle puzzle) => PuzzleHelpers.GetDay(puzzle.GetType());
 
@@ -40,11 +40,13 @@ namespace AoC.Utils
 
             if (Args.Length == 0) return true;
 
-            var name = $"{yearStr}-{dayStr}";
+            var nameA = $"{yearStr}-{dayStr}";
+            var nameB = $"Advent{yearStr}-Day{dayStr}";
 
-            foreach (var line in Args)
+            foreach (var line in Args.Select(l => l.Trim()))
             {
-                if (name.Contains(line.Trim())) return true;
+                if (nameA.Contains(line)) return true;
+                if (line.StartsWith(nameB)) return true;
             }
 
             return false;

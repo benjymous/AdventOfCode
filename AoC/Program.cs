@@ -8,6 +8,7 @@ namespace AoC
     {
         static void Main(string[] args)
         {
+            Console.WriteLine(args[0]);
             PuzzleHelpers.Args = args;
 
             bool singleThread = args.Contains("-single");
