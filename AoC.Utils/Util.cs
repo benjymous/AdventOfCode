@@ -509,6 +509,7 @@ public partial class Util
         cookieContainer.Add(new Uri("https://adventofcode.com"), new Cookie("session", sessionCookie));
         using var handler = new HttpClientHandler() { CookieContainer = cookieContainer };
         using var client = new HttpClient(handler);
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (compatible; github.com/benjymous/adventofcode)");
 
         var content = client.GetStringAsync(url).Result;
         return content;
