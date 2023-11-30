@@ -52,17 +52,9 @@ public class Day21 : IPuzzle
         }
     }
 
-    private static Monkey GetRootMonkey(string input, ILogger logger = null)
-    {
-        var dict = Util.RegexParse<Monkey>(input)
-                .ToDictionary(m => m.Name);
-        logger?.WriteLine("a");
-        return dict.Resolve(entry => entry.Value.ResolveChildren(entry.Collection))[RootKey];
-    }
-
-    public static long Part1(Monkey monkey) => monkey;
-
-    public static long Part2(Monkey monkey) => monkey.CalculateHumanValue();
+    private static Monkey GetRootMonkey(string input) => Memoize(input, _ =>
+        Util.RegexParse<Monkey>(input)
+            .ToDictionary(m => m.Name).Resolve(entry => entry.Value.ResolveChildren(entry.Collection))[RootKey]);
 
     public static long Part1(string input) => GetRootMonkey(input);
 
@@ -70,9 +62,7 @@ public class Day21 : IPuzzle
 
     public void Run(string input, ILogger logger)
     {
-        var monkey = GetRootMonkey(input, logger);
-
-        logger.WriteLine("- Pt1 - " + Part1(monkey));
-        logger.WriteLine("- Pt2 - " + Part2(monkey));
+        logger.WriteLine("- Pt1 - " + Part1(input));
+        logger.WriteLine("- Pt2 - " + Part2(input));
     }
 }

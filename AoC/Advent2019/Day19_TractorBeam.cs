@@ -7,7 +7,7 @@ public class Day19 : IPuzzle
 
         public int Scans { get; private set; } = 0;
 
-        public long Visit(int scanX, int scanY) => this.Memoize((scanX, scanY), _ =>
+        public long Visit(int scanX, int scanY) => Memoize((scanX, scanY), _ =>
         {
             Scans++;
             cpu.AddInput(scanX, scanY);

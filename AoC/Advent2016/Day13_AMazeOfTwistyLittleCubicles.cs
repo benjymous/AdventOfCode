@@ -24,7 +24,7 @@ public class Day13 : IPuzzle
                 yield return pt;
         }
 
-        public bool IsValidNeighbour((int x, int y) pt) => pt.x >= 0 && pt.y >= 0 && this.Memoize(pt, _ => IsOpen(pt.x, pt.y));
+        public bool IsValidNeighbour((int x, int y) pt) => pt.x >= 0 && pt.y >= 0 && Memoize(pt, _ => IsOpen(pt.x, pt.y));
 
         bool IsOpen(int x, int y) => (Seed + (x * x) + (3 * x) + (2 * x * y) + y + (y * y)).CountBits() % 2 == 0;
 

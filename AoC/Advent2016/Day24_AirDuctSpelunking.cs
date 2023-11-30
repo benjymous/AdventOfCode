@@ -28,7 +28,7 @@ public class Day24 : IPuzzle
             ShortestPath = Paths.Min(kvp => kvp.Value);
         }
 
-        public uint[] Bits(uint input) => this.Memoize(input, _ => input.BitSequence().ToArray());
+        public static uint[] Bits(uint input) => Memoize(input, _ => input.BitSequence().ToArray());
 
         static readonly PackedPos32[] Neighbours = [(1, 0), (0, 1), (-1, 0), (0, -1)];
         public IEnumerable<PackedPos32> GetNeighbours(PackedPos32 location) => Neighbours.Select(n => location + n).Where(n => Data.Contains(n));
@@ -41,7 +41,7 @@ public class Day24 : IPuzzle
             uint tryLocations = map.AllLocations - state.visited;
             if (tryLocations > 0)
             {   // check locations not visited
-                foreach (var location in map.Bits(tryLocations))
+                foreach (var location in MapData.Bits(tryLocations))
                 {
                     if (map.Paths.TryGetValue(state.location | location, out var pathDistance))
                     {

@@ -33,7 +33,7 @@ public class Day19 : IPuzzle
         static HashSet<(int x, int y, int z)> Transform(int transformIdx, HashSet<(int x, int y, int z)> data) => data.Select(point => Transforms[transformIdx](point)).ToHashSet();
     }
 
-    private static List<Group> AlignGroups(string input)
+    private static List<Group> AlignGroups(string input) => Memoize(input, _ =>
     {
         var groups = input.Split("\n\n").Select(bit => Util.Parse<ManhattanVector3>(bit.Split("\n", StringSplitOptions.RemoveEmptyEntries).Skip(1)).Select(p => p.AsSimple()).ToArray()).ToArray().WithIndex().Select(item => new Group(item.Index, item.Value)).ToArray();
 
@@ -58,20 +58,19 @@ public class Day19 : IPuzzle
         });
 
         return aligned;
+    });
+
+    public static int Part1(string input) => AlignGroups(input).Select(g => g.Points.AsEnumerable()).Aggregate((lhs, rhs) => lhs.Union(rhs)).ToHashSet().Count;
+
+    public static int Part2(string input)
+    {
+        var aligned = AlignGroups(input);
+        return Util.Matrix(aligned, aligned).Max(pair => pair.item1.Origin.Distance(pair.item2.Origin));
     }
-
-    private static int Part1(IEnumerable<Group> aligned) => aligned.Select(g => g.Points.AsEnumerable()).Aggregate((lhs, rhs) => lhs.Union(rhs)).ToHashSet().Count;
-    public static int Part2(IEnumerable<Group> aligned) => Util.Matrix(aligned, aligned).Max(pair => pair.item1.Origin.Distance(pair.item2.Origin));
-
-    public static int Part1(string input) => Part1(AlignGroups(input));
-
-    public static int Part2(string input) => Part2(AlignGroups(input));
 
     public void Run(string input, ILogger logger)
     {
-        IEnumerable<Group> aligned = AlignGroups(input);
-
-        logger.WriteLine("- Pt1 - " + Part1(aligned));
-        logger.WriteLine("- Pt2 - " + Part2(aligned));
+        logger.WriteLine("- Pt1 - " + Part1(input));
+        logger.WriteLine("- Pt2 - " + Part2(input));
     }
 }

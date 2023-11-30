@@ -1,5 +1,4 @@
 ﻿global using AoC.Utils;
-global using AoC.Utils.Memoize;
 global using AoC.Utils.Vectors;
 global using System.Collections.Frozen;
 global using System.Numerics;

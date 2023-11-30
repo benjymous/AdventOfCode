@@ -19,7 +19,7 @@ public class Day18 : IPuzzle
 
         public Dictionary<int, RoomPath> Paths { get; private set; } = [];
 
-        public int[] Bits(int input) => this.Memoize(input, _ => input.BitSequence().ToArray());
+        public static int[] Bits(int input) => Memoize(input, _ => input.BitSequence().ToArray());
 
         public MapData(string input, QuestionPart part) : base(new AllWalkable<char>())
         {
@@ -50,9 +50,9 @@ public class Day18 : IPuzzle
 
             if (solver.IsBetterThanCurrentBest(solver.PreviousPriority))
             {
-                foreach (var position in map.Bits(positions))
+                foreach (var position in MapData.Bits(positions))
                 {
-                    var tryKeys = map.Bits(map.AllKeys - heldKeys);
+                    var tryKeys = MapData.Bits(map.AllKeys - heldKeys);
                     foreach (var key in tryKeys)
                     {
                         int remainingCount = tryKeys.Length - 1;

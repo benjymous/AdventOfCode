@@ -16,9 +16,12 @@ public class Day16 : IPuzzle
 
     private static (Dictionary<uint, int> routes, Dictionary<uint, int> valveRates, uint availableNodes) Init(string input)
     {
-        var data = Util.RegexParse<Valve>(input).ToArray();
-        var valves = data.Where(val => val.Rate > 0).WithIndex(1).Select(i => { i.Value.BitIndex = 1U << i.Index; return i.Value; }).ToArray();
-        return (routes: BuildRoutes(valves, new MapData(data.ToDictionary(val => val.Id, val => val.Neighbours))).ToDictionary(), valveRates: valves.ToDictionary(val => val.BitIndex, val => val.Rate), availableNodes: (uint)valves.Sum(v => v.BitIndex));
+        return Memoize(input, _ =>
+        {
+            var data = Util.RegexParse<Valve>(input).ToArray();
+            var valves = data.Where(val => val.Rate > 0).WithIndex(1).Select(i => { i.Value.BitIndex = 1U << i.Index; return i.Value; }).ToArray();
+            return (routes: BuildRoutes(valves, new MapData(data.ToDictionary(val => val.Id, val => val.Neighbours))).ToDictionary(), valveRates: valves.ToDictionary(val => val.BitIndex, val => val.Rate), availableNodes: (uint)valves.Sum(v => v.BitIndex));
+        });
     }
 
     private static IEnumerable<(uint, int)> BuildRoutes(Valve[] valves, MapData map)

@@ -7,7 +7,7 @@ public class Day15 : IPuzzle
         public readonly (int x, int y) Pos = (x, y), Beacon = (bx, by);
         public readonly int Range = (x, y).Distance(bx, by);
 
-        public bool InRange(int x, int y) => Pos.Distance(x, y) <= Range;
+        public bool InRange((int x, int y) p) => Pos.Distance(p) <= Range;
 
         public int Overlap(Sensor other)
         {
@@ -55,12 +55,12 @@ public class Day15 : IPuzzle
 
         foreach (var sensor in sensors)
         {
-            var boundary = sensor.OuterBoundary();
-            var sensorsSorted = sensors.Select(s2 => (s2, sensor.Overlap(s2))).OrderBy(pair => pair.Item2).Take(8).Select(pair => pair.s2).ToArray();
-            foreach (var (x, y) in boundary)
+            var boundary = sensor.OuterBoundary().WithinBounds(0, max, 0, max);
+            var nearestNeighbours = sensors.Select(s2 => (s2, sensor.Overlap(s2))).OrderBy(pair => pair.Item2).Take(8).Select(pair => pair.s2).ToArray();
+            var res = boundary.Where(pos => !nearestNeighbours.Any(s => s.InRange(pos))).FirstOrDefault();
+            if (res != default)
             {
-                if (x >= 0 && x <= max && y >= 0 && y <= max && !sensorsSorted.Any(s => s.InRange(x, y)))
-                    return (4000000L * x) + y;
+                return (4000000L * res.x) + res.y;
             }
         }
 

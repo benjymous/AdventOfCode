@@ -12,7 +12,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "test\Test.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Init", "Init\Init.csproj", "{98FF292F-FA2B-4BD6-A7FE-998902E4063D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AoC.Utils", "AoC.Utils\AoC.Utils.csproj", "{088F80A5-7D95-4554-A612-0C1BDDBAEE37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AoC.Utils", "AoC.Utils\AoC.Utils.csproj", "{088F80A5-7D95-4554-A612-0C1BDDBAEE37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

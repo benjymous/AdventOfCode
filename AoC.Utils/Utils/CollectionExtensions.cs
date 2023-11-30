@@ -715,5 +715,8 @@ namespace AoC.Utils
             var result = vals.GroupBy(v => v).OrderBy(g => g.Count()).First();
             return (result.Key, result.Count());
         }
+
+        public static IEnumerable<(int x, int y)> WithinBounds(this IEnumerable<(int x, int y)> input, int minX, int maxX, int minY, int maxY)
+            => input.Where(p => p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY);
     }
 }

@@ -21,9 +21,9 @@ public class Day25 : IPuzzle
 
         static IEnumerable<(char filter, string value)> FilterLines(IEnumerable<string> lines, char filter = '?') => lines.Select(l => { if (l[0] != '-') filter = l[0]; return l; }).Where(l => l[0] == '-').Select(l => (filter, l[2..]));
 
-        Room GetOrParseRoom(string roomName, IEnumerable<string> lines) => this.Memoize(roomName, roomName =>
+        Room GetOrParseRoom(string roomName, IEnumerable<string> lines) => Memoizer.Memoize(roomName, roomName =>
         {
-            var filtered = FilterLines(lines);
+            var filtered = FilterLines(lines).ToArray();
             var exits = filtered.Where(f => f.filter == 'D').Select(f => f.value).ToBiMap(e => e, e => LastTravelDirection != null && e == Reverse[LastTravelDirection] ? LastRoom : default);
             var items = filtered.Where(f => f.filter == 'I' && !traps.Contains(f.value)).Select(f => f.value);
 

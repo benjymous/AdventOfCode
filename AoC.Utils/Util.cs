@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -746,6 +747,16 @@ public partial class Util
     }
 
     public static T LCM<T>(T a, T b) where T : IBinaryInteger<T> => a * b / GCD(a, b);
+
+    public static T TimeFunction<T>(Func<T> fn)
+    {
+        Stopwatch sw = Stopwatch.StartNew();
+        var res = fn();
+        sw.Stop();
+
+        Console.WriteLine($"{sw.Elapsed.TotalMilliseconds}ms");
+        return res;
+    }
 }
 
 public class AutoArray<DataType>(IEnumerable<DataType> input) : IEnumerable<DataType>
@@ -936,23 +947,16 @@ public class Accumulator<T> where T : INumber<T>, IMinMaxValue<T>
 }
 
 [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Struct)]
-public class RegexAttribute : Attribute
+public class RegexAttribute(string pattern) : Attribute
 {
-    public RegexAttribute(string pattern) => Regex = this.Memoize(pattern, _ => new Regex(pattern));
-    public Regex Regex { get; private set; }
+    public Regex Regex { get; private set; } = Memoizer.Memoize(pattern, _ => new Regex(pattern));
 }
 
 [AttributeUsage(AttributeTargets.Parameter)]
-public class SplitAttribute : Attribute
+public class SplitAttribute(string splitter, string kvpMatchRegex = null) : Attribute
 {
-    public SplitAttribute(string splitter, string kvpMatchRegex = null)
-    {
-        Splitter = splitter;
-        KvpMatchRegex = kvpMatchRegex != null ? this.Memoize(kvpMatchRegex, _ => new Regex(kvpMatchRegex)) : null;
-    }
-
-    public readonly string Splitter;
-    public Regex KvpMatchRegex { get; private set; }
+    public readonly string Splitter = splitter;
+    public Regex KvpMatchRegex { get; private set; } = kvpMatchRegex != null ? Memoizer.Memoize(kvpMatchRegex, _ => new Regex(kvpMatchRegex)) : null;
 }
 
 public class Boxed<T>(T v)
