@@ -54,6 +54,7 @@ public partial class Util
         int.TryParse(entry, out var v) ? (null, v) : (entry, 0));
     }
 
+
     internal static int WrapIndex(int v, int length) => v % length;
 
     public static T Create<T>(string line) => (T)Activator.CreateInstance(typeof(T), [line]);

@@ -6,36 +6,53 @@ namespace AoC.Advent2023.Test;
 [TestClass]
 public class Day01Test
 {
-    readonly string input = ""; // Util.GetInput<Day01>();
+    readonly string input = Util.GetInput<Day01>();
+
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
+    [DataRow("1abc2", 12)]
+    [DataRow("pqr3stu8vwx", 38)]
+    [DataRow("a1b2c3d4e5f", 15)]
+    [DataRow("treb7uchet", 77)]
+    [DataRow("hello12there", 12)]
     [DataTestMethod]
-    public void _01Test(string input, int expected)
+    public void Trebuchet01Test(string input, int expected)
     {
-        Assert.IsTrue(Day01.Part1(input) == expected);
+
+        var v = new Day01.Value(input);
+
+        Assert.AreEqual(expected, v.ValPt1);
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
+    [DataRow("two1nine", 29)]
+    [DataRow("eightwothree",83)]
+    [DataRow("abcone2threexyz",13)]
+    [DataRow("xtwone3four",24)]
+    [DataRow("4nineeightseven2",42)]
+    [DataRow("zoneight234",14)]
+    [DataRow("7pqrstsixteen",76)]
+    [DataRow("ninefour", 94)]
     [DataTestMethod]
-    public void _02Test(string input, int expected)
+    public void Trebuchet02Test(string input, int expected)
     {
-        Assert.IsTrue(Day01.Part2(input) == expected);
+        var v = new Day01.Value(input);
+
+        Assert.AreEqual(expected, v.ValPt2);
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void Trebuchet_Part1_Regression()
     {
-        Assert.AreEqual(0, Day01.Part1(input));
+        Assert.AreEqual(53334, Day01.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void Trebuchet_Part2_Regression()
     {
-        Assert.AreEqual(0, Day01.Part2(input));
+        Assert.AreEqual(52834, Day01.Part2(input));
     }
 }
 
