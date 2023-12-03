@@ -33,6 +33,8 @@ public class Day01Test
     [DataRow("zoneight234",14)]
     [DataRow("7pqrstsixteen",76)]
     [DataRow("ninefour", 94)]
+    //[DataRow("oneight", 18)]
+    //[DataRow("eightwo", 82)]
     [DataTestMethod]
     public void Trebuchet02Test(string input, int expected)
     {
