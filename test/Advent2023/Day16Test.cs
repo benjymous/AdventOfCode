@@ -13,7 +13,7 @@ public class Day16Test
     [DataTestMethod]
     public void _01Test(string input, int expected)
     {
-        Assert.IsTrue(Day16.Part1(input) == expected);
+        Assert.AreEqual(expected, Day16.Part1(input));
     }
 
     [TestCategory("Test")]
@@ -21,7 +21,7 @@ public class Day16Test
     [DataTestMethod]
     public void _02Test(string input, int expected)
     {
-        Assert.IsTrue(Day16.Part2(input) == expected);
+        Assert.AreEqual(expected, Day16.Part2(input));
     }
 
     [TestCategory("Regression")]
