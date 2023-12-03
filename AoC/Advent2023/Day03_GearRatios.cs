@@ -5,19 +5,16 @@ public class Day03 : IPuzzle
     private static IEnumerable<(int partNumber, char type, (int x, int y) pos)> GetParts(string input)
     {
         var data = Util.ParseSparseMatrix<char>(input, new Util.Convertomatic.SkipChars('.'));
-        var symbols = data.Where(kvp => !kvp.Value.IsDigit()).ToDictionary();
-        var numbers = data.Where(kvp => kvp.Value.IsDigit()).ToDictionary();
 
-        foreach (var symbol in symbols)
+        foreach (var symbol in data.Where(kvp => !kvp.Value.IsDigit()))
         {
             for (int y = symbol.Key.y - 1; y <= symbol.Key.y + 1; y++)
             {
                 for (int x = symbol.Key.x - 1; x <= symbol.Key.x + 1; x++)
                 {
-                    if (numbers.ContainsKey((x, y)))
+                    if (data.TryGetValue((x, y), out var v) && v.IsDigit())
                     {
-                        var num = FindNumber((x, y), numbers);
-                        yield return (num, symbol.Value, symbol.Key);
+                        yield return (FindNumber((x, y), data), symbol.Value, symbol.Key);
                     }
                 }
             }
@@ -42,7 +39,7 @@ public class Day03 : IPuzzle
 
     public static int Part1(string input) => GetParts(input).Sum(v => v.partNumber);
 
-    public static int Part2(string input) => GetParts(input).Where(p => p.type == '*').GroupBy(p => p.pos).Where(g => g.Count() == 2).Sum(g => g.First().partNumber * g.Skip(1).First().partNumber);
+    public static long Part2(string input) => GetParts(input).GroupBy(p => p.pos).Where(g => g.Count() == 2).Sum(g => g.Take(2).Product(g => g.partNumber));
 
     public void Run(string input, ILogger logger)
     {
