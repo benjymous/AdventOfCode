@@ -21,15 +21,14 @@ public class Day03 : IPuzzle
         }
     }
 
+    static int Seek(Dictionary<(int x, int y), char> numbers, int x, int y, int direction) => Util.Sequence(x, direction).Where(x => !(numbers.TryGetValue((x, y), out var v) && v.IsDigit())).First() - direction;
+
     private static int FindNumber((int x, int y) value, Dictionary<(int x, int y), char> numbers)
     {
-        int x1, x2;
-
-        for (x1 = value.x; numbers.TryGetValue((x1, value.y), out var v) && v.IsDigit(); --x1) ;
-        for (x2 = value.x; numbers.TryGetValue((x2, value.y), out var v) && v.IsDigit(); ++x2) ;
+        int x1 = Seek(numbers, value.x, value.y, -1), x2 = Seek(numbers, value.x, value.y, +1);
 
         var str = "";
-        for (int x = x1 + 1; x < x2; ++x)
+        for (int x = x1; x <= x2; ++x)
         {
             str += numbers[(x, value.y)];
             numbers.Remove((x, value.y));

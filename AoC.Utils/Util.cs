@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -53,7 +54,6 @@ public partial class Util
         return SplitNumbersAndWordsRegex().Split(input).WithoutNullOrWhiteSpace().Select(entry =>
         int.TryParse(entry, out var v) ? (null, v) : (entry, 0));
     }
-
 
     internal static int WrapIndex(int v, int length) => v % length;
 
@@ -194,7 +194,7 @@ public partial class Util
         {
             var elementType = destinationType.GetElementType();
 
-            string[] data = splitAttr != null ? input.Split(splitAttr.Splitter) : Split(input);
+            string[] data = splitAttr != null ? input.Split(splitAttr.Splitter).WithoutNullOrWhiteSpace().ToArray() : Split(input);
 
             if (elementType == typeof(string)) return data;
 
@@ -500,6 +500,16 @@ public partial class Util
     public static IEnumerable<int> RangeInclusive(int start, int end) => Enumerable.Range(start, end - start + 1);
 
     public static IEnumerable<(int x, int y)> Matrix(int maxX, int maxY) => Matrix(Enumerable.Range(0, maxX), Enumerable.Range(0, maxY));
+
+    public static IEnumerable<int> Sequence(int start, int delta)
+    {
+        int val = start;
+        while (true)
+        {
+            yield return val;
+            val += delta;
+        }
+    }
 
     static string sessionCookie = null;
 
@@ -948,7 +958,7 @@ public class Accumulator<T> where T : INumber<T>, IMinMaxValue<T>
 }
 
 [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Struct)]
-public class RegexAttribute(string pattern) : Attribute
+public class RegexAttribute([StringSyntax("Regex")] string pattern) : Attribute
 {
     public Regex Regex { get; private set; } = Memoizer.Memoize(pattern, _ => new Regex(pattern));
 }
