@@ -11,8 +11,8 @@ public class Day06 : IPuzzle
     {
         var midPoint = input.maxTime >> 1; // divide by 2
 
-        var (lowerBound, _) = Util.BinarySearch(T.Zero, midPoint, charge => (WillBeat(charge, input), charge));
-        var (upperBound, _) = Util.BinarySearch(midPoint, input.maxTime, charge => (!WillBeat(charge, input), charge));
+        var lowerBound = Util.BinarySearch(T.Zero, midPoint, charge => WillBeat(charge, input));
+        var upperBound = Util.BinarySearch(midPoint, input.maxTime, charge => !WillBeat(charge, input));
 
         return upperBound - lowerBound;
     }
