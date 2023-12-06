@@ -718,5 +718,13 @@ namespace AoC.Utils
 
         public static IEnumerable<(int x, int y)> WithinBounds(this IEnumerable<(int x, int y)> input, int minX, int maxX, int minY, int maxY)
             => input.Where(p => p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY);
+
+        public static IEnumerable<(T, T)> ZipTwo<T>(this IEnumerable<IEnumerable<T>> values)
+        {
+            if (values.Count() != 2) throw new ArgumentException("Outer array must have length 2");
+
+            return Enumerable.Zip(values.First(), values.Skip(1).First());
+
+        }
     }
 }

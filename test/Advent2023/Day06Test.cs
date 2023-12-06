@@ -6,36 +6,35 @@ namespace AoC.Advent2023.Test;
 [TestClass]
 public class Day06Test
 {
-    readonly string input = ""; // Util.GetInput<Day06>();
+    readonly string input = Util.GetInput<Day06>();
+    readonly string test = "Time:      7  15   30\nDistance:  9  40  200";
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _01Test(string input, int expected)
+    [TestMethod]
+    public void BoatRace_01Test()
     {
-        Assert.AreEqual(expected, Day06.Part1(input));
+        Assert.AreEqual(288, Day06.Part1(test));
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _02Test(string input, int expected)
+    [TestMethod]
+    public void BoatRace_02Test()
     {
-        Assert.AreEqual(expected, Day06.Part2(input));
+        Assert.AreEqual(71503, Day06.Part2(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void BoatRace_Part1_Regression()
     {
-        Assert.AreEqual(0, Day06.Part1(input));
+        Assert.AreEqual(440000, Day06.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void BoatRace_Part2_Regression()
     {
-        Assert.AreEqual(0, Day06.Part2(input));
+        Assert.AreEqual(26187338, Day06.Part2(input));
     }
 }
 

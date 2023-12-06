@@ -598,9 +598,9 @@ public partial class Util
         Console.WriteLine(actual);
     }
 
-    public static int[] ExtractNumbers(IEnumerable<char> input) => input.Where(c => c is ' ' or '-' or (>= '0' and <= '9')).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(int.Parse).ToArray();
+    public static int[] ExtractNumbers(IEnumerable<char> input) => Util.ExtractNumbers<int>(input);
 
-    public static long[] ExtractLongNumbers(IEnumerable<char> input) => input.Where(c => c is ' ' or '-' or (>= '0' and <= '9')).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(long.Parse).ToArray();
+    public static T[] ExtractNumbers<T>(IEnumerable<char> input) where T : IBinaryInteger<T> => input.Where(c => c is ' ' or '-' or (>= '0' and <= '9')).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(s => T.Parse(s, System.Globalization.NumberStyles.Any, null)).ToArray();
 
     public static void SetBit(ref long value, int i) => value |= (1L) << i;
 
