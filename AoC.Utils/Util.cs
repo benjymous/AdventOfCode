@@ -655,10 +655,7 @@ public partial class Util
         return (max, results[max]);
     }
 
-    public static TInput BinarySearch<TInput>(TInput min, TInput max, Func<TInput, bool> test) where TInput : IBinaryInteger<TInput>
-    {
-        return BinarySearch<TInput, object>(min, max, input => (test(input), null)).input;
-    }
+    public static TInput BinarySearch<TInput>(TInput min, TInput max, Func<TInput, bool> test) where TInput : IBinaryInteger<TInput> => BinarySearch<TInput, object>(min, max, input => (test(input), null)).input;
 
     public static int Log2i(ulong num) => num switch
     {
