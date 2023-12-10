@@ -300,6 +300,15 @@ namespace AoC.Utils.Vectors
             DY = dy;
         }
 
+        public Direction2(int dir) => SetDirection(dir switch
+        {
+            0 => East,
+            1 => West,
+            2 => North,
+            3 => South,
+            _ => throw new Exception("invalid int direction"),
+        });
+
         [Regex("(.)")]
         public Direction2(char dir) => SetDirection(dir switch
         {
@@ -307,7 +316,7 @@ namespace AoC.Utils.Vectors
             '<' or 'L' => West,
             '^' or 'U' => North,
             'v' or 'D' => South,
-            _ => throw new Exception("invalid char direction"),
+            _ => throw new Exception($"invalid char direction {dir}"),
         });
 
         public Direction2 SetDirection(int dirx, int diry)
