@@ -112,6 +112,20 @@ namespace AoC.Utils
             }
         }
 
+        public static IEnumerable<(T, T)> UniquePairs<T>(this IEnumerable<T> set)
+        {
+            foreach (var (i1, el1) in set.WithIndex())
+            {
+                foreach (var (i2, el2) in set.WithIndex())
+                {
+                    if (i2 > i1)
+                    {
+                        yield return (el1, el2);
+                    }
+                }
+            }
+        }
+
         public static (T, T) TakePair<T>(this IEnumerable<T> set) => set.Pairs().First();
 
         public static (T, T) TakeTwo<T>(this Queue<T> queue) => (queue.Dequeue(), queue.Dequeue());
