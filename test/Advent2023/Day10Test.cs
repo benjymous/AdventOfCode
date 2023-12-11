@@ -8,8 +8,9 @@ public class Day10Test
 {
     readonly string input = Util.GetInput<Day10>();
 
-
-    readonly string test1 = @"...........
+    const string test1 = ".....\n.S-7.\n.|.|.\n.L-J.\n.....";
+    const string test2 = "..F7.\n.FJ|.\nSJ.L7\n|F--J\nLJ...";
+    const string test3 = @"...........
 .S-------7.
 .|F-----7|.
 .||.....||.
@@ -17,16 +18,9 @@ public class Day10Test
 .|L-7.F-J|.
 .|..|.|..|.
 .L--J.L--J.
-...........".Replace("\r","");
+...........";
 
-    [TestCategory("Test")]
-    [TestMethod]
-    public void Pipes_01Test()
-    {
-        Assert.AreEqual(4, Day10.Part2(test1));
-    }
-
-    readonly string test2 = @".F----7F7F7F7F-7....
+    const string test4 = @".F----7F7F7F7F-7....
 .|F--7||||||||FJ....
 .||.FJ||||||||L7....
 FJL7L7LJLJ||LJ.L-7..
@@ -35,13 +29,28 @@ L--J.L7...LJS7F-7L7.
 ....L7.F7||L7|.L7L7|
 .....|FJLJ|FJ|F7|.LJ
 ....FJL-7.||.||||...
-....L---J.LJ.LJLJ...".Replace("\r", "");
+....L---J.LJ.LJLJ...";
 
     [TestCategory("Test")]
-    [TestMethod]
-    public void Pipes_02Test()
+    [DataRow(test1, 4)]
+    [DataRow(test2, 8)]
+    [DataRow(test3, 23)]
+    [DataRow(test4, 70)]
+    [DataTestMethod]
+    public void PipeLength_Test(string input, int expected)
     {
-        Assert.AreEqual(8, Day10.Part2(test2));
+        Assert.AreEqual(expected, Day10.Part1(input.Replace("\r", "")));
+    }
+
+    [TestCategory("Test")]
+    [DataRow(test1, 1)]
+    [DataRow(test2, 1)]
+    [DataRow(test3, 4)]
+    [DataRow(test4, 8)]
+    [DataTestMethod]
+    public void PipesInner_Test(string input, int expected)
+    {
+        Assert.AreEqual(expected, Day10.Part2(input.Replace("\r", "")));
     }
 
     [TestCategory("Regression")]

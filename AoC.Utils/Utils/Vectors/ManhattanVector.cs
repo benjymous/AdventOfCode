@@ -410,6 +410,8 @@ namespace AoC.Utils.Vectors
             return 'v';
         }
 
+        public static implicit operator char(Direction2 d) => d.AsChar();
+
         public (int x, int y) AsSimple() => (DX, DY);
 
         public int RotationSteps()

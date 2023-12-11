@@ -116,12 +116,9 @@ namespace AoC.Utils
         {
             foreach (var (i1, el1) in set.WithIndex())
             {
-                foreach (var (i2, el2) in set.WithIndex())
+                foreach (var el2 in set.Skip(i1))
                 {
-                    if (i2 > i1)
-                    {
-                        yield return (el1, el2);
-                    }
+                    yield return (el1, el2);
                 }
             }
         }

@@ -1,12 +1,12 @@
 ﻿namespace AoC.Advent2023;
 public class Day10 : IPuzzle
 {
-    static Dictionary<(int x, int y), char[]> GetLoop(string input) => Memoize(input, _ =>
+    static Dictionary<(int x, int y), Direction2[]> GetLoop(string input) => Memoize(input, _ =>
     {
         var grid = Util.ParseSparseMatrix<char>(input);
         var pos = grid.Where(kvp => kvp.Value == 'S').Single().Key;
 
-        Dictionary<(int x, int y), char[]> visited = [];
+        Dictionary<(int x, int y), Direction2[]> visited = [];
 
         Direction2 lastDir = Direction2.Null;
 
@@ -16,7 +16,7 @@ public class Day10 : IPuzzle
             var dir = PossibleDirections(current).Select(d => Direction2.FromChar(d)).Where(dir => (current == 'S' || (lastDir - dir) != 2) && ValidateDirection(grid, pos, dir)).First();
 
             var next = pos.OffsetBy(dir);
-            visited[pos] = /*current == 'S' ? [dir.AsChar()] :*/ [lastDir.AsChar(), dir.AsChar()];
+            visited[pos] = current == 'S' ? [dir] : [lastDir, dir];
             if (grid[next] == 'S') return visited;
 
             pos = next;
@@ -36,12 +36,12 @@ public class Day10 : IPuzzle
         _ => "",
     };
 
-    static bool ValidateDirection(Dictionary<(int x, int y), char> map, (int x, int y) position, Direction2 dir) => PossibleDirections(map[position.OffsetBy(dir)]).Contains((dir + 2).AsChar());
+    static bool ValidateDirection(Dictionary<(int x, int y), char> map, (int x, int y) position, Direction2 dir) => PossibleDirections(map[position.OffsetBy(dir)]).Contains(dir + 2);
 
-    static int FloodFill((int x, int y) pos, Dictionary<(int x, int y), char[]> matrix)
+    static int FloodFill((int x, int y) pos, Dictionary<(int x, int y), Direction2[]> matrix)
     {
         if (matrix.ContainsKey(pos)) return 0;
-        matrix[pos] = ['*'];
+        matrix[pos] = [];
         return 1 + FloodFill(pos.OffsetBy((0, 1)), matrix) + FloodFill(pos.OffsetBy((0, -1)), matrix) + FloodFill(pos.OffsetBy((1, 0)), matrix) + FloodFill(pos.OffsetBy((-1, 0)), matrix);
     }
 
@@ -55,9 +55,9 @@ public class Day10 : IPuzzle
 
         int minY = loop.Keys.Min(v => v.y);
 
-        var clockwise = loop.Any(kvp => kvp.Key.y == minY && kvp.Value[0] == '>');
+        var clockwise = loop.Any(kvp => kvp.Key.y == minY && kvp.Value[0] == Direction2.Right);
 
-        return loopKeys.SelectMany(pos => loop[pos].Distinct().Select(c => FloodFill(pos.OffsetBy(Direction2.FromChar(c) + (clockwise ? 1 : -1)), loop))).Sum();
+        return loopKeys.SelectMany(pos => loop[pos].Distinct().Select(dir => FloodFill(pos.OffsetBy(dir + (clockwise ? 1 : -1)), loop))).Sum();
     }
 
     public void Run(string input, ILogger logger)
