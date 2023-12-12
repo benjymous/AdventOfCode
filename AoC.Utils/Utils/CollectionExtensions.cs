@@ -737,5 +737,21 @@ namespace AoC.Utils
             return Enumerable.Zip(values.First(), values.Skip(1).First());
 
         }
+
+        public static int FindNthIndex<T>(this IEnumerable<T> enumerable, Predicate<T> match, int count)
+        {
+            var index = 0;
+
+            foreach (var item in enumerable)
+            {
+                if (match.Invoke(item))
+                    count--;
+                if (count == 0)
+                    return index;
+                index++;
+            }
+
+            return -1;
+        }
     }
 }
