@@ -44,6 +44,33 @@ public class Day12Test
     }
 
     [TestCategory("Test")]
+    [DataRow("?? 1,1", 0)]
+    [DataRow("??? 1,1", 1)] // #.#
+    [DataRow("?.? 1,1", 1)] // #.#
+    [DataRow("#.? 1,1", 1)] // #.#
+    [DataRow("?.# 1,1", 1)] // #.#
+    [DataRow("#?? 1,1", 1)] // #.#
+    [DataRow("??# 1,1", 1)] // #.#
+    [DataRow("?#? 1,1", 0)]
+    [DataRow("?? 1", 2)] // .#  #.
+    [DataRow(".?? 1", 2)] // ..#  .#.
+    [DataRow("???? 1,1", 3)] // #.#.  #..#  .#.#  
+    [DataRow("???? 1,2", 1)] // #.##   
+    [DataRow("???.### 1,1,3", 1)]
+    [DataRow(".??..??...?##. 1,1,3", 4)]
+    [DataRow(".??..??... 1,1", 4)]
+    [DataRow("??..?? 1,1", 4)]
+    //[DataRow("?#?#?#?#?#?#?#? 1,3,1,6", 1)]
+    //[DataRow("????.#...#... 4,1,1", 1)]
+    //[DataRow("????.######..#####. 1,6,5", 4)]
+    //[DataRow("?###???????? 3,2,1", 10)]
+    [DataTestMethod]
+    public void Springs01Test1(string input, int expected)
+    {
+        Assert.AreEqual(expected, Day12.Solve1Single(Util.FromString<Day12.Row>(input)));
+    }
+
+    [TestCategory("Test")]
     [TestMethod]
     public void Springs02Test()
     {
