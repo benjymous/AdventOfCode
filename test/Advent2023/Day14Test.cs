@@ -6,34 +6,43 @@ namespace AoC.Advent2023.Test;
 [TestClass]
 public class Day14Test
 {
-    readonly string input = ""; // Util.GetInput<Day14>();
+    readonly string input = Util.GetInput<Day14>();
+
+    readonly string test = @"O....#....
+O.OO#....#
+.....##...
+OO.#O....O
+.O.....O#.
+O.#..O.#.#
+..O..#O..O
+.......O..
+#....###..
+#OO..#....".Replace("\r", "");
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
     [DataTestMethod]
-    public void _01Test(string input, int expected)
+    public void RockRoll_01Test()
     {
-        Assert.AreEqual(expected, Day14.Part1(input));
+        Assert.AreEqual(136, Day14.Part1(test));
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
     [DataTestMethod]
-    public void _02Test(string input, int expected)
+    public void RockRoll_02Test()
     {
-        Assert.AreEqual(expected, Day14.Part2(input));
+        Assert.AreEqual(64, Day14.Part2(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void ReflectorDish_Part1_Regression()
     {
-        Assert.AreEqual(0, Day14.Part1(input));
+        Assert.AreEqual(108614, Day14.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void ReflectorDish_Part2_Regression()
     {
         Assert.AreEqual(0, Day14.Part2(input));
     }
