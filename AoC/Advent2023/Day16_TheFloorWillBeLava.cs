@@ -1,48 +1,30 @@
 ﻿namespace AoC.Advent2023;
 public class Day16 : IPuzzle
 {
-    static void Step((int x, int y) pos, Direction2 dir, char[,] map, int[,] beams) => DoBeam(pos.OffsetBy(dir), dir, map, beams);
+    static void Step((int x, int y) pos, Direction2 dir, char[,] map, int[,] beams)
+        => DoBeam(pos.OffsetBy(dir), dir, map, beams);
 
     static void DoBeam((int x, int y) pos, Direction2 dir, char[,] map, int[,] beams)
     {
-        if (pos.x < 0 || pos.x >= map.Width() || pos.y < 0 || pos.y >= map.Height()) return;
+        if (!map.Contains(pos)) return;
 
         int beamBit = 1 << dir.RotationSteps();
         if ((beams[pos.x, pos.y] & beamBit) == 0)
         {
             beams[pos.x, pos.y] |= beamBit;
+            var c = map[pos.x, pos.y];
 
-            switch (map[pos.x, pos.y])
+            if ((c == '|' && dir.DY == 0) || (c == '-' && dir.DX == 0))
             {
-                case '\\':
-                    dir.SetDirection(dir.DY, dir.DX);
-                    break;
-
-                case '/':
-                    dir.SetDirection(-dir.DY, -dir.DX);
-                    break;
-
-                case '|':
-                    if (dir.DY == 0)
-                    {
-                        Step(pos, dir - 1, map, beams);
-                        Step(pos, dir + 1, map, beams);
-
-                        return;
-                    }
-                    break;
-
-                case '-':
-                    if (dir.DX == 0)
-                    {
-                        Step(pos, dir - 1, map, beams);
-                        Step(pos, dir + 1, map, beams);
-
-                        return;
-                    }
-                    break;
+                Step(pos, dir - 1, map, beams);
+                Step(pos, dir + 1, map, beams);
             }
-            Step(pos, dir, map, beams);
+            else
+            {
+                if (c is '\\' or '/') dir.Mirror(c);
+
+                Step(pos, dir, map, beams);
+            }
         }
     }
 
@@ -52,7 +34,7 @@ public class Day16 : IPuzzle
 
         DoBeam(start, dir, data, beams);
 
-        return beams.Values().Where(v => v > 0).Count();
+        return beams.Values().Count(v => v > 0);
     }
 
     private static IEnumerable<int> SolvePart2(char[,] data)
@@ -74,6 +56,6 @@ public class Day16 : IPuzzle
     public void Run(string input, ILogger logger)
     {
         logger.WriteLine("- Pt1 - " + Part1(input));
-        logger.WriteLine("- Pt2 - " + Part2(input)); 
+        logger.WriteLine("- Pt2 - " + Part2(input));
     }
 }

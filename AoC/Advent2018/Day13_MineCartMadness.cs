@@ -40,20 +40,16 @@ public class Day13 : IPuzzle
                     else
                     {
                         trains[newPos] = t;
+                        var m = map[newPos];
 
-                        switch (map[newPos])
+                        if (m is '\\' or '/')
                         {
-                            case '\\':
-                                t.direction.SetDirection(t.direction.DY, t.direction.DX);
-                                break;
-                            case '/':
-                                t.direction.SetDirection(-t.direction.DY, -t.direction.DX);
-                                break;
-
-                            case '+':
-                                t.direction.TurnRightBySteps(t.turn - 1);
-                                t.turn = (t.turn + 1) % 3;
-                                break;
+                            t.direction.Mirror(m);
+                        }
+                        else if (m is '+')
+                        {
+                            t.direction.TurnRightBySteps(t.turn - 1);
+                            t.turn = (t.turn + 1) % 3;
                         }
                     }
                 }

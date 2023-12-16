@@ -342,6 +342,19 @@ namespace AoC.Utils.Vectors
         public Direction2 TurnRight() => SetDirection(-DY, DX);
         public Direction2 Turn180() => SetDirection(-DX, -DY);
 
+        public Direction2 Mirror(char m)
+        {
+            if (m == '/')
+            {
+                return SetDirection(-DY, -DX);
+            }
+            else if (m == '\\')
+            {
+                return SetDirection(DY, DX);
+            }
+            else return this;
+        }
+
         public Direction2 TurnLeftByDegrees(int degrees)
         {
             if (degrees % 90 != 0) throw new Exception("expected multiple of 90 degrees: " + degrees);
