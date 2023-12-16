@@ -436,10 +436,10 @@ namespace AoC.Utils.Vectors
 
         public static Direction2 FromChar(char c) => c switch
         {
-            '>' or 'R' => East,
-            '<' or 'L' => West,
-            '^' or 'U' => North,
-            'v' or 'D' => South,
+            '>' or 'R' => new Direction2(East),
+            '<' or 'L' => new Direction2(West),
+            '^' or 'U' => new Direction2(North),
+            'v' or 'D' => new Direction2(South),
             _ => throw new Exception("invalid char direction"),
         };
 
