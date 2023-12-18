@@ -166,6 +166,7 @@
         public static (int x, int y, int z) OffsetBy(this (int x, int y, int z) left, (int x, int y, int z) right) => (left.x + right.x, left.y + right.y, left.z + right.z);
 
         public static (int x, int y) OffsetBy(this (int x, int y) left, Direction2 right) => (left.x + right.DX, left.y + right.DY);
+        public static (int x, int y) OffsetBy(this (int x, int y) left, Direction2 right, int count) => (left.x + (right.DX * count), left.y + (right.DY * count));
 
         public static (int x, int y) Subtract(this (int x, int y) left, (int x, int y) right) => (left.x - right.x, left.y - right.y);
 

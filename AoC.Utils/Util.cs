@@ -188,11 +188,13 @@ public partial class Util
 
     public static T FromString<T>(string input) => (T)ConvertFromString(typeof(T), input);
 
-    static object ConvertFromString(Type destinationType, string input, SplitAttribute splitAttr = null)
+    static object ConvertFromString(Type destinationType, string input, Dictionary<Type, Attribute> attrs = null)
     {
         if (destinationType.IsArray || destinationType.FullName.StartsWith("System.Collections.Generic.Dictionary`2"))
         {
             var elementType = destinationType.GetElementType();
+
+            SplitAttribute splitAttr = attrs == null ? null : attrs.ContainsKey(typeof(SplitAttribute)) ? (SplitAttribute)attrs[typeof(SplitAttribute)] : null;
 
             string[] data = splitAttr != null ? input.Split(splitAttr.Splitter).WithoutNullOrWhiteSpace().ToArray() : Split(input);
 
@@ -205,7 +207,7 @@ public partial class Util
             }
             else if (TypeDescriptor.GetConverter(elementType).CanConvertFrom(typeof(string)))
             {
-                var arr = data.Select(item => ConvertFromString(elementType, item, splitAttr)).ToList();
+                var arr = data.Select(item => ConvertFromString(elementType, item, attrs)).ToList();
                 return ConvertArray(arr, elementType);
             }
             else
@@ -217,6 +219,13 @@ public partial class Util
         else
         {
             if (destinationType == typeof(string)) return input;
+
+            if (destinationType == typeof(int))
+            {
+                BaseAttribute baseAttr = attrs == null ? null : attrs.ContainsKey(typeof(BaseAttribute)) ? (BaseAttribute)attrs[typeof(BaseAttribute)] : null;
+
+                return baseAttr != null ? Convert.ToInt32(input, baseAttr.NumberBase) : int.Parse(input);
+            }
 
             if (string.IsNullOrEmpty(input)) return Activator.CreateInstance(destinationType); // appropriate empty value
 
@@ -252,7 +261,7 @@ public partial class Util
         var instanceParams = Enumerable.Zip(paramInfo, regexValues); // collate parameter types and matched substrings
 
         return instanceParams
-            .Select(kvp => ConvertFromString(kvp.First.ParameterType, kvp.Second, kvp.First.GetCustomAttribute<SplitAttribute>())).ToArray(); // convert substrings to match constructor input
+            .Select(kvp => ConvertFromString(kvp.First.ParameterType, kvp.Second, kvp.First.GetCustomAttributes().ToDictionary(v => v.GetType(), v => v))).ToArray(); // convert substrings to match constructor input
     }
 
     public static IEnumerable<T> RegexParse<T>(IEnumerable<string> input)
@@ -970,6 +979,12 @@ public class SplitAttribute(string splitter, string kvpMatchRegex = null) : Attr
 {
     public readonly string Splitter = splitter;
     public Regex KvpMatchRegex { get; private set; } = kvpMatchRegex != null ? Memoizer.Memoize(kvpMatchRegex, _ => new Regex(kvpMatchRegex)) : null;
+}
+
+[AttributeUsage(AttributeTargets.Parameter)]
+public class BaseAttribute(int numberBase) : Attribute
+{
+    public readonly int NumberBase = numberBase;
 }
 
 public class Boxed<T>(T v)
