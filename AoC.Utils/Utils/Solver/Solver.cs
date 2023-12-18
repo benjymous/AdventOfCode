@@ -82,6 +82,22 @@
                 action(element, this);
             }
         }
+
+        public void CullQueue(int max)
+        {
+            if (queue.Count > max + (max / 3))
+            {
+                List<(TElement, int)> tmp = new();
+
+                while (max-- > 0 && queue.TryDequeue(out var el, out var pri))
+                    tmp.Add((el, pri));
+
+                queue.Clear();
+                queue.EnqueueRange(tmp);
+            }
+
+
+        }
     }
 
     public static class PuzzleExtensions

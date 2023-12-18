@@ -6,36 +6,45 @@ namespace AoC.Advent2023.Test;
 [TestClass]
 public class Day16Test
 {
-    readonly string input = ""; // Util.GetInput<Day16>();
+    readonly string input = Util.GetInput<Day16>();
+
+    readonly string test = @".|...\....
+|.-.\.....
+.....|-...
+........|.
+..........
+.........\
+..../.\\..
+.-.-/..|..
+.|....-|.\
+..//.|....".Replace("\r", "");
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _01Test(string input, int expected)
+    [TestMethod]
+    public void Lava_01Test()
     {
-        Assert.AreEqual(expected, Day16.Part1(input));
+        Assert.AreEqual(46, Day16.Part1(test));
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
     [DataTestMethod]
-    public void _02Test(string input, int expected)
+    public void Lava_02Test()
     {
-        Assert.AreEqual(expected, Day16.Part2(input));
+        Assert.AreEqual(51, Day16.Part2(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void Lava_Part1_Regression()
     {
-        Assert.AreEqual(0, Day16.Part1(input));
+        Assert.AreEqual(6361, Day16.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void Lava_Part2_Regression()
     {
-        Assert.AreEqual(0, Day16.Part2(input));
+        Assert.AreEqual(6701, Day16.Part2(input));
     }
 }
 

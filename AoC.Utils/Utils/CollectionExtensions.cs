@@ -304,6 +304,10 @@ namespace AoC.Utils
         public static int Height<T>(this T[,] array2d) => array2d.GetLength(1);
         public static int Width<T>(this T[,] array2d) => array2d.GetLength(0);
 
+        public static bool Contains<T>(this T[,] array2d, int x, int y) => x >= 0 && y >= 0 && x < array2d.Width() && y < array2d.Height();
+        public static bool Contains<T>(this T[,] array2d, (int x, int y) pos) => pos.x >= 0 && pos.y >= 0 && pos.x < array2d.Width() && pos.y < array2d.Height();
+
+
         public static (int, int) Dimensions<T>(this T[,] array2d) => (array2d.Width(), array2d.Height());
 
         public static long Product(this IEnumerable<int> vals) => vals.Aggregate((long)1, (total, val) => total * val);
