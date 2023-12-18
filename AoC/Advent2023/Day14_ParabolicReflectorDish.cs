@@ -61,16 +61,9 @@ public class Day14 : IPuzzle
             for (int i = 0; i < 4; ++i)
                 rocks = RotateGrid(zones[i].SelectMany(z => z.Take(z.Count(rocks.Contains))), gridSize);
 
-            if (target == originalTarget)
+            if (target == originalTarget && seen.FindCycle(rocks.Sum(el => el.x * el.y), j, originalTarget, out var newTarget))
             {
-                int checkSum = rocks.Sum(el => el.x * el.y);
-
-                if (seen.TryGetValue(checkSum, out int prev))
-                {
-                    int cycle = j - prev;
-                    target = ((originalTarget - prev) % cycle) + j - 1;
-                }
-                else seen[checkSum] = j;
+                target = newTarget;
             }
         }
 

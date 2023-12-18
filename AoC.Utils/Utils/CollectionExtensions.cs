@@ -753,5 +753,21 @@ namespace AoC.Utils
 
             return -1;
         }
+
+        public static bool FindCycle<TFingerPrint>(this Dictionary<TFingerPrint, int> dict, TFingerPrint fingerprint, int currentIteration, int finalIteration, out int shortcutIteration)
+        {
+            if (dict.TryGetValue(fingerprint, out var previousSeen))
+            {
+                int cycle = currentIteration - previousSeen;
+                shortcutIteration = ((finalIteration - previousSeen) % cycle) + currentIteration - 1;
+                return true;
+            }
+            else
+            {
+                dict[fingerprint] = currentIteration;
+                shortcutIteration = 0;
+                return false;
+            }
+        }
     }
 }
