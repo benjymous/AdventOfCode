@@ -307,7 +307,6 @@ namespace AoC.Utils
         public static bool Contains<T>(this T[,] array2d, int x, int y) => x >= 0 && y >= 0 && x < array2d.Width() && y < array2d.Height();
         public static bool Contains<T>(this T[,] array2d, (int x, int y) pos) => pos.x >= 0 && pos.y >= 0 && pos.x < array2d.Width() && pos.y < array2d.Height();
 
-
         public static (int, int) Dimensions<T>(this T[,] array2d) => (array2d.Width(), array2d.Height());
 
         public static long Product(this IEnumerable<int> vals) => vals.Aggregate((long)1, (total, val) => total * val);
@@ -756,6 +755,20 @@ namespace AoC.Utils
             }
 
             return -1;
+        }
+
+        public static Dictionary<TKey, TValue> WithReplacement<TKey, TValue>(this Dictionary<TKey, TValue> source, TKey swapKey, TValue swapVal)
+        {
+            var newDict = source.ToDictionary();
+            newDict[swapKey] = swapVal;
+            return newDict;
+        }
+
+        public static TValue[] WithReplacement<TValue>(this TValue[] source, int swapKey, TValue swapVal)
+        {
+            var newArr = source.ToArray();
+            newArr[swapKey] = swapVal;
+            return newArr;
         }
 
         public static bool FindCycle<TFingerPrint>(this Dictionary<TFingerPrint, int> dict, TFingerPrint fingerprint, int currentIteration, int finalIteration, out int shortcutIteration)

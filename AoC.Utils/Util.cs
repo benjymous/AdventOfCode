@@ -975,7 +975,7 @@ public class RegexAttribute([StringSyntax("Regex")] string pattern) : Attribute
 }
 
 [AttributeUsage(AttributeTargets.Parameter)]
-public class SplitAttribute(string splitter, string kvpMatchRegex = null) : Attribute
+public class SplitAttribute(string splitter, [StringSyntax("Regex")] string kvpMatchRegex = null) : Attribute
 {
     public readonly string Splitter = splitter;
     public Regex KvpMatchRegex { get; private set; } = kvpMatchRegex != null ? Memoizer.Memoize(kvpMatchRegex, _ => new Regex(kvpMatchRegex)) : null;
