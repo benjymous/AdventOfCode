@@ -6,36 +6,32 @@ namespace AoC.Advent2023.Test;
 [TestClass]
 public class Day20Test
 {
-    readonly string input = ""; // Util.GetInput<Day20>();
+    readonly string input = Util.GetInput<Day20>();
+    readonly string test = @"broadcaster -> a
+%a -> inv, con
+&inv -> b
+%b -> con
+&con -> output".Replace("\r", "");
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _01Test(string input, int expected)
+    [TestMethod]
+    public void Signals_01Test()
     {
-        Assert.AreEqual(expected, Day20.Part1(input));
-    }
-
-    [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _02Test(string input, int expected)
-    {
-        Assert.AreEqual(expected, Day20.Part2(input));
+        Assert.AreEqual(11687500, Day20.Part1(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void PulsePropogation_Part1_Regression()
     {
-        Assert.AreEqual(0, Day20.Part1(input));
+        Assert.AreEqual(919383692, Day20.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void PulsePropogation_Part2_Regression()
     {
-        Assert.AreEqual(0, Day20.Part2(input));
+        Assert.AreEqual(247702167614647, Day20.Part2(input));
     }
 }
 

@@ -222,6 +222,8 @@ public partial class Util
 
             if (destinationType == typeof(int))
             {
+                if (string.IsNullOrEmpty(input)) return null;
+
                 BaseAttribute baseAttr = attrs == null ? null : attrs.ContainsKey(typeof(BaseAttribute)) ? (BaseAttribute)attrs[typeof(BaseAttribute)] : null;
 
                 return baseAttr != null ? Convert.ToInt32(input, baseAttr.NumberBase) : int.Parse(input);
