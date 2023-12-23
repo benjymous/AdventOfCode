@@ -10,7 +10,7 @@
     {
         readonly PriorityQueue<TElement, int> queue = new();
         readonly Dictionary<int, TResult> cache = [];
-        SolverResult<TResult> CurrentBest = default;
+        public SolverResult<TResult> CurrentBest = default;
         Func<TResult, TResult, TResult> Filter = default;
 
         public int PreviousPriority = default;
