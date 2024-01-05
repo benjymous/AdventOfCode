@@ -6,29 +6,33 @@ namespace AoC.Advent2023.Test;
 [TestClass]
 public class Day24Test
 {
-    readonly string input = ""; // Util.GetInput<Day24>();
+    readonly string input = Util.GetInput<Day24>();
+
+    readonly string test = @"19, 13, 30 @ -2,  1, -2
+18, 19, 22 @ -1, -1, -2
+20, 25, 34 @ -2, -2, -4
+12, 31, 28 @ -1, -2, -1
+20, 19, 15 @  1, -5, -3".Replace("\r", "");
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _01Test(string input, int expected)
+    [TestMethod]
+    public void _01Test()
     {
-        Assert.AreEqual(expected, Day24.Part1(input));
+        Assert.AreEqual(2, Day24.CheckTestArea(test, 7, 27));
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _02Test(string input, int expected)
+    [TestMethod]
+    public void _02Test()
     {
-        Assert.AreEqual(expected, Day24.Part2(input));
+        Assert.AreEqual(0, Day24.Part2(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
     public void _Part1_Regression()
     {
-        Assert.AreEqual(0, Day24.Part1(input));
+        Assert.AreEqual(29142, Day24.Part1(input));
     }
 
     [TestCategory("Regression")]
