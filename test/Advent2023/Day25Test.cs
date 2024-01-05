@@ -6,36 +6,34 @@ namespace AoC.Advent2023.Test;
 [TestClass]
 public class Day25Test
 {
-    readonly string input = ""; // Util.GetInput<Day25>();
+    readonly string input = Util.GetInput<Day25>();
+
+    readonly string test = @"jqt: rhn xhk nvd
+rsh: frs pzl lsr
+xhk: hfx
+cmg: qnr nvd lhk bvb
+rhn: xhk bvb hfx
+bvb: xhk hfx
+pzl: lsr hfx nvd
+qnr: nvd
+ntq: jqt hfx bvb xhk
+nvd: lhk
+lsr: lhk
+rzs: qnr cmg lsr rsh
+frs: qnr lhk lsr".Replace("\r", "");
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _01Test(string input, int expected)
+    [TestMethod]
+    public void _01Test()
     {
-        Assert.AreEqual(expected, Day25.Part1(input));
-    }
-
-    [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _02Test(string input, int expected)
-    {
-        Assert.AreEqual(expected, Day25.Part2(input));
+        Assert.AreEqual(54, Day25.Part1(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
     public void _Part1_Regression()
     {
-        Assert.AreEqual(0, Day25.Part1(input));
-    }
-
-    [TestCategory("Regression")]
-    [DataTestMethod]
-    public void _Part2_Regression()
-    {
-        Assert.AreEqual(0, Day25.Part2(input));
+        Assert.AreEqual(602151, Day25.Part1(input));
     }
 }
 

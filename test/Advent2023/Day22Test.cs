@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
 
 namespace AoC.Advent2023.Test;
 
@@ -13,62 +12,29 @@ public class Day22Test
 
     [TestCategory("Test")]
     [TestMethod]
-    public void _01Test()
+    public void Bricks_01Test()
     {
         Assert.AreEqual(5, Day22.Part1(test));
     }
 
     [TestCategory("Test")]
     [TestMethod]
-    public void _02Test()
+    public void Bricks_02Test()
     {
         Assert.AreEqual(7, Day22.Part2(test));
     }
 
- /*
-    G
-    |
-    F
-   /\    
-   D E
-  / X \
-  B   C
-   \ /
-    A
-*/
-
-    [TestCategory("Test")]
-    [DataTestMethod]
-    [DataRow("B", "A", true)]
-    [DataRow("A", "B", false)]
-    [DataRow("G", "F", true)]
-    [DataRow("C", "A", true)]
-    [DataRow("D", "A", true)]
-    [DataRow("E", "A", true)]
-    [DataRow("F", "A", true)]
-    [DataRow("G", "A", true)]
-    [DataRow("D", "E", false)]
-    [DataRow("B", "C", false)]
-    public void SupportedTest(string brick, string supportedBy, bool expected)
-    {
-        var bricks = Day22.SimulateBricks(test);
-        var dict = bricks.ToDictionary(b => b.Name, b => b);
-
-        Assert.AreEqual(expected, Day22.IsSupportedBy(dict[brick], dict[supportedBy]));
-    }
-
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void SandSlabs_Part1_Regression()
     {
         Assert.AreEqual(418, Day22.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void SandSlabs_Part2_Regression()
     {
-        Assert.AreEqual(0, Day22.Part2(input));
+        Assert.AreEqual(70702, Day22.Part2(input));
     }
 }
-

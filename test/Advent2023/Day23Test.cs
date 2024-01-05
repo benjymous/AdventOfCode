@@ -33,30 +33,30 @@ public class Day23Test
 
     [TestCategory("Test")]
     [TestMethod]
-    public void _01Test()
+    public void ScenicRoute_01Test()
     {
         Assert.AreEqual(94, Day23.Part1(test));
     }
 
     [TestCategory("Test")]
     [TestMethod]
-    public void _02Test()
+    public void ScenicRoute_02Test()
     {
         Assert.AreEqual(154, Day23.Part2(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void ALongWalk_Part1_Regression()
     {
         Assert.AreEqual(2070, Day23.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void ALongWalk_Part2_Regression()
     {
-        Assert.AreEqual(0, Day23.Part2(input));
+        Assert.AreEqual(6498, Day23.Part2(input));
     }
 }
 

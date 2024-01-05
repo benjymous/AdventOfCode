@@ -786,5 +786,13 @@ namespace AoC.Utils
                 return false;
             }
         }
+
+        public static void AddRange<TKey, TValue>(this Dictionary<TKey, TValue> dict, IEnumerable<(TKey key, TValue val)> values)
+        {
+            foreach (var v in values)
+            {
+                dict.Add(v.key, v.val);
+            }
+        }
     }
 }

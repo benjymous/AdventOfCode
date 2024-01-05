@@ -4,6 +4,7 @@
     {
         public static implicit operator SolverResult<TResult>(TResult v) => new(v);
         public static implicit operator TResult(SolverResult<TResult> p) => p.Value;
+        public override string ToString() => Value.ToString();
     }
 
     public class Solver<TElement, TResult>
@@ -87,7 +88,7 @@
         {
             if (queue.Count > max + (max / 3))
             {
-                List<(TElement, int)> tmp = new();
+                List<(TElement, int)> tmp = [];
 
                 while (max-- > 0 && queue.TryDequeue(out var el, out var pri))
                     tmp.Add((el, pri));
@@ -95,8 +96,6 @@
                 queue.Clear();
                 queue.EnqueueRange(tmp);
             }
-
-
         }
     }
 
