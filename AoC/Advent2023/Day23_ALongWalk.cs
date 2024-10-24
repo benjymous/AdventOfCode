@@ -31,13 +31,15 @@ public class Day23 : IPuzzle
             for (int i = 0; i < Waypoints.Count - 1; ++i)
             {
                 Routes[i] = [];
-                for (int j = 1; j < Waypoints.Count; ++j)
+                for (int j = Waypoints.Count - 1; j >= 1; --j)
                 {
                     Destination = Waypoints[j];
                     var route = this.FindPath(Waypoints[i], Waypoints[j]).Length;
                     if (route > 0)
                     {
                         Routes[i][j] = route;
+
+                        if (j == EndKey) break;
                     }
                 }
             }

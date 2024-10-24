@@ -25,7 +25,7 @@ public class Day24Test
     [TestMethod]
     public void _02Test()
     {
-        Assert.AreEqual(0, Day24.Part2(test));
+        Assert.AreEqual(47, Day24.Part2(test));
     }
 
     [TestCategory("Regression")]
@@ -39,7 +39,7 @@ public class Day24Test
     [DataTestMethod]
     public void _Part2_Regression()
     {
-        Assert.AreEqual(0, Day24.Part2(input));
+        Assert.AreEqual(848947587263033, Day24.Part2(input));
     }
 }
 
