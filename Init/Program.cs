@@ -1,7 +1,7 @@
 ﻿
 using Fluid;
 
-var year = "2023";
+var year = "2024";
 var yearFolder = Path.Combine("AoC", $"Advent{year}");
 var testFolder = Path.Combine("test", $"Advent{year}");
 

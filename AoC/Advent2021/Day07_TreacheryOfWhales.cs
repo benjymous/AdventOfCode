@@ -5,8 +5,10 @@ public class Day07 : IPuzzle
     {
         var positions = Util.ParseNumbers<int>(input).Order().ToArray();
 
+#pragma warning disable CS9236 // Compiling requires binding the lambda expression many times. Consider declaring the lambda expression with explicit parameter types, or if the containing method call is generic, consider using explicit type arguments.
         return Enumerable.Range(positions.First(), positions.Last())
                          .Min(x => positions.Sum(crab => FuelCost(Math.Abs(crab - x))));
+#pragma warning restore CS9236 // Compiling requires binding the lambda expression many times. Consider declaring the lambda expression with explicit parameter types, or if the containing method call is generic, consider using explicit type arguments.
     }
 
     public static int Part1(string input) => Solve(input, x => x);

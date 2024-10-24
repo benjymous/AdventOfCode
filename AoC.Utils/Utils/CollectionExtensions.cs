@@ -789,9 +789,9 @@ namespace AoC.Utils
 
         public static void AddRange<TKey, TValue>(this Dictionary<TKey, TValue> dict, IEnumerable<(TKey key, TValue val)> values)
         {
-            foreach (var v in values)
+            foreach (var (key, val) in values)
             {
-                dict.Add(v.key, v.val);
+                dict.Add(key, val);
             }
         }
     }

@@ -8,7 +8,6 @@ public class Day01Test
 {
     readonly string input = Util.GetInput<Day01>();
 
-
     [TestCategory("Test")]
     [DataRow("1abc2", 12)]
     [DataRow("pqr3stu8vwx", 38)]
@@ -26,12 +25,12 @@ public class Day01Test
 
     [TestCategory("Test")]
     [DataRow("two1nine", 29)]
-    [DataRow("eightwothree",83)]
-    [DataRow("abcone2threexyz",13)]
-    [DataRow("xtwone3four",24)]
-    [DataRow("4nineeightseven2",42)]
-    [DataRow("zoneight234",14)]
-    [DataRow("7pqrstsixteen",76)]
+    [DataRow("eightwothree", 83)]
+    [DataRow("abcone2threexyz", 13)]
+    [DataRow("xtwone3four", 24)]
+    [DataRow("4nineeightseven2", 42)]
+    [DataRow("zoneight234", 14)]
+    [DataRow("7pqrstsixteen", 76)]
     [DataRow("ninefour", 94)]
     //[DataRow("oneight", 18)]
     //[DataRow("eightwo", 82)]

@@ -1,3 +1,5 @@
+using System.Threading;
+
 namespace AoC.Advent2019.NPSA
 {
     public interface ICPUInterrupt
@@ -111,7 +113,7 @@ namespace AoC.Advent2019.NPSA
         }
 
         static ParamMode[][] paramCache = null;
-        static readonly object paramLock = new();
+        static readonly Lock paramLock = new();
 
         ParamMode[] paramMode;
 

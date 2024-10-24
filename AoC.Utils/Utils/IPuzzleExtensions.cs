@@ -1,3 +1,4 @@
+
 namespace AoC.Utils
 {
     public static class IPuzzleExtensions
@@ -57,7 +58,7 @@ namespace AoC.Utils
 
         public static string DataURL(Type puzzleType) => $"https://adventofcode.com/{GetYear(puzzleType)}/day/{GetDay(puzzleType).TrimStart('0')}/input";
 
-        static readonly object DataLock = new();
+        static readonly Lock DataLock = new();
         public static string GetInput(Type puzzleType)
         {
             lock (DataLock)

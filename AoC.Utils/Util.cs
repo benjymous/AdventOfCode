@@ -82,7 +82,7 @@ public partial class Util
 
     static IEnumerable<(ConstructorInfo tc, RegexAttribute attr)> GetPotentialConstructors(Type t)
     {
-        if (t.GetCustomAttribute(typeof(RegexAttribute)) is RegexAttribute ownAttr)
+        if (t.GetCustomAttribute<RegexAttribute>() is RegexAttribute ownAttr)
         {
             var typeConstructor = t.GetConstructors().First();
             yield return (typeConstructor, ownAttr);
@@ -127,13 +127,6 @@ public partial class Util
         result = Activator.CreateInstance(t, convertedParams);
 
         return true;
-    }
-
-    static bool RegexCreateInternal<T>(string line, ConstructorInfo typeConstructor, RegexAttribute attr, out T result)
-    {
-        var created = RegexCreateInternal(typeof(T), line, typeConstructor, attr, out var r);
-        result = created ? (T)r : default;
-        return created;
     }
 
     static Array ConvertArray(List<object> input, Type desiredType)

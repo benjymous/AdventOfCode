@@ -35,7 +35,7 @@ public class Day21 : IPuzzle
             }
         }
 
-        return visited.Values.ToList();
+        return [.. visited.Values];
     }
 
     public static int Part1(string input)

@@ -24,7 +24,7 @@ public class Day22 : IPuzzle
 
     public static Brick[] SimulateBricks(string input)
     {
-        Brick[] bricks = Util.RegexParse<Brick>(input).OrderBy(b => b.Cubes.Min(c => c.z)).ToArray();
+        Brick[] bricks = [.. Util.RegexParse<Brick>(input).OrderBy(b => b.Cubes.Min(c => c.z))];
 
         Dictionary<(int x, int y, int z), Brick> index = bricks.SelectMany(b => b.Cubes.Select(c => (c, b))).ToDictionary();
 

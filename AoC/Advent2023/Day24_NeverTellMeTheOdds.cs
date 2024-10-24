@@ -182,14 +182,14 @@ public class Day24 : IPuzzle
                 {0, ac_vel.Z, -ac_vel.Y,     0, -ac_pos.Z,  ac_pos.Y }
         };
 
-        decimal[] vec = {
+        decimal[] vec = [
             CrossZ(b.Vel, b_pos) - CrossZ(a.Vel, a_pos),
             CrossZ(c.Vel, c_pos) - CrossZ(a.Vel, a_pos),
             CrossY(b.Vel, b_pos) - CrossY(a.Vel, a_pos),
             CrossY(c.Vel, c_pos) - CrossY(a.Vel, a_pos),
             CrossX(b.Vel, b_pos) - CrossX(a.Vel, a_pos),
             CrossX(c.Vel, c_pos) - CrossX(a.Vel, a_pos)
-        };
+        ];
 
         var rock = MultiplyMatrixAndVector(InvertMatrix(mat), vec);
         return Math.Round(rock[0] + rock[1] + rock[2] + min.X + min.Y + min.Z);

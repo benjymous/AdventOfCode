@@ -50,7 +50,7 @@ public class Day19 : IPuzzle
         public readonly IEnumerable<State> PossibleMoves(Blueprint bp)
         {
             var self = this;
-            return Mins == 0 ? Enumerable.Empty<State>() : bp.PossibleMoves(this).Select(m => m.Tick(self));
+            return Mins == 0 ? [] : bp.PossibleMoves(this).Select(m => m.Tick(self));
         }
 
         State Tick(State parent)

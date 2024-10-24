@@ -9,7 +9,7 @@ public class Day07 : IPuzzle
             steps = [.. dependencies.Keys, .. dependencies.SelectMany(kvp => kvp.Value)];
         }
 
-        void AddDependency((char dependency, char task) entry) => dependencies.GetOrCalculate(entry.task, _ => new()).Add(entry.dependency);
+        void AddDependency((char dependency, char task) entry) => dependencies.GetOrCalculate(entry.task, _ => []).Add(entry.dependency);
 
         readonly HashSet<char> steps;
         readonly Dictionary<char, HashSet<char>> dependencies = [];

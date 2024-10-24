@@ -6,7 +6,7 @@ public class Day18 : IPuzzle
         public int Value = 0;
         public Val first, second, parent, left, right;
 
-        public static Val Parse(string data) => Parse(data.ToQueue());
+        public static Val Parse(string data) => Parse([.. data]);
 
         static Val Parse(Queue<char> data, Val parent = null)
         {

@@ -3,15 +3,15 @@ public class Day09 : IPuzzle
 {
     public static int GetNext(int[] sequence)
     {
-        int last = sequence[sequence.Length - 1];
-        return sequence.All(v => v == last) 
+        int last = sequence[^1];
+        return sequence.All(v => v == last)
             ? last
-            : last + GetNext([..sequence.Windows(2).Select(pair => pair[1] - pair[0])]);
+            : last + GetNext([.. sequence.Windows(2).Select(pair => pair[1] - pair[0])]);
     }
 
     public static int GetPrev(int[] sequence) => GetNext(sequence.Reverse().ToArray());
 
-    static IEnumerable<int[]> ParseData(string input) 
+    static IEnumerable<int[]> ParseData(string input)
         => Util.Split(input).Select(line => Util.ParseNumbers<int>(line, " "));
 
     public static int Part1(string input) => ParseData(input).Sum(GetNext);

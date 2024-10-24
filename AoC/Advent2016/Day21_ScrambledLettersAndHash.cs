@@ -21,7 +21,7 @@ public class Day21 : IPuzzle
         public static CharFunc Reverse(int start, int end) => pwd => pwd.Take(start).Concat(pwd.Skip(start).Take(end - start + 1).Reverse()).Concat(pwd.Skip(end + 1)).ToArray();
 
         [Regex(@"move position (.) to position (.)")]
-        public static CharFunc Move(int from, int to) => pwd => pwd.ToList().MoveIndex(from, to).ToArray();
+        public static CharFunc Move(int from, int to) => pwd => [.. pwd.ToList().MoveIndex(from, to)];
 
         [Regex(@"rotate based on position of letter (.)")]
         public static CharFunc RotateBased(char letter) => pwd => RotateRight(pwd, TranslatePos(pwd.IndexOf(letter)));

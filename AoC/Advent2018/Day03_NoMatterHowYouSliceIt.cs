@@ -1,8 +1,6 @@
 ﻿namespace AoC.Advent2018;
 public class Day03 : IPuzzle
 {
-    const int FabricSize = 1000;
-
     [Regex(@"#(\d+) @ (\d+),(\d+): (\d+)x(\d+)")]
     record struct Shape(string ID, int Left, int Top, int Width, int Height)
     {

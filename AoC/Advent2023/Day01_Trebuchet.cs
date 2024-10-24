@@ -7,16 +7,16 @@ public partial class Day01 : IPuzzle
         private IEnumerable<int> SplitDigitsAndWords(bool part2) =>
             SplitterRegex().Split(raw).WithoutNullOrWhiteSpace().Select(entry =>
             int.TryParse(entry, out var v) ? v : (part2 ? Parse(entry) : int.MaxValue)).Where(v => v != int.MaxValue);
-       
+
         [GeneratedRegex(@"(\d|one|two|three|four|five|six|seven|eight|nine)")] private static partial Regex SplitterRegex();
 
         private int Get(bool part2)
         {
             var digits = SplitDigitsAndWords(part2);
-            return digits.First() * 10 + digits.Last();
+            return (digits.First() * 10) + digits.Last();
         }
 
-        int Parse(string word) => word switch
+        static int Parse(string word) => word switch
         {
             "one" => 1,
             "two" => 2,
