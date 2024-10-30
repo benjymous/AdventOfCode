@@ -38,4 +38,3 @@ public class Day04Test
         Assert.AreEqual(0, Day04.Part2(input));
     }
 }
-
