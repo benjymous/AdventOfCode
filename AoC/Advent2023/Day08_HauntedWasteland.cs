@@ -13,7 +13,7 @@ public class Day08 : IPuzzle
         [Regex("(.+)")]
         public void AddRoute(string route) => Route = route;
 
-        public int WalkUntil(string location, Func<string, bool> test)
+        public int Walk(string location, Func<string, bool> test)
         {
             int steps = 0;
             while (!test(location))
@@ -23,14 +23,14 @@ public class Day08 : IPuzzle
     }
 
     public static int Part1(string input)
-        => Util.RegexFactory<GhostMap>(input).WalkUntil("AAA", current => current == "ZZZ");
+        => Util.RegexFactory<GhostMap>(input).Walk("AAA", current => current == "ZZZ");
 
     public static long Part2(string input)
     {
         var map = Util.RegexFactory<GhostMap>(input);
         return map.Paths.Keys.Where(k => k.EndsWith('A'))
             .Aggregate(1L, (cycle, start)
-                => Util.LCM(cycle, map.WalkUntil(start, current => current.EndsWith('Z'))));
+                => Util.LCM(cycle, map.Walk(start, current => current.EndsWith('Z'))));
     }
 
     public void Run(string input, ILogger logger)

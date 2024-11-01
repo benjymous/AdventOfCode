@@ -37,7 +37,7 @@ public class Day13Test
     [TestMethod]
     public void FindColMirrorTest()
     {
-        Assert.AreEqual(5, Day13.FindMirror(Util.ParseMatrix<char>(test1).Columns(), false));
+        Assert.AreEqual(5, Day13.FindMirror(Util.ParseMatrix<char>(test1).Columns(), QuestionPart.Part1));
     }
 
     readonly string test2 = @"#...##..#
@@ -52,7 +52,7 @@ public class Day13Test
     [TestMethod]
     public void FindRowMirrorTest()
     {
-        Assert.AreEqual(4, Day13.FindMirror(Util.ParseMatrix<char>(test2).Rows(), false));
+        Assert.AreEqual(4, Day13.FindMirror(Util.ParseMatrix<char>(test2).Rows(), QuestionPart.Part1));
     }
 
     /*
@@ -117,14 +117,14 @@ public class Day13Test
     [DataTestMethod]
     public void GetScoreTest(string input, int expected)
     {
-        Assert.AreEqual(expected, Day13.GetMirrorScore(input, false));
+        Assert.AreEqual(expected, Day13.GetMirrorScore(input, QuestionPart.Part1));
     }
 
     [TestCategory("Test")]
     [TestMethod]
     public void FindRowMirrorTestPt2()
     {
-        Assert.AreEqual(3, Day13.FindMirror(Util.ParseMatrix<char>(test1).Rows(), true));
+        Assert.AreEqual(3, Day13.FindMirror(Util.ParseMatrix<char>(test1).Rows(), QuestionPart.Part2));
     }
 
     [TestCategory("Test")]

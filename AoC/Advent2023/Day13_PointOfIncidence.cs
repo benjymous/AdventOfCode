@@ -15,7 +15,7 @@ public class Day13 : IPuzzle
     private static (bool found, int position, bool isBlotchy) ValidateGroup(HashSet<int> group, string[] vals, Dictionary<int, HashSet<int>> dict)
         => group.Where(v => group.Contains(v + 1)).Select(v => ValidatePairs(vals, dict, v)).FirstOrDefault(r => r.valid);
 
-    static Dictionary<int, HashSet<int>> DoGrouping((int index, string value)[] data, bool part2)
+    static Dictionary<int, HashSet<int>> DoGrouping((int index, string value)[] data, QuestionPart part)
     {
         Dictionary<int, HashSet<int>> dict = [];
 
@@ -26,7 +26,7 @@ public class Day13 : IPuzzle
             {
                 var v2 = data[j];
 
-                if (part2 ? StringsDifferByNoMoreThanOne(v1.value, v2.value) : v1.value == v2.value)
+                if (part.Two() ? StringsDifferByNoMoreThanOne(v1.value, v2.value) : v1.value == v2.value)
                 {
                     if (dict.TryGetValue(v1.index, out HashSet<int> value))
                     {
@@ -43,21 +43,21 @@ public class Day13 : IPuzzle
         return dict;
     }
 
-    public static int FindMirror(IEnumerable<IEnumerable<char>> input, bool part2)
+    public static int FindMirror(IEnumerable<IEnumerable<char>> input, QuestionPart part)
     {
         string[] vals = input.Select(c => c.AsString()).ToArray();
-        var groups = DoGrouping(vals.WithIndex(1).Select(c => (c.Index, value: c.Value)).ToArray(), part2);
+        var groups = DoGrouping(vals.WithIndex(1).Select(c => (c.Index, value: c.Value)).ToArray(), part);
 
         return groups.Select(g => ValidateGroup(g.Value, vals, groups))
-                     .Where(v => v.found && v.isBlotchy == part2).FirstOrDefault().position;
+.FirstOrDefault(v => v.found && v.isBlotchy == part.Two()).position;
     }
 
-    public static int GetMirrorScore(string input, bool part2)
+    public static int GetMirrorScore(string input, QuestionPart part)
     {
         var g = Util.ParseMatrix<char>(input);
 
-        var col = FindMirror(g.Columns(), part2);
-        return col > 0 ? col : FindMirror(g.Rows(), part2) * 100;
+        var col = FindMirror(g.Columns(), part);
+        return col > 0 ? col : FindMirror(g.Rows(), part) * 100;
     }
 
     public static bool StringsDifferByNoMoreThanOne(string in1, string in2)
@@ -73,9 +73,9 @@ public class Day13 : IPuzzle
         return true;
     }
 
-    public static int Part1(string input) => input.Split("\n\n").Sum(grid => GetMirrorScore(grid, false));
+    public static int Part1(string input) => input.Split("\n\n").Sum(grid => GetMirrorScore(grid, QuestionPart.Part1));
 
-    public static int Part2(string input) => input.Split("\n\n").Sum(grid => GetMirrorScore(grid, true));
+    public static int Part2(string input) => input.Split("\n\n").Sum(grid => GetMirrorScore(grid, QuestionPart.Part2));
 
     public void Run(string input, ILogger logger)
     {

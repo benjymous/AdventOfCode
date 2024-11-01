@@ -45,7 +45,7 @@ public class Day11 : IPuzzle
         var state = new State(input);
         int cellCount = state.Cells.Width() * state.Cells.Height();
 
-        return Util.Forever(1).Where(_ => state.Step() == cellCount).First();
+        return Util.Forever(1).First(_ => state.Step() == cellCount);
     }
 
     public void Run(string input, ILogger logger)

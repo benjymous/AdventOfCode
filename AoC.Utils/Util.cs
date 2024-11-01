@@ -18,7 +18,15 @@ public static class QuestionPartExtensions
 {
     public static bool One(this QuestionPart part) => part == QuestionPart.Part1;
     public static bool Two(this QuestionPart part) => part == QuestionPart.Part2;
+
 }
+
+// coming soon, maybe?
+//public implicit extension QuestionPartExtension for QuestionPart
+//{
+//    public bool One
+//        => this == QuestionPart.Part1
+//}
 
 public partial class Util
 {
@@ -109,6 +117,15 @@ public partial class Util
             if (RegexCreateInternal(t, line, tc, attr, out object result)) return result;
         }
         throw new Exception($"RegexParse failed to find suitable constructor for '{line}' in {t.Name}");
+    }
+
+    static object RegexCreate(Type t, string line, RegexAttribute paramAttr)
+    {
+
+        var tc = t.GetConstructors().First();
+        if (RegexCreateInternal(t, line, tc, paramAttr, out object result)) return result;
+
+        throw new Exception($"RegexParse failed to construct param for '{line}' in {t.Name}");
     }
 
     static bool RegexCreateInternal(Type t, string line, ConstructorInfo typeConstructor, RegexAttribute attr, out object result)
@@ -241,15 +258,19 @@ public partial class Util
                 return conv.ConvertFromString(input);
             }
 
-            return RegexCreate(destinationType, input);
+            RegexAttribute paramAttr = attrs == null ? null : attrs.ContainsKey(typeof(RegexAttribute)) ? (RegexAttribute)attrs[typeof(RegexAttribute)] : null;
+
+            return paramAttr != null ? RegexCreate(destinationType, input, paramAttr) : RegexCreate(destinationType, input);
         }
     }
 
     private static object[] ConstructParams(MatchCollection matches, ParameterInfo[] paramInfo)
     {
+        int skip = (matches.Count == 1 && matches[0].Groups.Count == 1 && paramInfo.Length == 1) ? 0 : 1;
+
         var regexValues = matches[0]
-            .Groups.Values//.Where(v => !string.IsNullOrWhiteSpace(v.Value))
-            .Skip(1).Select(g => g.Value).ToArray();
+            .Groups.Values
+            .Skip(skip).Select(g => g.Value).ToArray();
 
         if (regexValues.Length != paramInfo.Length) throw new Exception("RegexParse couldn't match constructor param count");
 
@@ -963,7 +984,7 @@ public class Accumulator<T> where T : INumber<T>, IMinMaxValue<T>
     public T Sum { get; private set; }
 }
 
-[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Struct)]
+[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Parameter)]
 public class RegexAttribute([StringSyntax("Regex")] string pattern) : Attribute
 {
     public Regex Regex { get; private set; } = Memoizer.Memoize(pattern, _ => new Regex(pattern));

@@ -1,11 +1,10 @@
 ﻿namespace AoC.Advent2022;
 public class Day15 : IPuzzle
 {
-    [method: Regex(@"Sensor at x=(.+), y=(.+): closest beacon is at x=(.+), y=(.+)")]
-    public class Sensor(int x, int y, int bx, int by)
+    [Regex(@"Sensor at (.+): closest beacon is at (.+)")]
+    public record class Sensor([Regex("x=(.+), y=(.+)")] (int x, int y) Pos, [Regex("x=(.+), y=(.+)")] (int x, int y) Beacon)
     {
-        public readonly (int x, int y) Pos = (x, y), Beacon = (bx, by);
-        public readonly int Range = (x, y).Distance(bx, by);
+        public readonly int Range = Pos.Distance(Beacon);
 
         public bool InRange((int x, int y) p) => Pos.Distance(p) <= Range;
 
@@ -57,7 +56,7 @@ public class Day15 : IPuzzle
         {
             var boundary = sensor.OuterBoundary().WithinBounds(0, max, 0, max);
             var nearestNeighbours = sensors.Select(s2 => (s2, sensor.Overlap(s2))).OrderBy(pair => pair.Item2).Take(8).Select(pair => pair.s2).ToArray();
-            var res = boundary.Where(pos => !nearestNeighbours.Any(s => s.InRange(pos))).FirstOrDefault();
+            var res = boundary.FirstOrDefault(pos => !nearestNeighbours.Any(s => s.InRange(pos)));
             if (res != default)
             {
                 return (4000000L * res.x) + res.y;

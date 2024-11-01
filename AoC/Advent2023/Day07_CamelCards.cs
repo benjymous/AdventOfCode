@@ -21,12 +21,7 @@ public class Day07 : IPuzzle
         public readonly int Ordering = GetSortOrder(Cards);
     }
 
-    public static int GetSortOrder(string cards)
-    {
-        int num = 0;
-        foreach (var c in cards) num = (num << 4) + CardIndex(c);
-        return -num;
-    }
+    public static int GetSortOrder(string cards) => cards.Aggregate(0, (v, c) => (v << 4) + CardIndex(c));
 
     public static string ApplyJokers(string cards)
     {
@@ -56,7 +51,7 @@ public class Day07 : IPuzzle
 
     static IEnumerable<(char Key, int Count)> GroupCards(string hand) => hand.GroupBy(c => c).Select(g => (g.Key, Count: g.Count())).OrderByDescending(g => g.Count);
 
-    public static IEnumerable<Hand> SortCards(IEnumerable<Hand> cards) => cards.OrderBy(h => (h.HandType, h.Ordering));
+    public static IEnumerable<Hand> SortCards(IEnumerable<Hand> cards) => cards.OrderBy(h => (h.HandType, -h.Ordering));
 
     static int Solve(string input) => SortCards(Util.RegexParse<Hand>(input).ToArray()).WithIndex(1).ToArray().Sum(h => h.Index * h.Value.Bid);
 

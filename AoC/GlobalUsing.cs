@@ -1,4 +1,5 @@
 ﻿global using AoC.Utils;
+global using AoC.Utils.AdaptorTypes;
 global using AoC.Utils.Collections;
 global using AoC.Utils.Pathfinding;
 global using AoC.Utils.Solver;

@@ -4,55 +4,42 @@ using DecVec3 = (decimal X, decimal Y, decimal Z);
 
 public class Day24 : IPuzzle
 {
-    [Regex(@"(\d+), (\d+), (\d+) @ +(-?\d+), +(-?\d+), +(-?\d+)")]
-    record class Entry(long X, long Y, long Z, long Dx, long Dy, long Dz)
+    [Regex(@"(.+) @ (.+)")]
+    record class Entry([Regex(@"(.+), (.+), (.+)")] (long X, long Y, long Z) Pos, [Regex(@"(.+), (.+), (.+)")] (long X, long Y, long Z) Vel)
     {
-        public bool IsFuture((float X, float Y) p) => Math.Sign((float)(p.X - X)) == Math.Sign(Dx) && Math.Sign((float)(p.Y - Y)) == Math.Sign(Dy);
-
-        public DecVec3 AtTime(int time) => (X + (Dx * time), Y + (Dy * time), Z + (Dz * time));
-
-        public DecVec3 Pos => (X, Y, Z);
-        public DecVec3 Vel => (Dx, Dy, Dz);
+        public bool IsFuture((float X, float Y) p) => Math.Sign((float)(p.X - Pos.X)) == Math.Sign(Vel.X) && Math.Sign((float)(p.Y - Pos.Y)) == Math.Sign(Vel.Y);
     }
 
-    static (long X, long Y)[] GetLine2d(Entry entry) => [(entry.X, entry.Y), (entry.X + entry.Dx, entry.Y + entry.Dy)];
-
-    static (float X, float Y)? GetIntersectionPoint((long X, long Y) p1, (long X, long Y) p2, (long X, long Y) p3, (long X, long Y) p4)
+    static (float X, float Y)? GetIntersectionPoint((long X, long Y)[] l1, (long X, long Y)[] l2)
     {
-        float denominator = ((p4.Y - p3.Y) * (p2.X - p1.X)) - ((p4.X - p3.X) * (p2.Y - p1.Y));
-        float numerator1 = ((p4.X - p3.X) * (p1.Y - p3.Y)) - ((p4.Y - p3.Y) * (p1.X - p3.X));
-        float numerator2 = ((p2.X - p1.X) * (p1.Y - p3.Y)) - ((p2.Y - p1.Y) * (p1.X - p3.X));
+        float denominator = ((l2[1].Y - l2[0].Y) * (l1[1].X - l1[0].X)) - ((l2[1].X - l2[0].X) * (l1[1].Y - l1[0].Y));
+        float numerator1 = ((l2[1].X - l2[0].X) * (l1[0].Y - l2[0].Y)) - ((l2[1].Y - l2[0].Y) * (l1[0].X - l2[0].X));
+        float numerator2 = ((l1[1].X - l1[0].X) * (l1[0].Y - l2[0].Y)) - ((l1[1].Y - l1[0].Y) * (l1[0].X - l2[0].X));
 
         if (denominator == 0f)
         {
-            return numerator1 == 0f && numerator2 == 0f ? (p1.X, p1.Y) : null;
+            return numerator1 == 0f && numerator2 == 0f ? (l1[0].X, l1[0].Y) : null;
         }
 
         float r = numerator1 / denominator;
 
-        return ((float)(p1.X + (r * (p2.X - p1.X))), (float)(p1.Y + (r * (p2.Y - p1.Y))));
+        return ((float)(l1[0].X + (r * (l1[1].X - l1[0].X))), (float)(l1[0].Y + (r * (l1[1].Y - l1[0].Y))));
     }
 
     public static int CheckTestArea(string input, long minTest, long maxTest)
     {
-        var data = Util.RegexParse<Entry>(input).ToList();
-        var lines = data.Select(GetLine2d).ToList();
+        var data = Util.RegexParse<Entry>(input).ToArray();
+        var lines = data.Select(entry => ((long, long)[])[(entry.Pos.X, entry.Pos.Y), (entry.Pos.X + entry.Vel.X, entry.Pos.Y + entry.Vel.Y)]).ToArray();
 
         int count = 0;
-        for (int i1 = 0; i1 < lines.Count; ++i1)
+        for (int i1 = 0; i1 < lines.Length; ++i1)
         {
-            for (int i2 = i1 + 1; i2 < lines.Count; ++i2)
+            for (int i2 = i1 + 1; i2 < lines.Length; ++i2)
             {
-                var intersect = GetIntersectionPoint(lines[i1][0], lines[i1][1], lines[i2][0], lines[i2][1]);
-                if (intersect != null)
+                var intersect = GetIntersectionPoint(lines[i1], lines[i2]);
+                if (intersect != null && data[i1].IsFuture(intersect.Value) && data[i2].IsFuture(intersect.Value) && intersect.Value.X >= minTest && intersect.Value.X <= maxTest && intersect.Value.Y >= minTest && intersect.Value.Y <= maxTest)
                 {
-                    if (data[i1].IsFuture(intersect.Value) && data[i2].IsFuture(intersect.Value))
-                    {
-                        if (intersect.Value.X >= minTest && intersect.Value.X <= maxTest && intersect.Value.Y >= minTest && intersect.Value.Y <= maxTest)
-                        {
-                            count++;
-                        }
-                    }
+                    count++;
                 }
             }
         }
@@ -63,15 +50,12 @@ public class Day24 : IPuzzle
     static decimal CrossX(DecVec3 a, DecVec3 b) => (a.Y * b.Z) - (a.Z * b.Y);
     static decimal CrossY(DecVec3 a, DecVec3 b) => (a.Z * b.X) - (a.X * b.Z);
     static decimal CrossZ(DecVec3 a, DecVec3 b) => (a.X * b.Y) - (a.Y * b.X);
+    static DecVec3 Subtract(DecVec3 a, DecVec3 b) => (a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 
     public static decimal[,] InvertMatrix(decimal[,] input)
     {
         ArgumentNullException.ThrowIfNull(input);
-
-        if (input.GetLength(0) != input.GetLength(1))
-        {
-            throw new ArgumentException("Input matrix must be square.");
-        }
+        if (input.GetLength(0) != input.GetLength(1)) throw new ArgumentException("Input matrix must be square.");
 
         int n = input.GetLength(0);
         decimal[,] result = new decimal[n, n];
@@ -91,10 +75,7 @@ public class Day24 : IPuzzle
         for (int i = 0; i < n; i++)
         {
             decimal pivot = augmented[i, i];
-            if (pivot == 0)
-            {
-                throw new ArgumentException("Input matrix is singular.");
-            }
+            if (pivot == 0) throw new ArgumentException("Input matrix is singular.");
 
             for (int j = 0; j < 2 * n; j++)
             {
@@ -132,9 +113,7 @@ public class Day24 : IPuzzle
         ArgumentNullException.ThrowIfNull(vector);
 
         if (matrix.GetLength(1) != vector.Length)
-        {
             throw new ArgumentException("Matrix column count must match vector length.");
-        }
 
         int rowCount = matrix.GetLength(0);
         int colCount = matrix.GetLength(1);
@@ -153,55 +132,39 @@ public class Day24 : IPuzzle
         return result;
     }
 
-    static DecVec3 Subtract(DecVec3 a, DecVec3 b) => (a.X - b.X, a.Y - b.Y, a.Z - b.Z);
-
-    static decimal SolvePt2(Entry[] entries)
+    static decimal SolvePt2((Entry a, Entry b, Entry c) input)
     {
-        var a = entries[0];
-        var b = entries[1];
-        var c = entries[2];
+        var min = input.a.Pos;
 
-        var min = a.Pos;
-
-        var a_pos = Subtract(a.Pos, min);
-        var b_pos = Subtract(b.Pos, min);
-        var c_pos = Subtract(c.Pos, min);
-
-        var ab_pos = Subtract(a_pos, b_pos);
-        var ab_vel = Subtract(a.Vel, b.Vel);
-
-        var ac_pos = Subtract(a_pos, c_pos);
-        var ac_vel = Subtract(a.Vel, c.Vel);
+        DecVec3 a_pos = Subtract(input.a.Pos, min), b_pos = Subtract(input.b.Pos, min), c_pos = Subtract(input.c.Pos, min);
+        DecVec3 ab_pos = Subtract(a_pos, b_pos), ab_vel = Subtract(input.a.Vel, input.b.Vel);
+        DecVec3 ac_pos = Subtract(a_pos, c_pos), ac_vel = Subtract(input.a.Vel, input.c.Vel);
 
         decimal[,] mat = {
-                {ab_vel.Y, -ab_vel.X,  0,   -ab_pos.Y,  ab_pos.X,  0},
-                {ac_vel.Y, -ac_vel.X,  0,   -ac_pos.Y,  ac_pos.X,  0},
-                {-ab_vel.Z, 0, ab_vel.X,     ab_pos.Z,  0, -ab_pos.X},
-                {-ac_vel.Z, 0, ac_vel.X,     ac_pos.Z,  0, -ac_pos.X},
-                {0, ab_vel.Z, -ab_vel.Y,     0, -ab_pos.Z,  ab_pos.Y},
-                {0, ac_vel.Z, -ac_vel.Y,     0, -ac_pos.Z,  ac_pos.Y }
+            {ab_vel.Y, -ab_vel.X,  0,   -ab_pos.Y,  ab_pos.X,  0},
+            {ac_vel.Y, -ac_vel.X,  0,   -ac_pos.Y,  ac_pos.X,  0},
+            {-ab_vel.Z, 0, ab_vel.X,     ab_pos.Z,  0, -ab_pos.X},
+            {-ac_vel.Z, 0, ac_vel.X,     ac_pos.Z,  0, -ac_pos.X},
+            {0, ab_vel.Z, -ab_vel.Y,     0, -ab_pos.Z,  ab_pos.Y},
+            {0, ac_vel.Z, -ac_vel.Y,     0, -ac_pos.Z,  ac_pos.Y}
         };
 
         decimal[] vec = [
-            CrossZ(b.Vel, b_pos) - CrossZ(a.Vel, a_pos),
-            CrossZ(c.Vel, c_pos) - CrossZ(a.Vel, a_pos),
-            CrossY(b.Vel, b_pos) - CrossY(a.Vel, a_pos),
-            CrossY(c.Vel, c_pos) - CrossY(a.Vel, a_pos),
-            CrossX(b.Vel, b_pos) - CrossX(a.Vel, a_pos),
-            CrossX(c.Vel, c_pos) - CrossX(a.Vel, a_pos)
+            CrossZ(input.b.Vel, b_pos) - CrossZ(input.a.Vel, a_pos),
+            CrossZ(input.c.Vel, c_pos) - CrossZ(input.a.Vel, a_pos),
+            CrossY(input.b.Vel, b_pos) - CrossY(input.a.Vel, a_pos),
+            CrossY(input.c.Vel, c_pos) - CrossY(input.a.Vel, a_pos),
+            CrossX(input.b.Vel, b_pos) - CrossX(input.a.Vel, a_pos),
+            CrossX(input.c.Vel, c_pos) - CrossX(input.a.Vel, a_pos)
         ];
 
         var rock = MultiplyMatrixAndVector(InvertMatrix(mat), vec);
-        return Math.Round(rock[0] + rock[1] + rock[2] + min.X + min.Y + min.Z);
+        return Math.Round(rock.Take(3).Sum() + min.X + min.Y + min.Z);
     }
 
     public static int Part1(string input) => CheckTestArea(input, 200000000000000, 400000000000000);
 
-    public static decimal Part2(string input)
-    {
-        var data = Util.RegexParse<Entry>(input).ToArray();
-        return SolvePt2(data);
-    }
+    public static decimal Part2(string input) => SolvePt2(Util.RegexParse<Entry>(input).Decompose3());
 
     public void Run(string input, ILogger logger)
     {

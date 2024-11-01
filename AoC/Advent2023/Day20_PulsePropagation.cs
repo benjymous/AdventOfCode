@@ -8,7 +8,7 @@ public class Day20 : IPuzzle
     public record class Node(char Type, string Id, [Split(", ")] string[] Outputs)
     {
         [Regex(@"broadcaster -> (.+)")]
-        public Node([Split(", ")] string[] outputs) : this(Broadcaster, "broadcaster", outputs) { }
+        public Node([Split(", ")] string[] outputs) : this(Broadcaster, "broad", outputs) { }
 
         bool State = false;
         readonly Dictionary<string, bool> Memory = [];
@@ -34,7 +34,7 @@ public class Day20 : IPuzzle
 
     private static (int highCount, int lowCount) PushButton(Dictionary<string, Node> network, HashSet<string> watchNodes = default, Action<string> watchCallback = default)
     {
-        List<(string dest, string from, bool level)> signals = [("broadcaster", "button", Low)];
+        List<(string dest, string from, bool level)> signals = [("broad", "button", Low)];
         (int lowCount, int highCount) counts = (0, 0);
         HashSet<string> watches = [];
         do
@@ -69,7 +69,7 @@ public class Day20 : IPuzzle
 
     public static long Part2(string input)
     {
-        Dictionary<string, Node> network = InitNetwork(input);
+        var network = InitNetwork(input);
         var watchNodes = network.Values.Single(n => n.Outputs.Contains("rx")).InputWires;
         Dictionary<string, int> lastSeen = [], cycles = [];
 

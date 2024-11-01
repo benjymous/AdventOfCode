@@ -317,6 +317,19 @@ namespace AoC.Test
             }
         }
 
+        [Regex("(.+) : (.+)")]
+        record class ParamRegexCreationTest([Regex("(.+),(.+)")] (int X, int Y) v1, [Regex("(.+),(.+)")] (int X, int Y) v2);
+
+        [TestMethod]
+        [TestCategory("RegexParse")]
+        public void RegexParseParamRegex()
+        {
+            var result = Util.FromString<ParamRegexCreationTest>("10,11 : 12,13");
+
+            Assert.AreEqual((10, 11), result.v1);
+            Assert.AreEqual((12, 13), result.v2);
+        }
+
         [TestMethod]
         public void ArrayDimensionTest()
         {

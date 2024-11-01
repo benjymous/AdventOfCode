@@ -1,0 +1,18 @@
+﻿RegexParse param as own defined type
+  - put RegexAttr on type's constructor
+
+RegexParse param as array
+  [Split(", ")] attr on arg to define splitting (defaults to ","))
+    (see 2023 Day 20)
+
+RegexParse param as dictionary
+  [Split(", ", @"(?<key>.+): (?<value>.+)")] attr on arg
+    (see 2015 Day 16,  2020 Day 7)
+
+RegexParse param as Tuple, etc
+  [Regex("..pattern..")] attr on arg (must accept first param!)
+    (see 2022 Day 15,  2023 Day 25)
+
+RegexParse param as hex
+  [Base(16)] on arg
+    (see 2023 Day 18)

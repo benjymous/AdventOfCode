@@ -1,18 +1,17 @@
 ﻿namespace AoC.Advent2023;
 public partial class Day01 : IPuzzle
 {
-
     public partial class Value(string raw)
     {
-        private IEnumerable<int> SplitDigitsAndWords(bool part2) =>
+        private IEnumerable<int> SplitDigitsAndWords(QuestionPart part) =>
             SplitterRegex().Split(raw).WithoutNullOrWhiteSpace().Select(entry =>
-            int.TryParse(entry, out var v) ? v : (part2 ? Parse(entry) : int.MaxValue)).Where(v => v != int.MaxValue);
+            int.TryParse(entry, out var v) ? v : (part.Two() ? Parse(entry) : default)).Where(v => v != default);
 
         [GeneratedRegex(@"(\d|one|two|three|four|five|six|seven|eight|nine)")] private static partial Regex SplitterRegex();
 
-        private int Get(bool part2)
+        public int GetResult(QuestionPart part)
         {
-            var digits = SplitDigitsAndWords(part2);
+            var digits = SplitDigitsAndWords(part);
             return (digits.First() * 10) + digits.Last();
         }
 
@@ -27,26 +26,15 @@ public partial class Day01 : IPuzzle
             "seven" => 7,
             "eight" => 8,
             "nine" => 9,
-            _ => int.MaxValue,
+            _ => default,
         };
-
-        public int ValPt1 => Get(false);
-        public int ValPt2 => Get(true);
     }
 
-    public static int Part1(string input)
-    {
-        var data = Util.Parse<Value>(input);
+    public static int Solve(string input, QuestionPart part) => Util.Parse<Value>(input).Sum(v => v.GetResult(part));
 
-        return data.Sum(v => v.ValPt1);
-    }
+    public static int Part1(string input) => Solve(input, QuestionPart.Part1);
 
-    public static int Part2(string input)
-    {
-        var data = Util.Parse<Value>(input);
-
-        return data.Sum(v => v.ValPt2);
-    }
+    public static int Part2(string input) => Solve(input, QuestionPart.Part2);
 
     public void Run(string input, ILogger logger)
     {

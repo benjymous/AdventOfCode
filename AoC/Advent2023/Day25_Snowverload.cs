@@ -2,26 +2,24 @@
 public class Day25 : IPuzzle
 {
     [Regex(@"(.+): (.+)")]
-    record class Connection(string Element, [Split(" ")] string[] Connections);
+    record class Connection(StringInt32 Element, [Split(" ")] StringInt32[] Connections);
 
-    class Map : IMap<string>
+    class Map : IMap<int>
     {
-        public string StartNode = "";
-        public string EndNode = "";
-        public Dictionary<string, HashSet<string>> connections = [];
-        public IEnumerable<string> GetNeighbours(string location) => location == StartNode ? connections[location].Except([EndNode]) : connections[location];
+        public int StartNode = 0, EndNode = 0;
+        public Dictionary<int, HashSet<int>> connections = [];
+        public IEnumerable<int> GetNeighbours(int location) => location == StartNode ? connections[location].Except([EndNode]) : connections[location];
 
-        public int Find(string start, string end)
+        public int Find(int start, int end)
         {
-            StartNode = start;
-            EndNode = end;
+            (StartNode, EndNode) = (start, end);
             return this.FindPath(start, end).Length;
         }
     }
 
-    public static int FindIslands(Dictionary<string, HashSet<string>> connections, IEnumerable<(string n1, string n2, int loop)> cutLinks)
+    public static int FindIslands(Dictionary<int, HashSet<int>> connections, IEnumerable<(int n1, int n2, int loop)> cutLinks)
     {
-        var map = new Map { connections = connections.ToDictionary() };
+        var map = new Map { connections = connections.Select(kvp => (kvp.Key, kvp.Value.ToHashSet())).ToDictionary() };
 
         foreach (var (n1, n2, loop) in cutLinks)
         {
@@ -29,25 +27,18 @@ public class Day25 : IPuzzle
             map.connections[n2].Remove(n1);
         }
 
-        List<HashSet<string>> islands = [];
-
         var nodes = connections.Keys;
 
-        islands.Add([nodes.First()]);
+        List<HashSet<int>> islands = [[nodes.First()]];
 
         foreach (var node in connections.Keys.Skip(1))
         {
-            bool found = false;
-            foreach (var island in islands)
+            var island = islands.FirstOrDefault(island => map.connections[node].Intersect(island).Any() || map.FindPath(node, island.First()).Length != 0);
+            if (island != null)
             {
-                if (map.connections[node].Intersect(island).Any() || map.FindPath(node, island.First()).Length != 0)
-                {
-                    island.Add(node);
-                    found = true;
-                    break;
-                }
+                island.Add(node);
             }
-            if (!found)
+            else
             {
                 islands.Add([node]);
             }
@@ -62,25 +53,16 @@ public class Day25 : IPuzzle
 
         foreach (var connection in Util.RegexParse<Connection>(input))
         {
-            if (!map.connections.ContainsKey(connection.Element)) map.connections[connection.Element] = [];
+            if (!map.connections.ContainsKey(connection.Element.Value)) map.connections[connection.Element.Value] = [];
             foreach (var child in connection.Connections)
             {
-                if (!map.connections.ContainsKey(child)) map.connections[child] = [];
-                map.connections[connection.Element].Add(child);
-                map.connections[child].Add(connection.Element);
+                if (!map.connections.ContainsKey(child.Value)) map.connections[child.Value] = [];
+                map.connections[connection.Element.Value].Add(child.Value);
+                map.connections[child.Value].Add(connection.Element.Value);
             }
         }
 
-        List<(string n1, string n2, int loop)> results = [];
-
-        foreach (var node in map.connections)
-        {
-            foreach (var link in node.Value.Where(v => string.Compare(v, node.Key, StringComparison.Ordinal) < 0))
-            {
-                results.Add((node.Key, link, map.Find(node.Key, link)));
-            }
-        }
-
+        var results = map.connections.SelectMany(node => node.Value.Where(v => v < node.Key).Select(link => (node.Key, link, loop: map.Find(node.Key, link))));
         return FindIslands(map.connections, results.OrderByDescending(v => v.loop).Take(3));
     }
 

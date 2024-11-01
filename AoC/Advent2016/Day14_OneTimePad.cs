@@ -60,7 +60,7 @@ public class Day14 : IPuzzle
             last = FillCache(input, stretch, cache, last, index + 1000);
 
             var triplet = runs[0].repeat;
-            if (cache.Where(v => v.index <= index + 1000 && v.runs.Any(r => r.run >= 5 && r.repeat == triplet)).Any() && ++found == 64)
+            if (cache.Any(v => v.index <= index + 1000 && v.runs.Any(r => r.run >= 5 && r.repeat == triplet)) && ++found == 64)
                 return index;
         }
     }

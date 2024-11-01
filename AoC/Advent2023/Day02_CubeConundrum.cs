@@ -4,48 +4,32 @@ public class Day02 : IPuzzle
     [Regex(@"(.+)")]
     record class Set(Entry[] Items)
     {
-        public bool Possible() => Items.All(i => i.Possible());
+        public bool Possible => Items.All(i => i.Possible);
     }
+
+    enum Colour
+    {
+        red = 12, green = 13, blue = 14
+    };
 
     [Regex(@"(\d+) (.+)")]
-    record class Entry(int Num, string Colour)
+    record class Entry(int Num, Colour Colour)
     {
-        public bool Possible() => Colour switch
-        {
-            "red" => Num <= 12,
-            "green" => Num <= 13,
-            "blue" => Num <= 14,
-            _ => false,
-        };
-
+        public bool Possible => Num <= (int)Colour;
     }
+
     [Regex(@"Game (\d+): (.+)")]
     record class Game(int Id, [Split(";")] Set[] Sets)
     {
-        public bool Possible() => Sets.All(s => s.Possible());
+        public bool Possible => Sets.All(s => s.Possible);
 
-        public Dictionary<string, int> GetMinCounts()
-        {
-            Dictionary<string, int> values = [];
-
-            foreach (var entry in Sets.SelectMany(set => set.Items.Where(entry => !values.TryGetValue(entry.Colour, out var prev) || prev < entry.Num)))
-            {
-                values[entry.Colour] = entry.Num;
-            }
-
-            return values;
-        }
-
-        public int Power()
-        {
-            var counts = GetMinCounts();
-            return counts["red"] * counts["green"] * counts["blue"];
-        }
+        public long Power => Sets.SelectMany(set => set.Items).GroupBy(s => s.Colour)
+                             .Select(group => group.Max(s => s.Num)).Product();
     }
 
-    public static int Part1(string input) => Util.RegexParse<Game>(input).Where(game => game.Possible()).Sum(g => g.Id);
+    public static int Part1(string input) => Util.RegexParse<Game>(input).Where(game => game.Possible).Sum(g => g.Id);
 
-    public static int Part2(string input) => Util.RegexParse<Game>(input).Sum(g => g.Power());
+    public static long Part2(string input) => Util.RegexParse<Game>(input).Sum(g => g.Power);
 
     public void Run(string input, ILogger logger)
     {

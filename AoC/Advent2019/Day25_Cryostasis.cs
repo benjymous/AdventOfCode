@@ -47,7 +47,7 @@ public class Day25 : IPuzzle
         public override IEnumerable<string> AutomaticInput()
         {
             var lines = buffer.Pop().WithoutNullOrWhiteSpace().ToArray();
-            var (roomName, roomLines) = lines.Select((line, i) => (line, lines.Skip(i + 2))).Where(v => v.line[0] == '=').LastOrDefault(); // find LAST room header
+            var (roomName, roomLines) = lines.Select((line, i) => (line, lines.Skip(i + 2))).LastOrDefault(v => v.line[0] == '='); // find LAST room header
             if (roomName != null) CurrentRoom = GetOrParseRoom(roomName, roomLines);
 
             if (Inputs.Count == 0)
@@ -83,7 +83,7 @@ public class Day25 : IPuzzle
         static IEnumerable<string> RouteFind(Room currentRoom, Room destinationRoom, HashSet<string> tried = null)
         {
             if (currentRoom.Exits.TryGet(destinationRoom, out var found)) return [found];
-            var (route, exit) = currentRoom.Exits.ValuesNonNull.Where(e => tried == null || !tried.Contains(e.Name)).Select(exit => (RouteFind(exit, destinationRoom, [.. (tried ??= []), currentRoom.Name]), exit)).Where(v => v.Item1 != null).FirstOrDefault();
+            var (route, exit) = currentRoom.Exits.ValuesNonNull.Where(e => tried == null || !tried.Contains(e.Name)).Select(exit => (RouteFind(exit, destinationRoom, [.. (tried ??= []), currentRoom.Name]), exit)).FirstOrDefault(v => v.Item1 != null);
             return route != default ? ([currentRoom.Exits[exit], .. route]) : null;
         }
     }

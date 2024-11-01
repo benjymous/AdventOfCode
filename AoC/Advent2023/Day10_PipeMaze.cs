@@ -4,7 +4,7 @@ public class Day10 : IPuzzle
     static Dictionary<(int x, int y), Direction2[]> GetLoop(string input) => Memoize(input, _ =>
     {
         var grid = Util.ParseSparseMatrix<char>(input);
-        var pos = grid.Where(kvp => kvp.Value == 'S').Single().Key;
+        var pos = grid.Single(kvp => kvp.Value == 'S').Key;
 
         Dictionary<(int x, int y), Direction2[]> visited = [];
 
@@ -13,7 +13,7 @@ public class Day10 : IPuzzle
         while (true)
         {
             var current = grid[pos];
-            var dir = PossibleDirections(current).Select(d => Direction2.FromChar(d)).Where(dir => (current == 'S' || (lastDir - dir) != 2) && ValidateDirection(grid, pos, dir)).First();
+            var dir = PossibleDirections(current).Select(d => Direction2.FromChar(d)).First(dir => (current == 'S' || (lastDir - dir) != 2) && ValidateDirection(grid, pos, dir));
 
             var next = pos.OffsetBy(dir);
             visited[pos] = current == 'S' ? [dir] : [lastDir, dir];
@@ -53,7 +53,7 @@ public class Day10 : IPuzzle
 
         var loopKeys = loop.Keys.ToArray();
 
-        int minY = loop.Keys.Min(v => v.y);
+        int minY = loopKeys.Min(v => v.y);
 
         var clockwise = loop.Any(kvp => kvp.Key.y == minY && kvp.Value[0] == Direction2.Right);
 

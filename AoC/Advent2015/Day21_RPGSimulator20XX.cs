@@ -75,7 +75,7 @@ public class Day21 : IPuzzle
 
         int maxgold = Weapons.Max(w => w.Cost) + Armour.Max(a => a.Cost) + (2 * Rings.Max(r => r.Cost));
         var itemCombos = GetInventoryCombinations(maxgold).OrderByDescending(tup => tup.cost);
-        return itemCombos.Where(combo => DoFight(enemyHp, enemyDmg, enemyArmour, combo.damage, combo.armour) == "Enemy").First().cost;
+        return itemCombos.First(combo => DoFight(enemyHp, enemyDmg, enemyArmour, combo.damage, combo.armour) == "Enemy").cost;
     }
 
     public void Run(string input, ILogger logger)

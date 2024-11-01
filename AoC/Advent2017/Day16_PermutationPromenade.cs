@@ -57,7 +57,7 @@ public class Day16 : IPuzzle
             order = DoDance(instructions, order);
         }
         long remainder = expectedRounds % round;
-        return seen.Where(kvp => kvp.Value == remainder).First().Key;
+        return seen.First(kvp => kvp.Value == remainder).Key;
     }
 
     public void Run(string input, ILogger logger)

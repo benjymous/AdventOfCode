@@ -2,16 +2,15 @@
 
 public class Day21 : IPuzzle
 {
-    static ((int x, int y) start, HashSet<(int x, int y)> walkable, int gridSize) ParseData(string input)
+    static (IEnumerable<int> counts, int gridSize, int distanceToEdge) ParseData(string input)
     {
         var map = Util.ParseSparseMatrix<char>(input);
-        var start = map.Where(kvp => kvp.Value == 'S').Single().Key;
-        var walkable = map.Where(kvp => kvp.Value != '#').Select(kvp => kvp.Key).ToHashSet();
+        var gridSize = map.Keys.Max(v => v.x) + 1;
 
-        return (start, walkable, map.Keys.Max(v => v.x) + 1);
+        return (counts: CalcTileDistances(map.Single(kvp => kvp.Value == 'S').Key, map.Where(kvp => kvp.Value != '#').Select(kvp => kvp.Key).ToHashSet()), gridSize, gridSize == 11 ? 7 : (gridSize / 2));
     }
 
-    public static List<int> CalcTileDistances((int x, int y) start, HashSet<(int, int)> walkable)
+    public static IEnumerable<int> CalcTileDistances((int x, int y) start, HashSet<(int, int)> walkable)
     {
         (int dx, int dy)[] neighbours = [(-1, 0), (1, 0), (0, -1), (0, 1)];
 
@@ -35,27 +34,19 @@ public class Day21 : IPuzzle
             }
         }
 
-        return [.. visited.Values];
+        return visited.Values;
     }
 
     public static int Part1(string input)
     {
-        var (start, walkable, gridSize) = ParseData(input);
+        var (counts, gridSize, distanceToEdge) = ParseData(input);
 
-        var counts = CalcTileDistances(start, walkable);
-
-        int distanceToEdge = gridSize == 11 ? 7 : (gridSize / 2);
-
-        return counts.Where(d => d < distanceToEdge && (d % 2 == 0)).Count();
+        return counts.Count(d => d < distanceToEdge && (d % 2 == 0));
     }
 
     public static long Part2(string input)
     {
-        var (start, walkable, gridSize) = ParseData(input);
-
-        var counts = CalcTileDistances(start, walkable);
-
-        int distanceToEdge = gridSize == 11 ? 7 : (gridSize / 2);
+        var (counts, gridSize, distanceToEdge) = ParseData(input);
 
         long n = (26501365 - distanceToEdge) / gridSize;
         if (n != 202300)

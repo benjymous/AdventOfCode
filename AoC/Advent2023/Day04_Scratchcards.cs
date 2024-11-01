@@ -5,7 +5,7 @@ public class Day04 : IPuzzle
     public readonly struct Scratchcard(int id, [Split(" ")] int[] winning, [Split(" ")] int[] numbers)
     {
         public readonly int Id = id, Matches = winning.Intersect(numbers).Count();
-        public int Value => Matches != 0 ? (int)BigInteger.Pow(2, Matches - 1) : 0;
+        public int Value => Matches != 0 ? (int)Math.Pow(2, Matches - 1) : 0;
     }
 
     public static int CountWinnings(Dictionary<int, int> cards, int cardId, int matches) => cards.Memoize(cardId, _

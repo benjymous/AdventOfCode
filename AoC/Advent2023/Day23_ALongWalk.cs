@@ -12,7 +12,7 @@ public class Day23 : IPuzzle
 
         public (int x, int y) Destination = (0, 0);
 
-        public Map(string input, bool part1)
+        public Map(string input, QuestionPart part)
         {
             Data = Util.ParseSparseMatrix<char>(input, new Util.Convertomatic.SkipChars('#'));
             int mapSize = Data.Max(kvp => kvp.Key.y);
@@ -23,7 +23,7 @@ public class Day23 : IPuzzle
 
             EndKey = Waypoints.Count - 1;
 
-            if (!part1)
+            if (!part.One())
             {
                 Data.Where(kvp => kvp.Value is not '.').ForEach(kvp => Data[kvp.Key] = '.');
             }
@@ -48,9 +48,9 @@ public class Day23 : IPuzzle
         public IEnumerable<(int x, int y)> GetNeighbours((int x, int y) location) => neighbours.Select(dir => (dir, pos: location.OffsetBy(dir))).Where(v => ((Data.TryGetValue(v.pos, out var c) && c == '.') || c == v.dir.AsChar()) && (v.pos == Destination || !Waypoints.Contains(v.pos))).Select(v => v.pos);
     }
 
-    private static int FindScenicRoute(string input, bool part1)
+    private static int FindScenicRoute(string input, QuestionPart part)
     {
-        var map = new Map(input, part1);
+        var map = new Map(input, part);
 
         return Solver<(int position, ulong visited, int steps), int>.Solve((0, 0, 0), (state, solver) =>
         {
@@ -68,9 +68,8 @@ public class Day23 : IPuzzle
         }, Math.Max);
     }
 
-    public static int Part1(string input) => FindScenicRoute(input, true);
-
-    public static int Part2(string input) => FindScenicRoute(input, false);
+    public static int Part1(string input) => FindScenicRoute(input, QuestionPart.Part1);
+    public static int Part2(string input) => FindScenicRoute(input, QuestionPart.Part2);
 
     public void Run(string input, ILogger logger)
     {

@@ -3,7 +3,7 @@ public class Day11 : IPuzzle
 {
     static int CountGaps(int v1, int v2, int[] gaps)
     {
-        var (min, max) = v1 < v2 ? (v1, v2) : (v2, v1);
+        var (min, max) = Util.MinMax(v1, v2);
         int count = 0;
         foreach (var gap in gaps)
             if (gap > min)

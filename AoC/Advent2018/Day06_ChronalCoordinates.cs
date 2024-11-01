@@ -54,7 +54,7 @@ public class Day06 : IPuzzle
         var width = data.Max(pos => pos.x);
         var height = data.Max(pos => pos.y);
 
-        return ParallelEnumerable.Range(0, height).Sum(y => Enumerable.Range(0, width).Where(x => data.Select(e => e.Distance(x, y)).Sum() < safeDistance).Count());
+        return ParallelEnumerable.Range(0, height).Sum(y => Enumerable.Range(0, width).Count(x => data.Select(e => e.Distance(x, y)).Sum() < safeDistance));
     }
 
     public static int Part2(string input) => Part2(input, 10000);

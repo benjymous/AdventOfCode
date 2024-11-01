@@ -21,19 +21,18 @@ public class Day03 : IPuzzle
         }
     }
 
-    static int Seek(Dictionary<(int x, int y), char> numbers, int x, int y, int direction) => Util.Sequence(x, direction).Where(x => !(numbers.TryGetValue((x, y), out var v) && v.IsDigit())).First() - direction;
+    static int Seek(Dictionary<(int x, int y), char> numbers, int x, int y, int direction) => Util.Sequence(x, direction).First(x => !(numbers.TryGetValue((x, y), out var v) && v.IsDigit())) - direction;
 
     private static int FindNumber((int x, int y) value, Dictionary<(int x, int y), char> numbers)
     {
         int x1 = Seek(numbers, value.x, value.y, -1), x2 = Seek(numbers, value.x, value.y, +1);
 
-        var str = "";
+        int result = 0;
         for (int x = x1; x <= x2; ++x)
         {
-            str += numbers[(x, value.y)];
-            numbers.Remove((x, value.y));
+            if (numbers.Remove((x, value.y), out char v)) result = (result * 10) + (v - '0');
         }
-        return int.Parse(str);
+        return result;
     }
 
     public static int Part1(string input) => GetParts(input).Sum(v => v.partNumber);

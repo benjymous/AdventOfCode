@@ -5,7 +5,7 @@ public class Day19 : IPuzzle
     {
         var grid = Util.ParseSparseMatrix<char>(input, new Util.Convertomatic.SkipChars());
 
-        var pos = grid.Where(kvp => kvp.Key.y == 0).First().Key;
+        var pos = grid.First(kvp => kvp.Key.y == 0).Key;
 
         Direction2 dir = new(0, 1);
         string word = "";

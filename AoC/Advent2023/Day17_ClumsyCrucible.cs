@@ -1,6 +1,6 @@
-﻿namespace AoC.Advent2023;
-using State = (int x, int y, int dir, int dirSteps, int heatLoss);
+﻿using State = (int x, int y, int dir, int dirSteps, int heatLoss);
 
+namespace AoC.Advent2023;
 public class Day17 : IPuzzle
 {
     static readonly Direction2[] Directions = [Direction2.North, Direction2.East, Direction2.South, Direction2.West];
@@ -45,7 +45,7 @@ public class Day17 : IPuzzle
         if (grid.Contains(nextPos))
         {
             var nextLoss = current.heatLoss + grid[nextPos.x, nextPos.y];
-            solver.Enqueue((nextPos.x, nextPos.y, nextDir, nextDir == current.dir ? current.dirSteps + 1 : 1, nextLoss), target.Distance(nextPos)+nextLoss);
+            solver.Enqueue((nextPos.x, nextPos.y, nextDir, nextDir == current.dir ? current.dirSteps + 1 : 1, nextLoss), target.Distance(nextPos) + nextLoss);
         }
     }
 
