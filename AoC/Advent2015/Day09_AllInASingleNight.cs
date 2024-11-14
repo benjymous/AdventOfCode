@@ -12,6 +12,8 @@ public class Day09 : IPuzzle
 
         readonly Dictionary<string, int> MappingDict = [];
         public readonly Dictionary<int, int> Atlas = [];
+
+        public static implicit operator Factory(string data) => Util.RegexFactory<Factory>(data);
     }
 
     static (int min, int max) MeasureRoutes(IEnumerable<int> remaining, Dictionary<int, int> atlas, int current = 0)
@@ -30,12 +32,7 @@ public class Day09 : IPuzzle
         return (min, max);
     }
 
-    static (int min, int max) Solve(string input)
-    {
-        var data = Util.RegexFactory<Factory>(input);
-
-        return MeasureRoutes(data.LocationKeys, data.Atlas);
-    }
+    static (int min, int max) Solve(Factory data) => MeasureRoutes(data.LocationKeys, data.Atlas);
 
     public static int Part1(string input) => Solve(input).min;
 

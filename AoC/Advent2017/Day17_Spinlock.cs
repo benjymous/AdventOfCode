@@ -43,8 +43,6 @@ public class Day17 : IPuzzle
 
     public void Run(string input, ILogger logger)
     {
-        //Util.Test(Part1("3"), 638);
-
         logger.WriteLine("- Pt1 - " + Part1(input));
         logger.WriteLine("- Pt2 - " + Part2(input));
     }

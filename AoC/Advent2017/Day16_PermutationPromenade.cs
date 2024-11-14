@@ -16,10 +16,7 @@ public class Day16 : IPuzzle
         [Regex(@"p(.)\/(.)")]
         public static Func<char[], char[]> Partner(char c1, char c2) => order =>
         {
-            var i1 = Array.IndexOf(order, c1);
-            var i2 = Array.IndexOf(order, c2);
-            order[i1] = c2;
-            order[i2] = c1;
+            (order[Array.IndexOf(order, c1)], order[Array.IndexOf(order, c2)]) = (c2, c1);
             return order;
         };
     }
@@ -28,36 +25,19 @@ public class Day16 : IPuzzle
 
     public static string DoDance(string input, string players) => DoDance(ParseRules(input), [.. players]).AsString();
 
-    public static char[] DoDance(IEnumerable<Func<char[], char[]>> instructions, char[] order)
-    {
-        int orderCount = order.Length;
-
-        foreach (var instr in instructions)
-        {
-            order = instr(order);
-        }
-
-        return order;
-    }
+    public static char[] DoDance(IEnumerable<Func<char[], char[]>> instructions, char[] order) => instructions.ApplyAll(order);
 
     public static string Part1(string input) => DoDance(input, "abcdefghijklmnop");
 
     public static string Part2(string input)
     {
-        long expectedRounds = 1000000000;
+        int expectedRounds = 1000000000;
 
         var instructions = ParseRules(input);
 
-        var seen = new Dictionary<string, long>();
-        long round = 0;
         var order = "abcdefghijklmnop".ToArray();
-        while (!seen.ContainsKey(order.AsString()))
-        {
-            seen[order.AsString()] = round++;
-            order = DoDance(instructions, order);
-        }
-        long remainder = expectedRounds % round;
-        return seen.First(kvp => kvp.Value == remainder).Key;
+
+        return Util.FindCycle(expectedRounds, order, s => s.AsString(), s => DoDance(instructions, s)).AsString();
     }
 
     public void Run(string input, ILogger logger)

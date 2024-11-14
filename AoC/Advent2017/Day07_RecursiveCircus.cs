@@ -6,11 +6,11 @@ public class Day07 : IPuzzle
         [Regex(@"(.+) \((\d+)\) -> (.+)")] public static (string, int, string[]) ParentNode(string key, int value, [Split(", ")] string[] children) => (key, value, children);
         [Regex(@"(.+) \((\d+)\)")] public static (string, int, string[]) LeafNode(string key, int value) => (key, value, []);
 
-        public static Tree<string, int> Build(string input)
+        public static Tree<string, int> Build(Util.AutoParse<(string key, int value, string[] children), TreeBuilder> input)
         {
             var tree = new Tree<string, int>();
 
-            foreach (var (key, value, children) in Util.RegexFactory<(string key, int value, string[] children), TreeBuilder>(input))
+            foreach (var (key, value, children) in input)
             {
                 tree.AddChildren(key, value, children);
             }

@@ -17,7 +17,7 @@ public class Day16 : IPuzzle
     public static (Dictionary<Test, HashSet<IInstr>> matches, string program) RunTests(string input)
     {
         var data = input.Split("\n\n\n");
-        var testLines = data[0].Split("\n\n");
+        var testLines = data[0].SplitSections();
 
         var tests = Util.RegexParse<Test>(testLines);
 

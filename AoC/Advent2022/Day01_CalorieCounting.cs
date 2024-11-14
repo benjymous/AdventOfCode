@@ -3,14 +3,14 @@ public class Day01 : IPuzzle
 {
     public static int Part1(string input)
     {
-        return input.Split("\n\n")
+        return input.SplitSections()
                     .Select(group => Util.ParseNumbers<int>(group))
                     .Max(cals => cals.Sum());
     }
 
     public static int Part2(string input)
     {
-        return input.Split("\n\n")
+        return input.SplitSections()
                     .Select(group => Util.ParseNumbers<int>(group))
                     .Select(cals => cals.Sum())
                     .OrderDescending()

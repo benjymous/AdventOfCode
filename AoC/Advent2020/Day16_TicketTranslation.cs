@@ -28,7 +28,7 @@ public class Day16 : IPuzzle
     {
         public TicketScanner(string input)
         {
-            var sections = input.Split("\n\n");
+            var sections = input.SplitSections();
             Rules = Util.RegexParse<TicketRule>(sections[0]).ToList();
             YourTicket = ParseTickets(sections[1]).First();
             NearbyTickets = ParseTickets(sections[2]);

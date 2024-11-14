@@ -7,6 +7,8 @@
         public override string ToString() => Value.ToString();
     }
 
+    public class Solver<TElement> : Solver<TElement, int>;
+
     public class Solver<TElement, TResult>
     {
         readonly PriorityQueue<TElement, int> queue = new();
@@ -31,6 +33,14 @@
         {
             Solver<TElement, TResult> solver = new();
             solver.queue.Enqueue(initialElement, 0);
+
+            solver.Run(action);
+        }
+
+        public static void Solve(IEnumerable<TElement> initialElements, Action<TElement, Solver<TElement, TResult>> action)
+        {
+            Solver<TElement, TResult> solver = new();
+            solver.queue.EnqueueRange(initialElements, 0);
 
             solver.Run(action);
         }
@@ -97,14 +107,5 @@
                 queue.EnqueueRange(tmp);
             }
         }
-    }
-
-    public static class PuzzleExtensions
-    {
-        public static void Solve<TElement>(this IPuzzle _, TElement initialElement, Action<TElement, Solver<TElement, object>> action) => Solver<TElement, object>.Solve(initialElement, action);
-
-        public static TResult Solve<TElement, TResult>(this IPuzzle _, TElement initialElement, Func<TElement, Solver<TElement, TResult>, SolverResult<TResult>> action, Func<TResult, TResult, TResult> filter) => Solver<TElement, TResult>.Solve(initialElement, action, filter);
-
-        public static TResult Solve<TElement, TResult>(this IPuzzle _, IEnumerable<TElement> initialElements, Func<TElement, Solver<TElement, TResult>, SolverResult<TResult>> action, Func<TResult, TResult, TResult> filter) => Solver<TElement, TResult>.Solve(initialElements, action, filter);
     }
 }

@@ -33,20 +33,14 @@ public class Day09 : IPuzzle
 
     public static ulong Part1(string input)
     {
-        var numbers = Util.ExtractNumbers(input);
-
-        var numPlayers = numbers[0];
-        var numMarbles = numbers[1];
+        var (numPlayers, numMarbles) = Util.ExtractNumbers(input).Decompose2();
 
         return MarbleGame(numPlayers, numMarbles);
     }
 
     public static ulong Part2(string input)
     {
-        var numbers = Util.ExtractNumbers(input);
-
-        var numPlayers = numbers[0];
-        var numMarbles = numbers[1];
+        var (numPlayers, numMarbles) = Util.ExtractNumbers(input).Decompose2();
 
         return MarbleGame(numPlayers, numMarbles * 100);
     }

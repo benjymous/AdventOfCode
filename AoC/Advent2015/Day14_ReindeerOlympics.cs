@@ -1,8 +1,8 @@
 ﻿namespace AoC.Advent2015;
 public class Day14 : IPuzzle
 {
-    [Regex(@"(.+) can fly (.+) km\/s for (.+) seconds, but then must rest for (.+) seconds\.")]
-    public record struct Reindeer(string Name, int Speed, int Sprint, int Rest)
+    [Regex(@".+ can fly (.+) km\/s for (.+) seconds, but then must rest for (.+) seconds\.")]
+    public record struct Reindeer(int Speed, int Sprint, int Rest)
     {
         public readonly IEnumerable<int> Distance()
         {
@@ -47,19 +47,9 @@ public class Day14 : IPuzzle
         return scores.Values.Max();
     }
 
-    public static int Part1(string input)
-    {
-        var deer = Util.RegexParse<Reindeer>(input);
+    public static int Part1(Util.AutoParse<Reindeer> deer) => MaxDistanceAfterTime(deer, 2503);
 
-        return MaxDistanceAfterTime(deer, 2503);
-    }
-
-    public static int Part2(string input)
-    {
-        var deer = Util.RegexParse<Reindeer>(input);
-
-        return MaxScoreAfterTime(deer, 2503);
-    }
+    public static int Part2(Util.AutoParse<Reindeer> deer) => MaxScoreAfterTime(deer, 2503);
 
     public void Run(string input, ILogger logger)
     {

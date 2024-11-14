@@ -38,9 +38,9 @@ public class Day15 : IPuzzle
         }
     }
 
-    public static int Part1(string input, int line = 2000000)
+    public static int Part1(Util.AutoParse<Sensor> input, int line = 2000000)
     {
-        var sensors = Util.RegexParse<Sensor>(input).ToArray().Where(s => s.WithinRow(line)).ToArray();
+        var sensors = input.Where(s => s.WithinRow(line)).ToArray();
         var beacons = sensors.Select(s => s.Beacon).Where(p => p.y == line).Distinct();
 
         var minMax = sensors.Select(s => s.RowMinMax(line)).ToArray();
@@ -48,10 +48,8 @@ public class Day15 : IPuzzle
         return minMax.Max(v => v.max) - minMax.Min(v => v.min) - beacons.Count();
     }
 
-    public static long Part2(string input, int max = 4000000)
+    public static long Part2(Util.AutoParse<Sensor> sensors, int max = 4000000)
     {
-        var sensors = Util.RegexParse<Sensor>(input).ToArray();
-
         foreach (var sensor in sensors)
         {
             var boundary = sensor.OuterBoundary().WithinBounds(0, max, 0, max);

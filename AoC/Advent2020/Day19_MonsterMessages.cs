@@ -14,7 +14,7 @@ public class Day19 : IPuzzle
 
     public static int Solve(string input, QuestionPart part)
     {
-        var sections = input.Split("\n\n");
+        var sections = input.SplitSections();
         var rules = Util.RegexParse<Rule>(sections[0]).ToDictionary(v => v.ID, v => v);
         var messages = sections[1].Split("\n");
 

@@ -44,8 +44,6 @@ public class Day14 : IPuzzle
     {
         var (rocks, obstacles, gridSize) = Init(input);
 
-        Dictionary<int, int> seen = [];
-
         List<(int x, int y)>[][] zones = [null, null, null, null];
         for (int i = 0; i < 4; ++i)
         {
@@ -54,20 +52,16 @@ public class Day14 : IPuzzle
         }
 
         int originalTarget = 1000000000;
-        int target = originalTarget;
 
-        for (int j = 0; j <= target; ++j)
-        {
-            for (int i = 0; i < 4; ++i)
-                rocks = RotateGrid(zones[i].SelectMany(z => z.Take(z.Count(rocks.Contains))), gridSize);
-
-            if (target == originalTarget && seen.FindCycle(rocks.Sum(el => el.x * el.y), j, originalTarget, out var newTarget))
+        return Util.FindCycle(originalTarget, rocks,
+            r => r.Sum(e => e.x * e.y),
+            r =>
             {
-                target = newTarget;
-            }
-        }
+                for (int i = 0; i < 4; ++i)
+                    r = RotateGrid(zones[i].SelectMany(z => z.Take(z.Count(r.Contains))), gridSize);
 
-        return rocks.Sum(el => gridSize - el.y);
+                return r;
+            }).Sum(el => gridSize - el.y);
     }
 
     public void Run(string input, ILogger logger)

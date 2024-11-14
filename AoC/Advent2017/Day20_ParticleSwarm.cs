@@ -18,10 +18,10 @@ public class Day20 : IPuzzle
 
     public static int Part1(string input)
     {
-        var particles = Util.RegexParse<Particle>(input).ToList();
+        var particles = Util.RegexParse<Particle>(input).ToArray();
 
         var slowest = particles.OrderBy(p => p.acc.Length).First();
-        return particles.IndexOf(slowest);
+        return Array.IndexOf(particles, slowest);
     }
 
     static IEnumerable<Particle> FilterCollisions(IEnumerable<Particle> particles) => particles.GroupBy(p => p.pos).Where(g => g.Count() == 1).SelectMany(x => x);

@@ -3,7 +3,7 @@ public class Day04 : IPuzzle
 {
     private static IEnumerable<Dictionary<string, string>> ParseData(string input, bool validate)
     {
-        return input.Split("\n\n")
+        return input.SplitSections()
             .Select(line => line.Replace("\n", " ").Trim().Split(" "))
             .Select(entries => entries.Select(v => v.Split(":"))
             .Where(pair => !validate || ValidateEntry(pair[0], pair[1]))

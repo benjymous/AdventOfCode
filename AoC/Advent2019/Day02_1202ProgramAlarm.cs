@@ -19,8 +19,8 @@ public class Day02 : IPuzzle
         var initial = RunProgram(input, 0, 0);
         long aim = initial + (Part2_Target % 100) - (initial % 100) + (((initial % 100) > (Part2_Target % 100)) ? 100 : 0);
 
-        (_, var y) = Util.BinarySearch(0, 100, y => (RunProgram(input, 0, y) >= aim, y));
-        (_, var x) = Util.BinarySearch(0, 100, x => (RunProgram(input, x, y) >= Part2_Target, x));
+        var y = Util.BinarySearch(0, 100, y => (RunProgram(input, 0, y) >= aim, y)).result;
+        var x = Util.BinarySearch(0, 100, x => (RunProgram(input, x, y) >= Part2_Target, x)).result;
 
         return (x * 100) + y;
     }

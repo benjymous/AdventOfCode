@@ -14,12 +14,12 @@ public class Day09 : IPuzzle
         return false;
     }
 
-    private static int SimulateRope(string input, int numSegments)
+    private static int SimulateRope(Util.AutoParse<Instruction> input, int numSegments)
     {
         (int x, int y)[] rope = new (int x, int y)[numSegments];
         HashSet<(int x, int y)> tailPositions = [];
 
-        foreach (var instr in Util.RegexParse<Instruction>(input))
+        foreach (var instr in input)
         {
             for (int i = 0; i < instr.Steps; i++)
             {

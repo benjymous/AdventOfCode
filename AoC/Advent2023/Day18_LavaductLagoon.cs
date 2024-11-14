@@ -3,14 +3,14 @@ public class Day18 : IPuzzle
 {
     static readonly Direction2[] Directions = [Direction2.Right, Direction2.Down, Direction2.Left, Direction2.Up];
 
-    record class Instr(Direction2 Dir, int Distance);
+    public record class Instr(Direction2 Dir, int Distance);
 
-    record class InstructionV1 : Instr
+    public record class InstructionV1 : Instr
     {
         [Regex(@"(.) (\d+) \(#......\)")] public InstructionV1(Direction2 dir, int distance) : base(dir, distance) { }
     }
 
-    record class InstructionV2 : Instr
+    public record class InstructionV2 : Instr
     {
         [Regex(@". \d+ \(#(.....)(.)\)")] public InstructionV2([Base(16)] int distance, int dirIdx) : base(Directions[dirIdx], distance) { }
     }
@@ -19,7 +19,7 @@ public class Day18 : IPuzzle
 
     static IEnumerable<(int x, int y)> GetPath((int x, int y) pos, IEnumerable<Instr> instructions) => instructions.Select(instr => pos = pos.OffsetBy(instr.Dir, instr.Distance));
 
-    static long PicksTheorem(List<(int x, int y)> points)
+    static long PicksTheorem(List<(int x, int y)> points) // Area of integer polygon
     {
         long area = 0;
         int boundaryPoints = 0, interiorPoints = 0;
@@ -47,9 +47,9 @@ public class Day18 : IPuzzle
         return Math.Abs(area / 2) - (interiorPoints / 2) + (boundaryPoints / 2) + 1;
     }
 
-    public static long Part1(string input) => Solve(Util.RegexParse<InstructionV1>(input));
+    public static long Part1(Util.AutoParse<InstructionV1> input) => Solve(input);
 
-    public static long Part2(string input) => Solve(Util.RegexParse<InstructionV2>(input));
+    public static long Part2(Util.AutoParse<InstructionV2> input) => Solve(input);
 
     public void Run(string input, ILogger logger)
     {

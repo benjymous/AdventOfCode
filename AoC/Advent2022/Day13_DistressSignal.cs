@@ -60,7 +60,7 @@ public class Day13 : IPuzzle
 
     public static int Part1(string input)
     {
-        return input.Split("\n\n")
+        return input.SplitSections()
                     .Select(group => Util.Parse<Element>(group).TakePair())
                     .WithIndex(1)
                     .Where(e => e.Value.Item1.CompareTo(e.Value.Item2) < 0)

@@ -1,9 +1,7 @@
 ﻿namespace AoC.Advent2015;
 public class Day11 : IPuzzle
 {
-    static readonly HashSet<char> bads = ['i', 'o', 'l'];
-
-    public static bool IsBad(char c) => bads.Contains(c);
+    public static bool IsBad(char c) => c is 'o' or 'i' or 'l';
 
     public static char[] Increment(char[] pwd)
     {
@@ -29,7 +27,7 @@ public class Day11 : IPuzzle
         return false;
     }
 
-    public static bool NoBads(char[] line) => !bads.Any(line.Contains);
+    public static bool NoBads(char[] line) => !line.Any(IsBad);
 
     public static bool HasTwoNonOverlappingPairs(char[] line)
     {

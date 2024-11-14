@@ -1,26 +1,15 @@
 ﻿namespace AoC.Advent2015;
 public class Day03 : IPuzzle
 {
-    public class SantaStepper
-    {
-        public ManhattanVector2 Position { get; set; } = new ManhattanVector2(0, 0);
-
-        public ManhattanVector2 Step(Direction2 dir)
-        {
-            Position += dir;
-            return Position;
-        }
-    }
-
     public static int Part1(string input)
     {
         HashSet<(int x, int y)> visited = [(0, 0)];
 
-        var santa = new SantaStepper();
+        var santa = (0, 0);
 
-        foreach (var dir in input.Select(c => new Direction2(c)))
+        foreach (var dir in input)
         {
-            visited.Add(santa.Step(dir));
+            visited.Add(santa = santa.OffsetBy(dir));
         }
 
         return visited.Count;
@@ -30,11 +19,11 @@ public class Day03 : IPuzzle
     {
         HashSet<(int x, int y)> visited = [(0, 0)];
 
-        var (santa1, santa2) = (new SantaStepper(), new SantaStepper());
+        var (santa1, santa2) = ((0, 0), (0, 0));
 
-        foreach (var dir in input.Select(c => new Direction2(c)))
+        foreach (var dir in input)
         {
-            visited.Add(santa1.Step(dir));
+            visited.Add(santa1 = santa1.OffsetBy(dir));
             (santa1, santa2) = (santa2, santa1);
         }
 

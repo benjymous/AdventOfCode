@@ -41,9 +41,9 @@ public class Day04 : IPuzzle
     private static int CheckRange(string low, string high, bool strict)
     {
         int count = 0;
-        var current = low.Select(x => x - '0').ToArray();
+        var current = low.Select(x => x.AsDigit()).ToArray();
         int end = int.Parse(high);
-        int digitCheck = high[0] - '0';
+        int digitCheck = high[0].AsDigit();
 
         while (true)
         {

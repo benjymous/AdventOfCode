@@ -44,7 +44,7 @@ public class Day04 : IPuzzle
 
     static int RunGame(string input, QuestionPart part)
     {
-        var chunks = input.Split("\n\n");
+        var chunks = input.SplitSections();
         var rnd = Util.ParseNumbers<int>(chunks[0]);
 
         var boards = Util.Parse<Board>(chunks.Skip(1)).ToHashSet();

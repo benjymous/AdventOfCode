@@ -7,10 +7,10 @@ public class Day10 : IPuzzle
         [Regex("addx (.+)")] public static int Addx(int v) => v;
     }
 
-    private static IEnumerable<(int cycle, int val)> SimulateCPU(string input)
+    private static IEnumerable<(int cycle, int val)> SimulateCPU(Util.AutoParse<int, Factory> input)
     {
         int cycle = 1, x = 1;
-        foreach (var instr in Util.RegexFactory<int, Factory>(input))
+        foreach (var instr in input)
         {
             for (int i = 0; i < (instr == 0 ? 1 : 2); ++i) yield return (cycle++, x);
             x += instr;

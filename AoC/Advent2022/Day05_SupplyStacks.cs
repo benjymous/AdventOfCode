@@ -22,7 +22,7 @@ public class Day05 : IPuzzle
 
     static (IEnumerable<Instruction>, Stack<char>[]) ParseData(string input)
     {
-        var (stack, instr) = input.Split("\n\n").Decompose2();
+        var (stack, instr) = input.DecomposeSections();
 
         var instructions = Util.RegexParse<Instruction>(instr);
 

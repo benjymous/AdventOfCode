@@ -2,12 +2,10 @@
 public class Day02 : IPuzzle
 {
     [Regex(@"(.).+ (\d+)")]
-    record struct Instruction(char Command, int Distance);
+    public record struct Instruction(char Command, int Distance);
 
-    public static int Part1(string input)
+    public static int Part1(Util.AutoParse<Instruction> data)
     {
-        var data = Util.RegexParse<Instruction>(input);
-
         int x = 0, y = 0;
 
         foreach (var line in data)
@@ -23,10 +21,8 @@ public class Day02 : IPuzzle
         return x * y;
     }
 
-    public static int Part2(string input)
+    public static int Part2(Util.AutoParse<Instruction> data)
     {
-        var data = Util.RegexParse<Instruction>(input);
-
         int x = 0, y = 0, aim = 0;
 
         foreach (var line in data)

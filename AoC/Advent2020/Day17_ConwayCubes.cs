@@ -41,7 +41,7 @@ public class Day17 : IPuzzle
     {
         newState.Cells.Clear();
 
-        oldState.Positions().ToArray().ForEach(pos => newState.Tick(oldState, pos));
+        oldState.Positions().ForEach(pos => newState.Tick(oldState, pos));
 
         return (oldState, newState);
     }

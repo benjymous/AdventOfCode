@@ -5,7 +5,7 @@ public class Day02 : IPuzzle
     struct MoveP2 { internal const char Rock = 'X', Paper = 'Y', Scissors = 'Z'; }
     struct Result { internal const char Lose = 'X', Draw = 'Y', Win = 'Z'; }
 
-    [Regex("(.) (.)")] record struct Rule(char Theirs, char Yours);
+    [Regex("(.) (.)")] public record struct Rule(char Theirs, char Yours);
 
     static int Score(char theirs, char yours) => (theirs, yours) switch
     {
@@ -45,9 +45,9 @@ public class Day02 : IPuzzle
 
     static int ScorePt2(Rule r) => Score(r.Theirs, GetMove(r.Theirs, r.Yours));
 
-    public static int Part1(string input) => Util.RegexParse<Rule>(input).Sum(ScorePt1);
+    public static int Part1(Util.AutoParse<Rule> input) => input.Sum(ScorePt1);
 
-    public static int Part2(string input) => Util.RegexParse<Rule>(input).Sum(ScorePt2);
+    public static int Part2(Util.AutoParse<Rule> input) => input.Sum(ScorePt2);
 
     public void Run(string input, ILogger logger)
     {

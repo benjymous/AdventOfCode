@@ -1,42 +1,31 @@
 ﻿namespace AoC.Advent2015;
 public class Day23 : IPuzzle
 {
-    public class CPU()
+    public record class CPU(string Input, int[] Registers)
     {
         int programCounter = 0;
-        Dictionary<char, int> registers = [];
+        readonly Action<CPU>[] program = Util.RegexFactory<Action<CPU>, CPU>(Input).ToArray();
 
-        [Regex(@"jmp ([\+|\-]\d+)")] public Action InstrJmp(int jump) => () => programCounter += jump - 1;
-        [Regex(@"jio (.), \+?(\-?\d+)")] public Action InstrJio(char reg, int jump) => () => programCounter += (registers[reg] == 1) ? jump - 1 : 0;
-        [Regex(@"jie (.), ([\+|\-]\d+)")] public Action InstrJie(char reg, int jump) => () => programCounter += ((registers[reg] % 2) == 0) ? jump - 1 : 0;
+        [Regex(@"jmp ([\+|\-]\d+)")] public static Action<CPU> InstrJmp(int jump) => (CPU c) => c.programCounter += jump - 1;
+        [Regex(@"jio (.), \+?(\-?\d+)")] public static Action<CPU> InstrJio(char reg, int jump) => (CPU c) => c.programCounter += (c.Registers[reg - 'a'] == 1) ? jump - 1 : 0;
+        [Regex(@"jie (.), ([\+|\-]\d+)")] public static Action<CPU> InstrJie(char reg, int jump) => (CPU c) => c.programCounter += ((c.Registers[reg - 'a'] % 2) == 0) ? jump - 1 : 0;
 
-        [Regex(@"inc (.)")] public Action InstrInc(char reg) => () => registers[reg]++;
-        [Regex(@"tpl (.)")] public Action InstrTpl(char reg) => () => registers[reg] *= 3;
-        [Regex(@"hlf (.)")] public Action InstrHlf(char reg) => () => registers[reg] /= 2;
+        [Regex(@"inc (.)")] public static Action<CPU> InstrInc(char reg) => (CPU c) => c.Registers[reg - 'a']++;
+        [Regex(@"tpl (.)")] public static Action<CPU> InstrTpl(char reg) => (CPU c) => c.Registers[reg - 'a'] *= 3;
+        [Regex(@"hlf (.)")] public static Action<CPU> InstrHlf(char reg) => (CPU c) => c.Registers[reg - 'a'] /= 2;
 
-        public int Run(string input, Dictionary<char, int> initial)
+        public int Run()
         {
-            registers = initial;
-            var program = Util.RegexFactory<Action, CPU>(input, this).ToArray();
-
-            do program[programCounter++]();
+            do program[programCounter++](this);
             while (programCounter < program.Length);
 
-            return registers['b'];
+            return Registers[1];
         }
     }
 
-    public static int Part1(string input)
-    {
-        var cpu = new CPU();
-        return cpu.Run(input, new Dictionary<char, int>() { { 'a', 0 }, { 'b', 0 } });
-    }
+    public static int Part1(string input) => new CPU(input, [0, 0]).Run();
 
-    public static int Part2(string input)
-    {
-        var cpu = new CPU();
-        return cpu.Run(input, new Dictionary<char, int>() { { 'a', 1 }, { 'b', 0 } });
-    }
+    public static int Part2(string input) => new CPU(input, [1, 0]).Run();
 
     public void Run(string input, ILogger logger)
     {

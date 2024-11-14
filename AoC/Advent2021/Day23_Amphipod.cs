@@ -60,7 +60,7 @@ public class Day23 : IPuzzle
         var map = Util.ParseSparseMatrix<CritterPos, char>(input, CritterPos.Convert, new Util.Convertomatic.SkipChars('#'));
         var initial = new State(map.Where(kvp => kvp.Value == '.').Select(kvp => 1UL << kvp.Key).Sum(), map.Where(kvp => kvp.Value is >= 'A' and <= 'D').ToDictionary(), 0);
 
-        return Solver<State, int>.Solve(initial, (state, solver) =>
+        return Solver<State>.Solve(initial, (state, solver) =>
         {
             foreach (var newState in state.Critters.SelectMany(critter => CritterMoves(state, critter)).Select(move => new State(state.OpenCells - (1UL << move.destination) + (1UL << move.origin), new Dictionary<CritterPos, char>(state.Critters).Move(move.origin, move.destination, move.value), state.Score + (move.spaces * moveCosts[move.value - 'A']))))
             {

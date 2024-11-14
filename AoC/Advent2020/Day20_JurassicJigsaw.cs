@@ -37,7 +37,7 @@ public class Day20 : IPuzzle
     {
         public JigsawSolver(string input)
         {
-            Tiles = Util.Parse<Tile>(input.Trim().Split("\n\n"));
+            Tiles = Util.Parse<Tile>(input.Trim().SplitSections());
             EdgeMap = Tiles.SelectMany(t => t.Edges.Select(e => (t, e))).SelectMany(v => Util.Values((v.t, v.e), (v.t, v.e.Reversed()))).GroupBy(v => v.Item2).ToDictionary(g => g.Key, g => g.Select(x => x.t).ToArray());
             foreach (var tile in Tiles) tile.Borders = tile.Edges.Count(e => EdgeMap[e].Length == 1);
         }

@@ -12,6 +12,8 @@ public class Day13 : IPuzzle
 
         public readonly Dictionary<int, int> Atlas = [];
         public readonly HashSet<char> Names = [];
+
+        public static implicit operator Factory(string data) => Util.RegexFactory<Factory>(data);
     }
 
     public static int GetKey(char p1, char p2) => p1 * p2;
@@ -23,10 +25,8 @@ public class Day13 : IPuzzle
             : remaining.Max(next => scores[GetKey(prev, next)] + TryPermutations(first, next, remaining.Where(c => c != next).ToArray(), scores));
     }
 
-    public static int Solve(string input, bool includeYou = false)
+    public static int Solve(Factory data, bool includeYou = false)
     {
-        var data = Util.RegexFactory<Factory>(input);
-
         char starter = includeYou ? '\0' : data.Names.First();
         data.Atlas[0] = 0;
         data.Names.Remove(starter);

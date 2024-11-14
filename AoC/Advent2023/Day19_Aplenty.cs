@@ -77,9 +77,9 @@ public class Day19 : IPuzzle
         }
     }
 
-    public static int Part1(string input) => RunRules(input.Split("\n\n")).Sum();
+    public static int Part1(string input) => RunRules(input.SplitSections()).Sum();
 
-    public static long Part2(string input) => CountCombinations(Util.RegexParse<Workflow>(input.Split("\n\n")[0]).ToDictionary(w => w.WorkflowId, w => w.Rules)).Sum();
+    public static long Part2(string input) => CountCombinations(Util.RegexParse<Workflow>(input.SplitSections()[0]).ToDictionary(w => w.WorkflowId, w => w.Rules)).Sum();
 
     public void Run(string input, ILogger logger)
     {

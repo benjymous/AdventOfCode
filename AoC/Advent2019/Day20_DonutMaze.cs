@@ -65,7 +65,7 @@ public class Day20 : IPuzzle
         var map = new PortalMap(Util.Split(input));
         Func<int, IEnumerable<int>> getNeighbours = part.One() ? map.GetNeighbours1 : map.GetNeighbours2;
 
-        return Solver<(int location, int distance), int>.Solve((map.End, 0), (entry, solver) =>
+        return Solver<(int location, int distance)>.Solve((map.End, 0), (entry, solver) =>
         {
             foreach (var newLocation in getNeighbours(entry.location))
                 if (newLocation == map.Start) return entry.distance + 1;

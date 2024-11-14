@@ -43,7 +43,7 @@ public class Day16 : IPuzzle
         }
     }
 
-    private static int Solve(string input, QuestionPart part) => Util.RegexParse<Sue>(input).Select(a => (part.One() ? a.ScorePart1(clues) : a.ScorePart2(clues), a)).OrderByDescending(t => t.Item1).First().a.Id;
+    private static int Solve(Util.AutoParse<Sue> input, QuestionPart part) => input.Select(a => (part.One() ? a.ScorePart1(clues) : a.ScorePart2(clues), a)).OrderByDescending(t => t.Item1).First().a.Id;
 
     public static int Part1(string input) => Solve(input, QuestionPart.Part1);
 

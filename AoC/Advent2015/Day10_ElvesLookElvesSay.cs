@@ -16,7 +16,7 @@ public class Day10 : IPuzzle
 
     public static int GetNth(string input, int iterations)
     {
-        var result = input.Trim().Select(ch => ch - '0').ToArray();
+        var result = input.Trim().Select(ch => ch.AsDigit()).ToArray();
 
         for (int i = 0; i < iterations; ++i)
         {

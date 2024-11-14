@@ -56,7 +56,7 @@ humidity-to-location map:
     [DataTestMethod]
     public void ForwardMappingTest(string from, string to, int start, int expected)
     {
-        var factory = Util.RegexFactory<Day05.Factory>(test);
+        var factory = (Day05.Factory)test;
         Assert.AreEqual(expected, factory.Remap(from, to, start));
     }
 
@@ -87,7 +87,7 @@ humidity-to-location map:
     [DataTestMethod]
     public void ReverseMappingTest(string from, string to, int start, int expected)
     {
-        var factory = Util.RegexFactory<Day05.Factory>(test);
+        var factory = (Day05.Factory)test;
         Assert.AreEqual(expected, factory.Reverse(from, to, start));
     }
 

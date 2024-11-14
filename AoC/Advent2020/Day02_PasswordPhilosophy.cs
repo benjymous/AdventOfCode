@@ -26,9 +26,9 @@ public class Day02 : IPuzzle
         }
     }
 
-    public static int Part1(string input) => Util.RegexParse<Record>(input).Count(r => r.ValidPt1);
+    public static int Part1(Util.AutoParse<Record> input) => input.Count(r => r.ValidPt1);
 
-    public static int Part2(string input) => Util.RegexParse<Record>(input).Count(r => r.ValidPt2);
+    public static int Part2(Util.AutoParse<Record> input) => input.Count(r => r.ValidPt2);
 
     public void Run(string input, ILogger logger)
     {

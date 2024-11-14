@@ -68,9 +68,9 @@ public class Day19 : IPuzzle
                    ((NumGeode + (NumGeodeRobots * Mins)) * bp.GeodeCostObsidian * bp.ObsidianCostClay * bp.ClayCostOre);
     }
 
-    public static int Part1(string input) => Util.RegexParse<Blueprint>(input).AsParallel().Sum(bp => bp.Run(24).score);
+    public static int Part1(Util.AutoParse<Blueprint> input) => input.AsParallel().Sum(bp => bp.Run(24).score);
 
-    public static long Part2(string input) => Util.RegexParse<Blueprint>(input).Take(3).AsParallel().Product(bp => bp.Run(32).geodes);
+    public static long Part2(Util.AutoParse<Blueprint> input) => input.Take(3).AsParallel().Product(bp => bp.Run(32).geodes);
 
     public void Run(string input, ILogger logger)
     {

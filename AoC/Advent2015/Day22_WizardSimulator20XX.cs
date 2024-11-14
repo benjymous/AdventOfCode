@@ -57,7 +57,7 @@ public class Day22 : IPuzzle
 
     public static int Run(State initialState, bool hardMode = false)
     {
-        return Solver<State, int>.Solve(initialState, (state, solver) =>
+        return Solver<State>.Solve(initialState, (state, solver) =>
         {
             if (solver.IsBetterThanSeen((state.PlayerMana, state.BossHP), state.ManaSpend))
             {

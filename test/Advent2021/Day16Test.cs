@@ -19,8 +19,7 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void TestPacketDecode(string data, string expected)
         {
-
-            var packet = Packet.Parse(data);
+            var packet = (Packet)data;
 
             string str = ToString(packet);
 
@@ -35,7 +34,7 @@ namespace AoC.Advent2021.Test
 
             if (packet.Header.Type == PacketType.LiteralValue)
             {
-                res.Append($"= {packet.LiteralValue}");
+                res.Append($"= {packet.Value}");
             }
             else
             {

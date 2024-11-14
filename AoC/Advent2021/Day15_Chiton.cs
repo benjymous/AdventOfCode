@@ -25,19 +25,15 @@ public class Day15 : IPuzzle
         readonly int MaxX, MaxY, RealX, RealY;
         readonly Dictionary<PackedPos32, int> Data;
 
-        public IEnumerable<PackedPos32> GetNeighbours(PackedPos32 location)
-        {
-            yield return location + (1, 0);
-            yield return location + (0, 1);
-            yield return location - (1, 0);
-            yield return location - (0, 1);
-        }
+        public IEnumerable<PackedPos32> GetNeighbours(PackedPos32 location) =>
+        [
+            location + (1, 0),
+            location + (0, 1),
+            location - (1, 0),
+            location - (0, 1)
+        ];
 
-        public int GScore(PackedPos32 pos) => Data.GetOrCalculate(pos, pos =>
-        {
-            var (x, y) = (pos & 0xffff, pos >> 16);
-            return ((Data[(x % RealX) + ((y % RealY) << 16)] + ((x / RealX) + (y / RealY)) - 1) % 9) + 1;
-        });
+        public int GScore(PackedPos32 pos) => Data.GetOrCalculate(pos, pos => ((Data[(pos.X % RealX) + ((pos.Y % RealY) << 16)] + ((pos.X / RealX) + (pos.Y / RealY)) - 1) % 9) + 1);
 
         public static int Solve(string input, QuestionPart part)
         {

@@ -34,17 +34,16 @@ public class Day21 : IPuzzle
         });
     }
 
-    class Factory
+    public class Factory
     {
         [Regex(@"Player . starting position: (\d+)")]
         public static int Player(int pos) => pos - 1;
     }
 
-    private static int[] GetStartPositions(string input) => Util.RegexFactory<int, Factory>(input).ToArray();
-
-    public static int Part1(string input)
+    public static int Part1(Util.AutoParse<int, Factory> input)
     {
-        var positions = GetStartPositions(input);
+        var positions = input.ToArray();
+
         var scores = new int[2] { 0, 0 };
         int turn = 0;
 
@@ -60,11 +59,9 @@ public class Day21 : IPuzzle
         return scores.Min() * die.Rolls;
     }
 
-    public static long Part2(string input)
+    public static long Part2(Util.AutoParse<int, Factory> input)
     {
-        var startPositions = GetStartPositions(input);
-
-        var (p1Won, p2Won) = DoStep(startPositions[0], startPositions[1]);
+        var (p1Won, p2Won) = DoStep(input[0], input[1]);
 
         return Math.Max(p1Won, p2Won);
     }

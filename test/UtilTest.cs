@@ -302,6 +302,50 @@ namespace AoC.Test
             Assert.IsTrue(obj.A2.TryGetValue(6, out v) && v == 7);
         }
 
+        [method: Regex(@"(.) (.+)")]
+        class RegexCreationList(int a1, [Split(":")] List<int> a2)
+        {
+            public int A1 = a1;
+            public List<int> A2 = a2;
+        }
+
+        [TestMethod]
+        [TestCategory("RegexParse")]
+        public void RegexCreateList()
+        {
+            var obj = Util.FromString<RegexCreationList>("1 2:3:4:5:6:7");
+            Assert.AreEqual(1, obj.A1);
+            Assert.AreEqual(6, obj.A2.Count);
+            Assert.AreEqual(2, obj.A2[0]);
+            Assert.AreEqual(3, obj.A2[1]);
+            Assert.AreEqual(4, obj.A2[2]);
+            Assert.AreEqual(5, obj.A2[3]);
+            Assert.AreEqual(6, obj.A2[4]);
+            Assert.AreEqual(7, obj.A2[5]);
+        }
+
+        [method: Regex(@"(.) (.+)")]
+        class RegexCreationHashSet(int a1, [Split(":")] HashSet<int> a2)
+        {
+            public int A1 = a1;
+            public HashSet<int> A2 = a2;
+        }
+
+        [TestMethod]
+        [TestCategory("RegexParse")]
+        public void RegexCreateHashSet()
+        {
+            var obj = Util.FromString<RegexCreationHashSet>("1 2:3:4:5:6:7:7:2");
+            Assert.AreEqual(1, obj.A1);
+            Assert.AreEqual(6, obj.A2.Count);
+            Assert.IsTrue(obj.A2.Contains(2));
+            Assert.IsTrue(obj.A2.Contains(3));
+            Assert.IsTrue(obj.A2.Contains(4));
+            Assert.IsTrue(obj.A2.Contains(5));
+            Assert.IsTrue(obj.A2.Contains(6));
+            Assert.IsTrue(obj.A2.Contains(7));
+        }
+
         [Regex(@"(.+)")]
         record class BoolsRegexCreationTest([Split(",")] bool[] bools);
 
@@ -328,6 +372,26 @@ namespace AoC.Test
 
             Assert.AreEqual((10, 11), result.v1);
             Assert.AreEqual((12, 13), result.v2);
+        }
+
+        [TestMethod]
+        [TestCategory("AutoParse")]
+        public void AutoParseTest()
+        {
+            var data = "10,11 : 12,13\n14,15 : 16,17";
+
+            DoThing(data);
+
+            static void DoThing(Util.AutoParse<ParamRegexCreationTest> result)
+            {
+                Assert.AreEqual(2, result.Length);
+
+                Assert.AreEqual((10, 11), result[0].v1);
+                Assert.AreEqual((12, 13), result[0].v2);
+
+                Assert.AreEqual((14, 15), result[1].v1);
+                Assert.AreEqual((16, 17), result[1].v2);
+            }
         }
 
         [TestMethod]

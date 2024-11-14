@@ -49,7 +49,7 @@ public class Day13 : IPuzzle
         var groups = DoGrouping(vals.WithIndex(1).Select(c => (c.Index, value: c.Value)).ToArray(), part);
 
         return groups.Select(g => ValidateGroup(g.Value, vals, groups))
-.FirstOrDefault(v => v.found && v.isBlotchy == part.Two()).position;
+                     .FirstOrDefault(v => v.found && v.isBlotchy == part.Two()).position;
     }
 
     public static int GetMirrorScore(string input, QuestionPart part)
@@ -73,9 +73,9 @@ public class Day13 : IPuzzle
         return true;
     }
 
-    public static int Part1(string input) => input.Split("\n\n").Sum(grid => GetMirrorScore(grid, QuestionPart.Part1));
+    public static int Part1(string input) => input.SplitSections().Sum(grid => GetMirrorScore(grid, QuestionPart.Part1));
 
-    public static int Part2(string input) => input.Split("\n\n").Sum(grid => GetMirrorScore(grid, QuestionPart.Part2));
+    public static int Part2(string input) => input.SplitSections().Sum(grid => GetMirrorScore(grid, QuestionPart.Part2));
 
     public void Run(string input, ILogger logger)
     {

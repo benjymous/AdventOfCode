@@ -34,7 +34,7 @@ public class Day14 : IPuzzle
     public static int Part2(string input)
     {
         var recipe = new List<int> { 3, 7 };
-        var toFind = input.Trim().Select(c => c - '0').ToArray();
+        var toFind = input.Trim().Select(c => c.AsDigit()).ToArray();
 
         int[] current = [0, 1];
 

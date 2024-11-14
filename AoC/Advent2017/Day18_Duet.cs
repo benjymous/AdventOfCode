@@ -61,10 +61,6 @@ public class Day18 : IPuzzle
 
     public void Run(string input, ILogger logger)
     {
-        //Util.Test(Part1("set a 1\nadd a 2\nmul a a\nmod a 5\nsnd a\nset a 0\nrcv a\njgz a -1\nset a 1\njgz a -2"),4);
-
-        //Part2("snd 1\nsnd 2\nsnd p\nrcv a\nrcv b\nrcv c\nrcv d");
-
         logger.WriteLine("- Pt1 - " + Part1(input));
         logger.WriteLine("- Pt2 - " + Part2(input));
     }

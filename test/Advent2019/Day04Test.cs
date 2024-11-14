@@ -1,3 +1,4 @@
+using AoC.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 
@@ -11,7 +12,7 @@ namespace AoC.Advent2019.Test
 
         static int[] ToArray(string input)
         {
-            return input.Select(x => x - '0').ToArray();
+            return input.Select(x => x.AsDigit()).ToArray();
         }
 
         [TestCategory("Test")]

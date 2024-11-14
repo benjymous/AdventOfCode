@@ -9,11 +9,7 @@ public class Day14 : IPuzzle
     }
 
     [method: Regex(@"(.+) => (.+)")]
-    public class Rule(string inp, Component outp)
-    {
-        public List<Component> inputs = Util.RegexParse<Component>(inp, ",").ToList();
-        public Component output = outp;
-    }
+    public record class Rule(List<Component> Inputs, Component Output);
 
     public static long Decompose(Component input, Dictionary<string, Rule> rules)
     {
@@ -38,11 +34,11 @@ public class Day14 : IPuzzle
 
                 if (component.Quantity > 0)
                 {
-                    var multiplier = (long)Math.Ceiling((double)component.Quantity / rule.output.Quantity);
+                    var multiplier = (long)Math.Ceiling((double)component.Quantity / rule.Output.Quantity);
 
-                    currentSet.EnqueueRange(rule.inputs.Select(c => new Component(c.Quantity * multiplier, c.Type)));
+                    currentSet.EnqueueRange(rule.Inputs.Select(c => new Component(c.Quantity * multiplier, c.Type)));
 
-                    var waste = (rule.output.Quantity * multiplier) - component.Quantity;
+                    var waste = (rule.Output.Quantity * multiplier) - component.Quantity;
                     if (waste > 0) wasteHeap.IncrementAtIndex(component.Type, waste);
                 }
             }
@@ -50,16 +46,16 @@ public class Day14 : IPuzzle
         return ore;
     }
 
-    public static long Part1(string input)
+    public static long Part1(Util.AutoParse<Rule> input)
     {
-        var rules = Util.RegexParse<Rule>(input).ToDictionary(e => e.output.Type, e => e);
+        var rules = input.ToDictionary(e => e.Output.Type, e => e);
 
         return Decompose(new Component(1, "FUEL"), rules);
     }
 
-    public static long Part2(string input)
+    public static long Part2(Util.AutoParse<Rule> input)
     {
-        var rules = Util.RegexParse<Rule>(input).ToDictionary(e => e.output.Type, e => e);
+        var rules = input.ToDictionary(e => e.Output.Type, e => e);
 
         long ore = 1000000000000;
         long guess = ore * 1000 / Decompose(new Component(1000, "FUEL"), rules);

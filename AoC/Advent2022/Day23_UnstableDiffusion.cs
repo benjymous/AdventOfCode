@@ -29,8 +29,6 @@ public class Day23 : IPuzzle
         var positions = Util.ParseSparseMatrix<PackedPos32, bool>(input).Keys.Select(k => k + (100, 100)).ToHashSet();
         UniqueMap<PackedPos32, PackedPos32> potentialMoves = new(positions.Count);
 
-        var d = Util.ParseSparseMatrix<bool>(input).Keys.ToHashSet();
-
         for (int moveIndex = 0; moveIndex < maxSteps; ++moveIndex)
         {
             foreach (var currentPos in positions)

@@ -182,10 +182,12 @@ public partial class Util
 
     static IEnumerable<object[]> ParsePairs(Type[] paramDef, string[] lines, SplitAttribute splitAttr = null) => lines.Select(line => CreateObjectArray(paramDef, line, splitAttr));
 
-    static object ConvertDictionary(Type[] paramDef, List<object[]> kvpdata)
+    static object ConvertGenericCollection(Type destinationType, IEnumerable<object[]> kvpdata)
     {
-        var genericType = Type.GetType("System.Collections.Generic.Dictionary`2");
-        var typeCreator = genericType.MakeGenericType(paramDef);
+        var collectionType = destinationType.GetGenericTypeDefinition();
+        var paramDef = destinationType.GetGenericArguments();
+
+        var typeCreator = collectionType.MakeGenericType(paramDef);
 
         var obj = Activator.CreateInstance(typeCreator);
 
@@ -200,29 +202,28 @@ public partial class Util
 
     static object ConvertFromString(Type destinationType, string input, Dictionary<Type, Attribute> attrs = null)
     {
-        if (destinationType.IsArray || destinationType.FullName.StartsWith("System.Collections.Generic.Dictionary`2"))
-        {
-            var elementType = destinationType.GetElementType();
+        if (string.IsNullOrEmpty(input)) return Activator.CreateInstance(destinationType); // appropriate empty value
 
-            SplitAttribute splitAttr = attrs == null ? null : attrs.ContainsKey(typeof(SplitAttribute)) ? (SplitAttribute)attrs[typeof(SplitAttribute)] : null;
+        if (destinationType.IsArray || destinationType.Namespace == "System.Collections.Generic")
+        {
+            var splitAttr = attrs.Get<SplitAttribute>();
 
             string[] data = splitAttr != null ? input.Split(splitAttr.Splitter).WithoutNullOrWhiteSpace().ToArray() : Split(input);
 
-            if (elementType == typeof(string)) return data;
-
-            if (destinationType.FullName.StartsWith("System.Collections.Generic.Dictionary`2"))
+            if (destinationType.Namespace == "System.Collections.Generic")
             {
-                var arr = ParsePairs(destinationType.GetGenericArguments(), data, splitAttr).ToList();
-                return ConvertDictionary(destinationType.GetGenericArguments(), arr);
-            }
-            else if (TypeDescriptor.GetConverter(elementType).CanConvertFrom(typeof(string)))
-            {
-                var arr = data.Select(item => ConvertFromString(elementType, item, attrs)).ToList();
-                return ConvertArray(arr, elementType);
+                var arr = ParsePairs(destinationType.GetGenericArguments(), data, splitAttr);
+                return ConvertGenericCollection(destinationType, arr);
             }
             else
             {
-                var arr = RegexParse(elementType, data).ToList();
+                var elementType = destinationType.GetElementType();
+
+                if (elementType == typeof(string)) return data;
+
+                var arr = TypeDescriptor.GetConverter(elementType).CanConvertFrom(typeof(string))
+                    ? data.Select(item => ConvertFromString(elementType, item, attrs)).ToList()
+                    : RegexParse(elementType, data).ToList();
                 return ConvertArray(arr, elementType);
             }
         }
@@ -232,14 +233,10 @@ public partial class Util
 
             if (destinationType == typeof(int))
             {
-                if (string.IsNullOrEmpty(input)) return null;
-
-                BaseAttribute baseAttr = attrs == null ? null : attrs.ContainsKey(typeof(BaseAttribute)) ? (BaseAttribute)attrs[typeof(BaseAttribute)] : null;
+                var baseAttr = attrs.Get<BaseAttribute>();
 
                 return baseAttr != null ? Convert.ToInt32(input, baseAttr.NumberBase) : int.Parse(input);
             }
-
-            if (string.IsNullOrEmpty(input)) return Activator.CreateInstance(destinationType); // appropriate empty value
 
             if (destinationType.IsEnum)
             {
@@ -248,8 +245,13 @@ public partial class Util
 
             if (destinationType == typeof(bool))
             {
-                var c = input.Trim().ToUpper()[0];
-                return c is 'T' or 'Y';
+                return input.Trim()[0].AsBool();
+            }
+
+            var nullableType = Nullable.GetUnderlyingType(destinationType);
+            if (nullableType != null)
+            {
+                return ConvertFromString(nullableType, input, attrs);
             }
 
             var conv = TypeDescriptor.GetConverter(destinationType);
@@ -258,7 +260,7 @@ public partial class Util
                 return conv.ConvertFromString(input);
             }
 
-            RegexAttribute paramAttr = attrs == null ? null : attrs.ContainsKey(typeof(RegexAttribute)) ? (RegexAttribute)attrs[typeof(RegexAttribute)] : null;
+            var paramAttr = attrs.Get<RegexAttribute>();
 
             return paramAttr != null ? RegexCreate(destinationType, input, paramAttr) : RegexCreate(destinationType, input);
         }
@@ -377,13 +379,13 @@ public partial class Util
     {
         public class ConvertInt : IConvertomatic
         {
-            public object Convert(char c) => c - '0';
+            public object Convert(char c) => c.AsDigit();
 
             public bool ShouldConvert(char c) => true;
         }
         public class ConvertByte : IConvertomatic
         {
-            public object Convert(char c) => (byte)(c - '0');
+            public object Convert(char c) => (byte)c.AsDigit();
             public bool ShouldConvert(char c) => true;
         }
         public class ConvertBool : IConvertomatic
@@ -467,6 +469,36 @@ public partial class Util
         return dic;
     }
 
+    public class AutoParse<T>(string data) : IEnumerable<T>
+    {
+        readonly T[] Resolved = RegexParse<T>(data).ToArray();
+
+        public int Length => Resolved.Length;
+
+        public T this[int index] => Resolved[index];
+
+        public static implicit operator AutoParse<T>(string s) => new(s);
+
+        public IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)Resolved).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => Resolved.GetEnumerator();
+    }
+
+    public class AutoParse<DT, FT>(string data) : IEnumerable<DT> where FT : class
+    {
+        public DT[] Resolved = Util.RegexFactory<DT, FT>(data).ToArray();
+
+        public int Length => Resolved.Length;
+
+        public DT this[int index] => Resolved[index];
+
+        public IEnumerator<DT> GetEnumerator() => ((IEnumerable<DT>)Resolved).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => Resolved.GetEnumerator();
+
+        public static implicit operator AutoParse<DT, FT>(string s) => new(s);
+        public static implicit operator DT[](AutoParse<DT, FT> ap) => ap.Resolved;
+
+    }
+
     public static IEnumerable<(T1 item1, T2 item2)> Matrix<T1, T2>(IEnumerable<T1> set1, IEnumerable<T2> set2) => set1.SelectMany(x => set2.Select(y => (x, y)));
     public static IEnumerable<(T1 item1, T1 item2)> Matrix2<T1>(IEnumerable<T1> set) => set.SelectMany(x => set.Select(y => (x, y)));
 
@@ -481,11 +513,33 @@ public partial class Util
         }
     }
 
+    public static IEnumerable<PackedVect2<TNum, TPacker>> Range2DInclusive<TNum, TPacker>((TNum minY, TNum maxY, TNum minX, TNum maxX) range) where TNum : IBinaryInteger<TNum> where TPacker : ICoordinatePacker2<TNum>
+    {
+        for (TNum y = range.minY; y <= range.maxY; ++y)
+        {
+            for (TNum x = range.minX; x <= range.maxX; ++x)
+            {
+                yield return (x, y);
+            }
+        }
+    }
+
     public static IEnumerable<(int x, int y)> Range2DExclusive((int minY, int maxY, int minX, int maxX) range)
     {
         for (int y = range.minY; y < range.maxY; ++y)
         {
             for (int x = range.minX; x < range.maxX; ++x)
+            {
+                yield return (x, y);
+            }
+        }
+    }
+
+    public static IEnumerable<PackedVect2<TNum, TPacker>> Range2DExclusive<TNum, TPacker>((TNum minY, TNum maxY, TNum minX, TNum maxX) range) where TNum : IBinaryInteger<TNum> where TPacker : ICoordinatePacker2<TNum>
+    {
+        for (TNum y = range.minY; y < range.maxY; ++y)
+        {
+            for (TNum x = range.minX; x < range.maxX; ++x)
             {
                 yield return (x, y);
             }
@@ -506,6 +560,20 @@ public partial class Util
         }
     }
 
+    public static IEnumerable<PackedVect3<TNum, TPacker>> Range3DInclusive<TNum, TPacker>((TNum minZ, TNum maxZ, TNum minY, TNum maxY, TNum minX, TNum maxX) range) where TNum : IBinaryInteger<TNum> where TPacker : ICoordinatePacker3<TNum>
+    {
+        for (TNum z = range.minZ; z <= range.maxZ; ++z)
+        {
+            for (TNum y = range.minY; y <= range.maxY; ++y)
+            {
+                for (TNum x = range.minX; x <= range.maxX; ++x)
+                {
+                    yield return (x, y, z);
+                }
+            }
+        }
+    }
+
     public static IEnumerable<(int x, int y, int z)> Range3DExclusive((int minZ, int maxZ, int minY, int maxY, int minX, int maxX) range)
     {
         for (int z = range.minZ; z < range.maxZ; ++z)
@@ -513,6 +581,20 @@ public partial class Util
             for (int y = range.minY; y < range.maxY; ++y)
             {
                 for (int x = range.minX; x < range.maxX; ++x)
+                {
+                    yield return (x, y, z);
+                }
+            }
+        }
+    }
+
+    public static IEnumerable<PackedVect3<TNum, TPacker>> Range3DExclusive<TNum, TPacker>((TNum minZ, TNum maxZ, TNum minY, TNum maxY, TNum minX, TNum maxX) range) where TNum : IBinaryInteger<TNum> where TPacker : ICoordinatePacker3<TNum>
+    {
+        for (TNum z = range.minZ; z < range.maxZ; ++z)
+        {
+            for (TNum y = range.minY; y < range.maxY; ++y)
+            {
+                for (TNum x = range.minX; x < range.maxX; ++x)
                 {
                     yield return (x, y, z);
                 }
@@ -795,6 +877,46 @@ public partial class Util
         Console.WriteLine($"{sw.Elapsed.TotalMilliseconds}ms");
         return res;
     }
+
+    public static (double X, double Y)? GetIntersectionPoint<T>((T X, T Y)[] l1, (T X, T Y)[] l2) where T : IBinaryInteger<T>
+    {
+        T denominator = ((l2[1].Y - l2[0].Y) * (l1[1].X - l1[0].X)) - ((l2[1].X - l2[0].X) * (l1[1].Y - l1[0].Y));
+        T numerator1 = ((l2[1].X - l2[0].X) * (l1[0].Y - l2[0].Y)) - ((l2[1].Y - l2[0].Y) * (l1[0].X - l2[0].X));
+        T numerator2 = ((l1[1].X - l1[0].X) * (l1[0].Y - l2[0].Y)) - ((l1[1].Y - l1[0].Y) * (l1[0].X - l2[0].X));
+
+        if (denominator == T.Zero)
+        {
+            return numerator1 == T.Zero && numerator2 == T.Zero ? (Convert.ToDouble(l1[0].X), Convert.ToDouble(l1[0].Y)) : null;
+        }
+
+        double r = Convert.ToDouble(numerator1) / Convert.ToDouble(denominator);
+
+        return (
+                Convert.ToDouble(l1[0].X) + (r * Convert.ToDouble(l1[1].X - l1[0].X)),
+                Convert.ToDouble(l1[0].Y) + (r * Convert.ToDouble(l1[1].Y - l1[0].Y))
+               );
+    }
+
+    public static TStateType FindCycle<TFingerprintType, TStateType>(int expectedRounds, TStateType initialState, Func<TStateType, TFingerprintType> GetFingerprint, Func<TStateType, TStateType> PerformCycle)
+    {
+        int targetRound = expectedRounds;
+
+        var seen = new Dictionary<TFingerprintType, int>();
+
+        TStateType state = initialState;
+
+        for (int round = 0; round <= targetRound; round++)
+        {
+            state = PerformCycle(state);
+
+            if (targetRound == expectedRounds && seen.FindCycle(GetFingerprint(state), round, targetRound, out var shortcut))
+            {
+                targetRound = shortcut;
+            }
+        }
+
+        return state;
+    }
 }
 
 public class AutoArray<DataType>(IEnumerable<DataType> input) : IEnumerable<DataType>
@@ -1023,4 +1145,6 @@ public static class Extensions
             yield return res;
         }
     }
+
+    public static TAttribute Get<TAttribute>(this Dictionary<Type, Attribute> attrs) where TAttribute : Attribute => attrs == null ? default : (TAttribute)attrs.GetOrDefault(typeof(TAttribute));
 }

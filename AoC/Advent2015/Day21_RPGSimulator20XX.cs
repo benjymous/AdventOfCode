@@ -8,9 +8,11 @@ public class Day21 : IPuzzle
     static readonly Item[] Armour = Util.RegexParse<Item>("5 Leather 13 0 1\n 6 Chainmail 31 0 2\n 7 Splintmail 53 0 3\n 8 Bandedmail 75 0 4\n 9 Platemail 102 0 5\n").ToArray();
     static readonly Item[] Rings = Util.RegexParse<Item>("10 Damage+1 25 1 0\n 11 Damage+2 50 2 0\n 12 Damage+3 100 3 0\n 13 Defense+1 20 0 1\n 14 Defense+2 40 0 2\n 15 Defense+3 80 0 3\n").ToArray();
 
-    class Entity(string name, int hp, int dmg, int armour)
+    static int MakeId(params Item[] items) => items.Sum(item => 1 << item.Id);
+
+    class Entity(bool isPlayer, int hp, int dmg, int armour)
     {
-        public string Name = name;
+        public readonly bool IsPlayer = isPlayer;
         public int HP = hp;
 
         public readonly int Damage = dmg, Armour = armour;
@@ -26,27 +28,27 @@ public class Day21 : IPuzzle
                 {
                     foreach (var ring2 in Rings.Where(r => r != ring1 && weapon.Cost + armour.Cost + ring1.Cost + r.Cost <= gold))
                     {
-                        yield return ((1 << weapon.Id) + (1 << armour.Id) + (1 << ring1.Id) + (1 << ring2.Id), weapon.Damage + ring1.Damage + ring2.Damage, armour.Armour + ring1.Armour + ring2.Armour, weapon.Cost + armour.Cost + ring1.Cost + ring2.Cost);
+                        yield return (MakeId(weapon, armour, ring1, ring2), weapon.Damage + ring1.Damage + ring2.Damage, armour.Armour + ring1.Armour + ring2.Armour, weapon.Cost + armour.Cost + ring1.Cost + ring2.Cost);
                     }
 
-                    yield return ((1 << weapon.Id) + (1 << armour.Id) + (1 << ring1.Id), weapon.Damage + ring1.Damage, armour.Armour + ring1.Armour, weapon.Cost + armour.Cost + ring1.Cost);
+                    yield return (MakeId(weapon, armour, ring1), weapon.Damage + ring1.Damage, armour.Armour + ring1.Armour, weapon.Cost + armour.Cost + ring1.Cost);
                 }
-                yield return ((1 << weapon.Id) + (1 << armour.Id), weapon.Damage, armour.Armour, weapon.Cost + armour.Cost);
+                yield return (MakeId(weapon, armour), weapon.Damage, armour.Armour, weapon.Cost + armour.Cost);
             }
 
-            yield return (1 << weapon.Id, weapon.Damage, 0, weapon.Cost);
+            yield return (MakeId(weapon), weapon.Damage, 0, weapon.Cost);
         }
     }
 
-    static string DoFight(int enemyHp, int enemyDmg, int enemyArmour, int itemDmg, int itemArmour)
+    static bool DoFight(int enemyHp, int enemyDmg, int enemyArmour, int itemDmg, int itemArmour)
     {
-        var (e1, e2) = (new Entity("Player", 100, itemDmg, itemArmour), new Entity("Enemy", enemyHp, enemyDmg, enemyArmour));
+        var (attacker, defender) = (new Entity(true, 100, itemDmg, itemArmour), new Entity(false, enemyHp, enemyDmg, enemyArmour));
 
         while (true)
         {
-            e2.HP -= Math.Max(1, e1.Damage - e2.Armour);
-            if (e2.HP <= 0) return e1.Name;
-            (e1, e2) = (e2, e1);
+            defender.HP -= Math.Max(1, attacker.Damage - defender.Armour);
+            if (defender.HP <= 0) return attacker.IsPlayer;
+            (attacker, defender) = (defender, attacker);
         }
     }
 
@@ -62,7 +64,7 @@ public class Day21 : IPuzzle
         {
             foreach (var (id, damage, armour, cost) in GetInventoryCombinations(gold).Where(combo => !triedCombos.Contains(combo.id)))
             {
-                if (DoFight(enemyHp, enemyDmg, enemyArmour, damage, armour) == "Player") return gold;
+                if (DoFight(enemyHp, enemyDmg, enemyArmour, damage, armour)) return gold;
                 triedCombos.Add(id);
             }
             gold++;
@@ -75,7 +77,7 @@ public class Day21 : IPuzzle
 
         int maxgold = Weapons.Max(w => w.Cost) + Armour.Max(a => a.Cost) + (2 * Rings.Max(r => r.Cost));
         var itemCombos = GetInventoryCombinations(maxgold).OrderByDescending(tup => tup.cost);
-        return itemCombos.First(combo => DoFight(enemyHp, enemyDmg, enemyArmour, combo.damage, combo.armour) == "Enemy").cost;
+        return itemCombos.First(combo => DoFight(enemyHp, enemyDmg, enemyArmour, combo.damage, combo.armour) == false).cost;
     }
 
     public void Run(string input, ILogger logger)

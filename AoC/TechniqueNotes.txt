@@ -1,18 +1,117 @@
-﻿RegexParse param as own defined type
-  - put RegexAttr on type's constructor
+﻿# RegexParse    
+    
+    param as own defined type
+      - put RegexAttr on type's constructor
 
-RegexParse param as array
-  [Split(", ")] attr on arg to define splitting (defaults to ","))
-    (see 2023 Day 20)
+    param as array, List, generic collection
+      [Split(", ")] attr on arg to define splitting (defaults to ","))
+        (see 2023 Day 20)
 
-RegexParse param as dictionary
-  [Split(", ", @"(?<key>.+): (?<value>.+)")] attr on arg
-    (see 2015 Day 16,  2020 Day 7)
+    param as dictionary
+      [Split(", ", @"(?<key>.+): (?<value>.+)")] attr on arg
+        (see 2015 Day 16,  2020 Day 7)
 
-RegexParse param as Tuple, etc
-  [Regex("..pattern..")] attr on arg (must accept first param!)
-    (see 2022 Day 15,  2023 Day 25)
+    param as Tuple, etc
+      [Regex("..pattern..")] attr on arg (must accept first param!)
+        (see 2022 Day 15,  2023 Day 25)
 
-RegexParse param as hex
-  [Base(16)] on arg
-    (see 2023 Day 18)
+    param as hex
+      [Base(16)] int on arg
+        (see 2023 Day 18)
+
+
+# RegexFactory 
+
+    Return class
+
+       Factory factory = Util.RegexFactory<Factory>(data)
+
+       auto convert
+       public static implicit operator Factory(string data) => Util.RegexFactory<Factory>(data);
+
+    Return array
+
+       Element[] = Util.RegexFactory<Element, Factory>(data);
+
+
+# Parse(Sparse)Matrix
+
+    Into an 2D array
+      ParseMatrix<type>(input) => type[,]
+
+    Into dictionary
+      ParseSparseMatrix<type>(input)
+      ParseSparseMatrix<keyType, valueType>(input)
+
+      ParseSparseMatrix<keytype, valueType>(input, valueConverter) <== allow custom converting
+      ParseSparseMatrix<keytype, valueType>(input, keyConverter, valueConverter) <== allow custom converting
+
+      var matrix = Util.ParseSparseMatrix<PackedPos32, char>(input, new Util.Convertomatic.SkipChars('.'));
+
+
+# Solver
+
+  From a single initial state:
+    Solver<stateType (returntype)>.Solve(initialState | initialElements, (state, solver) =>
+    {
+      return potential solution   (best filtered in Solver code)
+        or
+      solver.Enqueue(newSingleState)
+      solver.EnqueueRange(nextStates)
+      solver.Enqueue(newSingleState, priority)
+      solver.EnqueueRange([ .. (nextState, priority) .. ])
+        or
+      return default
+    }, 
+    Math.Min); <<-- looking for smallest result
+
+  'better' than the best potential solution so far
+    solver.IsBetterThanCurrentBest(potential) 
+
+  'better' than the best value for this state/key (i.e. shorter route from location than previously found)
+  (this will cache the given potential against the state/key )
+    solver.IsBetterThanSeen( state|key, potential) 
+
+  No 'answer' just want to consider all possible states
+    Solver<stateType>.Solve(initialState, (state, solver) => 
+    {
+      ...
+    })
+
+# AStar
+
+  Derive a class from IMap<coordtype>
+  Implement GetNeighbours(coordtype)
+  Call class.FindPath(start, end)
+
+# BinarySearch
+
+  range or initial guess
+  return true if condition satisfied
+  
+  (foundidx, foundresult) = Util.BinarySearch<TInput, TResult>(start, current => { func return good })
+  (foundidx, foundresult) = Util.BinarySearch<TInput, TResult>(min, max, current => { func return good })
+
+  no result value
+  (foundidx) = Util.BinarySearch<TInput>(min, max, current => { func return good })
+
+# HexVector
+
+  Flat or pointy!
+
+
+# FindCycle
+
+  does the modulus maths to figure out target iter
+  
+  var finalState = Util.FindCycle(targetCycle, initialState, getKeyFunc, doStepFunc )
+
+  (see 2017 day 16,  2023 day 14)
+
+# Memoize
+
+  Auto memoize on file/func
+  func(blah) => Memoize(blah, input => ... calc ...)
+
+  Memoize using obj as the context
+  obj.Memoize( blah, input => ... calc ...)

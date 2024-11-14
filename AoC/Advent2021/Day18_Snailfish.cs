@@ -18,7 +18,7 @@ public class Day18 : IPuzzle
                 {
                     case '[': v.first = Parse(data, v); continue;
                     case ',': v.second = Parse(data, v); continue;
-                    case >= '0' and <= '9': v.Value = ch - '0'; break;
+                    case >= '0' and <= '9': v.Value = ch.AsDigit(); break;
                 }
                 return v;
             }
@@ -69,13 +69,9 @@ public class Day18 : IPuzzle
         public static Val operator +(Val lhs, Val rhs) => (lhs.parent = rhs.parent = new Val { first = lhs, second = rhs }).Reduce();
     }
 
-    public static long Part1(string input) => Util.Split(input, "\n").Select(Val.Parse).Sum().Magnitude;
+    public static long Part1(string input) => Util.Split(input, "\n").Sum(Val.Parse).Magnitude;
 
-    public static long Part2(string input)
-    {
-        var lines = Util.Split(input, "\n");
-        return Util.Matrix2(lines).AsParallel().Max(pair => (Val.Parse(pair.item1) + Val.Parse(pair.item2)).Magnitude);
-    }
+    public static long Part2(string input) => Util.Matrix2(Util.Split(input, "\n")).AsParallel().Max(pair => (Val.Parse(pair.item1) + Val.Parse(pair.item2)).Magnitude);
 
     public void Run(string input, ILogger logger)
     {

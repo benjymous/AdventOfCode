@@ -3,7 +3,7 @@ public class Day01 : IPuzzle
 {
     public static int Captcha(string input, int offset)
     {
-        var data = input.Trim().Select(c => c - '0').ToArray();
+        var data = input.Trim().Select(c => c.AsDigit()).ToArray();
         return data.Where((v, i) => v == data[(i + offset) % data.Length]).Sum();
     }
 

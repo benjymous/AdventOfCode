@@ -2,7 +2,7 @@
 public class Day25 : IPuzzle
 {
     [Regex(@"(.+): (.+)")]
-    record class Connection(StringInt32 Element, [Split(" ")] StringInt32[] Connections);
+    public record class Connection(StringInt32 Element, [Split(" ")] StringInt32[] Connections);
 
     class Map : IMap<int>
     {
@@ -10,11 +10,7 @@ public class Day25 : IPuzzle
         public Dictionary<int, HashSet<int>> connections = [];
         public IEnumerable<int> GetNeighbours(int location) => location == StartNode ? connections[location].Except([EndNode]) : connections[location];
 
-        public int Find(int start, int end)
-        {
-            (StartNode, EndNode) = (start, end);
-            return this.FindPath(start, end).Length;
-        }
+        public int Find(int start, int end) => this.FindPath(StartNode = start, EndNode = end).Length;
     }
 
     public static int FindIslands(Dictionary<int, HashSet<int>> connections, IEnumerable<(int n1, int n2, int loop)> cutLinks)
@@ -27,9 +23,7 @@ public class Day25 : IPuzzle
             map.connections[n2].Remove(n1);
         }
 
-        var nodes = connections.Keys;
-
-        List<HashSet<int>> islands = [[nodes.First()]];
+        List<HashSet<int>> islands = [[connections.Keys.First()]];
 
         foreach (var node in connections.Keys.Skip(1))
         {
@@ -47,11 +41,11 @@ public class Day25 : IPuzzle
         return islands.Count == 2 ? islands[0].Count * islands[1].Count : 0;
     }
 
-    public static int Part1(string input)
+    public static int Part1(Util.AutoParse<Connection> input)
     {
         var map = new Map();
 
-        foreach (var connection in Util.RegexParse<Connection>(input))
+        foreach (var connection in input)
         {
             if (!map.connections.ContainsKey(connection.Element.Value)) map.connections[connection.Element.Value] = [];
             foreach (var child in connection.Connections)
@@ -66,8 +60,5 @@ public class Day25 : IPuzzle
         return FindIslands(map.connections, results.OrderByDescending(v => v.loop).Take(3));
     }
 
-    public void Run(string input, ILogger logger)
-    {
-        logger.WriteLine("- Pt1 - " + Part1(input));
-    }
+    public void Run(string input, ILogger logger) => logger.WriteLine("- Pt1 - " + Part1(input));
 }

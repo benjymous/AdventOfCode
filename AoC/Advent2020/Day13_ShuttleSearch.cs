@@ -10,9 +10,8 @@ public class Day13 : IPuzzle
         var times = Util.Split(lines[1]);
         var smallest = ulong.MaxValue;
         ulong bestbus = 0;
-        foreach (var t in times)
+        foreach (var t in times.Where(t => t != "x"))
         {
-            if (t == "x") continue;
             var bus = ulong.Parse(t);
             var nexttime = NextMultiple(timestamp, bus);
             if (nexttime < smallest)
@@ -29,21 +28,16 @@ public class Day13 : IPuzzle
         var lines = Util.Split(input, "\n");
         var times = Util.Split(lines[1]);
 
-        var nums = new List<(ulong, ulong)>();
-        ulong i = 0;
-        foreach (var t in times)
-        {
-            if (t != "x") nums.Add((ulong.Parse(t), i));
-            i++;
-        }
-        ulong res = nums[0].Item1;
+        var nums = times.WithIndex().Where(e => e.Value != "x").Select(e => (Value: ulong.Parse(e.Value), Index: (ulong)e.Index)).ToList();
+
+        ulong res = nums[0].Value;
         var inc = res;
 
         foreach (var n in nums.Skip(1))
         {
-            var mod = n.Item1 - (n.Item2 % n.Item1);
-            while (res % n.Item1 != mod) res += inc;
-            inc = Util.LCM(inc, n.Item1);
+            var mod = n.Value - (n.Index % n.Value);
+            while (res % n.Value != mod) res += inc;
+            inc = Util.LCM(inc, n.Value);
         }
 
         return res;

@@ -20,14 +20,14 @@ public class Day08 : IPuzzle
                 location = Paths[location][Route[steps++ % Route.Length]];
             return steps;
         }
+
+        public static implicit operator GhostMap(string data) => Util.RegexFactory<GhostMap>(data);
     }
 
-    public static int Part1(string input)
-        => Util.RegexFactory<GhostMap>(input).Walk("AAA", current => current == "ZZZ");
+    public static int Part1(GhostMap map) => map.Walk("AAA", current => current == "ZZZ");
 
-    public static long Part2(string input)
+    public static long Part2(GhostMap map)
     {
-        var map = Util.RegexFactory<GhostMap>(input);
         return map.Paths.Keys.Where(k => k.EndsWith('A'))
             .Aggregate(1L, (cycle, start)
                 => Util.LCM(cycle, map.Walk(start, current => current.EndsWith('Z'))));

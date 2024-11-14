@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2019;
 public class Day06 : IPuzzle
 {
-    public static int MakeId(string str) => str.Select((c, i) => (c - '0') << (i * 6)).Sum();
+    public static int MakeId(string str) => str.Select((c, i) => (c.AsDigit()) << (i * 6)).Sum();
 
     public static Tree<int> ParseTree(string input)
     {

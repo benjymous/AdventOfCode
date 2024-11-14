@@ -19,7 +19,7 @@ public class Day18 : IPuzzle
 
             if (ch is >= '0' and <= '9')
             {
-                val = ch - '0';
+                val = ch.AsDigit();
             }
             else if (ch == '(')
             {

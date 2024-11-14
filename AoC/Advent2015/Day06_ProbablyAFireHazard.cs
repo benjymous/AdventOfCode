@@ -44,19 +44,19 @@ public class Day06 : IPuzzle
         }
     }
 
-    public static int Part1(string input)
+    public static int Part1(Util.AutoParse<Instruction> input)
     {
         bool[,] grid = new bool[1000, 1000];
 
-        Util.RegexParse<Instruction>(input).ForEach(i => i.Apply(grid));
+        input.ForEach(i => i.Apply(grid));
         return grid.Values().Count(i => i);
     }
 
-    public static int Part2(string input)
+    public static int Part2(Util.AutoParse<Instruction> input)
     {
         int[,] grid = new int[1000, 1000];
 
-        Util.RegexParse<Instruction>(input).ForEach(i => i.Apply(grid));
+        input.ForEach(i => i.Apply(grid));
         return grid.Values().Sum();
     }
 

@@ -32,7 +32,7 @@ public class Day11 : IPuzzle
         int[,] grid = InitGrid(input);
 
         var max = 0;
-        ManhattanVector2 pos = null;
+        (int x, int y) pos = (0, 0);
 
         for (var y = 1; y < 298; ++y)
         {
@@ -43,12 +43,12 @@ public class Day11 : IPuzzle
                 if (score > max)
                 {
                     max = score;
-                    pos = new ManhattanVector2(x, y);
+                    pos = (x, y);
                 }
             }
         }
 
-        return pos.ToString();
+        return $"{pos.x},{pos.y}";
     }
 
     public static string Part2(string input)

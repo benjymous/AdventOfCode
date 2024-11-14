@@ -9,10 +9,10 @@ public class Day15 : IPuzzle
         public bool CheckAlignment(int delay) => (delay + Offset) % NumPos == 0;
     }
 
-    private static int FindAlignment(string input)
+    private static int FindAlignment(Util.AutoParse<Disc> input)
     {
         int i = 0, inc = 1;
-        foreach (var disc in Util.RegexParse<Disc>(input))
+        foreach (var disc in input)
         {
             while (!disc.CheckAlignment(i += inc)) ;
             inc *= disc.NumPos;

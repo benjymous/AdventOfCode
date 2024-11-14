@@ -44,7 +44,7 @@ public class Day12 : IPuzzle
         var goodStarts = allStarts.Where(pos => map.GetNeighbours(pos).Any(pos => map.Grid[pos] == 'b')).ToHashSet();
         allStarts.Except(goodStarts).ForEach(pos => map.Grid.Remove(pos));
 
-        return Solver<PackedPos32, int>.Solve(goodStarts, (pos, solver) =>
+        return Solver<PackedPos32>.Solve(goodStarts, (pos, solver) =>
         {
             var route = map.FindPath(pos, map.End);
             if (route.Length != 0)

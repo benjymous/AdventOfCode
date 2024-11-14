@@ -15,42 +15,42 @@ public class Day16 : IPuzzle
 
     public class Packet
     {
-        public static Packet Parse(string input) => new BitStream(input).ReadPacket();
         internal Packet(BitStream stream)
         {
             Header = (stream.ReadInteger(3), (PacketType)stream.ReadInteger(3));
             if (Header.Type == PacketType.LiteralValue)
             {
-                LiteralValue = stream.ReadLiteralValue();
+                Value = stream.ReadLiteralValue();
             }
             else
             {
                 if (stream.ReadBit() == 0) // length type
                 {
                     var endPos = stream.ReadInteger(15) + stream.Position;
-                    Children = Util.RepeatWhile(stream.ReadPacket, _ => stream.Position < endPos).ToList();
+                    Children = Util.RepeatWhile(stream.ReadPacket, _ => stream.Position < endPos).ToArray();
                 }
-                else Children = Util.Repeat(stream.ReadPacket, stream.ReadInteger(11)).ToList();
+                else Children = Util.Repeat(stream.ReadPacket, stream.ReadInteger(11)).ToArray();
+
+                Value = Header.Type switch
+                {
+                    PacketType.Sum => Children.Sum(c => c.Value),
+                    PacketType.Product => Children.Product(c => c.Value),
+                    PacketType.Minimum => Children.Min(c => c.Value),
+                    PacketType.Maximum => Children.Max(c => c.Value),
+                    PacketType.GreaterThan => Children[0].Value > Children[1].Value ? 1 : 0,
+                    PacketType.LessThan => Children[0].Value < Children[1].Value ? 1 : 0,
+                    PacketType.EqualTo => Children[0].Value == Children[1].Value ? 1 : 0,
+                    _ => Value,
+                };
             }
         }
 
         public readonly (int Version, PacketType Type) Header;
-        public readonly long LiteralValue;
-        public readonly List<Packet> Children = [];
+        public readonly long Value;
+        public readonly Packet[] Children = [];
         public int VersionSum() => Header.Version + Children.Sum(child => child.VersionSum());
-        public long GetValue() => Header.Type switch
-        {
-            PacketType.LiteralValue => LiteralValue,
-            PacketType.Sum => ChildValues.Sum(),
-            PacketType.Product => ChildValues.Product(),
-            PacketType.Minimum => ChildValues.Min(),
-            PacketType.Maximum => ChildValues.Max(),
-            PacketType.GreaterThan => ChildValues[0] > ChildValues[1] ? 1 : 0,
-            PacketType.LessThan => ChildValues[0] < ChildValues[1] ? 1 : 0,
-            PacketType.EqualTo => ChildValues[0] == ChildValues[1] ? 1 : 0,
-            _ => 0,
-        };
-        long[] ChildValues => Children.Select(c => c.GetValue()).ToArray();
+
+        public static implicit operator Packet(string data) => new BitStream(data).ReadPacket();
     }
 
     public class BitStream
@@ -72,9 +72,9 @@ public class Day16 : IPuzzle
         readonly IEnumerator<(int val, int idx)> stream;
     }
 
-    public static int Part1(string input) => Packet.Parse(input).VersionSum();
+    public static int Part1(Packet packet) => packet.VersionSum();
 
-    public static long Part2(string input) => Packet.Parse(input).GetValue();
+    public static long Part2(Packet packet) => packet.Value;
 
     public void Run(string input, ILogger logger)
     {

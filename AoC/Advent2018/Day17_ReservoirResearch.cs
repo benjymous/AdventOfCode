@@ -60,9 +60,8 @@ public class Day17 : IPuzzle
         }
     }
 
-    private static Dictionary<(int x, int y), char> RunWater(string input)
+    private static Dictionary<(int x, int y), char> RunWater(Util.AutoParse<Wall> walls)
     {
-        var walls = Util.RegexParse<Wall>(input);
         var data = walls.SelectMany(w => w.Vals).Distinct().ToDictionary(p => p, p => '#');
         var (minY, maxY) = data.Keys.MinMax(p => p.y);
 

@@ -26,7 +26,7 @@ public class Day25 : IPuzzle
 
         public Program(string input)
         {
-            var parts = input.Split("\n\n");
+            var parts = input.SplitSections();
             Start = ToKey(parts[0][15]);
             Diagnostic = Util.ExtractNumbers(parts[0])[0];
             States = Util.RegexParse<State>(parts.Skip(1)).ToArray();

@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace AoC.Advent2021.Test
 {
@@ -107,6 +108,8 @@ off x=-70369..-16548,y=22648..78696,z=-1892..86821
 on x=-53470..21291,y=-120233..-33476,z=-44150..38147
 off x=-93533..-4276,y=-16170..68771,z=-104985..-24507";
 
+        public static IEnumerable<Day22.Instruction> ParseData(string input) => Util.RegexParse<Day22.Instruction>(input);
+
         [TestCategory("Test")]
         [DataTestMethod]
         [DataRow(test0, 39)]
@@ -115,7 +118,7 @@ off x=-93533..-4276,y=-16170..68771,z=-104985..-24507";
         [DataRow(test3, 2758514936282235)]
         public void ReactorTest(string input, long expected)
         {
-            Assert.AreEqual(expected, Day22.RunOperation(Day22.ParseData(input.Replace("\r", ""))));
+            Assert.AreEqual(expected, Day22.RunOperation(ParseData(input.Replace("\r", ""))));
         }
 
         [TestCategory("Regression")]

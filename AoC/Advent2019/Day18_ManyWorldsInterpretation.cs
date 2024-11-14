@@ -44,7 +44,7 @@ public class Day18 : IPuzzle
     {
         var shortestPath = map.Paths.Values.Min(path => path.Length);
 
-        return Solver<(int positions, int heldKeys, int distance), int>.Solve((map.AllPlayers, 0, 0), (state, solver) =>
+        return Solver<(int positions, int heldKeys, int distance)>.Solve((map.AllPlayers, 0, 0), (state, solver) =>
         {
             var (positions, heldKeys, distance) = state;
 

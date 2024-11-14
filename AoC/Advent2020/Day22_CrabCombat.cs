@@ -1,12 +1,7 @@
 ﻿namespace AoC.Advent2020;
 public class Day22 : IPuzzle
 {
-    static Queue<int>[] ParseData(string input)
-    {
-        var groups = input.Split("\n\n");
-
-        return groups.Select(group => Util.ParseNumbers<int>(group.Split("\n").Skip(1)).ToQueue()).ToArray();
-    }
+    static Queue<int>[] ParseData(string input) => input.SplitSections().Select(group => Util.ParseNumbers<int>(group.Split("\n").Skip(1)).ToQueue()).ToArray();
 
     static int GetKey(Queue<int>[] decks) => decks[0].Take(4).GetCombinedHashCode();
 

@@ -28,7 +28,7 @@ public class Day05 : IPuzzle
             char c = hashString[1];
             char p = hashString[0];
 
-            int pos = p - '0';
+            int pos = p.AsDigit();
 
             if (pos >= 0 && pos <= 7 && outpass[pos] == '_')
             {

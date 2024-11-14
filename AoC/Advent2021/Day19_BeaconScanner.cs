@@ -35,7 +35,7 @@ public class Day19 : IPuzzle
 
     private static List<Group> AlignGroups(string input) => Memoize(input, _ =>
     {
-        var groups = input.Split("\n\n").Select(bit => Util.Parse<ManhattanVector3>(bit.Split("\n", StringSplitOptions.RemoveEmptyEntries).Skip(1)).Select(p => p.AsSimple()).ToArray()).ToArray().WithIndex().Select(item => new Group(item.Index, item.Value)).ToArray();
+        var groups = input.SplitSections().Select(bit => Util.Parse<ManhattanVector3>(bit.Split("\n", StringSplitOptions.RemoveEmptyEntries).Skip(1)).Select(p => p.AsSimple()).ToArray()).ToArray().WithIndex().Select(item => new Group(item.Index, item.Value)).ToArray();
 
         Dictionary<int, int> overlaps = [];
         for (int i = 0; i < groups.Length; ++i)

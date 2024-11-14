@@ -174,6 +174,8 @@
 
         public static T Sum<T>(this IEnumerable<T> elements) where T : ISummable<T> => elements.Skip(1).Aggregate(elements.First(), (total, val) => total + val);
 
+        public static TResult Sum<TSource, TResult>(this IEnumerable<TSource> elements, Func<TSource, TResult> selector) where TResult : ISummable<TResult> => elements.Skip(1).Aggregate(selector(elements.First()), (total, val) => total + selector(val));
+
         public static uint Sum(this IEnumerable<uint> elements) => elements.Skip(1).Aggregate(elements.First(), (total, val) => total + val);
 
         public static BigInteger Sum(this IEnumerable<BigInteger> elements) => elements.Skip(1).Aggregate(elements.First(), (total, val) => total + val);

@@ -40,7 +40,7 @@ public class Day11 : IPuzzle
 
     private static long RunRounds(string input, int numRounds, int reduceWorry)
     {
-        var monkeys = Util.RegexParse<Monkey>(input.Split("\n\n").Select(line => line.Replace("\n", "").WithoutMultipleSpaces())).ToArray();
+        var monkeys = Util.RegexParse<Monkey>(input.SplitSections().Select(line => line.Replace("\n", "").WithoutMultipleSpaces())).ToArray();
 
         var filter = monkeys.Product(m => m.Divisor);
 

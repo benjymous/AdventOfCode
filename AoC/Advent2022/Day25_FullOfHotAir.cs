@@ -45,6 +45,6 @@ public class Snafu : ISummable<Snafu>
     public long ToDecimal() => components.Reverse().Aggregate(0L, (current, val) => (current * 5) + val);
     public override string ToString() => Balance().components.Reverse().Select(ToChar).AsString();
 
-    static sbyte ToDecimal(char c) => c switch { '=' => -2, '-' => -1, _ => (sbyte)(c - '0') };
+    static sbyte ToDecimal(char c) => c switch { '=' => -2, '-' => -1, _ => (sbyte)c.AsDigit() };
     static char ToChar(sbyte v) => v switch { -2 => '=', -1 => '-', _ => (char)('0' + v) };
 }

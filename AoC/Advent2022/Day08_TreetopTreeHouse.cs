@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2022;
 public class Day08 : IPuzzle
 {
-    class Data
+    public class Data
     {
         public Data(string input)
         {
@@ -41,21 +41,13 @@ public class Day08 : IPuzzle
                  * CountVisible(col.Take(pos.y).Reverse(), tree)
                  * CountVisible(col.Skip(pos.y + 1), tree);
         }
+
+        public static implicit operator Data(string data) => new(data);
     }
 
-    public static int Part1(string input)
-    {
-        var data = new Data(input);
+    public static int Part1(Data data) => data.All.Count(data.VisibleFromEdge);
 
-        return data.All.Count(data.VisibleFromEdge);
-    }
-
-    public static int Part2(string input)
-    {
-        var data = new Data(input);
-
-        return data.All.Max(data.ScenicScore);
-    }
+    public static int Part2(Data data) => data.All.Max(data.ScenicScore);
 
     public void Run(string input, ILogger logger)
     {

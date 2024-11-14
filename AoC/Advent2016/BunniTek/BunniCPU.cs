@@ -20,24 +20,27 @@ namespace AoC.Advent2016.BunniTek
 
     public readonly record struct Value(int IntVal, bool IsInt)
     {
+        [Regex(@"(a|b|c|d)")] public Value(char regCode) : this(regCode - 'a', false) { }
+        [Regex(@"(-?\d+)")] public Value(int intVal) : this(intVal, true) { }
+
         public static implicit operator Value(int intVal) => new(intVal, true);
         public static implicit operator Value(RegisterId regIndex) => new((int)regIndex, false);
-        public static implicit operator Value(string input) => input[0] >= 'a' ? new Value(input[0] - 'a', false) : new Value(int.Parse(input), true);
+
+        public override string ToString() => IsInt ? IntVal.ToString() : $"reg:{(char)('a' + IntVal)}";
     }
 
-    public class Instruction
+    public record class Instruction
     {
         public OpCode Opcode;
         public readonly Value X, Y;
 
-        public Instruction(string line)
+        [Regex(@"(...) ?(\S+)? ?(\S+)?")]
+        public Instruction(OpCode op, Value? x, Value? y)
         {
-            var bits = line.Split(" ");
-            Opcode = Enum.Parse<OpCode>(bits[0]);
-
-            if (bits.Length >= 2) X = bits[1];
-            if (bits.Length == 3) Y = bits[2];
+            Opcode = op; X = x.GetValueOrDefault(); Y = y.GetValueOrDefault();
         }
+
+        public override string ToString() => $"{Opcode} {X} {Y}";
     }
 
     public class BunnyCPU(Instruction[] program)
@@ -50,7 +53,7 @@ namespace AoC.Advent2016.BunniTek
 
         public Func<int, bool> Output = null;
 
-        public static Instruction[] Compile(string program) => [.. Util.Parse<Instruction>(program)];
+        public static Instruction[] Compile(string program) => [.. Util.RegexParse<Instruction>(program)];
 
         public BunnyCPU(string program) : this(Compile(program)) { }
 

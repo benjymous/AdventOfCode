@@ -47,7 +47,7 @@ public class Day20 : IPuzzle
 
     public static int Simulate(string input, int steps, int margin = 1, bool crop = false)
     {
-        var bits = input.Split("\n\n");
+        var bits = input.SplitSections();
         var rules = bits[0].Select(b => b == '#').ToArray();
 
         var map = new State(Util.ParseSparseMatrix<bool>(bits[1]).Keys);

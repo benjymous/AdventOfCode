@@ -312,10 +312,10 @@ namespace AoC.Utils.Vectors
         [Regex("(.)")]
         public Direction2(char dir) => SetDirection(dir switch
         {
-            '>' or 'R' => East,
-            '<' or 'L' => West,
-            '^' or 'U' => North,
-            'v' or 'D' => South,
+            '>' or 'R' or 'r' or 'E' or 'e' => East,
+            '<' or 'L' or 'l' or 'W' or 'w' => West,
+            '^' or 'U' or 'u' or 'N' or 'n' => North,
+            'v' or 'D' or 'd' or 'S' or 's' => South,
             _ => throw new Exception($"invalid char direction {dir}"),
         });
 
@@ -344,14 +344,15 @@ namespace AoC.Utils.Vectors
 
         public Direction2 Mirror(char m)
         {
-            if (m == '/')
-            {
-                return SetDirection(-DY, -DX);
-            }
-            else if (m == '\\')
-            {
-                return SetDirection(DY, DX);
-            }
+            if (m == '/') return SetDirection(-DY, -DX);
+            else if (m == '\\') return SetDirection(DY, DX);
+            else return this;
+        }
+
+        public Direction2 Turn(char leftright)
+        {
+            if (leftright is 'L' or 'l') return TurnLeft();
+            else if (leftright is 'R' or 'r') return TurnRight();
             else return this;
         }
 
@@ -424,6 +425,7 @@ namespace AoC.Utils.Vectors
         }
 
         public static implicit operator char(Direction2 d) => d.AsChar();
+        public static implicit operator Direction2(char d) => new(d);
 
         public (int x, int y) AsSimple() => (DX, DY);
 
@@ -446,15 +448,6 @@ namespace AoC.Utils.Vectors
         public static readonly Direction2 Down = new(0, 1);
         public static readonly Direction2 Right = new(1, 0);
         public static readonly Direction2 Left = new(-1, 0);
-
-        public static Direction2 FromChar(char c) => c switch
-        {
-            '>' or 'R' => new Direction2(East),
-            '<' or 'L' => new Direction2(West),
-            '^' or 'U' => new Direction2(North),
-            'v' or 'D' => new Direction2(South),
-            _ => throw new Exception("invalid char direction"),
-        };
 
         public override string ToString() => $"[{AsChar()}]{DX},{DY}";
 

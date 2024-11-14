@@ -42,14 +42,14 @@ public class Day16 : IPuzzle
         int size = data.Width() - 1;
         for (int i = 0; i <= size; ++i)
         {
-            yield return RunBeamSimulation((0, i), Direction2.FromChar('>'), data);
-            yield return RunBeamSimulation((size, i), Direction2.FromChar('<'), data);
-            yield return RunBeamSimulation((i, 0), Direction2.FromChar('v'), data);
-            yield return RunBeamSimulation((i, size), Direction2.FromChar('^'), data);
+            yield return RunBeamSimulation((0, i), '>', data);
+            yield return RunBeamSimulation((size, i), '<', data);
+            yield return RunBeamSimulation((i, 0), 'v', data);
+            yield return RunBeamSimulation((i, size), '^', data);
         }
     }
 
-    public static int Part1(string input) => RunBeamSimulation((0, 0), Direction2.FromChar('>'), Util.ParseMatrix<char>(input));
+    public static int Part1(string input) => RunBeamSimulation((0, 0), '>', Util.ParseMatrix<char>(input));
 
     public static int Part2(string input) => SolvePart2(Util.ParseMatrix<char>(input)).Max();
 

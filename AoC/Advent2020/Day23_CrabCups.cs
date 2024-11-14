@@ -28,7 +28,7 @@ public class Day23 : IPuzzle
 
     public static IEnumerable<int> Play(string input, int rounds, bool part2 = false)
     {
-        var current = CreateCircle(input.Trim().Select(ch => ch - '0'), part2);
+        var current = CreateCircle(input.Trim().Select(ch => ch.AsDigit()), part2);
 
         while (rounds-- > 0)
         {

@@ -69,7 +69,7 @@ namespace AoC.Utils
 
                 if (!File.Exists(expectedFile))
                 {
-                    string puzzleData = Util.Download(DataURL(puzzleType));
+                    string puzzleData = Util.Download(DataURL(puzzleType)).Replace("\r", "");
                     File.WriteAllText(expectedFile, puzzleData);
                     return puzzleData;
                 }

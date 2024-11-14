@@ -1,4 +1,6 @@
 ﻿namespace AoC.Advent2023;
+
+using PackedPos = PackedVect3<int, Pack8_8_16>;
 public class Day22 : IPuzzle
 {
     public class Brick
@@ -6,57 +8,44 @@ public class Day22 : IPuzzle
         [Regex(@"(\d+),(\d+),(\d+)~(\d+),(\d+),(\d+)")]
         public Brick(int x1, int y1, int z1, int x2, int y2, int z2)
         {
-            for (int z = z1; z <= z2; ++z)
-                for (int y = y1; y <= y2; ++y)
-                    for (int x = x1; x <= x2; ++x)
-                        Cubes.Add((x, y, z));
+            _Cubes = Util.Range3DInclusive<int, Pack8_8_16>((z1, z2, y1, y2, x1, x2)).ToArray();
+            _Bottom = _Cubes.Select(c => c - (0, 0, 1)).Where(c => !Cubes.Contains(c)).ToArray();
+            Lowest = z1;
         }
 
-        public List<(int x, int y, int z)> Cubes = [];
+        readonly PackedPos[] _Cubes = [], _Bottom = [];
+        public int Lowest = 0, OffsetZ = 0;
+        public IEnumerable<PackedPos> Cubes => _Cubes.Select(c => c + (0, 0, OffsetZ));
+        public IEnumerable<PackedPos> Bottom => _Bottom.Select(c => c + (0, 0, OffsetZ));
+
         public HashSet<Brick> Supporting = [], SupportedBy = [];
 
         public bool Stable = false;
-
-        public IEnumerable<(int x, int y, int z)> Bottom() => Cubes.Where(c => !Cubes.Contains((c.x, c.y, c.z - 1)));
-
-        public void Drop() => Cubes = Cubes.Select(p => (p.x, p.y, p.z - 1)).ToList();
+        public bool ReachedFloor => Lowest + OffsetZ == 1;
     }
 
-    public static Brick[] SimulateBricks(string input)
+    public static Brick[] SimulateBricks(Util.AutoParse<Brick> input)
     {
-        Brick[] bricks = [.. Util.RegexParse<Brick>(input).OrderBy(b => b.Cubes.Min(c => c.z))];
+        Brick[] bricks = [.. input.OrderBy(b => b.Lowest)];
 
-        Dictionary<(int x, int y, int z), Brick> index = bricks.SelectMany(b => b.Cubes.Select(c => (c, b))).ToDictionary();
+        Dictionary<PackedPos, Brick> index = bricks.SelectMany(b => b.Cubes.Select(c => (c, b))).ToDictionary();
 
         Queue<Brick> active = [.. bricks];
 
         while (active.TryDequeue(out Brick brick))
         {
-            var bottom = brick.Bottom().ToArray();
-            if (bottom.Any(p => p.z == 1))
+            if (!(brick.Stable = brick.ReachedFloor || brick.Bottom.Any(cube => index.TryGetValue(cube, out var brick) && brick.Stable)))
             {
-                brick.Stable = true;
-                continue;
+                index.RemoveRange(brick.Cubes);
+                brick.OffsetZ--;
+                index.AddRange(brick.Cubes.Select(c => (c, brick)));
+                active.Add(brick);
             }
-
-            var touching = bottom.Where(p => index.ContainsKey((p.x, p.y, p.z - 1))).ToArray();
-
-            if (touching.Length != 0)
-            {
-                brick.Stable = touching.Any(p => index[(p.x, p.y, p.z - 1)].Stable);
-                continue;
-            }
-
-            index.RemoveRange(brick.Cubes);
-            brick.Drop();
-            index.AddRange(brick.Cubes.Select(c => (c, brick)));
-
-            active.Add(brick);
         }
 
         foreach (var brick in bricks)
         {
-            foreach (var cube in brick.Cubes.Select(c => (c.x, c.y, c.z + 1)))
+            foreach (var cube in brick.Cubes.Select(c => (c.X, c.Y, c.Z + 1)))
             {
                 if (index.TryGetValue(cube, out var aboveBrick) && aboveBrick != brick)
                 {

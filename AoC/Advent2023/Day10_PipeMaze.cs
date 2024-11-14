@@ -13,7 +13,7 @@ public class Day10 : IPuzzle
         while (true)
         {
             var current = grid[pos];
-            var dir = PossibleDirections(current).Select(d => Direction2.FromChar(d)).First(dir => (current == 'S' || (lastDir - dir) != 2) && ValidateDirection(grid, pos, dir));
+            var dir = PossibleDirections(current).Select(d => (Direction2)d).First(dir => (current == 'S' || (lastDir - dir) != 2) && ValidateDirection(grid, pos, dir));
 
             var next = pos.OffsetBy(dir);
             visited[pos] = current == 'S' ? [dir] : [lastDir, dir];

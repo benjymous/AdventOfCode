@@ -30,14 +30,14 @@ public class Day03 : IPuzzle
         int result = 0;
         for (int x = x1; x <= x2; ++x)
         {
-            if (numbers.Remove((x, value.y), out char v)) result = (result * 10) + (v - '0');
+            if (numbers.Remove((x, value.y), out char v)) result = (result * 10) + v.AsDigit();
         }
         return result;
     }
 
     public static int Part1(string input) => GetParts(input).Sum(v => v.partNumber);
 
-    public static long Part2(string input) => GetParts(input).GroupBy(p => p.pos).Where(g => g.Count() == 2).Sum(g => g.Take(2).Product(g => g.partNumber));
+    public static long Part2(string input) => GetParts(input).GroupBy(p => p.pos).Where(g => g.Count() == 2).Sum(g => g.Product(g => g.partNumber));
 
     public void Run(string input, ILogger logger)
     {

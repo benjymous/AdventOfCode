@@ -5,7 +5,7 @@ public class Day22 : IPuzzle
     {
         public Map(string input)
         {
-            var (mapData, tapeData) = input.Split("\n\n").Decompose2();
+            var (mapData, tapeData) = input.DecomposeSections();
             Data = Util.ParseSparseMatrix<char>(mapData, new Util.Convertomatic.SkipChars(' ')).ToFrozenDictionary();
             Tape = Util.SplitNumbersAndWords(tapeData);
             (maxX, maxY) = (Data.Max(kvp => kvp.Key.x), Data.Max(kvp => kvp.Key.y));

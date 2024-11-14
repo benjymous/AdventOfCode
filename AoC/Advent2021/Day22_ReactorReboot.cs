@@ -54,21 +54,9 @@ public class Day22 : IPuzzle
         return data.Sum(Volume);
     }
 
-    public static IEnumerable<Instruction> ParseData(string input) => Util.RegexParse<Instruction>(input);
+    public static long Part1(Util.AutoParse<Instruction> lines) => RunOperation(lines.Take(20));
 
-    public static long Part1(string input)
-    {
-        IEnumerable<Instruction> lines = ParseData(input);
-
-        return RunOperation(lines.Take(20));
-    }
-
-    public static long Part2(string input)
-    {
-        IEnumerable<Instruction> lines = ParseData(input);
-
-        return RunOperation(lines);
-    }
+    public static long Part2(Util.AutoParse<Instruction> lines) => RunOperation(lines);
 
     public void Run(string input, ILogger logger)
     {

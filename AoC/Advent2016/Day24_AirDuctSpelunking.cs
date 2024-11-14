@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2016;
 public class Day24 : IPuzzle
 {
-    static uint LocationCode(char c) => 1U << (c - '0');
+    static uint LocationCode(char c) => 1U << (c.AsDigit());
     static readonly uint HOME = LocationCode('0');
 
     public class MapData : IMap<PackedPos32>
@@ -36,7 +36,7 @@ public class Day24 : IPuzzle
 
     public static int Solve(MapData map, bool returnHome)
     {
-        return Solver<(uint location, uint visited, int distance), int>.Solve((HOME, HOME, 0), (state, solver) =>
+        return Solver<(uint location, uint visited, int distance)>.Solve((HOME, HOME, 0), (state, solver) =>
         {
             uint tryLocations = map.AllLocations - state.visited;
             if (tryLocations > 0)

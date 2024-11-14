@@ -334,6 +334,15 @@ namespace AoC.Utils
             return didSomething;
         }
 
+        public static T ApplyAll<T>(this IEnumerable<Func<T, T>> actions, T input)
+        {
+            foreach (var action in actions)
+            {
+                input = action(input);
+            }
+            return input;
+        }
+
         public static Dictionary<K, V> Resolve<K, V>(this Dictionary<K, V> source, Action<(K Key, V Value, Dictionary<K, V> Collection)> action)
         {
             foreach (var element in source)

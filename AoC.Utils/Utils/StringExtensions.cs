@@ -4,6 +4,9 @@ namespace AoC.Utils
 {
     public static partial class StringExtensions
     {
+        public static string[] SplitSections(this string input) => input.Split("\n\n");
+        public static (string section1, string section2) DecomposeSections(this string input) => input.SplitSections().Decompose2();
+
         public static byte[] GetSHA256(this string inputString) => SHA256.HashData(Encoding.UTF8.GetBytes(inputString));
 
         public static string GetSHA256String(this string inputString)
@@ -50,9 +53,14 @@ namespace AoC.Utils
 
         public static bool IsDigit(this char c) => digits.Contains(c);
 
+        public static int AsDigit(this char c) => c - '0';
+
         private static readonly string hexdigits = "0123456789abcdef";
 
         public static bool IsHex(this char c) => hexdigits.Contains(c);
+
+        private static readonly string truthy = "yY1tT";
+        public static bool AsBool(this char c) => truthy.Contains(c);
 
         public static IEnumerable<int> AllIndexesOf(this string str, string value)
         {

@@ -13,7 +13,7 @@ public class Day17 : IPuzzle
 
         int maxStraight = part.One() ? 3 : 10, minStop = part.One() ? 1 : 4;
 
-        return Solver<State, int>.Solve((0, 0, 1, 0, 0), (state, solver) =>
+        return Solver<State>.Solve((0, 0, 1, 0, 0), (state, solver) =>
         {
             if (solver.IsBetterThanSeen((state.x, state.y, state.dir, state.dirSteps), state.heatLoss))
             {

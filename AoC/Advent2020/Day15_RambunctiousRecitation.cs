@@ -1,16 +1,13 @@
 ﻿namespace AoC.Advent2020;
 public class Day15 : IPuzzle
 {
-    class Entry
+    class Entry(int v1 = -1, int v2 = -1)
     {
-        public Entry() => (v1, v2) = (-1, -1);
         public int Push(int v)
         {
             (v1, v2) = (v2, v);
             return v1;
         }
-
-        int v1, v2;
     }
 
     class Storage

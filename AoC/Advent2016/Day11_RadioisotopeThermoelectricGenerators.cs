@@ -66,7 +66,7 @@ public class Day11 : IPuzzle
     private static int FindBestPath(State initialState)
     {
         int closest = int.MaxValue;
-        return Solver<State, int>.Solve(initialState, (state, solver) =>
+        return Solver<State>.Solve(initialState, (state, solver) =>
         {
             foreach (var move in state.GetMoves().Where(move => solver.IsBetterThanCurrentBest(move.Steps) && move.Remaining - closest <= 2 && solver.IsBetterThanSeen(move, move.Steps)))
             {

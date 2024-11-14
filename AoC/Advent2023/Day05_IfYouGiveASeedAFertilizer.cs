@@ -17,6 +17,8 @@ public class Day05 : IPuzzle
 
     public class Factory
     {
+        public static implicit operator Factory(string data) => Util.RegexFactory<Factory>(data);
+
         public long[] Seeds;
 
         public Dictionary<string, (string to, Mapper map)> maps = [], mapsReverse = [];
@@ -47,17 +49,10 @@ public class Day05 : IPuzzle
         public long Reverse(string from, string to, long val) => DoMapping(false, from, to, val);
     }
 
-    public static long Part1(string input)
+    public static long Part1(Factory factory) => factory.Seeds.Select(seed => factory.Remap("seed", "location", seed)).Min();
+
+    public static long Part2(Factory factory)
     {
-        var factory = Util.RegexFactory<Factory>(input);
-
-        return factory.Seeds.Select(seed => factory.Remap("seed", "location", seed)).Min();
-    }
-
-    public static long Part2(string input)
-    {
-        var factory = Util.RegexFactory<Factory>(input);
-
         var chunks = factory.Seeds.Chunk(2).Select(c => (start: c[0], end: c[0] + c[1])).ToArray();
 
         int jumpSize = 10000;

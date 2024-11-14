@@ -48,9 +48,9 @@ public class Day20 : IPuzzle
         return counts;
     }
 
-    private static Dictionary<string, Node> InitNetwork(string input)
+    private static Dictionary<string, Node> InitNetwork(Util.AutoParse<Node> input)
     {
-        var network = Util.RegexParse<Node>(input).ToDictionary(n => n.Id, n => n);
+        var network = input.ToDictionary(n => n.Id, n => n);
         foreach (var (sourceId, childId) in network.Values.SelectMany(node => node.Outputs.Where(childId => network.ContainsKey(childId)).Select(childId => (node.Id, childId))))
             network[childId].InputWires.Add(sourceId);
 

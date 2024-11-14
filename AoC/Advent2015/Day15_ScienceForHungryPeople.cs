@@ -3,7 +3,7 @@ public class Day15 : IPuzzle
 {
     const int Calories = 4;
 
-    class Factory
+    public class Factory
     {
         [Regex(@".+: capacity (.+), durability (.+), flavor (.+), texture (.+), calories (.+)")]
         public static int[] Ingredient(int capacity, int durability, int flavor, int texture, int calories) => [capacity, durability, flavor, texture, calories];
@@ -44,17 +44,9 @@ public class Day15 : IPuzzle
 
     public static int Solve(int[][] ingredients, bool countCalories) => IngredientCombinations().Max(set => CalcScore(set, ingredients, countCalories));
 
-    public static int Part1(string input)
-    {
-        var ingredients = Util.RegexFactory<int[], Factory>(input).ToArray();
-        return Solve(ingredients, false);
-    }
+    public static int Part1(Util.AutoParse<int[], Factory> ingredients) => Solve(ingredients, false);
 
-    public static int Part2(string input)
-    {
-        var ingredients = Util.RegexFactory<int[], Factory>(input).ToArray();
-        return Solve(ingredients, true);
-    }
+    public static int Part2(Util.AutoParse<int[], Factory> ingredients) => Solve(ingredients, true);
 
     public void Run(string input, ILogger logger)
     {

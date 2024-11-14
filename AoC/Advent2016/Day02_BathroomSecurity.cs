@@ -15,37 +15,31 @@ public class Day02 : IPuzzle
 
     static Dictionary<(int x, int y), char> ParseKeypad(string kp) => Util.ParseSparseMatrix<char>(kp, new Util.Convertomatic.SkipChars());
 
-    public static string SimulateKeypad(string input, string keypadLayout)
+    public static IEnumerable<char> SimulateKeypad(string input, string keypadLayout)
     {
         var keypad = ParseKeypad(keypadLayout);
 
         var position = keypad.First(kvp => kvp.Value == '5').Key;
 
         var lines = Util.Split(input);
-        StringBuilder code = new();
-
-        ManhattanVector2 newPos = new(0, 0);
 
         foreach (var line in lines)
         {
             foreach (var offset in line.Select(c => new Direction2(c)))
             {
-                newPos = position;
-                newPos.Offset(offset);
+                var newPos = position.OffsetBy(offset);
                 if (keypad.ContainsKey(newPos))
                 {
                     position = newPos;
                 }
             }
-            code.Append(keypad[position]);
+            yield return keypad[position];
         }
-
-        return code.ToString();
     }
 
-    public static string Part1(string input) => SimulateKeypad(input, keypad1);
+    public static string Part1(string input) => SimulateKeypad(input, keypad1).AsString();
 
-    public static string Part2(string input) => SimulateKeypad(input, keypad2);
+    public static string Part2(string input) => SimulateKeypad(input, keypad2).AsString();
 
     public void Run(string input, ILogger logger)
     {

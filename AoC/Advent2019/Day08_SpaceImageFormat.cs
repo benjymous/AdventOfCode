@@ -5,7 +5,7 @@ public class Day08 : IPuzzle
 
     class Image(string data)
     {
-        readonly int[][] groups = data.Trim().Select(ch => ch - '0').Chunk(Width * Height).ToArray();
+        readonly int[][] groups = data.Trim().Select(ch => ch.AsDigit()).Chunk(Width * Height).ToArray();
 
         public int GetChecksum()
         {

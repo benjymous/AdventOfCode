@@ -2,9 +2,9 @@
 public class Day12 : IPuzzle
 {
     [method: Regex(@"(.+) (.+)")]
-    public record class Row(string Input, int[] Lengths);
+    public record class Row(string Input, List<int> Lengths);
 
-    static T[] Unfold<T>(IEnumerable<T> input, bool addJoiner = false, T join = default)
+    static List<T> Unfold<T>(IEnumerable<T> input, bool addJoiner = false, T join = default)
     {
         List<T> output = [];
         for (int i = 0; i < 5; ++i)
@@ -12,13 +12,13 @@ public class Day12 : IPuzzle
             output.AddRange(input);
             if (addJoiner && i < 4) output.Add(join);
         }
-        return [.. output];
+        return output;
     }
 
-    public static long Solve(string input, int[] lengths, int currentCount = 0) =>
+    public static long Solve(string input, List<int> lengths, int currentCount = 0) =>
         Memoize((input, lengths.GetCombinedHashCode(), currentCount), _ =>
     {
-        if (input.Length == 0) return lengths.Length == 0 ? 1 : 0;
+        if (input.Length == 0) return lengths.Count == 0 ? 1 : 0;
 
         int i = 0, count = currentCount;
 
@@ -29,13 +29,13 @@ public class Day12 : IPuzzle
                 i++; count++; // count the set blocks
             }
 
-            if (count > 0 && (lengths.Length == 0 || count > lengths[0])) return 0;
+            if (count > 0 && (lengths.Count == 0 || count > lengths[0])) return 0;
 
             if (i == input.Length || (input[i] == '.' && count > 0))
             {
                 // end of block, compare against lengths
                 if (count != lengths[0]) return 0; // this block doesn't match the first length
-                if (lengths.Length == 1 && i >= input.Length) return 1; // last length matches, so full match
+                if (lengths.Count == 1 && i >= input.Length) return 1; // last length matches, so full match
 
                 lengths = lengths[1..];
                 count = 0;
@@ -44,7 +44,7 @@ public class Day12 : IPuzzle
             while (i < input.Length && input[i] == '.') i++;
         } while (i < input.Length && input[i] != '?');
 
-        if (i >= input.Length && lengths.Length == 0) return 1; // full match
+        if (i >= input.Length && lengths.Count == 0) return 1; // full match
 
         if (i < input.Length && input[i] == '?')
         {

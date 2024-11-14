@@ -21,7 +21,7 @@ public class Day16 : IPuzzle
 
     public static string ApplyRepeatedFFT(string initial, int repeats)
     {
-        var current = initial.Trim().ToCharArray().Select(ch => ch - '0').ToArray();
+        var current = initial.Trim().Select(ch => ch.AsDigit()).ToArray();
         for (var i = 0; i < repeats; ++i)
         {
             current = ApplyFFT(current).ToArray();

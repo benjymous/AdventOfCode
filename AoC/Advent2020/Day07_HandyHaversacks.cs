@@ -3,28 +3,19 @@ public class Day07 : IPuzzle
 {
     static readonly string ShinyGoldKey = "shiny gold";
 
-    readonly struct BagRule
+    public class Factory
     {
-        public readonly string BagType;
-        public readonly Dictionary<string, uint> Children = [];
-
         [Regex(@"(.+) bags contain no other bags")]
-        public BagRule(string bagType) => BagType = bagType;
+        public static (string, Dictionary<string, uint>) EmptyBag(string bagType) => (bagType, []);
 
         [Regex(@"(.+) bags contain (.+)\.")]
-        public BagRule(string bagType, [Split(", ", @"(?<value>\d+) (?<key>.+) bags?")] Dictionary<string, uint> children) => (BagType, Children) = (bagType, children);
+        public static (string, Dictionary<string, uint>) Bag(string bagType, [Split(", ", @"(?<value>\d+) (?<key>.+) bags?")] Dictionary<string, uint> children) => (bagType, children);
     }
 
-    static long Count(string type, Dictionary<string, BagRule> rules, Dictionary<string, long> cache = null)
-    {
-        cache ??= [];
-        return cache.GetOrCalculate(type, type => rules[type].Children.Sum(c => c.Value * Count(c.Key, rules, cache)) + 1);
-    }
+    static long Count(string type, Dictionary<string, Dictionary<string, uint>> rules, Dictionary<string, long> cache = null) => cache.GetOrCalculate(type, type => rules[type].Sum(c => c.Value * Count(c.Key, rules, cache)) + 1);
 
-    public static int Part1(string input)
+    public static int Part1(Util.AutoParse<(string BagType, Dictionary<string, uint> Children), Factory> rules)
     {
-        var rules = Util.RegexParse<BagRule>(input).ToArray();
-
         HashSet<string> goldholders = rules.Where(r => r.Children.ContainsKey(ShinyGoldKey)).Select(r => r.BagType).ToHashSet();
 
         while (true)
@@ -36,12 +27,8 @@ public class Day07 : IPuzzle
         }
     }
 
-    public static long Part2(string input)
-    {
-        var rules = Util.RegexParse<BagRule>(input).ToDictionary(r => r.BagType);
-
-        return Count(ShinyGoldKey, rules) - 1;
-    }
+    public static long Part2(Util.AutoParse<(string, Dictionary<string, uint>), Factory> input)
+        => Count(ShinyGoldKey, input.ToDictionary(), []) - 1;
 
     public void Run(string input, ILogger logger)
     {
