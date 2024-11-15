@@ -1,34 +1,32 @@
 ﻿namespace AoC.Advent2018;
 public class Day24 : IPuzzle
 {
-    public class Group
+    public enum AttrType
     {
-        [Regex(@"(\d+) units each with (\d+) hit points with an attack that does (\d+) (.).+ damage at initiative (\d+)")]
-        public Group(uint unitCount, uint hitPoints, uint attackDamage, char damageType, uint initiative) => (UnitCount, HP, AttackDamage, AttackType, Initiative) = (unitCount, hitPoints, attackDamage, damageType, initiative);
-
-        [Regex(@"(\d+) units each with (\d+) hit points \(?(.+)?\)? with an attack that does (\d+) (.).+ damage at initiative (\d+)")]
-        public Group(uint unitCount, uint hitPoints, string attributes, uint attackDamage, char damageType, uint initiative)
-            : this(unitCount, hitPoints, attackDamage, damageType, initiative)
-        {
-            var bits = attributes.Replace(",", "").Split(';', StringSplitOptions.TrimEntries);
-            foreach (var bit in bits)
-            {
-                var bits2 = bit.Split(' ');
-                ((bits2[0] == "weak") ? Weak : Immune).UnionWith(bits2.Skip(2).Select(attr => attr[0]).ToHashSet());
-            }
-        }
-
+        weak,
+        immune
+    }
+    [Regex(@"(weak|immune) to (.+)")]
+    public class Attribute(AttrType type, [Split(", ")] string[] elements)
+    {
+        public AttrType Type = type;
+        public int Elements = elements.Sum(e => (1 << e[0]-'a'));
+    }
+    [Regex(@"(\d+) units each with (\d+) hit points ?\(?(.+)?\)? with an attack that does (\d+) (.).+ damage at initiative (\d+)")]
+    public class Group(uint unitCount, uint hitPoints, [Split("; ")] List<Attribute> attributes, uint attackDamage, char damageType, uint initiative)
+    {
         public bool ImmuneSystem = true;
         public int Id = 0;
         public Group target = null;
 
-        public uint UnitCount, HP, AttackDamage, Initiative;
-        public char AttackType;
+        public uint UnitCount = unitCount, HP = hitPoints, AttackDamage = attackDamage, Initiative = initiative;
+        public int AttackType = 1 << damageType-'a';
         public uint EffectivePower => UnitCount * AttackDamage;
 
-        readonly HashSet<char> Weak = [], Immune = [];
+        readonly Dictionary<AttrType, int> Attributes = attributes.ToDictionary(a => a.Type, a => a.Elements);
+        public bool CheckAffinity(AttrType type, int attr) => Attributes.TryGetValue(type, out var hash) && (hash & attr)!=0;
 
-        public uint EstimateDamage(Group attacker) => Immune.Contains(attacker.AttackType) ? 0 : (attacker.EffectivePower * (Weak.Contains(attacker.AttackType) ? 2u : 1u));
+        public uint EstimateDamage(Group attacker) => CheckAffinity(AttrType.immune, attacker.AttackType) ? 0 : (attacker.EffectivePower * (CheckAffinity(AttrType.weak, attacker.AttackType) ? 2u : 1u));
 
         public uint DoAttack()
         {
@@ -47,11 +45,11 @@ public class Day24 : IPuzzle
 
         while (true)
         {
-            int targetted = 0;
+            int targeted = 0;
             foreach (var g in groups.OrderByDescending(g => g.EffectivePower))
             {
-                g.target = groups.Where(g2 => ((targetted & g2.Id) == 0) && g2.ImmuneSystem != g.ImmuneSystem).Select(g2 => (group: g2, damage: g2.EstimateDamage(g))).Where(res => res.damage > 0).OrderByDescending(res => (res.damage, res.group.EffectivePower, res.group.Initiative)).Select(t => t.group).FirstOrDefault();
-                if (g.target != null) targetted |= g.target.Id;
+                g.target = groups.Where(g2 => ((targeted & g2.Id) == 0) && g2.ImmuneSystem != g.ImmuneSystem).Select(g2 => (group: g2, damage: g2.EstimateDamage(g))).Where(res => res.damage > 0).OrderByDescending(res => (res.damage, res.group.EffectivePower, res.group.Initiative)).Select(t => t.group).FirstOrDefault();
+                if (g.target != null) targeted |= g.target.Id;
             }
 
             if (groups.Sum(g => g.DoAttack()) == 0) break;
