@@ -19,8 +19,8 @@ public class Day11 : IPuzzle
 
         var (maxX, maxY) = (galaxies.Max(v => v.x), galaxies.Max(x => x.y));
 
-        var gapsX = Enumerable.Range(0, maxX).Where(x => !galaxies.Any(p => p.x == x)).ToArray();
-        var gapsY = Enumerable.Range(0, maxY).Where(y => !galaxies.Any(p => p.y == y)).ToArray();
+        var gapsX = Enumerable.Range(0, maxX).Except(galaxies.Select(p => p.x)).ToArray();
+        var gapsY = Enumerable.Range(0, maxY).Except(galaxies.Select(p => p.y)).ToArray();
 
         return galaxies.UniquePairs()
                 .Sum(pair => pair.Item1.Distance(pair.Item2) +

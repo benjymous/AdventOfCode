@@ -19,11 +19,11 @@ namespace AoC.Advent2019.Test
         }
 
         [TestCategory("Regression")]
+        [TestCategory("OCR")]
         [DataTestMethod]
         public void Painter_Part2_Regression()
         {
-            const string expectedHash = "A29721599A050782D56738E44A37A8DE";
-            Assert.AreEqual(expectedHash, Day11.Part2(input, new ConsoleOut()));
+            Assert.AreEqual("APFKRKBR", Day11.Part2(input, new ConsoleOut()));
         }
     }
 }

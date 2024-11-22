@@ -4,7 +4,7 @@ public class Day17 : IPuzzle
     [Regex(@"target area: x=(\d+)..(\d+), y=(-?\d+)..(-?\d+)")]
     public record struct TargetRect(int X1, int X2, int Y1, int Y2)
     {
-        public static TargetRect Create(string input) => Util.FromString<TargetRect>(input);
+        public static implicit operator TargetRect(string data) => Util.FromString<TargetRect>(data);
 
         public readonly bool Contains((int X, int Y) point, bool ignoreX) => ignoreX ? point.Y >= Y1 && point.Y <= Y2 : point.X >= X1 && point.Y >= Y1 && point.X <= X2 && point.Y <= Y2;
 
@@ -28,20 +28,16 @@ public class Day17 : IPuzzle
         }
     }
 
-    public static int Part1(string input)
+    public static int Part1(TargetRect target)
     {
-        var target = TargetRect.Create(input);
-
         return Util.RangeBetween(0, 150)
                          .Select(dy => TestShot(target, (0, dy), true))
                          .Where(res => res.hit)
                          .Max(res => res.maxY);
     }
 
-    public static int Part2(string input)
+    public static int Part2(TargetRect target)
     {
-        var target = TargetRect.Create(input);
-
         return Util.Matrix(Util.RangeBetween(1, target.X2 + 1), Util.RangeBetween(target.Y1, 150))
                     .Select(pos => TestShot(target, pos, false))
                     .Count(res => res.hit);

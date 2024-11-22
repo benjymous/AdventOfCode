@@ -68,7 +68,7 @@ public class Day18 : IPuzzle
         return result;
     }
 
-    static Queue<char> ToQueue(string input) => new(input.Replace(" ", ""));
+    static Queue<char> ToQueue(string input) => [.. input.Replace(" ", "")];
 
     public static long Solve1(string input) => Solve(ToQueue(input), QuestionPart.Part1);
 

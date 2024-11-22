@@ -3,13 +3,10 @@ public class Day16 : IPuzzle
 {
     static readonly Dictionary<string, int> clues = Util.FromString<Dictionary<string, int>>("children: 3, cats: 7, samoyeds: 2, pomeranians: 3, akitas: 0, vizslas: 0, goldfish: 5, trees: 3, cars: 2, perfumes: 1");
 
-    [method: Regex(@"Sue (\d+): (.+)")]
-    public class Sue(int id, [Split(", ", @"(?<key>.+): (?<value>.+)")] Dictionary<string, int> inv)
+    [Regex(@"Sue (\d+): (.+)")]
+    public record class Sue(int Id, [Split(", ", @"(?<key>.+): (?<value>.+)")] Dictionary<string, int> Inventory)
     {
-        public int Id = id;
-        public Dictionary<string, int> inventory = inv;
-
-        public int ScorePart1(Dictionary<string, int> clues) => clues.Count(clue => clue.Value > 0 && inventory.TryGetValue(clue.Key, out int value) && clue.Value == value);
+        public int ScorePart1(Dictionary<string, int> clues) => clues.Count(clue => clue.Value > 0 && Inventory.TryGetValue(clue.Key, out int value) && clue.Value == value);
 
         public int ScorePart2(Dictionary<string, int> clues)
         {
@@ -20,7 +17,7 @@ public class Day16 : IPuzzle
                 {
                     // In particular, the cats and trees readings indicates that there are greater than that many 
                     // (due to the unpredictable nuclear decay of cat dander and tree pollen)
-                    if (inventory.TryGetValue(clue.Key, out int value) && clue.Value < value)
+                    if (Inventory.TryGetValue(clue.Key, out int value) && clue.Value < value)
                     {
                         score++;
                     }
@@ -29,12 +26,12 @@ public class Day16 : IPuzzle
                 {
                     // the pomeranians and goldfish readings indicate that there are fewer than that many
                     // (due to the modial interaction of magnetoreluctance)
-                    if ((inventory.TryGetValue(clue.Key, out int value) && clue.Value > value) || !inventory.ContainsKey(clue.Key))
+                    if ((Inventory.TryGetValue(clue.Key, out int value) && clue.Value > value) || !Inventory.ContainsKey(clue.Key))
                     {
                         score++;
                     }
                 }
-                else if (clue.Value > 0 && inventory.TryGetValue(clue.Key, out int value) && clue.Value == value)
+                else if (clue.Value > 0 && Inventory.TryGetValue(clue.Key, out int value) && clue.Value == value)
                 {
                     score++;
                 }
@@ -43,7 +40,7 @@ public class Day16 : IPuzzle
         }
     }
 
-    private static int Solve(Util.AutoParse<Sue> input, QuestionPart part) => input.Select(a => (part.One() ? a.ScorePart1(clues) : a.ScorePart2(clues), a)).OrderByDescending(t => t.Item1).First().a.Id;
+    private static int Solve(Util.AutoParse<Sue> input, QuestionPart part) => input.Select(a => (part.One() ? a.ScorePart1(clues) : a.ScorePart2(clues), a)).MaxBy(t => t.Item1).a.Id;
 
     public static int Part1(string input) => Solve(input, QuestionPart.Part1);
 

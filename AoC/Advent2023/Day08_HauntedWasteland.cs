@@ -28,9 +28,9 @@ public class Day08 : IPuzzle
 
     public static long Part2(GhostMap map)
     {
-        return map.Paths.Keys.Where(k => k.EndsWith('A'))
+        return map.Paths.Keys.Where(k => k.ToString().EndsWith('A'))
             .Aggregate(1L, (cycle, start)
-                => Util.LCM(cycle, map.Walk(start, current => current.EndsWith('Z'))));
+                => Util.LCM(cycle, map.Walk(start, current => current.ToString().EndsWith('Z'))));
     }
 
     public void Run(string input, ILogger logger)

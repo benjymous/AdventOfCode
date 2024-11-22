@@ -42,7 +42,7 @@ public class Day23 : IPuzzle
         return current.Find(1).Skip(1);
     }
 
-    public static string Part1(string input, int rounds = 100) => string.Join("", Play(input, rounds).Select(i => i.ToString()));
+    public static string Part1(string input, int rounds = 100) => string.Concat(Play(input, rounds).Select(i => i.ToString()));
 
     public static long Part2(string input) => Play(input, 10000000, true).Take(2).Product();
 

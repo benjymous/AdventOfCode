@@ -50,47 +50,6 @@ public class Day18 : IPuzzle
                 }
 
                 previous[hash] = i;
-
-                //if (previous.FindCycle(hash, i, iterations, out var target))
-                //{
-                //    targetStep = target + 1;
-                //}
-
-            }
-
-            for (var y = 0; y < height; ++y)
-                for (var x = 0; x < width; ++x)
-                    newState[x, y] = Step(currentState[x, y], GetNeighbours(currentState, x, y, width, height));
-
-            (currentState, newState) = (newState, currentState);
-        }
-
-        return Count(TREES, ref currentState) * Count(LUMBERYARD, ref currentState);
-    }
-
-    public static int _Run(string input, int iterations)
-    {
-        var currentState = Util.ParseMatrix<char>(input);
-        var (width, height) = currentState.Dimensions();
-        var newState = new char[width, height];
-
-        var previous = new Dictionary<int, int>();
-        int targetStep = iterations < 100 ? iterations : -1;
-
-        for (var i = 0; i < iterations; ++i)
-        {
-            if (targetStep == i) break;
-            else if (targetStep == -1)
-            {
-                var hash = CalcHash(ref currentState);
-
-                if (previous.TryGetValue(hash, out int idx))
-                {
-                    var cycleLength = i - idx;
-                    targetStep = cycleLength == 1 ? i + 1 : i + ((iterations - (i % cycleLength)) % cycleLength);
-                }
-
-                previous[hash] = i;
             }
 
             for (var y = 0; y < height; ++y)

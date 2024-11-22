@@ -58,7 +58,7 @@ public class Day16 : IPuzzle
 
     public static string Part2(string input)
     {
-        var initial = string.Join("", Enumerable.Repeat(input.Trim(), 10000)).Select(c => (int)c);
+        var initial = string.Concat(Enumerable.Repeat(input.Trim(), 10000)).Select(c => (int)c);
 
         var signal = ProcessSignal(initial.ToArray());
 

@@ -2,7 +2,7 @@
 public class Day25 : IPuzzle
 {
     [Regex(@"(.+): (.+)")]
-    public record class Connection(StringInt32 Element, [Split(" ")] StringInt32[] Connections);
+    public record class Connection(StringInt6 Element, [Split(" ")] StringInt6[] Connections);
 
     class Map : IMap<int>
     {

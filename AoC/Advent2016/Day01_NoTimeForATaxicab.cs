@@ -25,7 +25,7 @@ public class Day01 : IPuzzle
             {
                 for (int i = 0; i < instruction.Distance; ++i)
                 {
-                    position.Offset(direction);
+                    position += direction;
 
                     if (seen.Contains(position))
                     {

@@ -18,11 +18,7 @@ public class Day15 : IPuzzle
             Util.ParseNumbers<int>(input).ForEach(i => AddNumber(i));
         }
 
-        (int, int) AddNumber(int val)
-        {
-            var e = values[val] ??= new();
-            return (val, e.Push(++Count));
-        }
+        (int, int) AddNumber(int val) => (val, (values[val] ??= new()).Push(++Count));
 
         public int Populate(int required)
         {
@@ -39,11 +35,7 @@ public class Day15 : IPuzzle
         readonly Entry[] values;
     }
 
-    public static int Solve(string input, int count)
-    {
-        var data = new Storage(input, count);
-        return data.Populate(count);
-    }
+    public static int Solve(string input, int count) => new Storage(input, count).Populate(count);
 
     public static int Part1(string input) => Solve(input, 2020);
 

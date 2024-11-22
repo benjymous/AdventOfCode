@@ -446,5 +446,14 @@ namespace AoC.Test
             Assert.AreEqual("wxyz", windows[22]);
             Assert.AreEqual("wxyz", windows.Last());
         }
+
+        [TestMethod]
+        public void NextMultipleTest()
+        {
+            Assert.AreEqual(20, Util.RoundUpToNextMultiple(11, 10));
+            Assert.AreEqual(30, Util.RoundUpToNextMultiple(27, 10));
+            Assert.AreEqual(75UL, Util.RoundUpToNextMultiple(73UL, 25UL));
+
+        }
     }
 }

@@ -1,18 +1,13 @@
 ﻿namespace AoC.Advent2022;
 public class Day16 : IPuzzle
 {
-    static readonly int AA = Util.MakeTwoCC("AA");
-
     [method: Regex("Valve (..) has flow rate=(.+); tunnels? leads? to valves? (.+)")]
-    class Valve(string id, int rate, string[] neighbours)
+    record class Valve(TwoCC Id, int Rate, [Split(", ")] TwoCC[] Neighbours)
     {
-        public int Id = Util.MakeTwoCC(id);
         public uint BitIndex;
-        public int Rate = rate;
-        public int[] Neighbours = neighbours.Select(n => (int)Util.MakeTwoCC(n.Trim())).ToArray();
     }
 
-    record MapData(Dictionary<int, int[]> Data) : IMap<int> { public IEnumerable<int> GetNeighbours(int location) => Data[location]; }
+    record MapData(Dictionary<TwoCC, TwoCC[]> Data) : IMap<TwoCC> { public IEnumerable<TwoCC> GetNeighbours(TwoCC location) => Data[location]; }
 
     private static (Dictionary<uint, int> routes, Dictionary<uint, int> valveRates, uint availableNodes) Init(string input)
     {
@@ -29,7 +24,7 @@ public class Day16 : IPuzzle
         for (int i = 0; i < valves.Length; i++)
         {
             Valve v1 = valves[i];
-            yield return (1 | v1.BitIndex, map.FindPath(AA, v1.Id).Length + 1);
+            yield return (1 | v1.BitIndex, map.FindPath("AA", v1.Id).Length + 1);
             for (int j = i + 1; j < valves.Length; j++)
             {
                 Valve v2 = valves[j];

@@ -1,4 +1,3 @@
-using AoC.Utils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AoC.Advent2018.Test
@@ -12,10 +11,11 @@ namespace AoC.Advent2018.Test
         readonly string input = Util.GetInput<Day10>();
 
         [TestCategory("Regression")]
+        [TestCategory("OCR")]
         [DataTestMethod]
         public void StarSigns_Part1_Regression()
         {
-            Assert.AreEqual("12BE5B2645AD2CFDA4AA7A90A0C7328E", Day10.Part1(input).GetMD5String());
+            Assert.AreEqual("FBHKLEAG", Utils.OCR.TextReader.Read(Day10.Part1(input, new ConsoleOut())));
         }
 
         [TestCategory("Regression")]

@@ -4,18 +4,18 @@ public class Day02 : IPuzzle
     [Regex(@"(.+)")]
     public record class Set(Entry[] Items)
     {
-        public bool Possible => Items.All(i => i.Possible);
+        public readonly bool Possible = Items.All(i => i.Possible);
     }
 
     public enum Colour
     {
         red = 12, green = 13, blue = 14
-    };
+    }
 
     [Regex(@"(\d+) (.+)")]
     public record class Entry(int Num, Colour Colour)
     {
-        public bool Possible => Num <= (int)Colour;
+        public readonly bool Possible = Num <= (int)Colour;
     }
 
     [Regex(@"Game (\d+): (.+)")]

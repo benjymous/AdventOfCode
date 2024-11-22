@@ -1,29 +1,30 @@
 ﻿namespace AoC.Advent2023;
+using Signal = (TwoCC dest, TwoCC from, bool level);
 public class Day20 : IPuzzle
 {
     const bool Low = false, High = true;
     const char FlipFlop = '%', Conjuction = '&', Broadcaster = 'b';
 
     [method: Regex(@"([%&])(.+) -> (.+)")]
-    public record class Node(char Type, string Id, [Split(", ")] string[] Outputs)
+    public record class Node(char Type, TwoCC Id, [Split(", ")] TwoCC[] Outputs)
     {
         [Regex(@"broadcaster -> (.+)")]
-        public Node([Split(", ")] string[] outputs) : this(Broadcaster, "broad", outputs) { }
+        public Node([Split(", ")] TwoCC[] outputs) : this(Broadcaster, "br", outputs) { }
 
         bool State = false;
-        readonly Dictionary<string, bool> Memory = [];
+        readonly Dictionary<TwoCC, bool> Memory = [];
 
-        public HashSet<string> InputWires = [];
+        public HashSet<TwoCC> InputWires = [];
 
-        IEnumerable<(string dest, string from, bool level)> Send(bool signal) => Outputs.Select(o => (o, Id, signal));
+        IEnumerable<Signal> Send(bool signal) => Outputs.Select(o => (o, Id, signal));
 
-        bool DoConjunction((string dest, string from, bool level) signal)
+        bool DoConjunction(Signal signal)
         {
             Memory[signal.from] = signal.level;
             return !InputWires.All(id => Memory.TryGetValue(id, out var value) && value);
         }
 
-        public IEnumerable<(string dest, string from, bool level)> Operate((string dest, string from, bool level) signal) => Type switch
+        public IEnumerable<Signal> Operate(Signal signal) => Type switch
         {
             Broadcaster => Send(signal.level),
             FlipFlop when signal.level == Low => Send(State = !State),
@@ -32,9 +33,9 @@ public class Day20 : IPuzzle
         };
     }
 
-    private static (int highCount, int lowCount) PushButton(Dictionary<string, Node> network, HashSet<string> watchNodes = default, Action<string> watchCallback = default)
+    private static (int highCount, int lowCount) PushButton(Dictionary<TwoCC, Node> network, HashSet<TwoCC> watchNodes = default, Action<TwoCC> watchCallback = default)
     {
-        List<(string dest, string from, bool level)> signals = [("broad", "button", Low)];
+        List<Signal> signals = [("br", "--", Low)];
         (int lowCount, int highCount) counts = (0, 0);
         HashSet<string> watches = [];
         do
@@ -48,7 +49,7 @@ public class Day20 : IPuzzle
         return counts;
     }
 
-    private static Dictionary<string, Node> InitNetwork(Util.AutoParse<Node> input)
+    private static Dictionary<TwoCC, Node> InitNetwork(Util.AutoParse<Node> input)
     {
         var network = input.ToDictionary(n => n.Id, n => n);
         foreach (var (sourceId, childId) in network.Values.SelectMany(node => node.Outputs.Where(childId => network.ContainsKey(childId)).Select(childId => (node.Id, childId))))
@@ -59,7 +60,7 @@ public class Day20 : IPuzzle
 
     public static int Part1(string input)
     {
-        Dictionary<string, Node> network = InitNetwork(input);
+        Dictionary<TwoCC, Node> network = InitNetwork(input);
         (int lowCount, int highCount) counts = (0, 0);
 
         for (int pushCount = 0; pushCount < 1000; ++pushCount) counts = counts.OffsetBy(PushButton(network));
@@ -71,7 +72,7 @@ public class Day20 : IPuzzle
     {
         var network = InitNetwork(input);
         var watchNodes = network.Values.Single(n => n.Outputs.Contains("rx")).InputWires;
-        Dictionary<string, int> lastSeen = [], cycles = [];
+        Dictionary<TwoCC, int> lastSeen = [], cycles = [];
 
         for (int pushCount = 0; ; ++pushCount)
         {

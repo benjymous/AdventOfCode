@@ -1,14 +1,14 @@
 ﻿namespace AoC.Advent2020;
 public class Day04 : IPuzzle
 {
-    private static IEnumerable<Dictionary<string, string>> ParseData(string input, bool validate)
+    private static int CountValid(string input, bool validate)
     {
         return input.SplitSections()
             .Select(line => line.Replace("\n", " ").Trim().Split(" "))
-            .Select(entries => entries.Select(v => v.Split(":"))
-            .Where(pair => !validate || ValidateEntry(pair[0], pair[1]))
-            .ToDictionary(pair => pair[0], pair => pair[1]))
-            .Where(r => r.Keys.Intersect(expectedFields).Count() == expectedFields.Count);
+            .Select(entries => entries.Select(v => v.Split(":").Decompose2())
+            .Where(pair => !validate || ValidateEntry(pair.First, pair.Second))
+            .Select(pair => pair.First))
+            .Count(r => r.Intersect(expectedFields).Count() == expectedFields.Count);
     }
 
     static readonly HashSet<string> eyeCols = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
@@ -55,19 +55,20 @@ public class Day04 : IPuzzle
                 case "pid":
                     // Passport ID - a nine-digit number, including leading zeroes
                     return val.Length == 9 && val.All(v => v.IsDigit());
+
+                default:
+                    return false;
             }
         }
         catch
         {
             return false;
         }
-
-        return false;
     }
 
-    public static int Part1(string input) => ParseData(input, false).Count();
+    public static int Part1(string input) => CountValid(input, false);
 
-    public static int Part2(string input) => ParseData(input, true).Count();
+    public static int Part2(string input) => CountValid(input, true);
 
     public void Run(string input, ILogger logger)
     {

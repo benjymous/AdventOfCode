@@ -46,7 +46,7 @@ public class Day08 : IPuzzle
         };
     }
 
-    public static string Escape(string input) => '\"' + string.Join("", input.Select(Encode)) + '\"';
+    public static string Escape(string input) => '\"' + string.Concat(input.Select(Encode)) + '\"';
 
     public static int Part1(string input)
     {

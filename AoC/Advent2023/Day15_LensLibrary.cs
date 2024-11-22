@@ -1,17 +1,18 @@
 ﻿namespace AoC.Advent2023;
 public class Day15 : IPuzzle
 {
-    public static int CalculateHASH(IEnumerable<char> collection) => collection.Aggregate(0, (hash, v) => (hash + v) * 17 % 256);
+    public static int CalculateHASH(string collection) => Memoize(collection, _ => collection.Aggregate(0, (hash, v) => (hash + v) * 17 % 256));
 
-    public record struct Instruction(string Label, bool Put, int FocalLength = 0)
+    public class Factory
     {
+        public readonly LensBox[] Boxes = Enumerable.Range(0, 256).Select(i => new LensBox(i)).ToArray();
+        LensBox Box(string label) => Boxes[CalculateHASH(label)];
+
         [Regex(@"([a-z]+)=(\d+)")]
-        public Instruction(string label, int focalLength) : this(label, true, focalLength) { }
+        public void AddLens(string label, int focalLength) => Box(label).AddLens((label, focalLength));
 
         [Regex(@"([a-z]+)-")]
-        public Instruction(string label) : this(label, false) { }
-
-        public readonly int BoxNumber = CalculateHASH(Label);
+        public void RemoveLens(string label) => Box(label).RemoveLens(label);
     }
 
     public record class LensBox(int BoxIndex)
@@ -34,19 +35,7 @@ public class Day15 : IPuzzle
     public static int Part1(string input) => Util.Split(input).Sum(CalculateHASH);
 
     public static int Part2(string input)
-    {
-        var boxes = Enumerable.Range(0, 256).Select(i => new LensBox(i)).ToArray();
-
-        foreach (var instr in Util.RegexParse<Instruction>(Util.Split(input)))
-        {
-            if (instr.Put)
-                boxes[instr.BoxNumber].AddLens((instr.Label, instr.FocalLength));
-            else
-                boxes[instr.BoxNumber].RemoveLens(instr.Label);
-        }
-
-        return boxes.Sum(b => b.GetPower());
-    }
+        => Util.RegexFactory<Factory>(Util.Split(input)).Boxes.Sum(b => b.GetPower());
 
     public void Run(string input, ILogger logger)
     {

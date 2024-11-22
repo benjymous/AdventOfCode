@@ -22,7 +22,7 @@ public class Day20 : IPuzzle
             });
         }
 
-        public int Get(PackedPos32 pos) => data.Contains(pos) ? 1 : 0;
+        public int this[PackedPos32 pos] => data.Contains(pos) ? 1 : 0;
 
         public (int minY, int maxY, int minX, int maxX) GetRange(int margin) => (MinY - margin, MaxY + margin, MinX - margin, MaxX + margin);
 
@@ -40,7 +40,7 @@ public class Day20 : IPuzzle
         int result = 0;
         for (int i = 0; i < 9; ++i)
         {
-            result = (result << 1) + input.Get(key + Offsets[i]);
+            result = (result << 1) + input[key + Offsets[i]];
         }
         return result;
     }

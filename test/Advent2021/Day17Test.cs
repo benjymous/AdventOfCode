@@ -22,7 +22,7 @@ namespace AoC.Advent2021.Test
 
         public static bool TestInRect(string input, int x, int y)
         {
-            var rect = TargetRect.Create(input);
+            var rect = (TargetRect)input;
             return rect.Contains((x, y), false);
         }
 
@@ -40,7 +40,7 @@ namespace AoC.Advent2021.Test
 
         public static bool TestHits(string input, int dx, int dy)
         {
-            var target = TargetRect.Create(input);
+            var target = (TargetRect)input;
 
             return TestShot(target, (dx, dy), false).hit;
         }

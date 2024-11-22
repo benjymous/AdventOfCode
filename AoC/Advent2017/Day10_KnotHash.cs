@@ -46,7 +46,7 @@ public class Day10 : IPuzzle
         return RunHash(256, instructions, 1).CheckSum();
     }
 
-    public static string Part2(string input) => string.Join("", KnotHash(input).Select(i => i.ToHex()));
+    public static string Part2(string input) => string.Concat(KnotHash(input).Select(i => i.ToHex()));
 
     public void Run(string input, ILogger logger)
     {

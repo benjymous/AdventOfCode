@@ -11,24 +11,18 @@ public class Day24 : IPuzzle
         public bool IsFuture((double X, double Y) p) => Math.Sign((float)(p.X - Pos.X)) == Math.Sign(Vel.X) && Math.Sign((float)(p.Y - Pos.Y)) == Math.Sign(Vel.Y);
     }
 
+    public static bool IsInside((double X, double Y) position, long minTest, long maxTest) => position.X >= minTest && position.X <= maxTest && position.Y >= minTest && position.Y <= maxTest;
+
     public static int CheckTestArea(Util.AutoParse<Entry> data, long minTest, long maxTest)
     {
-        var lines = data.Select(entry => ((long, long)[])[(entry.Pos.X, entry.Pos.Y), (entry.Pos.X + entry.Vel.X, entry.Pos.Y + entry.Vel.Y)]).ToArray();
-
-        int count = 0;
-        for (int i1 = 0; i1 < lines.Length; ++i1)
-        {
-            for (int i2 = i1 + 1; i2 < lines.Length; ++i2)
-            {
-                var intersect = Util.GetIntersectionPoint(lines[i1], lines[i2]);
-                if (intersect != null && data[i1].IsFuture(intersect.Value) && data[i2].IsFuture(intersect.Value) && intersect.Value.X >= minTest && intersect.Value.X <= maxTest && intersect.Value.Y >= minTest && intersect.Value.Y <= maxTest)
-                {
-                    count++;
-                }
-            }
-        }
-
-        return count;
+        return data.Select(entry => (Entry: entry,
+                                     Value: ((long, long)[])[(entry.Pos.X, entry.Pos.Y), (entry.Pos.X + entry.Vel.X, entry.Pos.Y + entry.Vel.Y)]))
+                   .UniquePairs()
+                   .Select(pair => (Pair: pair, Intersect: Util.GetIntersectionPoint(pair.Item1.Value, pair.Item2.Value)))
+                   .Count(entry => entry.Intersect != null
+                              && IsInside(entry.Intersect.Value, minTest, maxTest)
+                              && entry.Pair.Item1.Entry.IsFuture(entry.Intersect.Value)
+                              && entry.Pair.Item2.Entry.IsFuture(entry.Intersect.Value));
     }
 
     static decimal SolvePt2((Entry a, Entry b, Entry c) input)

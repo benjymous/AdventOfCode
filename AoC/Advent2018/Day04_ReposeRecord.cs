@@ -62,8 +62,8 @@ public class Day04 : IPuzzle
     {
         var (guards, durations) = Parse(input);
 
-        var sleepiest = durations.OrderByDescending(kvp => kvp.Value).First().Key;
-        var m = guards[sleepiest].OrderByDescending(kvp => kvp.Value).First().Key;
+        var sleepiest = durations.MaxBy(kvp => kvp.Value).Key;
+        var m = guards[sleepiest].MaxBy(kvp => kvp.Value).Key;
 
         return sleepiest * m;
     }
@@ -72,7 +72,7 @@ public class Day04 : IPuzzle
     {
         var (guards, durations) = Parse(input);
 
-        var (guardId, min, count) = guards.SelectMany(kvp => kvp.Value.Select(kvp2 => (guardId: kvp.Key, min: kvp2.Key, count: kvp2.Value))).OrderByDescending(entry => entry.count).First();
+        var (guardId, min, count) = guards.SelectMany(kvp => kvp.Value.Select(kvp2 => (guardId: kvp.Key, min: kvp2.Key, count: kvp2.Value))).MaxBy(entry => entry.count);
         return guardId * min;
     }
 

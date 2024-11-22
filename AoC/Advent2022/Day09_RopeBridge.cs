@@ -28,7 +28,7 @@ public class Day09 : IPuzzle
                 for (int j = 0; j < numSegments - 1; ++j)
                     if (!UpdateTail(rope[j], ref rope[j + 1])) break;
 
-                tailPositions.Add(rope[numSegments - 1]);
+                tailPositions.Add(rope[^1]);
             }
         }
 

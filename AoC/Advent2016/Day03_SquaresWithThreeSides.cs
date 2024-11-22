@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2016;
 public class Day03 : IPuzzle
 {
-    public static bool TriangleValid(params int[] row) => row[0] + row[1] > row[2] && row[0] + row[2] > row[1] && row[1] + row[2] > row[0];
+    public static bool TriangleValid(int[] row) => row[0] + row[1] > row[2] && row[0] + row[2] > row[1] && row[1] + row[2] > row[0];
 
     public static int Part1(string input)
     {

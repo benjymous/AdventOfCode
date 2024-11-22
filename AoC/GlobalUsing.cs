@@ -1,5 +1,4 @@
 ﻿global using AoC.Utils;
-global using AoC.Utils.AdaptorTypes;
 global using AoC.Utils.Collections;
 global using AoC.Utils.Pathfinding;
 global using AoC.Utils.Solver;
@@ -13,4 +12,7 @@ global using System.Runtime.CompilerServices;
 global using System.Text;
 global using System.Text.RegularExpressions;
 global using static AoC.Utils.Memoizer;
+//global using FourCC = AoC.Utils.Strings.PackedString<uint, AoC.Utils.Strings.PackFourCC>;
 global using PackedPos32 = AoC.Utils.Vectors.PackedVect2<int, AoC.Utils.Vectors.Pack16_16>;
+global using StringInt6 = AoC.Utils.Strings.PackedString<int, AoC.Utils.Strings.PackAlphaInt6>;
+global using TwoCC = AoC.Utils.Strings.PackedString<ushort, AoC.Utils.Strings.PackTwoCC>;

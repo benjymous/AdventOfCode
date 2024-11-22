@@ -30,7 +30,7 @@ public class Day16 : IPuzzle
         {
             var sections = input.SplitSections();
             Rules = Util.RegexParse<TicketRule>(sections[0]).ToList();
-            YourTicket = ParseTickets(sections[1]).First();
+            YourTicket = ParseTickets(sections[1]).Single();
             NearbyTickets = ParseTickets(sections[2]);
         }
 

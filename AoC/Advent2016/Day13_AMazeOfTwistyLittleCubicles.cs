@@ -5,26 +5,11 @@ public class Day13 : IPuzzle
     {
         readonly int Seed = int.Parse(seed);
 
-        public virtual IEnumerable<(int x, int y)> GetNeighbours((int x, int y) center)
-        {
-            (int x, int y) pt = (center.x - 1, center.y);
-            if (IsValidNeighbour(pt))
-                yield return pt;
+        readonly (int dx, int dy)[] Neighbours = [(-1, 0), (1, 0), (0, 1), (0, -1)];
 
-            pt = (center.x + 1, center.y);
-            if (IsValidNeighbour(pt))
-                yield return pt;
+        public virtual IEnumerable<(int x, int y)> GetNeighbours((int x, int y) center) => Neighbours.Select(n => center.OffsetBy(n)).Where(IsValidNeighbour);
 
-            pt = (center.x, center.y + 1);
-            if (IsValidNeighbour(pt))
-                yield return pt;
-
-            pt = (center.x, center.y - 1);
-            if (IsValidNeighbour(pt))
-                yield return pt;
-        }
-
-        public bool IsValidNeighbour((int x, int y) pt) => pt.x >= 0 && pt.y >= 0 && Memoize(pt, _ => IsOpen(pt.x, pt.y));
+        bool IsValidNeighbour((int x, int y) pt) => pt.x >= 0 && pt.y >= 0 && Memoize(pt, _ => IsOpen(pt.x, pt.y));
 
         bool IsOpen(int x, int y) => (Seed + (x * x) + (3 * x) + (2 * x * y) + y + (y * y)).CountBits() % 2 == 0;
 

@@ -97,4 +97,31 @@ namespace AoC.Utils.Collections
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
+
+    public static class TreeExtensions
+    {
+        public static Tree<TKeyType, TDataType> ToTree<TKeyType, TDataType>(this IEnumerable<(TKeyType key, TDataType value, IEnumerable<TKeyType> children)> data)
+        {
+            var tree = new Tree<TKeyType, TDataType>();
+
+            foreach (var (key, value, children) in data)
+            {
+                tree.AddChildren(key, value, children);
+            }
+
+            return tree;
+        }
+
+        public static Tree<TKeyType> ToTree<TKeyType>(this IEnumerable<(TKeyType parent, TKeyType child)> data)
+        {
+            var tree = new Tree<TKeyType>();
+
+            foreach (var (parent, child) in data)
+            {
+                tree.AddPair(parent, child);
+            }
+
+            return tree;
+        }
+    }
 }

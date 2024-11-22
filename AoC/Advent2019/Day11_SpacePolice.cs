@@ -65,7 +65,7 @@ public class Day11 : IPuzzle
         robot.Run();
         var image = robot.GetDrawnPattern();
         logger.WriteLine("\n" + image);
-        return image.GetMD5String();
+        return Utils.OCR.TextReader.Read(image);
     }
 
     public void Run(string input, ILogger logger)

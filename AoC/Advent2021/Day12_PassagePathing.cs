@@ -4,8 +4,7 @@ public class Day12 : IPuzzle
     public static Tree<string> ParseTree(string input)
     {
         var tree = new Tree<string>();
-        var data = Util.Split(input);
-        foreach (var line in data)
+        foreach (var line in Util.Split(input))
         {
             if (string.IsNullOrEmpty(line)) continue;
             var bits = line.Split('-');
@@ -29,9 +28,8 @@ public class Day12 : IPuzzle
 
         int routes = 0;
 
-        while (queue.Count != 0)
+        queue.Operate(item =>
         {
-            var item = queue.Dequeue();
             foreach (var neighbour in item.location.Children)
             {
                 if (neighbour == endNode)
@@ -56,22 +54,15 @@ public class Day12 : IPuzzle
 
                 queue.Enqueue((neighbour, SetSeen(item.seen, neighbour.Id), canRevisit));
             }
-        }
+        });
 
         return routes;
     }
 
-    public static int Part1(string input)
-    {
-        var tree = ParseTree(input);
-        return Solve(tree);
-    }
+    public static int Part1(string input) => Solve(ParseTree(input));
 
-    public static int Part2(string input)
-    {
-        var tree = ParseTree(input);
-        return Solve(tree, true);
-    }
+    public static int Part2(string input) => Solve(ParseTree(input), true);
+
     public void Run(string input, ILogger logger)
     {
         logger.WriteLine("- Pt1 - " + Part1(input));

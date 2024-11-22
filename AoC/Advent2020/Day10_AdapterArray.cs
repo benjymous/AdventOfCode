@@ -3,11 +3,8 @@ public class Day10 : IPuzzle
 {
     static List<int> GetValues(string input)
     {
-        var values = Util.ParseNumbers<int>(input).ToList();
-        values.Add(0);
-        values = [.. values.Order()];
-        values.Add(values.Last() + 3);
-        return values;
+        var values = Util.ParseNumbers<int>(input).Order().ToList();
+        return [0, .. values, values[^1] + 3];
     }
 
     public static int Part1(string input)

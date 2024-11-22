@@ -43,7 +43,7 @@ public class Day08 : IPuzzle
 
         public int NumPixelsOn() => pixels.Values().Count(x => x);
 
-        public override string ToString() => pixels.AsString(v => v ? "##" : "..");
+        public override string ToString() => pixels.AsString(v => v ? "##" : "  ");
     }
 
     public static int Part1(string input) => new Display(input, 50, 6).NumPixelsOn();
@@ -52,7 +52,7 @@ public class Day08 : IPuzzle
     {
         var display = new Display(input, 50, 6).ToString();
         logger?.WriteLine("\n\n" + display);
-        return display.GetMD5String(false);
+        return display;
     }
 
     public void Run(string input, ILogger logger)

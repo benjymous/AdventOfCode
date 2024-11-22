@@ -1,11 +1,9 @@
 ﻿namespace AoC.Advent2017;
 public class Day13 : IPuzzle
 {
-    [method: Regex(@"(\d+): (\d+)")]
-    public class Scanner(int Id, int Range)
+    [Regex(@"(\d+): (\d+)")]
+    public record class Scanner(int Id, int Range)
     {
-        public int Id { get; private set; } = Id;
-        public int Range { get; private set; } = Range;
         public int Position { get; private set; } = 0;
         public int Frequency { get; private set; } = (2 * Range) - 2;
 

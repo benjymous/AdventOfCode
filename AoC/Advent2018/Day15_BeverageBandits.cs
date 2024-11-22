@@ -52,7 +52,7 @@ public class Day15 : IPuzzle
 
         PackedPos32 ReadingOrderMove(PackedPos32 pos, PackedPos32 dest, PackedPos32 next)
         {
-            var v = pos.Distance(dest) == 1 ? dest : InRange.Select(offset => pos + offset).Where(IsClear).Select(newPos => (pos: newPos, dist: this.FindPath(newPos, dest).Length)).Where(v => v.dist > 0).OrderBy(v => (v.dist, v.pos)).First().pos;
+            var v = pos.Distance(dest) == 1 ? dest : InRange.Select(offset => pos + offset).Where(IsClear).Select(newPos => (pos: newPos, dist: this.FindPath(newPos, dest).Length)).Where(v => v.dist > 0).MinBy(v => (v.dist, v.pos)).pos;
 
             if (v != dest && v != next)
             {

@@ -11,7 +11,7 @@ namespace AoC;
 public enum QuestionPart
 {
     Part1 = 1,
-    Part2 = 2
+    Part2 = 2,
 }
 
 public static class QuestionPartExtensions
@@ -320,7 +320,7 @@ public partial class Util
         throw new Exception($"RegexFactory failed to find suitable factory function for {line}");
     }
 
-    public static void RegexFactoryPerform<FT>(string line, FT factory) where FT : class
+    static void RegexFactoryPerform<FT>(string line, FT factory) where FT : class
     {
         foreach (var func in typeof(FT).GetMethods())
         {
@@ -351,14 +351,30 @@ public partial class Util
 
     public static FT RegexFactory<FT>(string input, string splitter = "\n") where FT : class, new()
     {
+        return RegexFactory<FT>(input.Split(splitter).WithoutNullOrWhiteSpace());
+    }
+
+    public static FT RegexFactory<FT>(IEnumerable<string> input) where FT : class, new()
+    {
         FT factory = new();
 
-        foreach (var line in input.Split(splitter).WithoutNullOrWhiteSpace())
+        foreach (var line in input)
         {
             RegexFactoryPerform(line, factory);
         }
 
         return factory;
+    }
+
+    public static void RegexFactory<FT>(string input, FT factory, string splitter = "\n") where FT : class
+        => RegexFactory(input.Split(splitter).WithoutNullOrWhiteSpace(), factory);
+
+    public static void RegexFactory<FT>(IEnumerable<string> input, FT factory) where FT : class
+    {
+        foreach (var line in input)
+        {
+            RegexFactoryPerform(line, factory);
+        }
     }
 
     public static List<T> CreateMultiple<T>(int count) where T : new() => Enumerable.Repeat(0, count).Select(_ => new T()).ToList();
@@ -850,10 +866,12 @@ public partial class Util
                 yield return (item1, item2);
     }
 
-    public static ushort MakeTwoCC(string name) => name.Length == 1 ? name[0] : (ushort)(name[0] + (name[1] << 8));
+    public static ushort MakeTwoCC(string name) => name.Length == 1 ? name[0] : (ushort)(name[1] + (name[0] << 8));
     public static ushort MakeTwoCC(char c1, char c2) => (ushort)(c1 + (c2 << 8));
+    public static string UnMakeTwoCC(ushort val) => ((char[])[(char)((val >> 8) & 0xff), (char)(val & 0xff)]).AsString();
 
-    public static uint MakeFourCC(string name) => name[0] + ((uint)name[1] << 8) + ((uint)name[2] << 16) + ((uint)name[3] << 24);
+    public static uint MakeFourCC(string name) => (name.Length > 4 ? name[3] : 0U) + ((uint)name[2] << 8) + ((uint)name[1] << 16) + ((uint)name[0] << 24);
+    public static string UnMakeFourCC(uint val) => ((char[])[(char)((val >> 24) & 0xff), (char)((val >> 16) & 0xff), (char)((val >> 8) & 0xff), (char)((val) & 0xff)]).AsString();
 
     public static (T min, T max) MinMax<T>(params T[] input) where T : IBinaryInteger<T> => (input.Min(), input.Max());
 
@@ -917,6 +935,8 @@ public partial class Util
 
         return state;
     }
+
+    public static TNum RoundUpToNextMultiple<TNum>(TNum n, TNum mult) where TNum : IBinaryNumber<TNum> => (n + (mult - TNum.One)) / mult * mult;
 }
 
 public class AutoArray<DataType>(IEnumerable<DataType> input) : IEnumerable<DataType>
@@ -1147,4 +1167,6 @@ public static class Extensions
     }
 
     public static TAttribute Get<TAttribute>(this Dictionary<Type, Attribute> attrs) where TAttribute : Attribute => attrs == null ? default : (TAttribute)attrs.GetOrDefault(typeof(TAttribute));
+
+    public static Boxed<T> Wrap<T>(this T item) => new(item);
 }

@@ -1,8 +1,6 @@
 ﻿namespace AoC.Advent2020;
 public class Day13 : IPuzzle
 {
-    static ulong NextMultiple(ulong n, ulong mult) => (n + (mult - 1)) / mult * mult;
-
     public static ulong Part1(string input)
     {
         var lines = Util.Split(input, "\n");
@@ -13,7 +11,7 @@ public class Day13 : IPuzzle
         foreach (var t in times.Where(t => t != "x"))
         {
             var bus = ulong.Parse(t);
-            var nexttime = NextMultiple(timestamp, bus);
+            var nexttime = Util.RoundUpToNextMultiple(timestamp, bus);
             if (nexttime < smallest)
             {
                 smallest = nexttime;

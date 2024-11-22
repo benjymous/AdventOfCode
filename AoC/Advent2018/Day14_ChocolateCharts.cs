@@ -28,7 +28,7 @@ public class Day14 : IPuzzle
 
         StepRecipe(recipe, ref current, start + keep);
 
-        return string.Join("", recipe).Substring(start, keep);
+        return string.Concat(recipe).Substring(start, keep);
     }
 
     public static int Part2(string input)

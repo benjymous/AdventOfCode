@@ -3,7 +3,7 @@ public class Day20 : IPuzzle
 {
     private static long Shuffle(string input, long key = 1, int repeats = 1)
     {
-        var circle = Circle<Boxed<long>>.Create(Util.ParseNumbers<int>(input).Select(i => new Boxed<long>(key * i)));
+        var circle = Circle<Boxed<long>>.Create(Util.ParseNumbers<int>(input).Select(i => (key * i).Wrap()));
         var elements = circle.Elements().ToArray();
 
         elements.Repeat(repeats).ForEach(el => el.Move(el.Value));

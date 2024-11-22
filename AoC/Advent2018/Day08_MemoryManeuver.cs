@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2018;
 public class Day08 : IPuzzle
 {
-    static Node BuildTree(string input) => new(new Queue<int>(Util.ParseNumbers<int>(input, " ")));
+    static Node BuildTree(string input) => new([.. Util.ParseNumbers<int>(input, " ")]);
 
     class Node
     {

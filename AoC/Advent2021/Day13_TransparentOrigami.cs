@@ -5,12 +5,8 @@ public class Day13 : IPuzzle
     class Fold(char dir, int foldLine)
     {
         public IEnumerable<(int x, int y)> Perform(IEnumerable<(int x, int y)> dots)
-        {
-            return from dot in dots
-                   select dir == 'x'
-                       ? dot.x < foldLine ? dot : (foldLine - (dot.x - foldLine), dot.y)
-                       : dot.y < foldLine ? dot : (dot.x, foldLine - (dot.y - foldLine));
-        }
+          => dots.Select(dot => dir == 'x' ? dot.x < foldLine ? dot : (foldLine - (dot.x - foldLine), dot.y)
+                                            : dot.y < foldLine ? dot : (dot.x, foldLine - (dot.y - foldLine)));
     }
 
     static string Display(HashSet<(int x, int y)> dots)
@@ -61,7 +57,7 @@ public class Day13 : IPuzzle
         var display = Display(data);
         logger?.WriteLine(display);
 
-        return display.GetMD5String(false);
+        return display;
     }
 
     public void Run(string input, ILogger logger)

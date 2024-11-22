@@ -9,19 +9,29 @@ public class Day22 : IPuzzle
         public Brick(int x1, int y1, int z1, int x2, int y2, int z2)
         {
             _Cubes = Util.Range3DInclusive<int, Pack8_8_16>((z1, z2, y1, y2, x1, x2)).ToArray();
-            _Bottom = _Cubes.Select(c => c - (0, 0, 1)).Where(c => !Cubes.Contains(c)).ToArray();
+            _Bottom = _Cubes.Where(c => c.Z == z1).Select(c => c - (0, 0, 1)).ToArray();
             Lowest = z1;
         }
 
         readonly PackedPos[] _Cubes = [], _Bottom = [];
         public int Lowest = 0, OffsetZ = 0;
         public IEnumerable<PackedPos> Cubes => _Cubes.Select(c => c + (0, 0, OffsetZ));
-        public IEnumerable<PackedPos> Bottom => _Bottom.Select(c => c + (0, 0, OffsetZ));
 
         public HashSet<Brick> Supporting = [], SupportedBy = [];
 
-        public bool Stable = false;
-        public bool ReachedFloor => Lowest + OffsetZ == 1;
+        bool Stable = false;
+
+        public bool Update(Dictionary<PackedPos, Brick> index)
+        {
+            if (!(Stable = (Lowest + OffsetZ == 1) || _Bottom.Any(cube => index.TryGetValue(cube + (0, 0, OffsetZ), out var brick) && brick.Stable)))
+            {
+                index.RemoveRange(Cubes);
+                OffsetZ--;
+                index.AddRange(Cubes.Select(c => (c, this)));
+                return true;
+            }
+            return false;
+        }
     }
 
     public static Brick[] SimulateBricks(Util.AutoParse<Brick> input)
@@ -34,11 +44,8 @@ public class Day22 : IPuzzle
 
         while (active.TryDequeue(out Brick brick))
         {
-            if (!(brick.Stable = brick.ReachedFloor || brick.Bottom.Any(cube => index.TryGetValue(cube, out var brick) && brick.Stable)))
+            if (brick.Update(index))
             {
-                index.RemoveRange(brick.Cubes);
-                brick.OffsetZ--;
-                index.AddRange(brick.Cubes.Select(c => (c, brick)));
                 active.Add(brick);
             }
         }

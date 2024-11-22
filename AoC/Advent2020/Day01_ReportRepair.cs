@@ -4,20 +4,18 @@ public class Day01 : IPuzzle
     public static int Part1(string input)
     {
         var allNumbers = Util.ParseNumbers<int>(input).ToHashSet();
-
-        return (from n1 in allNumbers
-                where allNumbers.Contains(2020 - n1)
-                select n1 * (2020 - n1)).First();
+        return allNumbers.Where(n1 => allNumbers.Contains(2020 - n1))
+                         .Select(n1 => n1 * (2020 - n1))
+                         .First();
     }
 
     public static int Part2(string input)
     {
         var allNumbers = Util.ParseNumbers<int>(input).ToHashSet();
 
-        return (from n1 in allNumbers
-                from n2 in allNumbers
-                where allNumbers.Contains(2020 - (n1 + n2))
-                select n1 * n2 * (2020 - (n1 + n2))).First();
+        return allNumbers.SelectMany(n1 => allNumbers.Where(n2 => allNumbers.Contains(2020 - (n1 + n2)))
+                                                     .Select(n2 => n1 * n2 * (2020 - (n1 + n2))))
+                         .First();
     }
 
     public void Run(string input, ILogger logger)

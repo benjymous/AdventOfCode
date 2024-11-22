@@ -1,6 +1,6 @@
-﻿using State = (int x, int y, int dir, int dirSteps, int heatLoss);
+﻿namespace AoC.Advent2023;
 
-namespace AoC.Advent2023;
+using State = (int x, int y, int dir, int dirSteps, int heatLoss);
 public class Day17 : IPuzzle
 {
     static readonly Direction2[] Directions = [Direction2.North, Direction2.East, Direction2.South, Direction2.West];

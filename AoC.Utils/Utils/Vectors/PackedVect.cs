@@ -32,6 +32,9 @@
 
     public record struct PackedVect2<TNum, TPacker>(TNum V) : IComparable<PackedVect2<TNum, TPacker>> where TNum : IBinaryInteger<TNum> where TPacker : ICoordinatePacker2<TNum>
     {
+        [Regex(@"(\d+)\s?,\s?(\d+)")]
+        public PackedVect2(TNum x, TNum y) : this(TPacker.Set((x, y))) { }
+
         public readonly TNum X => TPacker.GetX(V);
         public readonly TNum Y => TPacker.GetY(V);
         public static implicit operator TNum(PackedVect2<TNum, TPacker> p) => p.V;

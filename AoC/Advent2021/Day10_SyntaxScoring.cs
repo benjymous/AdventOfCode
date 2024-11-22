@@ -19,20 +19,14 @@ public class Day10 : IPuzzle
                     break;
 
                 case ')' or ']' or '}' or '>':
-                    var expected = ExpectedClose(stack.Pop());
-                    if (c != expected) return (c, stack);
+                    if (c != ExpectedClose(stack.Pop())) return (c, stack);
                     break;
             }
         }
         return ('\0', stack);
     }
 
-    public static int Part1(string input)
-    {
-        var lines = Util.Split(input);
-
-        return lines.Sum(line => Score(CheckLine(line).found).part1);
-    }
+    public static int Part1(string input) => Util.Split(input).Sum(line => Score(CheckLine(line).found).part1);
 
     public static long Part2(string input)
     {

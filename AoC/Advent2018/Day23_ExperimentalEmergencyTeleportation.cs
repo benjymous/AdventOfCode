@@ -9,7 +9,7 @@ public class Day23 : IPuzzle
 
     public static int Part1(Util.AutoParse<Entry> data)
     {
-        var strongest = data.OrderByDescending(e => e.Radius).First();
+        var strongest = data.MaxBy(e => e.Radius);
 
         return data.Count(e => e.Position.Distance(strongest.Position) <= strongest.Radius);
     }
@@ -18,7 +18,7 @@ public class Day23 : IPuzzle
     {
         var (minZ, maxZ, minY, maxY, minX, maxX) = data.Select(e => e.Position).GetRange();
 
-        var weakest = data.OrderBy(e => e.Radius).First();
+        var weakest = data.MinBy(e => e.Radius);
 
         int step = Math.Max(1, weakest.Radius / 2);
 

@@ -237,7 +237,7 @@ namespace AoC.Utils
                 yield return Column(array2d, col);
         }
 
-        public static string AsString<T>(this T[,] array2d, Func<T, string> displayFunc) => string.Join("\n", array2d.Rows().Select(row => string.Join("", row.Select(v => displayFunc(v)))));
+        public static string AsString<T>(this T[,] array2d, Func<T, string> displayFunc) => string.Join("\n", array2d.Rows().Select(row => string.Concat(row.Select(v => displayFunc(v)))));
 
         public static bool TrySet<T>(this T[,] array2d, (int col, int row) pos, T val) => TrySet(array2d, pos.col, pos.row, val);
 
@@ -374,7 +374,7 @@ namespace AoC.Utils
 
         public static void Add<T>(this Queue<T> queue, T item) => queue.Enqueue(item);
 
-        public static Queue<T> ToQueue<T>(this IEnumerable<T> sequence) => new(sequence);
+        public static Queue<T> ToQueue<T>(this IEnumerable<T> sequence) => [.. sequence];
         public static Stack<T> ToStack<T>(this IEnumerable<T> sequence) => new(sequence);
 
         public static void EnqueueRange<T>(this Queue<T> queue, IEnumerable<T> sequence)
@@ -485,6 +485,19 @@ namespace AoC.Utils
                 foreach (var v in collection)
                 {
                     hash = (hash * 31) + v;
+                }
+                return hash;
+            }
+        }
+
+        public static int GetCombinedHashCode(this IEnumerable<bool> collection)
+        {
+            unchecked
+            {
+                int hash = 17;
+                foreach (var v in collection)
+                {
+                    hash = (hash * 31) + (v ? 1 : 0);
                 }
                 return hash;
             }
@@ -729,13 +742,13 @@ namespace AoC.Utils
 
         public static (T value, int count) MostCommon<T>(this IEnumerable<T> vals)
         {
-            var result = vals.GroupBy(v => v).OrderByDescending(g => g.Count()).First();
+            var result = vals.GroupBy(v => v).MaxBy(g => g.Count());
             return (result.Key, result.Count());
         }
 
         public static (T value, int count) LeastCommon<T>(this IEnumerable<T> vals)
         {
-            var result = vals.GroupBy(v => v).OrderBy(g => g.Count()).First();
+            var result = vals.GroupBy(v => v).MinBy(g => g.Count());
             return (result.Key, result.Count());
         }
 

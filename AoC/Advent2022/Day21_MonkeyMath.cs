@@ -1,27 +1,46 @@
 ﻿namespace AoC.Advent2022;
 public class Day21 : IPuzzle
 {
-    static readonly string HumanKey = "humn";
-    static readonly string RootKey = "root";
+    static readonly string HumanKey = "humn", RootKey = "root";
 
-    public class Monkey
+    public class Factory(string input)
     {
+        public Dictionary<string, Monkey> index = [];
+        Monkey Get(string monkey) => index.GetOrCalculate(monkey, n => new(n));
+
         [Regex("(....): (....) (.) (....)")]
-        public Monkey(string name, string left, char op, string right) => (Name, _Left, _Right, Op) = (name, left, right, op);
+        public Monkey MonkeyLink(string name, string left, char op, string right)
+        {
+            var monkey = Get(name);
+            monkey.Left = Get(left);
+            monkey.Right = Get(right);
+            monkey.Op = op;
+
+            return monkey;
+        }
 
         [Regex(@"(....): (\d+)")]
-        public Monkey(string name, long value) => (Name, _Value) = (name, value);
+        public Monkey MonkeyValue(string name, long value)
+        {
+            var monkey = Get(name);
+            monkey.Value = value;
+            return monkey;
+        }
 
-        public readonly string Name;
+        public Monkey GetRootMonkey()
+        {
+            Util.RegexFactory(input, this);
+            return index[RootKey];
+        }
+    }
 
-        readonly string _Left = null, _Right = null;
-        readonly char Op;
+    public class Monkey(string name)
+    {
+        public char Op;
+        public Monkey Left, Right;
+        public long? Value = null;
 
-        Monkey Left, Right;
-
-        public void ResolveChildren(Dictionary<string, Monkey> index) => (Left, Right) = (_Left != null) ? (index[_Left], index[_Right]) : (null, null);
-
-        public static implicit operator long(Monkey m) => m._Value ??= m.Op switch
+        public static implicit operator long(Monkey m) => m.Value ??= m.Op switch
         {
             '+' => m.Left + m.Right,
             '*' => m.Left * m.Right,
@@ -29,18 +48,17 @@ public class Day21 : IPuzzle
             '/' => m.Left / m.Right,
             _ => throw new Exception("unexpected operator")
         };
-        long? _Value = null;
 
-        bool ContainsHuman => _ContainsHuman ??= (Name == HumanKey || (Left != null && (Left.ContainsHuman || Right.ContainsHuman)));
+        bool ContainsHuman => _ContainsHuman ??= (name == HumanKey || (Left != null && (Left.ContainsHuman || Right.ContainsHuman)));
         bool? _ContainsHuman = null;
 
         public long CalculateHumanValue(long targetResult = 0)
         {
-            if (Name == HumanKey) return targetResult;
+            if (name == HumanKey) return targetResult;
 
             (Monkey humanSide, long resolvedBranch) = Left.ContainsHuman ? (Left, Right) : (Right, Left);
 
-            return humanSide.CalculateHumanValue(((Name == RootKey) ? '=' : Op) switch
+            return humanSide.CalculateHumanValue(((name == RootKey) ? '=' : Op) switch
             {
                 '=' => resolvedBranch,
                 '+' => targetResult - resolvedBranch,
@@ -52,9 +70,7 @@ public class Day21 : IPuzzle
         }
     }
 
-    private static Monkey GetRootMonkey(string input) => Memoize(input, _ =>
-        Util.RegexParse<Monkey>(input)
-            .ToDictionary(m => m.Name).Resolve(entry => entry.Value.ResolveChildren(entry.Collection))[RootKey]);
+    private static Monkey GetRootMonkey(string input) => Memoize(input, _ => new Factory(input).GetRootMonkey());
 
     public static long Part1(string input) => GetRootMonkey(input);
 

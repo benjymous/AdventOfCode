@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2017;
 public class Day05 : IPuzzle
 {
-    public static int Run(string input, bool mode2)
+    public static int Run(string input, QuestionPart part)
     {
         var instructions = Util.ParseNumbers<int>(input);
 
@@ -12,7 +12,7 @@ public class Day05 : IPuzzle
         {
             int offset = instructions[position];
 
-            instructions[position] += (mode2 && (offset >= 3)) ? -1 : 1;
+            instructions[position] += (part.Two() && (offset >= 3)) ? -1 : 1;
 
             position += offset;
             steps++;
@@ -21,9 +21,9 @@ public class Day05 : IPuzzle
         return steps;
     }
 
-    public static int Part1(string input) => Run(input, false);
+    public static int Part1(string input) => Run(input, QuestionPart.Part1);
 
-    public static int Part2(string input) => Run(input, true);
+    public static int Part2(string input) => Run(input, QuestionPart.Part2);
 
     public void Run(string input, ILogger logger)
     {

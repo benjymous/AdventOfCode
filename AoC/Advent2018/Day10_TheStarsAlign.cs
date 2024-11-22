@@ -55,13 +55,19 @@ public class Day10 : IPuzzle
         }
     }
 
-    public static string Part1(string input) => Solve(input).message;
+    public static string Part1(string input, ILogger logger)
+    {
+        var message = Solve(input).message;
+
+        logger.WriteLine("\n" + message);
+        return message;
+    }
 
     public static int Part2(string input) => Solve(input).steps;
 
     public void Run(string input, ILogger logger)
     {
-        logger.WriteLine("- Pt1 - \n" + Part1(input));
+        logger.WriteLine("- Pt1 - \n" + Part1(input, logger));
         logger.WriteLine("- Pt2 - " + Part2(input));
     }
 }

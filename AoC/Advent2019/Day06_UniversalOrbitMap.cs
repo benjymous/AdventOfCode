@@ -3,17 +3,7 @@ public class Day06 : IPuzzle
 {
     public static int MakeId(string str) => str.Select((c, i) => (c.AsDigit()) << (i * 6)).Sum();
 
-    public static Tree<int> ParseTree(string input)
-    {
-        var tree = new Tree<int>();
-        var data = Util.Split(input);
-        foreach (var line in data)
-        {
-            var bits = line.Split(')');
-            tree.AddPair(MakeId(bits[0]), MakeId(bits[1]));
-        }
-        return tree;
-    }
+    public static Tree<int> ParseTree(string input) => Util.Split(input).Select(line => line.Split(')').Select(MakeId)).Select(line => line.Decompose2()).ToTree();
 
     public static int Part1(string input)
     {

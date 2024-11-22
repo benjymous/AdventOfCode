@@ -16,7 +16,7 @@ namespace AoC.Advent2019.Test
         [DataTestMethod]
         public void BoostTestOutput(string program, string expected)
         {
-            Assert.AreEqual(expected, string.Join(",", string.Join("", Day09.Run(program, 1))));
+            Assert.AreEqual(expected, string.Join(",", string.Concat(Day09.Run(program, 1))));
         }
 
         [TestCategory("Regression")]

@@ -3,19 +3,10 @@ public class Day07 : IPuzzle
 {
     public class TreeBuilder
     {
-        [Regex(@"(.+) \((\d+)\) -> (.+)")] public static (string, int, string[]) ParentNode(string key, int value, [Split(", ")] string[] children) => (key, value, children);
-        [Regex(@"(.+) \((\d+)\)")] public static (string, int, string[]) LeafNode(string key, int value) => (key, value, []);
+        [Regex(@"(.+) \((\d+)\) -> (.+)")] public static (string, int, IEnumerable<string>) ParentNode(string key, int value, [Split(", ")] string[] children) => (key, value, children);
+        [Regex(@"(.+) \((\d+)\)")] public static (string, int, IEnumerable<string>) LeafNode(string key, int value) => (key, value, []);
 
-        public static Tree<string, int> Build(Util.AutoParse<(string key, int value, string[] children), TreeBuilder> input)
-        {
-            var tree = new Tree<string, int>();
-
-            foreach (var (key, value, children) in input)
-            {
-                tree.AddChildren(key, value, children);
-            }
-            return tree;
-        }
+        public static Tree<string, int> Build(Util.AutoParse<(string key, int value, IEnumerable<string> children), TreeBuilder> input) => input.ToTree();
     }
 
     static int GetChildScore(TreeNode<string, int> node) => node.Value + node.Children.Sum(GetChildScore);

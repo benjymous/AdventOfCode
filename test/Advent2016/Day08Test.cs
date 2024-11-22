@@ -16,10 +16,11 @@ namespace AoC.Advent2016.Test
         }
 
         [TestCategory("Regression")]
+        [TestCategory("OCR")]
         [DataTestMethod]
         public void TFA_Part2_Regression()
         {
-            Assert.AreEqual("10F7D860E71BC77C7C91BE1592DAD4CB", Day08.Part2(input, new ConsoleOut()));
+            Assert.AreEqual("AFBUPZBJPS", Utils.OCR.TextReader.Read(Day08.Part2(input, new ConsoleOut())));
         }
     }
 }

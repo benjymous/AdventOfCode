@@ -34,7 +34,7 @@ public class Day10 : IPuzzle
 
         logger.WriteLine(Environment.NewLine + crt);
 
-        return crt.GetMD5String();
+        return crt;
     }
 
     public void Run(string input, ILogger logger)

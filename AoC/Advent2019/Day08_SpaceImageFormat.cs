@@ -9,7 +9,7 @@ public class Day08 : IPuzzle
 
         public int GetChecksum()
         {
-            var lowestZeroes = groups.OrderBy(g => g.Count(i => i == 0)).First();
+            var lowestZeroes = groups.MinBy(g => g.Count(i => i == 0));
             return lowestZeroes.Count(i => i == 1) * lowestZeroes.Count(i => i == 2);
         }
 
@@ -33,7 +33,7 @@ public class Day08 : IPuzzle
     {
         var image = new Image(input).ToString();
         logger.WriteLine("\n" + image);
-        return image.GetMD5String();
+        return Utils.OCR.TextReader.Read(image);
     }
 
     public void Run(string input, ILogger logger)

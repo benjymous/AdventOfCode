@@ -13,17 +13,9 @@ public class Day02 : IPuzzle
         return data.Pairs().Where(pair => pair.Item1 % pair.Item2 == 0).Select(pair => pair.Item1 / pair.Item2).First();
     }
 
-    public static int Part1(string input)
-    {
-        var lines = Util.Split(input);
-        return lines.Sum(RowDifference);
-    }
+    public static int Part1(string input) => Util.Split(input).Sum(RowDifference);
 
-    public static int Part2(string input)
-    {
-        var lines = Util.Split(input);
-        return lines.Sum(RowMultiple);
-    }
+    public static int Part2(string input) => Util.Split(input).Sum(RowMultiple);
 
     public void Run(string input, ILogger logger)
     {

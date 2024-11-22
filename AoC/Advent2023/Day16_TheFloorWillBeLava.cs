@@ -4,38 +4,36 @@ public class Day16 : IPuzzle
     static void Step((int x, int y) pos, Direction2 dir, char[,] map, int[,] beams)
         => DoBeam(pos.OffsetBy(dir), dir, map, beams);
 
-    static void DoBeam((int x, int y) pos, Direction2 dir, char[,] map, int[,] beams)
+    static int[,] DoBeam((int x, int y) pos, Direction2 dir, char[,] map, int[,] beams = default)
     {
-        if (!map.Contains(pos)) return;
-
-        int beamBit = 1 << dir.RotationSteps();
-        if ((beams[pos.x, pos.y] & beamBit) == 0)
+        if (beams == default) beams = new int[map.Width(), map.Height()];
+        if (map.Contains(pos))
         {
-            beams[pos.x, pos.y] |= beamBit;
-            var c = map[pos.x, pos.y];
-
-            if ((c == '|' && dir.DY == 0) || (c == '-' && dir.DX == 0))
+            int beamBit = 1 << dir.RotationSteps();
+            if ((beams[pos.x, pos.y] & beamBit) == 0)
             {
-                Step(pos, dir - 1, map, beams);
-                Step(pos, dir + 1, map, beams);
-            }
-            else
-            {
-                if (c is '\\' or '/') dir.Mirror(c);
+                beams[pos.x, pos.y] |= beamBit;
+                var c = map[pos.x, pos.y];
 
-                Step(pos, dir, map, beams);
+                if ((c == '|' && dir.DY == 0) || (c == '-' && dir.DX == 0))
+                {
+                    Step(pos, dir - 1, map, beams);
+                    Step(pos, dir + 1, map, beams);
+                }
+                else
+                {
+                    if (c is '\\' or '/') dir.Mirror(c);
+
+                    Step(pos, dir, map, beams);
+                }
             }
         }
+
+        return beams;
     }
 
     private static int RunBeamSimulation((int x, int y) start, Direction2 dir, char[,] data)
-    {
-        var beams = new int[data.Width(), data.Height()];
-
-        DoBeam(start, dir, data, beams);
-
-        return beams.Values().Count(v => v > 0);
-    }
+        => DoBeam(start, dir, data).Values().Count(v => v > 0);
 
     private static IEnumerable<int> SolvePart2(char[,] data)
     {

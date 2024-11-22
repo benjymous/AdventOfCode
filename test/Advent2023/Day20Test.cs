@@ -3,6 +3,7 @@
 namespace AoC.Advent2023.Test;
 
 [TestCategory("2023")]
+[TestCategory("PackedString")]
 [TestClass]
 public class Day20Test
 {

@@ -6,14 +6,14 @@ public class Day14 : IPuzzle
         var pairs = Util.Split(input, "\n")
             .Distinct()
             .SelectMany(line =>
-                Util.Parse<ManhattanVector2>(line.Split(" -> "))
+                Util.RegexParse<PackedPos32>(line, " -> ")
                 .OverlappingPairs());
 
         foreach (var (first, second) in pairs)
         {
-            var delta = second.Delta(first);
-            for (var pos = first; pos != second; pos += delta) yield return (PackedPos32)pos.AsSimple();
-            yield return (PackedPos32)second.AsSimple();
+            PackedPos32 delta = (Math.Sign(second.X - first.X), Math.Sign(second.Y - first.Y));
+            for (var pos = first; pos != second; pos += delta) yield return pos;
+            yield return second;
         }
     }
 

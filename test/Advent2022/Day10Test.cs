@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AoC.Utils;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AoC.Advent2022.Test
 {
@@ -167,7 +168,7 @@ noop".Replace("\r", "");
         [DataTestMethod]
         public void CRT02Test()
         {
-            Assert.AreEqual("BA8737FF1F5B748145E3243169BF9978", Day10.Part2(test, new ConsoleOut()));
+            Assert.AreEqual("BA8737FF1F5B748145E3243169BF9978", Day10.Part2(test, new ConsoleOut()).GetMD5String());
         }
 
         [TestCategory("Regression")]
@@ -178,10 +179,11 @@ noop".Replace("\r", "");
         }
 
         [TestCategory("Regression")]
+        [TestCategory("OCR")]
         [DataTestMethod]
         public void CRT_Part2_Regression()
         {
-            Assert.AreEqual("6DBA86D87D1C42C2DAE02CB537DA78C4", Day10.Part2(input, new ConsoleOut()));
+            Assert.AreEqual("RZHFGJCB", Utils.OCR.TextReader.Read(Day10.Part2(input, new ConsoleOut())));
         }
     }
 }

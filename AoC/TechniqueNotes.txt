@@ -1,4 +1,8 @@
-﻿# RegexParse    
+﻿# auto convert from string
+       public static implicit operator Factory(string data) => Util.RegexFactory<Factory>(data);
+       public static implicit operator MyClass(string data) => new(data);
+
+# RegexParse    
     
     param as own defined type
       - put RegexAttr on type's constructor
@@ -23,14 +27,9 @@
 # RegexFactory 
 
     Return class
-
        Factory factory = Util.RegexFactory<Factory>(data)
 
-       auto convert
-       public static implicit operator Factory(string data) => Util.RegexFactory<Factory>(data);
-
     Return array
-
        Element[] = Util.RegexFactory<Element, Factory>(data);
 
 

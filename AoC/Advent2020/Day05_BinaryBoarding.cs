@@ -4,41 +4,40 @@ public class Day05 : IPuzzle
 {
     public class BinSearch(int min, int max)
     {
-        public int Min = min, Max = max;
+        int Min = min, Max = max;
 
         int Range => Max - Min + 1;
 
         public void Lower() => Max -= Math.Max(1, Range / 2);
         public void Upper() => Min += Math.Max(1, Range / 2);
+
+        public static implicit operator int(BinSearch v) => v.Min;
     }
     public class BoardingPass
     {
         public BoardingPass(string id)
         {
-            var rowSearch = new BinSearch(0, 127);
-            var colSearch = new BinSearch(0, 7);
+            BinSearch row = new(0, 127), col = new(0, 7);
             foreach (char c in id)
             {
                 switch (c)
                 {
                     case 'F':
-                        rowSearch.Lower();
+                        row.Lower();
                         break;
                     case 'B':
-                        rowSearch.Upper();
+                        row.Upper();
                         break;
 
                     case 'L':
-                        colSearch.Lower();
+                        col.Lower();
                         break;
                     case 'R':
-                        colSearch.Upper();
+                        col.Upper();
                         break;
                 }
             }
 
-            int row = rowSearch.Min;
-            int col = colSearch.Min;
             ID = (row * 8) + col;
         }
 
