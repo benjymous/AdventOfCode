@@ -13,7 +13,7 @@ public class Day24 : IPuzzle
 
     public static bool IsInside((double X, double Y) position, long minTest, long maxTest) => position.X >= minTest && position.X <= maxTest && position.Y >= minTest && position.Y <= maxTest;
 
-    public static int CheckTestArea(Util.AutoParse<Entry> data, long minTest, long maxTest)
+    public static int CheckTestArea(Parser.AutoArray<Entry> data, long minTest, long maxTest)
     {
         return data.Select(entry => (Entry: entry,
                                      Value: ((long, long)[])[(entry.Pos.X, entry.Pos.Y), (entry.Pos.X + entry.Vel.X, entry.Pos.Y + entry.Vel.Y)]))
@@ -55,9 +55,9 @@ public class Day24 : IPuzzle
         return Math.Round(rock.Take(3).Sum() + min.X + min.Y + min.Z);
     }
 
-    public static int Part1(string input) => CheckTestArea(input, 200000000000000, 400000000000000);
+    public static int Part1(Parser.AutoArray<Entry> input) => CheckTestArea(input, 200000000000000, 400000000000000);
 
-    public static decimal Part2(string input) => SolvePt2(Util.RegexParse<Entry>(input).Decompose3());
+    public static decimal Part2(Parser.AutoArray<Entry> input) => SolvePt2(input.Decompose3());
 
     public void Run(string input, ILogger logger)
     {

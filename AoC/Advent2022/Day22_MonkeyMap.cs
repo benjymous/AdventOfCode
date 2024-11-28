@@ -6,9 +6,10 @@ public class Day22 : IPuzzle
         public Map(string input)
         {
             var (mapData, tapeData) = input.DecomposeSections();
-            Data = Util.ParseSparseMatrix<char>(mapData, new Util.Convertomatic.SkipChars(' ')).ToFrozenDictionary();
+            var raw = Util.ParseSparseMatrix<char>(mapData, new Util.Convertomatic.SkipChars(' '));
+            Data = raw.ToFrozenDictionary();
             Tape = Util.SplitNumbersAndWords(tapeData);
-            (maxX, maxY) = (Data.Max(kvp => kvp.Key.x), Data.Max(kvp => kvp.Key.y));
+            (maxX, maxY) = (raw.Width, raw.Height);
             FaceSize = (int)Math.Sqrt(Data.Count / 6);
         }
 

@@ -47,9 +47,9 @@ public class Day14 : IPuzzle
         return scores.Values.Max();
     }
 
-    public static int Part1(Util.AutoParse<Reindeer> deer) => MaxDistanceAfterTime(deer, 2503);
+    public static int Part1(Parser.AutoArray<Reindeer> deer) => MaxDistanceAfterTime(deer, 2503);
 
-    public static int Part2(Util.AutoParse<Reindeer> deer) => MaxScoreAfterTime(deer, 2503);
+    public static int Part2(Parser.AutoArray<Reindeer> deer) => MaxScoreAfterTime(deer, 2503);
 
     public void Run(string input, ILogger logger)
     {

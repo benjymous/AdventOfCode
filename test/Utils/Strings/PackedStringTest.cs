@@ -76,6 +76,7 @@ namespace Test.Utils.Strings
         {
             PackedString<uint, PackFourCC> v1 = str;
             PackedString<uint, PackFourCC> v2 = new(str);
+            PackedString<uint, PackFourCC> v3 = new($"{str.Substring(0, 3)}-");
 
             uint val = v1;
             uint val2 = 12345;
@@ -91,10 +92,12 @@ namespace Test.Utils.Strings
             Assert.AreEqual(v1, str);
             Assert.AreEqual(str, v1);
 
-            Assert.AreEqual(str, v1.ToString());
-
             Assert.AreNotEqual(v1, "blah");
+            Assert.AreNotEqual(v1, v3);
+            Assert.AreNotEqual(v3, v1);
             Assert.AreNotEqual("wibble", v1);
+
+            Assert.AreEqual(str, v1.ToString());
 
             Assert.IsTrue(v1 == val);
             Assert.IsTrue(val == v1);

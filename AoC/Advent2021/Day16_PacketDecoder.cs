@@ -67,7 +67,7 @@ public class Day16 : IPuzzle
         public int ReadInteger(int numBits) => Util.Repeat(ReadBit, numBits).Aggregate(0, (total, val) => (total << 1) + val);
         public int ReadBit() => stream.Pop().val;
 
-        static IEnumerable<(int, int)> Bits(string raw) => raw.Select(ch => ch.ParseHex()).SelectMany(n => n.BinarySequenceBigEndian(8)).WithIndex().Select(v => (v.Value, v.Index));
+        static IEnumerable<(int, int)> Bits(string raw) => raw.Select(ch => ch.ParseHex()).SelectMany(n => n.BinarySequenceBigEndian(8)).Index().Select(v => (v.Item, v.Index));
         (bool continueRead, int value) ReadChunk() => (ReadBit() == 1, ReadInteger(4));
         readonly IEnumerator<(int val, int idx)> stream;
     }

@@ -11,9 +11,9 @@ public class Day04 : IPuzzle
     public static int CountWinnings(Dictionary<int, int> cards, int cardId, int matches) => cards.Memoize(cardId, _
         => matches == 0 ? 0 : matches + Enumerable.Range(cardId + 1, matches).Sum(c => CountWinnings(cards, c, cards[c])));
 
-    public static int Part1(Util.AutoParse<Scratchcard> input) => input.Sum(t => t.Value);
+    public static int Part1(Parser.AutoArray<Scratchcard> input) => input.Sum(t => t.Value);
 
-    public static int Part2(Util.AutoParse<Scratchcard> input)
+    public static int Part2(Parser.AutoArray<Scratchcard> input)
     {
         var cards = input.ToDictionary(c => c.Id, c => c.Matches);
 

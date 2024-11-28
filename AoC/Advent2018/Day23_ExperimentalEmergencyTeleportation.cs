@@ -7,14 +7,14 @@ public class Day23 : IPuzzle
         public readonly bool Overlaps(Entry other) => Position.Distance(other.Position) <= Math.Max(Radius, other.Radius);
     }
 
-    public static int Part1(Util.AutoParse<Entry> data)
+    public static int Part1(Parser.AutoArray<Entry> data)
     {
         var strongest = data.MaxBy(e => e.Radius);
 
         return data.Count(e => e.Position.Distance(strongest.Position) <= strongest.Radius);
     }
 
-    public static int Part2(Util.AutoParse<Entry> data)
+    public static int Part2(Parser.AutoArray<Entry> data)
     {
         var (minZ, maxZ, minY, maxY, minX, maxX) = data.Select(e => e.Position).GetRange();
 

@@ -44,9 +44,9 @@ public class Day15 : IPuzzle
 
     public static int Solve(int[][] ingredients, bool countCalories) => IngredientCombinations().Max(set => CalcScore(set, ingredients, countCalories));
 
-    public static int Part1(Util.AutoParse<int[], Factory> ingredients) => Solve(ingredients, false);
+    public static int Part1(Parser.AutoArray<int[], Factory> ingredients) => Solve(ingredients, false);
 
-    public static int Part2(Util.AutoParse<int[], Factory> ingredients) => Solve(ingredients, true);
+    public static int Part2(Parser.AutoArray<int[], Factory> ingredients) => Solve(ingredients, true);
 
     public void Run(string input, ILogger logger)
     {

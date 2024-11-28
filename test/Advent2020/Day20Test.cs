@@ -1,3 +1,4 @@
+using AoC.Utils.Parser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
 
@@ -156,7 +157,7 @@ namespace AoC.Advent2020.Test
         [DataTestMethod]
         public void RotationTest(string input, int orientation, string expected)
         {
-            var tile = new Day20.Tile(input);
+            var tile = Parser.FromString<Day20.Tile>(input.Replace("\n", "-"));
             for (var i = 0; i < orientation; ++i)
             {
                 tile.Twizzle();

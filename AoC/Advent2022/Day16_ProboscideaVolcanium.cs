@@ -13,8 +13,8 @@ public class Day16 : IPuzzle
     {
         return Memoize(input, _ =>
         {
-            var data = Util.RegexParse<Valve>(input).ToArray();
-            var valves = data.Where(val => val.Rate > 0).WithIndex(1).Select(i => { i.Value.BitIndex = 1U << i.Index; return i.Value; }).ToArray();
+            var data = Parser.Parse<Valve>(input).ToArray();
+            var valves = data.Where(val => val.Rate > 0).Index(1).Select(i => { i.Item.BitIndex = 1U << i.Index; return i.Item; }).ToArray();
             return (routes: BuildRoutes(valves, new MapData(data.ToDictionary(val => val.Id, val => val.Neighbours))).ToDictionary(), valveRates: valves.ToDictionary(val => val.BitIndex, val => val.Rate), availableNodes: (uint)valves.Sum(v => v.BitIndex));
         });
     }

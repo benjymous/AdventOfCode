@@ -65,8 +65,8 @@ public class Day21 : IPuzzle
 
     private static string Scramble(CharFunc[] instructions, char[] password) => instructions.Aggregate(password, (current, instr) => instr(current)).AsString();
 
-    public static CharFunc[] ParseInstructions(string input) => Util.RegexFactory<CharFunc, InstructionFactory>(input).ToArray();
-    public static CharFunc[] ReverseInstructions(string input) => Util.RegexFactory<CharFunc, InstructionFactory>(input.Split('\n').Select(Reverse).Reverse(), new InstructionFactory()).ToArray();
+    public static CharFunc[] ParseInstructions(string input) => Parser.Factory<CharFunc, InstructionFactory>(input).ToArray();
+    public static CharFunc[] ReverseInstructions(string input) => Parser.Factory<CharFunc, InstructionFactory>(input.Split('\n').Select(Reverse).Reverse(), new InstructionFactory()).ToArray();
 
     public static string Reverse(string rule) => rule.StartsWith("rotate based ")
             ? $"UNROTATE {rule[35]}"

@@ -53,7 +53,7 @@ public class Day07 : IPuzzle
 
     public static IEnumerable<Hand> SortCards(IEnumerable<Hand> cards) => cards.OrderBy(h => (h.HandType, -h.Ordering));
 
-    static int Solve(string input) => SortCards(Util.RegexParse<Hand>(input).ToArray()).WithIndex(1).ToArray().Sum(h => h.Index * h.Value.Bid);
+    static int Solve(string input) => SortCards(Parser.Parse<Hand>(input).ToArray()).Index(1).ToArray().Sum(h => h.Index * h.Item.Bid);
 
     public static int Part1(string input) => Solve(input);
 

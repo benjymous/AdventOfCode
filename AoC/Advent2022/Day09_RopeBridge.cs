@@ -14,7 +14,7 @@ public class Day09 : IPuzzle
         return false;
     }
 
-    private static int SimulateRope(Util.AutoParse<Instruction> input, int numSegments)
+    private static int SimulateRope(Parser.AutoArray<Instruction> input, int numSegments)
     {
         (int x, int y)[] rope = new (int x, int y)[numSegments];
         HashSet<(int x, int y)> tailPositions = [];

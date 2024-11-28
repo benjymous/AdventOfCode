@@ -40,7 +40,7 @@ public class Day21 : IPuzzle
         public static int Player(int pos) => pos - 1;
     }
 
-    public static int Part1(Util.AutoParse<int, Factory> input)
+    public static int Part1(Parser.AutoArray<int, Factory> input)
     {
         var positions = input.ToArray();
 
@@ -59,7 +59,7 @@ public class Day21 : IPuzzle
         return scores.Min() * die.Rolls;
     }
 
-    public static long Part2(Util.AutoParse<int, Factory> input)
+    public static long Part2(Parser.AutoArray<int, Factory> input)
     {
         var (p1Won, p2Won) = DoStep(input[0], input[1]);
 

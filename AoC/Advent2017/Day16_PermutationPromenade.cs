@@ -21,7 +21,7 @@ public class Day16 : IPuzzle
         };
     }
 
-    private static Func<char[], char[]>[] ParseRules(string input) => Util.RegexFactory<Func<char[], char[]>, InstructionFactory>(input, null, ",").ToArray();
+    private static Func<char[], char[]>[] ParseRules(string input) => Parser.Factory<Func<char[], char[]>, InstructionFactory>(input, null, ",").ToArray();
 
     public static string DoDance(string input, string players) => DoDance(ParseRules(input), [.. players]).AsString();
 

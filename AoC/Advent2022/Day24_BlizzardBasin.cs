@@ -9,9 +9,9 @@ public class Day24 : IPuzzle
     {
         var map = Util.ParseSparseMatrix<PackedPos32, char>(input, new Util.Convertomatic.SkipChars('.'));
 
-        (int w, int h) = (map.Keys.Max(v => v.X) - 1, map.Keys.Max(v => v.Y) - 1);
+        (int w, int h) = (map.Width - 1, map.Height - 1);
 
-        HashSet<PackedPos32> walls = [.. map.Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key), (1, -1), (w, h + 2)];
+        HashSet<PackedPos32> walls = [.. map.KeysWithValue('#'), (1, -1), (w, h + 2)];
         var blizzards = map.Where(kvp => kvp.Value != '#').Select(kvp => (pos: kvp.Key, dir: ToDirection(kvp.Value))).ToArray();
 
         var blizH = blizzards.Where(b => b.dir == -1 || b.dir == 1).ToArray();

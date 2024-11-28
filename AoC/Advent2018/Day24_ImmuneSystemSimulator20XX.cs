@@ -62,7 +62,7 @@ public class Day24 : IPuzzle
 
     private static IEnumerable<Group> Parse(string input, uint boost)
     {
-        var (immune, infection) = input.SplitSections().Select(data => Util.RegexParse<Group>(data.Split("\n", StringSplitOptions.TrimEntries).Skip(1)).ToArray()).Decompose2();
+        var (immune, infection) = input.SplitSections().Select(data => Parser.Parse<Group>(data.Split("\n", StringSplitOptions.TrimEntries).Skip(1)).ToArray()).Decompose2();
 
         immune.ForEach(g => g.AttackDamage += boost);
         infection.ForEach(g => g.ImmuneSystem = false);

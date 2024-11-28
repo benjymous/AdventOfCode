@@ -71,9 +71,9 @@ public class Day22 : IPuzzle
         }, Math.Min);
     }
 
-    public static int Part1(string input) => Run(Util.FromString<State>(input));
+    public static int Part1(string input) => Run(Parser.FromString<State>(input));
 
-    public static int Part2(string input) => Run(Util.FromString<State>(input), true);
+    public static int Part2(string input) => Run(Parser.FromString<State>(input), true);
 
     public void Run(string input, ILogger logger)
     {

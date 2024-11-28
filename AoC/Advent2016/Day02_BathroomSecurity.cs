@@ -13,7 +13,7 @@ public class Day02 : IPuzzle
                             " ABC \n" +
                             "  D  \n";
 
-    static FrozenDictionary<(int x, int y), char> ParseKeypad(string kp) => Util.ParseSparseMatrix<char>(kp, new Util.Convertomatic.SkipChars()).ToFrozenDictionary();
+    static FrozenDictionary<(int x, int y), char> ParseKeypad(string kp) => Util.ParseSparseMatrix<char>(kp, new Util.Convertomatic.SkipChars()).Dict.ToFrozenDictionary();
 
     public static IEnumerable<char> SimulateKeypad(string input, string keypadLayout)
     {

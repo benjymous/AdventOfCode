@@ -46,14 +46,14 @@ public class Day14 : IPuzzle
         return ore;
     }
 
-    public static long Part1(Util.AutoParse<Rule> input)
+    public static long Part1(Parser.AutoArray<Rule> input)
     {
         var rules = input.ToDictionary(e => e.Output.Type, e => e);
 
         return Decompose(new Component(1, "FUEL"), rules);
     }
 
-    public static long Part2(Util.AutoParse<Rule> input)
+    public static long Part2(Parser.AutoArray<Rule> input)
     {
         var rules = input.ToDictionary(e => e.Output.Type, e => e);
 

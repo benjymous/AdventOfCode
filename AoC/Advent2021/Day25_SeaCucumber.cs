@@ -3,7 +3,7 @@ public class Day25 : IPuzzle
 {
     public static int Part1(string input)
     {
-        var state = Util.ParseSparseMatrix<PackedPos32, char>(input, new Util.Convertomatic.SkipChars('.'));
+        var state = Util.ParseSparseMatrix<PackedPos32, char>(input, new Util.Convertomatic.SkipChars('.')).Dict;
 
         bool moved = false;
         int moves = 0;
@@ -22,7 +22,7 @@ public class Day25 : IPuzzle
 
                 next = state.Where(kvp => kvp.Value == waiting).ToDictionary();
 
-                foreach (var cell in state.Where(kvp => kvp.Value == moving).Select(kvp => kvp.Key))
+                foreach (var cell in state.KeysWithValue(moving))
                 {
                     PackedPos32 dest = phase == 0 ? ((cell.X + 1) % maxx, cell.Y) : (cell.X, (cell.Y + 1) % maxy);
                     if (state.ContainsKey(dest)) dest = cell;

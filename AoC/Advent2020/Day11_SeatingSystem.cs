@@ -7,9 +7,9 @@ public class Day11 : IPuzzle
         {
             part = p;
             var data = Util.ParseSparseMatrix<PackedPos32, char>(input, new Util.Convertomatic.SkipChars('.'));
-            (Width, Height) = (data.Keys.Max(pos => pos.X), data.Keys.Max(pos => pos.Y));
+            (Width, Height) = (data.Width, data.Height);
             Seats = [.. data.Keys];
-            Occupied = data.Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key).ToHashSet();
+            Occupied = data.KeysWithValue('#').ToHashSet();
         }
 
         public State(State other) => (Width, Height, part, Seats) = (other.Width, other.Height, other.part, other.Seats);

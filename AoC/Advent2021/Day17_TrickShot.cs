@@ -4,7 +4,7 @@ public class Day17 : IPuzzle
     [Regex(@"target area: x=(\d+)..(\d+), y=(-?\d+)..(-?\d+)")]
     public record struct TargetRect(int X1, int X2, int Y1, int Y2)
     {
-        public static implicit operator TargetRect(string data) => Util.FromString<TargetRect>(data);
+        public static implicit operator TargetRect(string data) => Parser.FromString<TargetRect>(data);
 
         public readonly bool Contains((int X, int Y) point, bool ignoreX) => ignoreX ? point.Y >= Y1 && point.Y <= Y2 : point.X >= X1 && point.Y >= Y1 && point.X <= X2 && point.Y <= Y2;
 

@@ -1,10 +1,9 @@
 ﻿namespace AoC.Advent2022;
 public class Day18 : IPuzzle
 {
-    public record class Node((int x, int y, int z) Pos)
+    [Regex("(.+)")]
+    public record class Node([Regex("(.+),(.+),(.+)")] (int x, int y, int z) Pos)
     {
-        public Node(string line) : this(new ManhattanVector3(line).AsSimple()) { }
-
         public ((int, int, int), (int, int, int))[] Edges() =>
         [
             ((Pos.x - 1, Pos.y, Pos.z), Pos),
@@ -29,11 +28,11 @@ public class Day18 : IPuzzle
         }
     }
 
-    public static int Part1(string input) => CountOuterEdges(Util.Parse<Node>(input));
+    public static int Part1(string input) => CountOuterEdges(Parser.Parse<Node>(input));
 
     public static int Part2(string input)
     {
-        var cells = Util.Parse<Node>(input).ToArray();
+        var cells = Parser.Parse<Node>(input).ToArray();
 
         var range = cells.GetRange(v => v.Pos);
         var airPositions = Util.Range3DInclusive(range).Except(cells.Select(c => c.Pos)).ToHashSet();

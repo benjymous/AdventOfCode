@@ -22,11 +22,9 @@ public class Day05 : IPuzzle
 
     static (IEnumerable<Instruction>, Stack<char>[]) ParseData(string input)
     {
-        var (stack, instr) = input.DecomposeSections();
+        var (layout, instructions) = input.ParseSections(stack => Util.Split(stack),
+                                                         instr => Parser.Parse<Instruction>(instr));
 
-        var instructions = Util.RegexParse<Instruction>(instr);
-
-        var layout = Util.Split(stack);
         var stackCount = Util.ParseNumbers<int>(layout.Last(), " ").Last();
         var grid = Util.ParseMatrix<char>(layout.Reverse().Skip(1));
         var stacks = Enumerable.Range(0, stackCount)

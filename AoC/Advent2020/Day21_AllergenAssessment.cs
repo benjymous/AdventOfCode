@@ -8,7 +8,7 @@ public class Day21 : IPuzzle
     {
         public Foods(string input)
         {
-            var FoodList = Util.RegexParse<Food>(input).WithIndex();
+            var FoodList = Parser.Parse<Food>(input).Index();
 
             foreach (var (foodIdx, food) in FoodList)
             {

@@ -6,7 +6,7 @@ public class Day14 : IPuzzle
         var pairs = Util.Split(input, "\n")
             .Distinct()
             .SelectMany(line =>
-                Util.RegexParse<PackedPos32>(line, " -> ")
+                Parser.Parse<PackedPos32>(line, " -> ")
                 .OverlappingPairs());
 
         foreach (var (first, second) in pairs)

@@ -21,16 +21,16 @@ public class Day08 : IPuzzle
             return steps;
         }
 
-        public static implicit operator GhostMap(string data) => Util.RegexFactory<GhostMap>(data);
+        public static implicit operator GhostMap(string data) => Parser.Factory<GhostMap>(data);
     }
 
     public static int Part1(GhostMap map) => map.Walk("AAA", current => current == "ZZZ");
 
     public static long Part2(GhostMap map)
     {
-        return map.Paths.Keys.Where(k => k.ToString().EndsWith('A'))
+        return map.Paths.Keys.Where(k => k.EndsWith('A'))
             .Aggregate(1L, (cycle, start)
-                => Util.LCM(cycle, map.Walk(start, current => current.ToString().EndsWith('Z'))));
+                => Util.LCM(cycle, map.Walk(start, current => current.EndsWith('Z'))));
     }
 
     public void Run(string input, ILogger logger)

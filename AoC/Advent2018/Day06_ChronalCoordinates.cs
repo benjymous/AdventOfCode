@@ -3,7 +3,7 @@ public class Day06 : IPuzzle
 {
     public static int Part1(string input)
     {
-        var data = Util.Parse<ManhattanVector2>(input).Select(v => v.AsSimple()).ToArray();
+        var data = Parser.Parse<ManhattanVector2>(input).Select(v => v.AsSimple()).ToArray();
 
         var width = data.Max(pos => pos.x);
         var height = data.Max(pos => pos.y);
@@ -49,7 +49,7 @@ public class Day06 : IPuzzle
 
     public static int Part2(string input, int safeDistance)
     {
-        var data = Util.Parse<ManhattanVector2>(input).Select(v => v.AsSimple()).ToArray();
+        var data = Parser.Parse<ManhattanVector2>(input).Select(v => v.AsSimple()).ToArray();
 
         var width = data.Max(pos => pos.x);
         var height = data.Max(pos => pos.y);

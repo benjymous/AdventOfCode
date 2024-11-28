@@ -1,9 +1,10 @@
 ﻿namespace AoC.Advent2021;
 public class Day08 : IPuzzle
 {
-    class DataRow
+    public class DataRow
     {
-        public DataRow(string input) => (diagnostic, output) = input.Split(" | ").Select(group => group.Split(" ").Select(Convert).ToArray()).Decompose2();
+        [Regex(@"(.+) \| (.+)")]
+        public DataRow([Split(" ")] List<string> diag, [Split(" ")] List<string> outp) => (diagnostic, output) = (diag.Select(Convert).ToArray(), outp.Select(Convert).ToArray());
 
         static uint Convert(string chars) => (uint)chars.Sum(c => 1 << (c - 'a'));
 
@@ -66,17 +67,11 @@ public class Day08 : IPuzzle
         }
     }
 
-    public static int Part1(string input)
-    {
-        var data = Util.Parse<DataRow>(input);
-        return data.Select(line => Util.Values(2, 3, 4, 7).Select(segCount => line.CountOutputMatches(segCount)).Sum()).Sum();
-    }
+    public static int Part1(Parser.AutoArray<DataRow> data)
+        => data.Select(line => Util.Values(2, 3, 4, 7).Sum(segCount => line.CountOutputMatches(segCount))).Sum();
 
-    public static int Part2(string input)
-    {
-        var data = Util.Parse<DataRow>(input);
-        return data.Sum(line => line.Decode());
-    }
+    public static int Part2(Parser.AutoArray<DataRow> data)
+        => data.Sum(line => line.Decode());
 
     public void Run(string input, ILogger logger)
     {

@@ -24,7 +24,7 @@ public class Day04 : IPuzzle
         Dictionary<int, Dictionary<int, int>> guards = [];
         Dictionary<int, int> durations = [];
 
-        foreach (var r in Util.RegexParse<Entry>(Util.Split(input).Order()))
+        foreach (var r in Parser.Parse<Entry>(Util.Split(input).Order()))
         {
             switch (r.EntryType)
             {

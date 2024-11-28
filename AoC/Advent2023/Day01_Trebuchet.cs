@@ -1,6 +1,7 @@
 ﻿namespace AoC.Advent2023;
 public partial class Day01 : IPuzzle
 {
+    [Regex("(.+)")]
     public partial class Value(string raw)
     {
         private IEnumerable<int> SplitDigitsAndWords(QuestionPart part) =>
@@ -30,7 +31,7 @@ public partial class Day01 : IPuzzle
         };
     }
 
-    public static int Solve(string input, QuestionPart part) => Util.Parse<Value>(input).Sum(v => v.GetResult(part));
+    public static int Solve(string input, QuestionPart part) => Parser.Parse<Value>(input).Sum(v => v.GetResult(part));
 
     public static int Part1(string input) => Solve(input, QuestionPart.Part1);
 

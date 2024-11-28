@@ -2,7 +2,7 @@
 public class Day20 : IPuzzle
 {
     [method: Regex(@"[p]=<(-*\d+,-*\d+,-*\d+)>, [v]=<(-*\d+,-*\d+,-*\d+)>, [a]=<(-*\d+,-*\d+,-*\d+)>")]
-    class Particle(ManhattanVector3 p, ManhattanVector3 v, ManhattanVector3 a)
+    public class Particle(ManhattanVector3 p, ManhattanVector3 v, ManhattanVector3 a)
     {
         public ManhattanVector3 pos = p, vel = v, acc = a;
 
@@ -16,20 +16,17 @@ public class Day20 : IPuzzle
         }
     }
 
-    public static int Part1(string input)
-    {
-        var particles = Util.RegexParse<Particle>(input).ToArray();
-
-        var slowest = particles.OrderBy(p => p.acc.Length).First();
-        return Array.IndexOf(particles, slowest);
-    }
-
     static IEnumerable<Particle> FilterCollisions(IEnumerable<Particle> particles) => particles.GroupBy(p => p.pos).Where(g => g.Count() == 1).SelectMany(x => x);
 
-    public static int Part2(string input)
+    public static int Part1(Parser.AutoArray<Particle> particles)
     {
-        Particle[] particles = Util.RegexParse<Particle>(input).ToArray();
+        var slowest = particles.OrderBy(p => p.acc.Length).First();
+        return particles.IndexOf(slowest);
+    }
 
+    public static int Part2(Parser.AutoArray<Particle> input)
+    {
+        var particles = input.ToArray();
         int lastCol = 0;
 
         while (true)

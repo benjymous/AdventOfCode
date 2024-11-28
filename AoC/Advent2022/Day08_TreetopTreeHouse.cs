@@ -29,7 +29,7 @@ public class Day08 : IPuzzle
             return visibleLeft || visibleRight;
         }
 
-        static int CountVisible(IEnumerable<char> values, int compare) => values.WithIndex(1).Where(v => v.Value >= compare).Select(v => v.Index).FirstOrDefault(values.Count());
+        static int CountVisible(IEnumerable<char> values, int compare) => values.Index(1).Where(v => v.Item >= compare).Select(v => v.Index).FirstOrDefault(values.Count());
 
         public int ScenicScore((int x, int y) pos)
         {

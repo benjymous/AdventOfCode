@@ -3,8 +3,8 @@ public class Day06 : IPuzzle
 {
     private static int FindSignal(string input, int size) =>
         input.Windows(size)
-             .WithIndex()
-             .First(kvp => kvp.Value.Distinct().Count() == size)
+             .Index()
+             .First(kvp => kvp.Item.Distinct().Count() == size)
              .Index + size;
 
     public static int Part1(string input) => FindSignal(input, 4);

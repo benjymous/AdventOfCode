@@ -5,18 +5,18 @@ public class Day20 : IPuzzle
 
     public class Tile
     {
-        public Tile(string input)
+        [Regex(@"Tile (\d+):-(.+)")]
+        public Tile(int id, [Split("-")] string[] grid)
         {
-            var lines = input.Split("\n");
-            ID = int.Parse(lines[0].Substring(5, 4));
-            Grid = lines.Skip(1).ToArray();
+            ID = id;
+            Grid = grid;
             Edges = [Grid.First(), (Grid.Select(row => row.Last()).AsString()), Grid.Last().Reversed(), Grid.Select(row => row.First()).AsString().Reversed()];
-            (w, h) = (Grid.Length - 1, Grid[0].Length - 1);
+            Size = Grid.Length - 1;
         }
 
-        public int ID, Orientation = 0, Borders = 0;
+        public readonly int ID, Size;
+        public int Orientation = 0, Borders = 0;
         public string[] Grid, Edges;
-        private readonly int w, h;
 
         public void Twizzle()
         {
@@ -27,17 +27,17 @@ public class Day20 : IPuzzle
 
         public void RotateToFit(int edgePos, string matchingEdge) => Util.RepeatWhile(() => Edges[edgePos] != matchingEdge, Twizzle);
 
-        readonly Func<int, int, int, int, (int x, int y)>[] Transforms = [(x, y, w, h) => (x, y), (x, y, w, h) => (y, w - x), (x, y, w, h) => (w - x, h - y), (x, y, w, h) => (h - y, x), (x, y, w, h) => (y, x), (x, y, w, h) => (w - x, y), (x, y, w, h) => (h - y, w - x), (x, y, w, h) => (x, h - y)];
+        readonly Func<int, int, int, (int x, int y)>[] Transforms = [(x, y, size) => (x, y), (x, y, size) => (y, size - x), (x, y, size) => (size - x, size - y), (x, y, size) => (size - y, x), (x, y, size) => (y, x), (x, y, size) => (size - x, y), (x, y, size) => (size - y, size - x), (x, y, size) => (x, size - y)];
 
         char GetCell((int x, int y) pos) => Grid[pos.y][pos.x];
-        public char GetCellTransformed(int x, int y) => GetCell(Transforms[Orientation](x, y, w, h));
+        public char GetCellTransformed(int x, int y) => GetCell(Transforms[Orientation](x, y, Size));
     }
 
     public class JigsawSolver
     {
         public JigsawSolver(string input)
         {
-            Tiles = Util.Parse<Tile>(input.Trim().SplitSections());
+            Tiles = Parser.Parse<Tile>(input.Trim().SplitSections().Select(s => s.Replace("\n", "-"))).ToList();
             EdgeMap = Tiles.SelectMany(t => t.Edges.Select(e => (t, e))).SelectMany(v => Util.Values((v.t, v.e), (v.t, v.e.Reversed()))).GroupBy(v => v.Item2).ToDictionary(g => g.Key, g => g.Select(x => x.t).ToArray());
             foreach (var tile in Tiles) tile.Borders = tile.Edges.Count(e => EdgeMap[e].Length == 1);
         }

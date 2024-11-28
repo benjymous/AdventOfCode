@@ -18,12 +18,11 @@ namespace AoC.Advent2020.Elforola
         public OpCode Opcode;
         public int Val;
 
-        public Instruction(string line)
+        [Regex("(.+) (.+)")]
+        public Instruction(OpCode op, int val)
         {
-            var bits = line.Split(" ");
-            if (!Enum.TryParse(bits[0], out Opcode)) throw new Exception("Unknown opcode");
-
-            Val = int.Parse(bits[1]);
+            Opcode = op;
+            Val = val;
         }
 
         public Instruction(Instruction other)
@@ -45,7 +44,7 @@ namespace AoC.Advent2020.Elforola
 
         public int CycleCount = 0;
 
-        public Elf80(string program) => Instructions = [.. Util.Parse<Instruction>(program)];
+        public Elf80(string program) => Instructions = [.. Parser.Parse<Instruction>(program)];
 
         public Elf80(Elf80 other)
         {

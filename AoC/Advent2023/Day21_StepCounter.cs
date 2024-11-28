@@ -5,7 +5,7 @@ public class Day21 : IPuzzle
     static (IEnumerable<int> counts, int gridSize, int distanceToEdge) ParseData(string input)
     {
         var map = Util.ParseSparseMatrix<char>(input);
-        var gridSize = map.Keys.Max(v => v.x) + 1;
+        var gridSize = map.Width + 1;
 
         return (counts: CalcTileDistances(map.Single(kvp => kvp.Value == 'S').Key, map.Where(kvp => kvp.Value != '#').Select(kvp => kvp.Key).ToHashSet()), gridSize, gridSize == 11 ? 7 : (gridSize / 2));
     }

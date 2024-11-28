@@ -1,5 +1,7 @@
-﻿# auto convert from string
-       public static implicit operator Factory(string data) => Util.RegexFactory<Factory>(data);
+﻿
+
+# auto convert from string
+       public static implicit operator Factory(string data) => Parser.RegexFactory<Factory>(data);
        public static implicit operator MyClass(string data) => new(data);
 
 # RegexParse    
@@ -17,7 +19,7 @@
 
     param as Tuple, etc
       [Regex("..pattern..")] attr on arg (must accept first param!)
-        (see 2022 Day 15,  2023 Day 25)
+        (see 2022 Day 15,  2022 Day 18,  2023 Day 25)
 
     param as hex
       [Base(16)] int on arg
@@ -27,10 +29,10 @@
 # RegexFactory 
 
     Return class
-       Factory factory = Util.RegexFactory<Factory>(data)
+       Factory factory = Parser.Factory<FactoryT>(data)
 
     Return array
-       Element[] = Util.RegexFactory<Element, Factory>(data);
+       ElementT[] = Parser.Factory<ElementT, FactoryT>(data);
 
 
 # Parse(Sparse)Matrix

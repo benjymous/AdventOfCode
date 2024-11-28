@@ -15,14 +15,14 @@ public class Day11 : IPuzzle
 
     public static long MeasureGalaxies(string input, long gapSize)
     {
-        var galaxies = Util.ParseSparseMatrix<bool>(input).Keys;
+        var galaxies = Util.ParseSparseMatrix<bool>(input);
 
-        var (maxX, maxY) = (galaxies.Max(v => v.x), galaxies.Max(x => x.y));
+        var (maxX, maxY) = (galaxies.Width, galaxies.Height);
 
-        var gapsX = Enumerable.Range(0, maxX).Except(galaxies.Select(p => p.x)).ToArray();
-        var gapsY = Enumerable.Range(0, maxY).Except(galaxies.Select(p => p.y)).ToArray();
+        var gapsX = Enumerable.Range(0, maxX).Except(galaxies.Keys.Select(p => p.x)).ToArray();
+        var gapsY = Enumerable.Range(0, maxY).Except(galaxies.Keys.Select(p => p.y)).ToArray();
 
-        return galaxies.UniquePairs()
+        return galaxies.Keys.UniquePairs()
                 .Sum(pair => pair.Item1.Distance(pair.Item2) +
                    ((CountGaps(pair.Item1.x, pair.Item2.x, gapsX) +
                      CountGaps(pair.Item1.y, pair.Item2.y, gapsY)) * (gapSize - 1)));

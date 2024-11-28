@@ -8,7 +8,7 @@ public class Day22 : IPuzzle
         public readonly int Size = size, Used = used, Free = free;
     }
 
-    static Node[] Parse(string input) => Util.RegexParse<Node>(Util.Split(input).Where(line => line.StartsWith("/dev/"))).ToArray();
+    static Node[] Parse(string input) => Parser.Parse<Node>(Util.Split(input).Where(line => line.StartsWith("/dev/"))).ToArray();
 
     record struct Walkable(int MaxMovable) : IIsWalkable<Node>
     {

@@ -65,7 +65,7 @@ public class Day20 : IPuzzle
 
     private static void CalcFurthestDistance(Dictionary<(int x, int y), Cell> map, (int x, int y) pos, Cell cell)
     {
-        foreach (var (neighbour, neighbourPos) in cell.Exits.WithIndex().Where(e => e.Value).Select(e => pos.OffsetBy(Directions[e.Index])).Select(neighbourPos => (neighbour: map[neighbourPos], neighbourPos)).Where(v => v.neighbour.DoorDistance > cell.DoorDistance + 1))
+        foreach (var (neighbour, neighbourPos) in cell.Exits.Index().Where(e => e.Item).Select(e => pos.OffsetBy(Directions[e.Index])).Select(neighbourPos => (neighbour: map[neighbourPos], neighbourPos)).Where(v => v.neighbour.DoorDistance > cell.DoorDistance + 1))
         {
             neighbour.DoorDistance = cell.DoorDistance + 1;
             CalcFurthestDistance(map, neighbourPos, neighbour);

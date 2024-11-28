@@ -53,7 +53,7 @@ public class Day21 : IPuzzle
 
     public static int RunRules(string input, int iterations)
     {
-        var rules = Util.RegexParse<Rule>(input).Select(rule => rule.Rotations.ToHashSet().Select(key => (key, rule))).SelectMany(x => x).OrderBy(x => x.key).Select(x => x.rule.Out).ToArray();
+        var rules = Parser.Parse<Rule>(input).Select(rule => rule.Rotations.ToHashSet().Select(key => (key, rule))).SelectMany(x => x).OrderBy(x => x.key).Select(x => x.rule.Out).ToArray();
         var map = Util.ParseSparseMatrix<char>(".#.\n..#\n###", new Util.Convertomatic.SkipChars('.')).Select(kvp => ToKey(kvp.Key.x, kvp.Key.y)).ToHashSet();
 
         for (int i = 0; i < iterations; ++i)

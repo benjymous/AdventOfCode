@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
 namespace AoC.Utils
@@ -5,7 +6,27 @@ namespace AoC.Utils
     public static partial class StringExtensions
     {
         public static string[] SplitSections(this string input) => input.Split("\n\n");
+
+        public static string[] SplitSections(this string input, [StringSyntax("Regex")] string pattern) => Regex.Split(input, pattern);
         public static (string section1, string section2) DecomposeSections(this string input) => input.SplitSections().Decompose2();
+
+        public static (T1 section1, T2 section2) ParseSections<T1, T2>(this string input, Func<string, T1> parseSec1, Func<string, T2> parseSec2)
+        {
+            var sections = input.SplitSections();
+            return (parseSec1(sections[0]), parseSec2(sections[1]));
+        }
+
+        public static (T1 section1, T2 section2, T3 section3) ParseSections<T1, T2, T3>(this string input, Func<string, T1> parseSec1, Func<string, T2> parseSec2, Func<string, T3> parseSec3)
+        {
+            var sections = input.SplitSections();
+            return (parseSec1(sections[0]), parseSec2(sections[1]), parseSec3(sections[2]));
+        }
+
+        public static (T1 section1, T2 section2, T3 section3) ParseSections<T1, T2, T3>(this string input, [StringSyntax("Regex")] string pattern, Func<string, T1> parseSec1, Func<string, T2> parseSec2, Func<string, T3> parseSec3)
+        {
+            var sections = input.SplitSections(pattern);
+            return (parseSec1(sections[0]), parseSec2(sections[1]), parseSec3(sections[2]));
+        }
 
         public static byte[] GetSHA256(this string inputString) => SHA256.HashData(Encoding.UTF8.GetBytes(inputString));
 

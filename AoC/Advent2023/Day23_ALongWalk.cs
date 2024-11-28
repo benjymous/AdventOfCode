@@ -5,7 +5,7 @@ public class Day23 : IPuzzle
 
     class Map : IMap<(int x, int y)>
     {
-        public readonly Dictionary<(int x, int y), char> Data;
+        public readonly Util.SparseMatrix<(int x, int y), char> Data;
         readonly List<(int x, int y)> Waypoints;
         public readonly Dictionary<int, Dictionary<int, int>> Routes = [];
         public readonly int EndKey = -1;
@@ -15,7 +15,7 @@ public class Day23 : IPuzzle
         public Map(string input, QuestionPart part)
         {
             Data = Util.ParseSparseMatrix<char>(input, new Util.Convertomatic.SkipChars('#'));
-            int mapSize = Data.Max(kvp => kvp.Key.y);
+            int mapSize = Data.Height;
 
             Waypoints = [Data.Single(kvp => kvp.Key.y == 0 && kvp.Value == '.').Key,
             ..Data.Keys.Where(pos => neighbours.Select(d => pos.OffsetBy(d)).Count(p => Data.ContainsKey(p)) > 2),

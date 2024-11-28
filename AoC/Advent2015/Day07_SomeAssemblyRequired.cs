@@ -66,7 +66,7 @@ public class Day07 : IPuzzle
             return comp.Resolved.Value;
         }
 
-        readonly Dictionary<string, Component> index = Util.RegexParse<Component>(input).ToDictionary(c => c.OutName.StringValue);
+        readonly Dictionary<string, Component> index = Parser.Parse<Component>(input).ToDictionary(c => c.OutName.StringValue);
     }
 
     public static int Part1(string input) => new Circuit(input).Solve("a");

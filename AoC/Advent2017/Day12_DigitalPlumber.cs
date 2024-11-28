@@ -21,7 +21,7 @@ public class Day12 : IPuzzle
             pools = [.. pools.Except(joinedPools), group];
         }
 
-        public HashSet<int> FindPool(int number) => pools.FirstOrDefault(p => p.Contains(number));
+        public HashSet<int> FindPool(int number) => pools.Find(p => p.Contains(number));
 
         public int NumGroups() => pools.Count;
     }

@@ -1,5 +1,6 @@
 ﻿using AoC.Utils;
 using AoC.Utils.Collections;
+using AoC.Utils.Parser;
 using AoC.Utils.Vectors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -179,7 +180,7 @@ namespace AoC.Test
         [TestCategory("RegexParse")]
         public void RegexParseTest()
         {
-            var list = Util.RegexParse<RegexCreationTest1>("10,10 20,20,5 32\n1,2 3,4,5 6\n0,0 1,1,1 2", "\n").ToArray();
+            var list = Parser.Parse<RegexCreationTest1>("10,10 20,20,5 32\n1,2 3,4,5 6\n0,0 1,1,1 2", "\n").ToArray();
             Assert.AreEqual(3, list.Length);
 
             Assert.AreEqual(new ManhattanVector2(10, 10), list[0].A);
@@ -199,7 +200,7 @@ namespace AoC.Test
         [TestCategory("RegexParse")]
         public void NestedRegexParseTest()
         {
-            var list = Util.RegexParse<NestedRegexCreationTest>("One Two 32\nA B 6\nhello there 2", "\n").ToArray();
+            var list = Parser.Parse<NestedRegexCreationTest>("One Two 32\nA B 6\nhello there 2", "\n").ToArray();
             Assert.AreEqual(3, list.Length);
 
             Assert.AreEqual("One", list[0].A.Val);
@@ -219,7 +220,7 @@ namespace AoC.Test
         [TestCategory("RegexParse")]
         public void RegexCreateTest()
         {
-            var obj = Util.FromString<RegexCreationTest1>("10,10 20,20,5 32");
+            var obj = Parser.FromString<RegexCreationTest1>("10,10 20,20,5 32");
             Assert.AreEqual(new ManhattanVector2(10, 10), obj.A);
             Assert.AreEqual(new ManhattanVector3(20, 20, 5), obj.B);
             Assert.AreEqual(32, obj.C);
@@ -237,7 +238,7 @@ namespace AoC.Test
         [TestCategory("RegexParse")]
         public void RegexCreateTest2()
         {
-            var obj = Util.FromString<RegexCreationTest2>("1,2,3 100,200,300 tom,dick,harry");
+            var obj = Parser.FromString<RegexCreationTest2>("1,2,3 100,200,300 tom,dick,harry");
             Assert.AreEqual(3, obj.A1.Length);
             Assert.AreEqual(1, obj.A1[0]);
             Assert.AreEqual(2, obj.A1[1]);
@@ -261,7 +262,7 @@ namespace AoC.Test
         [TestCategory("RegexParse")]
         public void RegexCreateFailTest()
         {
-            Assert.ThrowsException<Exception>(() => Util.FromString<RegexCreationTestNoConstructor>("blah"));
+            Assert.ThrowsException<Exception>(() => Parser.FromString<RegexCreationTestNoConstructor>("blah"));
         }
 
         [method: Regex(@"(.+) (.+)")]
@@ -275,7 +276,7 @@ namespace AoC.Test
         [TestCategory("RegexParse")]
         public void ArrayRegexCreateTest()
         {
-            var item = Util.FromString<ArrayRegexCreationTest>("One,Two 32");
+            var item = Parser.FromString<ArrayRegexCreationTest>("One,Two 32");
             Assert.AreEqual(2, item.A.Length);
 
             Assert.AreEqual("One", item.A[0].Val);
@@ -294,7 +295,7 @@ namespace AoC.Test
         [TestCategory("RegexParse")]
         public void RegexCreateDictionary()
         {
-            var obj = Util.FromString<RegexCreationDictionary>("1 2: 3, 4: 5, 6: 7");
+            var obj = Parser.FromString<RegexCreationDictionary>("1 2: 3, 4: 5, 6: 7");
             Assert.AreEqual(1, obj.A1);
             Assert.AreEqual(3, obj.A2.Count);
             Assert.IsTrue(obj.A2.TryGetValue(2, out var v) && v == 3);
@@ -313,7 +314,7 @@ namespace AoC.Test
         [TestCategory("RegexParse")]
         public void RegexCreateList()
         {
-            var obj = Util.FromString<RegexCreationList>("1 2:3:4:5:6:7");
+            var obj = Parser.FromString<RegexCreationList>("1 2:3:4:5:6:7");
             Assert.AreEqual(1, obj.A1);
             Assert.AreEqual(6, obj.A2.Count);
             Assert.AreEqual(2, obj.A2[0]);
@@ -335,7 +336,7 @@ namespace AoC.Test
         [TestCategory("RegexParse")]
         public void RegexCreateHashSet()
         {
-            var obj = Util.FromString<RegexCreationHashSet>("1 2:3:4:5:6:7:7:2");
+            var obj = Parser.FromString<RegexCreationHashSet>("1 2:3:4:5:6:7:7:2");
             Assert.AreEqual(1, obj.A1);
             Assert.AreEqual(6, obj.A2.Count);
             Assert.IsTrue(obj.A2.Contains(2));
@@ -353,7 +354,7 @@ namespace AoC.Test
         [TestCategory("RegexParse")]
         public void RegexParseBooleans()
         {
-            var bools = Util.FromString<BoolsRegexCreationTest>("true, false, True, False, TRUE, FALSE, t, f, T, F, yes, no, Yes, No, YES, NO, y, n, Y, N");
+            var bools = Parser.FromString<BoolsRegexCreationTest>("true, false, True, False, TRUE, FALSE, t, f, T, F, yes, no, Yes, No, YES, NO, y, n, Y, N");
             Assert.AreEqual(20, bools.bools.Length);
             for (int i = 0; i < bools.bools.Length; ++i)
             {
@@ -368,7 +369,7 @@ namespace AoC.Test
         [TestCategory("RegexParse")]
         public void RegexParseParamRegex()
         {
-            var result = Util.FromString<ParamRegexCreationTest>("10,11 : 12,13");
+            var result = Parser.FromString<ParamRegexCreationTest>("10,11 : 12,13");
 
             Assert.AreEqual((10, 11), result.v1);
             Assert.AreEqual((12, 13), result.v2);
@@ -382,7 +383,7 @@ namespace AoC.Test
 
             DoThing(data);
 
-            static void DoThing(Util.AutoParse<ParamRegexCreationTest> result)
+            static void DoThing(Parser.AutoArray<ParamRegexCreationTest> result)
             {
                 Assert.AreEqual(2, result.Length);
 

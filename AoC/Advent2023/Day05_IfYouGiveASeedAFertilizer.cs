@@ -9,15 +9,15 @@ public class Day05 : IPuzzle
         public long Remap(bool forwards, long source)
         {
             var remap = forwards
-                ? ranges.FirstOrDefault(range => source >= range.from && source < range.from + range.count)
-                : ranges.FirstOrDefault(range => source - range.delta >= range.from && source - range.delta < range.from + range.count);
+                ? ranges.Find(range => source >= range.from && source < range.from + range.count)
+                : ranges.Find(range => source - range.delta >= range.from && source - range.delta < range.from + range.count);
             return remap == default ? source : forwards ? source + remap.delta : source - remap.delta;
         }
     }
 
     public class Factory
     {
-        public static implicit operator Factory(string data) => Util.RegexFactory<Factory>(data);
+        public static implicit operator Factory(string data) => Parser.Factory<Factory>(data);
 
         public long[] Seeds;
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AoC.Utils.Parser;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AoC.Advent2023.Test;
 
@@ -60,7 +61,7 @@ public class Day12Test
 
     static long Solve1Single(string input)
     {
-        var row = Util.FromString<Day12.Row>(input);
+        var row = Parser.FromString<Day12.Row>(input);
         return Day12.Solve(row.Input, row.Lengths);
     }
 

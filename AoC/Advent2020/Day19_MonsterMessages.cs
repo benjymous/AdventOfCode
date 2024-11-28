@@ -15,13 +15,13 @@ public class Day19 : IPuzzle
     public static int Solve(string input, QuestionPart part)
     {
         var sections = input.SplitSections();
-        var rules = Util.RegexParse<Rule>(sections[0]).ToDictionary(v => v.ID, v => v);
+        var rules = Parser.Parse<Rule>(sections[0]).ToDictionary(v => v.ID, v => v);
         var messages = sections[1].Split("\n");
 
         if (part.Two())
         {
-            rules["8"] = Util.FromString<Rule>("8: ( 42 )+");
-            rules["11"] = Util.FromString<Rule>("11: 42 ( 42 ( 42 ( 42 ( 42 ( 42 31 )* 31 )* 31 )* 31 )* 31 )* 31");
+            rules["8"] = Parser.FromString<Rule>("8: ( 42 )+");
+            rules["11"] = Parser.FromString<Rule>("11: 42 ( 42 ( 42 ( 42 ( 42 ( 42 31 )* 31 )* 31 )* 31 )* 31 )* 31");
         }
 
         var r = new Regex("^" + Resolve("0", rules) + "$");

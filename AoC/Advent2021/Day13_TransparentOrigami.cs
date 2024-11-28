@@ -31,12 +31,8 @@ public class Day13 : IPuzzle
 
     static (IEnumerable<(int x, int y)>, IEnumerable<Fold>) Parse(string input)
     {
-        var (coordinates, folds) = input.DecomposeSections();
-        return
-        (
-            Util.Parse<ManhattanVector2>(coordinates).Select(v => v.AsSimple()),
-            Util.RegexParse<Fold>(folds).ToArray()
-        );
+        return input.ParseSections(coordinates => Parser.Parse<ManhattanVector2>(coordinates).Select(v => v.AsSimple()),
+                                   folds => Parser.Parse<Fold>(folds).ToArray());
     }
 
     public static int Part1(string input)

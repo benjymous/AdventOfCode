@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AoC.Utils.Parser;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AoC.Advent2022.Test
 {
@@ -46,7 +47,7 @@ namespace AoC.Advent2022.Test
         [DataTestMethod]
         public void Minerals01Test(string input, int expected)
         {
-            var bp = Util.FromString<Day19.Blueprint>(input);
+            var bp = Parser.FromString<Day19.Blueprint>(input);
 
             Assert.AreEqual(expected, bp.Run(24).score);
         }
@@ -57,7 +58,7 @@ namespace AoC.Advent2022.Test
         [DataTestMethod]
         public void Minerals02Test(string input, int expected)
         {
-            var bp = Util.FromString<Day19.Blueprint>(input);
+            var bp = Parser.FromString<Day19.Blueprint>(input);
 
             Assert.AreEqual(expected, bp.Run(32).geodes);
         }

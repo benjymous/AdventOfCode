@@ -1,5 +1,6 @@
 ﻿global using AoC.Utils;
 global using AoC.Utils.Collections;
+global using AoC.Utils.Parser;
 global using AoC.Utils.Pathfinding;
 global using AoC.Utils.Solver;
 global using AoC.Utils.Vectors;

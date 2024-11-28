@@ -18,9 +18,9 @@ public class Day03 : IPuzzle
         return square.Where(kvp => kvp.Value > 1).Select(kvp => kvp.Key).ToHashSet();
     }
 
-    public static int Part1(Util.AutoParse<Shape> shapes) => FindOverlaps(shapes).Count;
+    public static int Part1(Parser.AutoArray<Shape> shapes) => FindOverlaps(shapes).Count;
 
-    public static string Part2(Util.AutoParse<Shape> shapes)
+    public static string Part2(Parser.AutoArray<Shape> shapes)
     {
         var overlaps = FindOverlaps(shapes);
 

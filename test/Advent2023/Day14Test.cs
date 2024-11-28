@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AoC.Utils;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 
 namespace AoC.Advent2023.Test;
@@ -51,20 +52,20 @@ O.#..O.#.#
         "#.." + "\n" +
         "..." + "\n";
 
-        var grid = Util.ParseSparseMatrix<char>(input).Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key).ToHashSet();
+        var grid = Util.ParseSparseMatrix<char>(input).KeysWithValue('#').ToHashSet();
 
         var grid1 = Day14.RotateGrid(grid, 3);
-        var grid1E = Util.ParseSparseMatrix<char>(expected1).Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key).ToHashSet();
+        var grid1E = Util.ParseSparseMatrix<char>(expected1).KeysWithValue('#').ToHashSet();
 
         Assert.IsTrue(grid1.SetEquals(grid1E));
 
         var grid2 = Day14.RotateGrid(grid1, 3);
-        var grid2E = Util.ParseSparseMatrix<char>(expected2).Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key).ToHashSet();
+        var grid2E = Util.ParseSparseMatrix<char>(expected2).KeysWithValue('#').ToHashSet();
 
         Assert.IsTrue(grid2.SetEquals(grid2E));
 
         var grid3 = Day14.RotateGrid(grid2, 3);
-        var grid3E = Util.ParseSparseMatrix<char>(expected3).Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key).ToHashSet();
+        var grid3E = Util.ParseSparseMatrix<char>(expected3).KeysWithValue('#').ToHashSet();
 
         Assert.IsTrue(grid3.SetEquals(grid3E));
 

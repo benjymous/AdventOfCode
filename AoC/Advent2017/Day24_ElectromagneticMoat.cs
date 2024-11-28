@@ -6,7 +6,7 @@ public class Day24 : IPuzzle
         [Regex(@"(.+)\/(.+)")] public static (int x, int y, int s) Component(int x, int y) => (x, y, x + y);
     }
 
-    public static ((int length, int strength) longstrong, int strongest) GetChains(string input) => GetChains(0, Util.RegexFactory<(int x, int y, int s), Factory>(input).ToArray());
+    public static ((int length, int strength) longstrong, int strongest) GetChains(string input) => GetChains(0, Parser.Factory<(int x, int y, int s), Factory>(input).ToArray());
 
     public static ((int length, int strength) longstrong, int strongest) GetChains(int currentPort, (int x, int y, int s)[] inputs)
     {

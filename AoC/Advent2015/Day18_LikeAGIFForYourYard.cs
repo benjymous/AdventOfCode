@@ -10,11 +10,11 @@ public class Day18 : IPuzzle
 
         public State(string input, bool stuckCorners)
         {
-            var raw = Util.ParseSparseMatrix<bool>(input).Keys;
-            cells = raw.Select(v => v.x + (v.y << 8)).ToHashSet();
+            var raw = Util.ParseSparseMatrix<bool>(input);
+            cells = raw.Keys.Select(v => v.x + (v.y << 8)).ToHashSet();
 
-            Width = raw.Max(v => v.x);
-            Height = raw.Max(v => v.y);
+            Width = raw.Width;
+            Height = raw.Height;
 
             if (stuckCorners) corners = [0, Width, Height << 8, Width + (Height << 8)];
         }

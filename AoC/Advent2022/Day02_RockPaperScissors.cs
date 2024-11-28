@@ -45,9 +45,9 @@ public class Day02 : IPuzzle
 
     static int ScorePt2(Rule r) => Score(r.Theirs, GetMove(r.Theirs, r.Yours));
 
-    public static int Part1(Util.AutoParse<Rule> input) => input.Sum(ScorePt1);
+    public static int Part1(Parser.AutoArray<Rule> input) => input.Sum(ScorePt1);
 
-    public static int Part2(Util.AutoParse<Rule> input) => input.Sum(ScorePt2);
+    public static int Part2(Parser.AutoArray<Rule> input) => input.Sum(ScorePt2);
 
     public void Run(string input, ILogger logger)
     {

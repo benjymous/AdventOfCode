@@ -6,7 +6,7 @@ public class Day01 : IPuzzle
 
     private static int FollowPath(string input, QuestionPart part)
     {
-        var instructions = Util.RegexParse<Instruction>(input, ",");
+        var instructions = Parser.Parse<Instruction>(input, ",");
 
         var position = new ManhattanVector2(0, 0);
         var direction = new Direction2(0, -1);

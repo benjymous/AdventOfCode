@@ -47,9 +47,9 @@ public class Day18 : IPuzzle
         return Math.Abs(area / 2) - (interiorPoints / 2) + (boundaryPoints / 2) + 1;
     }
 
-    public static long Part1(Util.AutoParse<InstructionV1> input) => Solve(input);
+    public static long Part1(Parser.AutoArray<InstructionV1> input) => Solve(input);
 
-    public static long Part2(Util.AutoParse<InstructionV2> input) => Solve(input);
+    public static long Part2(Parser.AutoArray<InstructionV2> input) => Solve(input);
 
     public void Run(string input, ILogger logger)
     {

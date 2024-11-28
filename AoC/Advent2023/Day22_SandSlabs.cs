@@ -34,7 +34,7 @@ public class Day22 : IPuzzle
         }
     }
 
-    public static Brick[] SimulateBricks(Util.AutoParse<Brick> input)
+    public static Brick[] SimulateBricks(Parser.AutoArray<Brick> input)
     {
         Brick[] bricks = [.. input.OrderBy(b => b.Lowest)];
 

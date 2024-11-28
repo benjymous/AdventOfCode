@@ -3,9 +3,9 @@ public class Day25 : IPuzzle
 {
     class Graph
     {
-        public Graph(string input)
+        public Graph(Parser.AutoArray<ManhattanVector4> input)
         {
-            Index = Util.Parse<ManhattanVector4>(input).Select((pos, idx) => new Node { position = pos.AsSimple(), Id = idx, links = [idx] }).ToArray();
+            Index = input.Select((pos, idx) => new Node { position = pos.AsSimple(), links = [idx] }).ToArray();
 
             for (int i = 0; i < Index.Length; i++)
             {
@@ -15,8 +15,8 @@ public class Day25 : IPuzzle
                     var node2 = Index[j];
                     if (node1.IsLinkedTo(node2))
                     {
-                        node1.links.Add(node2.Id);
-                        node2.links.Add(node1.Id);
+                        node1.links.Add(j);
+                        node2.links.Add(i);
                     }
                 }
             }
@@ -26,8 +26,8 @@ public class Day25 : IPuzzle
 
         public int CountGroups()
         {
-            List<HashSet<int>> foundGroups = [];
-            foreach (var node in Index)
+            List<HashSet<int>> foundGroups = [Index.First().links];
+            foreach (var node in Index.Skip(1))
             {
                 var overlap = foundGroups.Where(g2 => g2.Overlaps(node.links)).ToHashSet();
                 node.links.UnionWith(overlap.SelectMany(x => x));
@@ -42,7 +42,6 @@ public class Day25 : IPuzzle
     {
         public (int x, int y, int z, int w) position;
         public HashSet<int> links = [];
-        public int Id;
 
         public bool IsLinkedTo(Node other) => position.Distance(other.position) <= 3;
     }

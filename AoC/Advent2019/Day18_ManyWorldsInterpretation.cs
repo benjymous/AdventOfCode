@@ -24,7 +24,7 @@ public class Day18 : IPuzzle
         public MapData(string input, QuestionPart part) : base(new AllWalkable<char>())
         {
             Data = Util.ParseSparseMatrix<char>(input, new Util.Convertomatic.SkipChars('#'));
-            var startPositions = Data.Where(kvp => kvp.Value == '@').Select(kvp => kvp.Key).ToList();
+            var startPositions = Data.KeysWithValue('@').ToList();
             var keyPositions = Data.Where(kvp => kvp.Value is >= 'a' and <= 'z').Select(kvp => (KeyCode(kvp.Value), kvp.Key)).ToDictionary();
             AllKeys = keyPositions.Keys.Sum();
 

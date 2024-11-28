@@ -133,6 +133,6 @@ namespace AoC.Advent2019.NPSA
             throw new Exception("Not found");
         }
 
-        public HashSet<PackedPos32> FindAll(char c) => screenBuffer.Where(kvp => kvp.Value == c).Select(kvp => kvp.Key).ToHashSet();
+        public HashSet<PackedPos32> FindAll(char c) => screenBuffer.KeysWithValue(c).ToHashSet();
     }
 }

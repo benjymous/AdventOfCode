@@ -13,7 +13,7 @@ public class Day09 : IPuzzle
         readonly Dictionary<string, int> MappingDict = [];
         public readonly Dictionary<int, int> Atlas = [];
 
-        public static implicit operator Factory(string data) => Util.RegexFactory<Factory>(data);
+        public static implicit operator Factory(string data) => Parser.Factory<Factory>(data);
     }
 
     static (int min, int max) MeasureRoutes(IEnumerable<int> remaining, Dictionary<int, int> atlas, int current = 0)

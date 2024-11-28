@@ -23,6 +23,7 @@ namespace AoC.Advent2017.NorthCloud
 
     public class Variant
     {
+        [Regex("(.+)")]
         public Variant(string input) =>
             (Value, IsReg) = (input.Length == 1 && input[0] >= 'a' && input[0] <= 'z')
                 ? (input[0] - 'a', true)
@@ -151,7 +152,7 @@ namespace AoC.Advent2017.NorthCloud
                 var mnemonic = line[..3];
                 if (opcodes.TryGetValue(mnemonic, out var func))
                 {
-                    var opargs = Util.Parse<Variant>(line[4..], " ").ToArray();
+                    var opargs = Parser.Parse<Variant>(line[4..], " ").ToArray();
                     opargs.ForEach(v => v.Bus = Bus);
 
                     instrs.Add(new InstructionLine(instrs.Count, mnemonic, func, opargs, Bus));

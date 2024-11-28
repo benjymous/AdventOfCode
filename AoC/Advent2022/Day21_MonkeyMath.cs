@@ -29,7 +29,7 @@ public class Day21 : IPuzzle
 
         public Monkey GetRootMonkey()
         {
-            Util.RegexFactory(input, this);
+            Parser.Factory(input, this);
             return index[RootKey];
         }
     }

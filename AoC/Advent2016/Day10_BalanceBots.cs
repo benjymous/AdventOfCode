@@ -47,7 +47,7 @@ public class Day10 : IPuzzle
             return default;
         }
 
-        public static implicit operator Factory(string data) => Util.RegexFactory<Factory>(data);
+        public static implicit operator Factory(string data) => Parser.Factory<Factory>(data);
     }
 
     public static string Part1(Factory factory) => factory.Run(true);

@@ -44,7 +44,7 @@ public class Day05 : IPuzzle
 
     private static int Solve(string input, QuestionPart part)
     {
-        var lines = Util.RegexParse<Line>(input).ToArray();
+        var lines = Parser.Parse<Line>(input).ToArray();
         if (part.One()) lines = lines.Where(l => l.IsAxial).ToArray();
 
         return lines.SelectMany(line => line.Points)

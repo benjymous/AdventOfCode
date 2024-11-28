@@ -38,7 +38,7 @@ public class Day15 : IPuzzle
         }
     }
 
-    public static int Part1(Util.AutoParse<Sensor> input, int line = 2000000)
+    public static int Part1(Parser.AutoArray<Sensor> input, int line = 2000000)
     {
         var sensors = input.Where(s => s.WithinRow(line)).ToArray();
         var beacons = sensors.Select(s => s.Beacon).Where(p => p.y == line).Distinct();
@@ -48,7 +48,7 @@ public class Day15 : IPuzzle
         return minMax.Max(v => v.max) - minMax.Min(v => v.min) - beacons.Count();
     }
 
-    public static long Part2(Util.AutoParse<Sensor> sensors, int max = 4000000)
+    public static long Part2(Parser.AutoArray<Sensor> sensors, int max = 4000000)
     {
         foreach (var sensor in sensors)
         {

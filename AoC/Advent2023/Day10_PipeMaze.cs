@@ -51,12 +51,11 @@ public class Day10 : IPuzzle
     {
         var loop = GetLoop(input);
 
-        var loopKeys = loop.Keys.ToArray();
-
-        int minY = loopKeys.Min(v => v.y);
+        int minY = loop.Min(v => v.Key.y);
 
         var clockwise = loop.Any(kvp => kvp.Key.y == minY && kvp.Value[0] == Direction2.Right);
 
+        var loopKeys = loop.Keys.ToArray();
         return loopKeys.SelectMany(pos => loop[pos].Distinct().Select(dir => FloodFill(pos.OffsetBy(dir + (clockwise ? 1 : -1)), loop))).Sum();
     }
 

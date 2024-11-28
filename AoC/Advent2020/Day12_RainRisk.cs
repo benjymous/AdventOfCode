@@ -27,7 +27,7 @@ public class Day12 : IPuzzle
         [Regex(@"F(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionF(int val) => (ManhattanVector2 ship, ManhattanVector2 wp) => ship.Offset(wp, val);
     }
 
-    public static int Part1(Util.AutoParse<Action<ManhattanVector2, Direction2>, FactoryPt1> input)
+    public static int Part1(Parser.AutoArray<Action<ManhattanVector2, Direction2>, FactoryPt1> input)
     {
         var position = new ManhattanVector2(0, 0);
         var direction = new Direction2(1, 0);
@@ -37,7 +37,7 @@ public class Day12 : IPuzzle
         return position.Distance(ManhattanVector2.Zero);
     }
 
-    public static int Part2(Util.AutoParse<Action<ManhattanVector2, ManhattanVector2>, FactoryPt2> input)
+    public static int Part2(Parser.AutoArray<Action<ManhattanVector2, ManhattanVector2>, FactoryPt2> input)
     {
         var position = new ManhattanVector2(0, 0);
         var waypoint = new ManhattanVector2(10, -1);

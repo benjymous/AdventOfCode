@@ -4,12 +4,11 @@ public class Day22 : IPuzzle
     public static int Part1(string input)
     {
         var data = Util.ParseSparseMatrix<PackedPos32, bool>(input);
-        var (width, height) = (data.Max(kvp => kvp.Key.X), data.Max(kvp => kvp.Key.Y));
 
-        PackedPos32 pos = (x: width / 2, y: height / 2);
+        PackedPos32 pos = (x: data.Width / 2, y: data.Height / 2);
         var dir = new Direction2(Direction2.North);
 
-        var grid = data.Where(kvp => kvp.Value == true).Select(kvp => kvp.Key).ToHashSet();
+        var grid = data.KeysWithValue(true).ToHashSet();
 
         int infections = 0;
 
@@ -41,9 +40,8 @@ public class Day22 : IPuzzle
     public static int Part2(string input)
     {
         var data = Util.ParseSparseMatrix<PackedPos32, char>(input);
-        var (width, height) = (data.Max(kvp => kvp.Key.X), data.Max(kvp => kvp.Key.Y));
 
-        PackedPos32 pos = (width / 2, height / 2);
+        PackedPos32 pos = (data.Width / 2, data.Height / 2);
         var dir = new Direction2(Direction2.North);
 
         var grid = data.Where(kvp => kvp.Value == Infected).ToDictionary();

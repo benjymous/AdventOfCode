@@ -62,11 +62,11 @@ public class Day12 : IPuzzle
         return 0;
     });
 
-    public static long Part1(string input)
-        => Util.RegexParse<Row>(input).ToArray().Sum(row => Solve(row.Input, row.Lengths));
+    public static long Part1(Parser.AutoArray<Row> input)
+        => input.Sum(row => Solve(row.Input, row.Lengths));
 
-    public static long Part2(string input)
-        => Util.RegexParse<Row>(input).ToArray().Sum(row => Solve(Unfold(row.Input, true, '?').AsString(), Unfold(row.Lengths)));
+    public static long Part2(Parser.AutoArray<Row> input)
+        => input.Sum(row => Solve(Unfold(row.Input, true, '?').AsString(), Unfold(row.Lengths)));
 
     public void Run(string input, ILogger logger)
     {

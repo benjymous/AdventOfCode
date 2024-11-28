@@ -23,9 +23,9 @@ public class Day02 : IPuzzle
         }
     }
 
-    public static int Part1(string input) => Util.RegexParse<Box>(input).Sum(b => b.Wrap());
+    public static int Part1(Parser.AutoArray<Box> input) => input.Sum(b => b.Wrap());
 
-    public static int Part2(string input) => Util.RegexParse<Box>(input).Sum(b => b.Ribbon());
+    public static int Part2(Parser.AutoArray<Box> input) => input.Sum(b => b.Ribbon());
 
     public void Run(string input, ILogger logger)
     {

@@ -19,7 +19,7 @@ public class Day16 : IPuzzle
         var data = input.Split("\n\n\n");
         var testLines = data[0].SplitSections();
 
-        var tests = Util.RegexParse<Test>(testLines);
+        var tests = Parser.Parse<Test>(testLines);
 
         var instrs = ChronCPU.GetInstructions();
 

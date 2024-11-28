@@ -13,7 +13,7 @@ public class Day13 : IPuzzle
         public readonly Dictionary<int, int> Atlas = [];
         public readonly HashSet<char> Names = [];
 
-        public static implicit operator Factory(string data) => Util.RegexFactory<Factory>(data);
+        public static implicit operator Factory(string data) => Parser.Factory<Factory>(data);
     }
 
     public static int GetKey(char p1, char p2) => p1 * p2;

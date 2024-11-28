@@ -1,55 +1,37 @@
-﻿using OperatorFunc = System.Func<int, int, bool>;
-
-namespace AoC.Advent2017;
+﻿namespace AoC.Advent2017;
 public class Day08 : IPuzzle
 {
-    static OperatorFunc ParseOperator(string op) => op switch
+    class Factory
     {
-        "==" => (int lhs, int rhs) => lhs == rhs,
-        "!=" => (int lhs, int rhs) => lhs != rhs,
-        "<" => (int lhs, int rhs) => lhs < rhs,
-        ">" => (int lhs, int rhs) => lhs > rhs,
-        "<=" => (int lhs, int rhs) => lhs <= rhs,
-        ">=" => (int lhs, int rhs) => lhs >= rhs,
-        _ => throw new Exception("Unknown operator"),
-    };
+        public readonly Dictionary<string, int> RegLookup = [];
 
-    class Instruction
-    {
-        readonly Dictionary<string, int> RegLookup;
-
-        public Instruction(string line, Dictionary<string, int> lookup)
-        {
-            RegLookup = lookup;
-            Instr = Decode(line);
-        }
+        [Regex(@"(.+) (inc|dec) (-?\d+) if (.+) (<|<=|==|!=|>=|>) (-?\d+)")]
+        public Action<int[]> Instr(string regToChange, string action, int amount, string regToCheck, string oper, int checkVal)
+            => (int[] regs) => regs[RegIndex(regToChange)] += Operator(oper, regs[RegIndex(regToCheck)], checkVal) ? (action == "inc" ? amount : -amount) : 0;
 
         private int RegIndex(string name) => RegLookup.GetOrCalculate(name, _ => RegLookup.Count);
 
-        private (int RegToChange, int Amount, int RegToCheck, OperatorFunc Operator, int CheckValue) Decode(string line)
+        static bool Operator(string op, int lhs, int rhs) => op switch
         {
-            var bits = line.Split(" ");
-            int val = int.Parse(bits[2]);
-            if (bits[1] == "dec") val = -val;
-            return (RegIndex(bits[0]), val, RegIndex(bits[4]), ParseOperator(bits[5]), int.Parse(bits[6]));
-        }
-
-        public void Act(int[] regs) => regs[Instr.RegToChange] += Instr.Operator(regs[Instr.RegToCheck], Instr.CheckValue) ? Instr.Amount : 0;
-
-        private (int RegToChange, int Amount, int RegToCheck, OperatorFunc Operator, int CheckValue) Instr;
+            "==" => lhs == rhs,
+            "!=" => lhs != rhs,
+            "<" => lhs < rhs,
+            ">" => lhs > rhs,
+            "<=" => lhs <= rhs,
+            ">=" => lhs >= rhs,
+            _ => throw new Exception("Unknown operator"),
+        };
     }
 
     public static (int largestEnd, int largestRecord) Run(string input)
     {
-        Dictionary<string, int> regLookup = [];
-        var instructions = Util.Parse<Instruction, Dictionary<string, int>>(input, regLookup);
-        var values = new int[regLookup.Count];
+        var values = new int[32];
 
         int runningMax = 0;
 
-        foreach (var instr in instructions)
+        foreach (var instr in Parser.Factory<Action<int[]>, Factory>(input, new Factory()))
         {
-            instr.Act(values);
+            instr(values);
 
             runningMax = Math.Max(runningMax, values.Max());
         }

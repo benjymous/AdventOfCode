@@ -23,7 +23,7 @@ public class Day17 : IPuzzle
                 if (newScore < 150) jobqueue.Enqueue((newValues, newScore));
             }
         });
-        return cache.Where(kvp => kvp.Value == 150).Select(kvp => kvp.Key);
+        return cache.KeysWithValue(150);
     }
 
     public static int Part1(string input)

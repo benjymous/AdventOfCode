@@ -27,9 +27,9 @@ public class Day02 : IPuzzle
                              .Select(group => group.Max(s => s.Num)).Product();
     }
 
-    public static int Part1(Util.AutoParse<Game> input) => input.Where(game => game.Possible).Sum(g => g.Id);
+    public static int Part1(Parser.AutoArray<Game> input) => input.Where(game => game.Possible).Sum(g => g.Id);
 
-    public static long Part2(Util.AutoParse<Game> input) => input.Sum(g => g.Power);
+    public static long Part2(Parser.AutoArray<Game> input) => input.Sum(g => g.Power);
 
     public void Run(string input, ILogger logger)
     {

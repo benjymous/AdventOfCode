@@ -11,7 +11,7 @@ public class Day14 : IPuzzle
     private static long Solve(string input, int steps)
     {
         var (initial, ruleLines) = input.DecomposeSections();
-        var rules = Util.RegexParse<Rule>(ruleLines).ToDictionary(rule => rule.Input, rule => rule);
+        var rules = Parser.Parse<Rule>(ruleLines).ToDictionary(rule => rule.Input, rule => rule);
 
         var pairs = initial.Windows(2)
                            .Select(p => p.AsString())

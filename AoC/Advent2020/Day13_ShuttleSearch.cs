@@ -26,7 +26,7 @@ public class Day13 : IPuzzle
         var lines = Util.Split(input, "\n");
         var times = Util.Split(lines[1]);
 
-        var nums = times.WithIndex().Where(e => e.Value != "x").Select(e => (Value: ulong.Parse(e.Value), Index: (ulong)e.Index)).ToList();
+        var nums = times.Index().Where(e => e.Item != "x").Select(e => (Value: ulong.Parse(e.Item), Index: (ulong)e.Index)).ToList();
 
         ulong res = nums[0].Value;
         var inc = res;

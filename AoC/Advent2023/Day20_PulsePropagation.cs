@@ -49,7 +49,7 @@ public class Day20 : IPuzzle
         return counts;
     }
 
-    private static Dictionary<TwoCC, Node> InitNetwork(Util.AutoParse<Node> input)
+    private static Dictionary<TwoCC, Node> InitNetwork(Parser.AutoArray<Node> input)
     {
         var network = input.ToDictionary(n => n.Id, n => n);
         foreach (var (sourceId, childId) in network.Values.SelectMany(node => node.Outputs.Where(childId => network.ContainsKey(childId)).Select(childId => (node.Id, childId))))

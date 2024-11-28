@@ -4,7 +4,7 @@ public class Day20 : IPuzzle
     [Regex(@"(\d+)-(\d+)")]
     public record class Rule(uint Min, uint Max);
 
-    public static uint Part1(Util.AutoParse<Rule> input)
+    public static uint Part1(Parser.AutoArray<Rule> input)
     {
         var rules = input.OrderBy(r => r.Min).ToArray();
 
@@ -21,7 +21,7 @@ public class Day20 : IPuzzle
         return current;
     }
 
-    public static uint Part2(Util.AutoParse<Rule> input)
+    public static uint Part2(Parser.AutoArray<Rule> input)
     {
         var rules = input.OrderBy(r => r.Min).ToArray();
         uint max = uint.MaxValue;

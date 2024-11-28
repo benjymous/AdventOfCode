@@ -4,7 +4,7 @@ public class Day02 : IPuzzle
     [Regex(@"(.).+ (\d+)")]
     public record struct Instruction(char Command, int Distance);
 
-    public static int Part1(Util.AutoParse<Instruction> data)
+    public static int Part1(Parser.AutoArray<Instruction> data)
     {
         int x = 0, y = 0;
 
@@ -21,7 +21,7 @@ public class Day02 : IPuzzle
         return x * y;
     }
 
-    public static int Part2(Util.AutoParse<Instruction> data)
+    public static int Part2(Parser.AutoArray<Instruction> data)
     {
         int x = 0, y = 0, aim = 0;
 

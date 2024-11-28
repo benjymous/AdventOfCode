@@ -53,7 +53,7 @@ namespace AoC.Advent2016.BunniTek
 
         public Func<int, bool> Output = null;
 
-        public static Instruction[] Compile(string program) => [.. Util.RegexParse<Instruction>(program)];
+        public static Instruction[] Compile(string program) => [.. Parser.Parse<Instruction>(program)];
 
         public BunnyCPU(string program) : this(Compile(program)) { }
 

@@ -1,8 +1,9 @@
 ﻿namespace AoC.Advent2022;
 public class Day03 : IPuzzle
 {
-    readonly struct Rucksack
+    public readonly struct Rucksack
     {
+        [Regex("(.+)")]
         public Rucksack(string line)
         {
             All = line;
@@ -24,18 +25,13 @@ public class Day03 : IPuzzle
         _ => throw new Exception("unexpected char"),
     };
 
-    public static int Part1(string input)
-    {
-        return Util.Parse<Rucksack>(input)
-                   .Sum(line => line.Priority);
-    }
+    public static int Part1(Parser.AutoArray<Rucksack> input) => input.Sum(line => line.Priority);
 
-    public static int Part2(string input)
+    public static int Part2(Parser.AutoArray<Rucksack> input)
     {
-        return Util.Parse<Rucksack>(input)
-                   .Partition(3)
-                   .Select(g => g.Select(r => r.All).ToArray())
-                   .Sum(group => Priority(group[0].Intersect(group[1]).Intersect(group[2]).First()));
+        return input.Partition(3)
+                    .Select(g => g.Select(r => r.All).ToArray())
+                    .Sum(group => Priority(group[0].Intersect(group[1]).Intersect(group[2]).First()));
     }
 
     public void Run(string input, ILogger logger)

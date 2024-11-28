@@ -51,8 +51,8 @@ public class Day19 : IPuzzle
 
     static IEnumerable<int> RunRules(string[] sections)
     {
-        var workflows = Util.RegexParse<Workflow>(sections[0]).ToDictionary(w => w.WorkflowId, w => w.Rules);
-        foreach (var part in Util.RegexParse<PartQualities>(sections[1]).Select(pq => pq.AsArray))
+        var workflows = Parser.Parse<Workflow>(sections[0]).ToDictionary(w => w.WorkflowId, w => w.Rules);
+        foreach (var part in Parser.Parse<PartQualities>(sections[1]).Select(pq => pq.AsArray))
         {
             string current = "in";
             while (current is not "A" and not "R")
@@ -79,7 +79,7 @@ public class Day19 : IPuzzle
 
     public static int Part1(string input) => RunRules(input.SplitSections()).Sum();
 
-    public static long Part2(string input) => CountCombinations(Util.RegexParse<Workflow>(input.SplitSections()[0]).ToDictionary(w => w.WorkflowId, w => w.Rules)).Sum();
+    public static long Part2(string input) => CountCombinations(Parser.Parse<Workflow>(input.SplitSections()[0]).ToDictionary(w => w.WorkflowId, w => w.Rules)).Sum();
 
     public void Run(string input, ILogger logger)
     {

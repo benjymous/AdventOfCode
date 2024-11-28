@@ -26,9 +26,9 @@ public class Day14 : IPuzzle
     {
         var grid = Util.ParseSparseMatrix<char>(input);
 
-        return (rocks: grid.Where(kvp => kvp.Value == 'O').Select(kvp => kvp.Key).ToHashSet(),
-            obstacles: grid.Where(kvp => kvp.Value == '#').Select(kvp => kvp.Key).ToHashSet(),
-             gridSize: grid.Max(kvp => kvp.Key.x) + 1);
+        return (rocks: grid.KeysWithValue('O').ToHashSet(),
+            obstacles: grid.KeysWithValue('#').ToHashSet(),
+             gridSize: grid.Width + 1);
     }
 
     public static int Part1(string input)

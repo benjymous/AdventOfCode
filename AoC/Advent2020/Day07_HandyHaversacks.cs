@@ -14,7 +14,7 @@ public class Day07 : IPuzzle
 
     static long Count(string type, Dictionary<string, Dictionary<string, uint>> rules, Dictionary<string, long> cache = null) => cache.GetOrCalculate(type, type => rules[type].Sum(c => c.Value * Count(c.Key, rules, cache)) + 1);
 
-    public static int Part1(Util.AutoParse<(string BagType, Dictionary<string, uint> Children), Factory> rules)
+    public static int Part1(Parser.AutoArray<(string BagType, Dictionary<string, uint> Children), Factory> rules)
     {
         HashSet<string> goldholders = rules.Where(r => r.Children.ContainsKey(ShinyGoldKey)).Select(r => r.BagType).ToHashSet();
 
@@ -27,7 +27,7 @@ public class Day07 : IPuzzle
         }
     }
 
-    public static long Part2(Util.AutoParse<(string, Dictionary<string, uint>), Factory> input)
+    public static long Part2(Parser.AutoArray<(string, Dictionary<string, uint>), Factory> input)
         => Count(ShinyGoldKey, input.ToDictionary(), []) - 1;
 
     public void Run(string input, ILogger logger)

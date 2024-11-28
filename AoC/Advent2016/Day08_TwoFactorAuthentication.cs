@@ -39,7 +39,7 @@ public class Day08 : IPuzzle
                 pixels[col, y] = oldCol[(GridHeight + (y - shift)) % GridHeight];
         };
 
-        public void Perform(string input) => Util.RegexFactory<Action, Display>(input, this).ForEach(a => a());
+        public void Perform(string input) => Parser.Factory<Action, Display>(input, this).ForEach(a => a());
 
         public int NumPixelsOn() => pixels.Values().Count(x => x);
 

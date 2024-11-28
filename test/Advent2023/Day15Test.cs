@@ -48,11 +48,12 @@ public class Day15Test
         Box.AddLens(Lens2);
         Box.AddLens(Lens3);
 
-        Assert.AreEqual(2, Box.Lenses.Count);
-        Assert.AreEqual("A", Box.Lenses[0].Label);
-        Assert.AreEqual(3, Box.Lenses[0].FocalLength);
-        Assert.AreEqual("B", Box.Lenses[1].Label);
-        Assert.AreEqual(2, Box.Lenses[1].FocalLength);
+        Assert.AreEqual(2, Box.Count);
+        Assert.AreEqual("A", Box[0].Label);
+        Assert.AreEqual(3, Box[0].FocalLength);
+        Assert.AreEqual("B", Box[1].Label);
+        Assert.AreEqual(2, Box[1].FocalLength);
+
     }
 
     [TestCategory("Test")]

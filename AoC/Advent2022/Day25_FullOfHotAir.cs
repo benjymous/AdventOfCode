@@ -1,15 +1,11 @@
 ﻿namespace AoC.Advent2022;
-public class Day25 : IPuzzle
-{
-    public static Snafu Part1(string input) => Util.Parse<Snafu>(input).Sum();
-
-    public void Run(string input, ILogger logger) => logger.WriteLine("- Pt1 - " + Part1(input));
-}
 
 public class Snafu : ISummable<Snafu>
 {
-    public Snafu(long value = 0) => components = value.While(value => value > 0, value => { var res = DivRemBalance(value, out value); return (value, res); }).ToArray();
+    [Regex("(.+)")]
     public Snafu(string value) => components = value.Reverse().Select(ToDecimal).ToArray();
+    public Snafu(long value = 0) => components = value.While(value => value > 0, value => { var res = DivRemBalance(value, out value); return (value, res); }).ToArray();
+
     Snafu(IEnumerable<sbyte> comp) => (components, balanced) = (comp.ToArray(), false);
 
     readonly sbyte[] components;
@@ -47,4 +43,11 @@ public class Snafu : ISummable<Snafu>
 
     static sbyte ToDecimal(char c) => c switch { '=' => -2, '-' => -1, _ => (sbyte)c.AsDigit() };
     static char ToChar(sbyte v) => v switch { -2 => '=', -1 => '-', _ => (char)('0' + v) };
+}
+
+public class Day25 : IPuzzle
+{
+    public static Snafu Part1(Parser.AutoArray<Snafu> input) => input.Sum();
+
+    public void Run(string input, ILogger logger) => logger.WriteLine("- Pt1 - " + Part1(input));
 }

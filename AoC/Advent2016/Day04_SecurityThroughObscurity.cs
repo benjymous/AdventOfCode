@@ -18,9 +18,9 @@ public class Day04 : IPuzzle
         }
     }
 
-    public static int Part1(Util.AutoParse<Room> rooms) => rooms.Where(r => r.IsReal).Sum(r => r.SectionID);
+    public static int Part1(Parser.AutoArray<Room> rooms) => rooms.Where(r => r.IsReal).Sum(r => r.SectionID);
 
-    public static int Part2(Util.AutoParse<Room> rooms) => rooms.Single(r => r.IsReal && r.IsDesiredRoom).SectionID;
+    public static int Part2(Parser.AutoArray<Room> rooms) => rooms.Single(r => r.IsReal && r.IsDesiredRoom).SectionID;
 
     public void Run(string input, ILogger logger)
     {

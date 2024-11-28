@@ -15,6 +15,7 @@ public class Day05 : IPuzzle
     }
     public class BoardingPass
     {
+        [Regex("(.+)")]
         public BoardingPass(string id)
         {
             BinSearch row = new(0, 127), col = new(0, 7);
@@ -44,7 +45,7 @@ public class Day05 : IPuzzle
         public readonly int ID;
     }
 
-    static HashSet<int> ParsePasses(string input) => Memoize(input, _ => Util.Parse<BoardingPass>(input).Select(p => p.ID).ToHashSet());
+    static HashSet<int> ParsePasses(string input) => Memoize(input, _ => Parser.Parse<BoardingPass>(input).Select(p => p.ID).ToHashSet());
 
     public static int Part1(string input) => ParsePasses(input).Max();
 

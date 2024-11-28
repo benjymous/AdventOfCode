@@ -46,7 +46,7 @@ public class Day14 : IPuzzle
 
     public static IEnumerable<long> Combinations((long Value, long QuantumBits) input) => input.QuantumBits.BitSequence().Combinations().Select(combo => (input.Value & ~input.QuantumBits) | combo.Sum());
 
-    static IEnumerable<Statement> Flatten(List<Statement> inputs)
+    static IEnumerable<Statement> Flatten(IEnumerable<Statement> inputs)
     {
         var mask = (0L, 0L);
 
@@ -57,7 +57,7 @@ public class Day14 : IPuzzle
         }
     }
 
-    private static IEnumerable<Statement> ParseData(string input) => Flatten(Util.RegexParse<Statement>(input).ToList()).Reverse();
+    private static IEnumerable<Statement> ParseData(string input) => Flatten(Parser.Parse<Statement>(input)).Reverse();
 
     public static long Part1(string input)
     {

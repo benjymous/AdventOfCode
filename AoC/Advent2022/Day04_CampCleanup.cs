@@ -9,9 +9,9 @@ public class Day04 : IPuzzle
         public readonly bool HasOverlap => Min1 <= Max2 && Min2 <= Max1;
     }
 
-    public static int Part1(Util.AutoParse<Pair> input) => input.Count(p => p.SubsetContained);
+    public static int Part1(Parser.AutoArray<Pair> input) => input.Count(p => p.SubsetContained);
 
-    public static int Part2(Util.AutoParse<Pair> input) => input.Count(p => p.HasOverlap);
+    public static int Part2(Parser.AutoArray<Pair> input) => input.Count(p => p.HasOverlap);
 
     public void Run(string input, ILogger logger)
     {

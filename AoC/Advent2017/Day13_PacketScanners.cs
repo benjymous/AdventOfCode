@@ -10,7 +10,7 @@ public class Day13 : IPuzzle
         public void Step() => Position = (Position + 1) % Frequency;
     }
 
-    private static Dictionary<int, Scanner> GetScanners(string input) => Util.RegexParse<Scanner>(input).ToDictionary(s => s.Id, s => s);
+    private static Dictionary<int, Scanner> GetScanners(string input) => Parser.Parse<Scanner>(input).ToDictionary(s => s.Id, s => s);
 
     private static int CheckBlock((int Key, int Mod)[] scanners, int start, int size)
     {

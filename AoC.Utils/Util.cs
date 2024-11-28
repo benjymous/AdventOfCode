@@ -1,9 +1,9 @@
 ﻿using System.Collections;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 
 namespace AoC;
@@ -61,320 +61,6 @@ public partial class Util
     {
         return SplitNumbersAndWordsRegex().Split(input).WithoutNullOrWhiteSpace().Select(entry =>
         int.TryParse(entry, out var v) ? (null, v) : (entry, 0));
-    }
-
-    internal static int WrapIndex(int v, int length) => v % length;
-
-    public static T Create<T>(string line) => (T)Activator.CreateInstance(typeof(T), [line]);
-    public static string Create(string line) => line;
-
-    public static List<T> Parse<T>(IEnumerable<string> input) => input.Select(Create<T>).ToList();
-
-    public static List<T> Parse<T, C>(string input, C cache, string splitter = "\n")
-    {
-        return Parse<T, C>(input.Split(splitter)
-                             .WithoutNullOrWhiteSpace(), cache);
-    }
-
-    public static List<T> Parse<T, C>(IEnumerable<string> input, C cache)
-    {
-        return input.Select(line => (T)Activator.CreateInstance(typeof(T), [line, cache]))
-                    .ToList();
-    }
-
-    public static List<T> Parse<T>(string input, string splitter = "\n")
-    {
-        return Parse<T>(input.Split(splitter)
-                             .WithoutNullOrWhiteSpace());
-    }
-
-    static IEnumerable<(ConstructorInfo tc, RegexAttribute attr)> GetPotentialConstructors(Type t)
-    {
-        if (t.GetCustomAttribute<RegexAttribute>() is RegexAttribute ownAttr)
-        {
-            var typeConstructor = t.GetConstructors().First();
-            yield return (typeConstructor, ownAttr);
-        }
-        else
-        {
-            foreach (var typeConstructor in t.GetConstructors())
-            {
-                if (typeConstructor?.GetCustomAttributes(typeof(RegexAttribute), true)
-                    .FirstOrDefault() is not RegexAttribute attribute) continue; // skip constructor if it doesn't have attr
-
-                yield return (typeConstructor, attribute);
-            }
-        }
-    }
-
-    static T RegexCreate<T>(string line, (ConstructorInfo tc, RegexAttribute attr)[] potentialConstructors = null) => (T)RegexCreate(typeof(T), line, potentialConstructors);
-
-    static object RegexCreate(Type t, string line, (ConstructorInfo tc, RegexAttribute attr)[] potentialConstructors = null)
-    {
-        potentialConstructors ??= GetPotentialConstructors(t).ToArray();
-        foreach (var (tc, attr) in potentialConstructors)
-        {
-            if (RegexCreateInternal(t, line, tc, attr, out object result)) return result;
-        }
-        throw new Exception($"RegexParse failed to find suitable constructor for '{line}' in {t.Name}");
-    }
-
-    static object RegexCreate(Type t, string line, RegexAttribute paramAttr)
-    {
-
-        var tc = t.GetConstructors().First();
-        if (RegexCreateInternal(t, line, tc, paramAttr, out object result)) return result;
-
-        throw new Exception($"RegexParse failed to construct param for '{line}' in {t.Name}");
-    }
-
-    static bool RegexCreateInternal(Type t, string line, ConstructorInfo typeConstructor, RegexAttribute attr, out object result)
-    {
-        var matches = attr.Regex.Matches(line); // match this constructor against the input line
-
-        if (matches.Count == 0)
-        {
-            result = default;
-            return false; // Try other constructors to see if they match
-        }
-
-        var paramInfo = typeConstructor.GetParameters();
-
-        object[] convertedParams = ConstructParams(matches, paramInfo);
-        result = Activator.CreateInstance(t, convertedParams);
-
-        return true;
-    }
-
-    static Array ConvertArray(List<object> input, Type desiredType)
-    {
-        var arr = Array.CreateInstance(desiredType, input.Count);
-        for (int i = 0; i < input.Count; ++i)
-        {
-            arr.SetValue(input[i], i);
-        }
-        return arr;
-    }
-
-    static object[] CreateObjectArray(Type[] paramDef, string input, SplitAttribute splitAttr = null)
-    {
-        string[] data = [];
-        if (splitAttr != null && splitAttr.KvpMatchRegex != null)
-        {
-            var matches = splitAttr.KvpMatchRegex.Matches(input);
-            if (matches.Count != 1)
-            {
-                throw new Exception("Couldn't match kvp regex");
-            }
-
-            string[] expectedKeys = ["key", "value"];
-
-            data = expectedKeys.Select(k => matches[0].Groups[k].Value).ToArray();
-        }
-        else
-        {
-            data = input.Split(":");
-        }
-
-        var tupleParams = Enumerable.Zip(paramDef, data);
-        return tupleParams.Select(kvp => ConvertFromString(kvp.First, kvp.Second.Trim())).ToArray(); // convert substrings to match kvp types
-    }
-
-    static IEnumerable<object[]> ParsePairs(Type[] paramDef, string[] lines, SplitAttribute splitAttr = null) => lines.Select(line => CreateObjectArray(paramDef, line, splitAttr));
-
-    static object ConvertGenericCollection(Type destinationType, IEnumerable<object[]> kvpdata)
-    {
-        var collectionType = destinationType.GetGenericTypeDefinition();
-        var paramDef = destinationType.GetGenericArguments();
-
-        var typeCreator = collectionType.MakeGenericType(paramDef);
-
-        var obj = Activator.CreateInstance(typeCreator);
-
-        var add = obj.GetType().GetMethod("Add", paramDef);
-        foreach (var row in kvpdata)
-            add.Invoke(obj, row);
-
-        return obj;
-    }
-
-    public static T FromString<T>(string input) => (T)ConvertFromString(typeof(T), input);
-
-    static object ConvertFromString(Type destinationType, string input, Dictionary<Type, Attribute> attrs = null)
-    {
-        if (string.IsNullOrEmpty(input)) return Activator.CreateInstance(destinationType); // appropriate empty value
-
-        if (destinationType.IsArray || destinationType.Namespace == "System.Collections.Generic")
-        {
-            var splitAttr = attrs.Get<SplitAttribute>();
-
-            string[] data = splitAttr != null ? input.Split(splitAttr.Splitter).WithoutNullOrWhiteSpace().ToArray() : Split(input);
-
-            if (destinationType.Namespace == "System.Collections.Generic")
-            {
-                var arr = ParsePairs(destinationType.GetGenericArguments(), data, splitAttr);
-                return ConvertGenericCollection(destinationType, arr);
-            }
-            else
-            {
-                var elementType = destinationType.GetElementType();
-
-                if (elementType == typeof(string)) return data;
-
-                var arr = TypeDescriptor.GetConverter(elementType).CanConvertFrom(typeof(string))
-                    ? data.Select(item => ConvertFromString(elementType, item, attrs)).ToList()
-                    : RegexParse(elementType, data).ToList();
-                return ConvertArray(arr, elementType);
-            }
-        }
-        else
-        {
-            if (destinationType == typeof(string)) return input;
-
-            if (destinationType == typeof(int))
-            {
-                var baseAttr = attrs.Get<BaseAttribute>();
-
-                return baseAttr != null ? Convert.ToInt32(input, baseAttr.NumberBase) : int.Parse(input);
-            }
-
-            if (destinationType.IsEnum)
-            {
-                input = input.Replace(" ", "_");
-            }
-
-            if (destinationType == typeof(bool))
-            {
-                return input.Trim()[0].AsBool();
-            }
-
-            var nullableType = Nullable.GetUnderlyingType(destinationType);
-            if (nullableType != null)
-            {
-                return ConvertFromString(nullableType, input, attrs);
-            }
-
-            var conv = TypeDescriptor.GetConverter(destinationType);
-            if (conv.CanConvertFrom(typeof(string)))
-            {
-                return conv.ConvertFromString(input);
-            }
-
-            var paramAttr = attrs.Get<RegexAttribute>();
-
-            return paramAttr != null ? RegexCreate(destinationType, input, paramAttr) : RegexCreate(destinationType, input);
-        }
-    }
-
-    private static object[] ConstructParams(MatchCollection matches, ParameterInfo[] paramInfo)
-    {
-        int skip = (matches.Count == 1 && matches[0].Groups.Count == 1 && paramInfo.Length == 1) ? 0 : 1;
-
-        var regexValues = matches[0]
-            .Groups.Values
-            .Skip(skip).Select(g => g.Value).ToArray();
-
-        if (regexValues.Length != paramInfo.Length) throw new Exception("RegexParse couldn't match constructor param count");
-
-        var instanceParams = Enumerable.Zip(paramInfo, regexValues); // collate parameter types and matched substrings
-
-        return instanceParams
-            .Select(kvp => ConvertFromString(kvp.First.ParameterType, kvp.Second, kvp.First.GetCustomAttributes().ToDictionary(v => v.GetType(), v => v))).ToArray(); // convert substrings to match constructor input
-    }
-
-    public static IEnumerable<T> RegexParse<T>(IEnumerable<string> input)
-    {
-        (ConstructorInfo tc, RegexAttribute attr)[] constructors = GetPotentialConstructors(typeof(T)).ToArray();
-        return input.WithoutNullOrWhiteSpace()
-             .Select(line => RegexCreate<T>(line, constructors));
-    }
-
-    static IEnumerable<object> RegexParse(Type t, IEnumerable<string> input)
-    {
-        (ConstructorInfo tc, RegexAttribute attr)[] constructors = GetPotentialConstructors(t).ToArray();
-        return input.WithoutNullOrWhiteSpace()
-             .Select(line => RegexCreate(t, line, constructors));
-    }
-
-    public static IEnumerable<T> RegexParse<T>(string input, string splitter = "\n") =>
-        RegexParse<T>(input.Split(splitter));
-
-    static T RegexFactoryCreate<T, FT>(string line, FT factory) where FT : class
-    {
-        foreach (var func in typeof(FT).GetMethods())
-        {
-            if (func.GetCustomAttributes(typeof(RegexAttribute), true)
-                .FirstOrDefault() is not RegexAttribute attribute) continue; // skip function if it doesn't have attr
-
-            var matches = attribute.Regex.Matches(line); // match this function against the input line
-
-            if (matches.Count == 0) continue; // Try other functions to see if they match
-
-            var paramInfo = func.GetParameters();
-
-            object[] convertedParams = ConstructParams(matches, paramInfo);
-
-            return (T)func.Invoke(factory, convertedParams);
-
-        }
-        throw new Exception($"RegexFactory failed to find suitable factory function for {line}");
-    }
-
-    static void RegexFactoryPerform<FT>(string line, FT factory) where FT : class
-    {
-        foreach (var func in typeof(FT).GetMethods())
-        {
-            if (func.GetCustomAttributes(typeof(RegexAttribute), true)
-                .FirstOrDefault() is not RegexAttribute attribute) continue; // skip function if it doesn't have attr
-
-            var matches = attribute.Regex.Matches(line); // match this function against the input line
-
-            if (matches.Count == 0) continue; // Try other functions to see if they match
-
-            var paramInfo = func.GetParameters();
-
-            object[] convertedParams = ConstructParams(matches, paramInfo);
-
-            func.Invoke(factory, convertedParams);
-            return;
-
-        }
-        throw new Exception($"RegexFactory failed to find suitable factory function for {line}");
-    }
-
-    public static IEnumerable<T> RegexFactory<T, FT>(IEnumerable<string> input, FT factory) where FT : class =>
-        input.WithoutNullOrWhiteSpace()
-             .Select(line => RegexFactoryCreate<T, FT>(line, factory));
-
-    public static IEnumerable<T> RegexFactory<T, FT>(string input, FT factory = null, string splitter = "\n") where FT : class =>
-        RegexFactory<T, FT>(input.Split(splitter), factory);
-
-    public static FT RegexFactory<FT>(string input, string splitter = "\n") where FT : class, new()
-    {
-        return RegexFactory<FT>(input.Split(splitter).WithoutNullOrWhiteSpace());
-    }
-
-    public static FT RegexFactory<FT>(IEnumerable<string> input) where FT : class, new()
-    {
-        FT factory = new();
-
-        foreach (var line in input)
-        {
-            RegexFactoryPerform(line, factory);
-        }
-
-        return factory;
-    }
-
-    public static void RegexFactory<FT>(string input, FT factory, string splitter = "\n") where FT : class
-        => RegexFactory(input.Split(splitter).WithoutNullOrWhiteSpace(), factory);
-
-    public static void RegexFactory<FT>(IEnumerable<string> input, FT factory) where FT : class
-    {
-        foreach (var line in input)
-        {
-            RegexFactoryPerform(line, factory);
-        }
     }
 
     public static List<T> CreateMultiple<T>(int count) where T : new() => Enumerable.Repeat(0, count).Select(_ => new T()).ToList();
@@ -454,65 +140,93 @@ public partial class Util
 
         var converter = GetValueConverter<T>();
 
-        input.WithIndex().ForEach(line => line.Value.WithIndex().Where(ch => converter.ShouldConvert(ch.Value)).ForEach(ch => mtx[ch.Index, line.Index] = (T)converter.Convert(ch.Value)));
+        input.Index().ForEach(line => line.Item.Index().Where(ch => converter.ShouldConvert(ch.Item)).ForEach(ch => mtx[ch.Index, line.Index] = (T)converter.Convert(ch.Item)));
 
         return mtx;
     }
 
-    public static Dictionary<(int x, int y), T> ParseSparseMatrix<T>(string input) => ParseSparseMatrix<(int, int), T>(input, Convertomatic.DefaultKeys, null);
+    public static SparseMatrix<(int x, int y), T> ParseSparseMatrix<T>(string input) => ParseSparseMatrix<(int, int), T>(input, Convertomatic.DefaultKeys, null);
 
-    public static Dictionary<(int x, int y), T> ParseSparseMatrix<T>(string input, IConvertomatic valueConverter) => ParseSparseMatrix<(int, int), T>(input, Convertomatic.DefaultKeys, valueConverter);
+    public static SparseMatrix<(int x, int y), T> ParseSparseMatrix<T>(string input, IConvertomatic valueConverter) => ParseSparseMatrix<(int, int), T>(input, Convertomatic.DefaultKeys, valueConverter);
 
-    public static Dictionary<(int x, int y), T> ParseSparseMatrix<T>(IEnumerable<string> input, IConvertomatic valueConverter) => ParseSparseMatrix<(int x, int y), T>(input, Convertomatic.DefaultKeys, valueConverter);
+    public static SparseMatrix<(int x, int y), T> ParseSparseMatrix<T>(IEnumerable<string> input, IConvertomatic valueConverter) => ParseSparseMatrix<(int x, int y), T>(input, Convertomatic.DefaultKeys, valueConverter);
 
-    public static Dictionary<TKey, TVal> ParseSparseMatrix<TKey, TVal>(string input) => ParseSparseMatrix<TKey, TVal>(input, null, null);
+    public static SparseMatrix<TKey, TVal> ParseSparseMatrix<TKey, TVal>(string input) => ParseSparseMatrix<TKey, TVal>(input, null, null);
 
-    public static Dictionary<TKey, TVal> ParseSparseMatrix<TKey, TVal>(string input, IConvertomatic valueConverter) => ParseSparseMatrix<TKey, TVal>(input, null, valueConverter);
+    public static SparseMatrix<TKey, TVal> ParseSparseMatrix<TKey, TVal>(string input, IConvertomatic valueConverter) => ParseSparseMatrix<TKey, TVal>(input, null, valueConverter);
 
-    public static Dictionary<TKey, TVal> ParseSparseMatrix<TKey, TVal>(string input, Func<(int, int), object> keyConverter, IConvertomatic valueConverter) => ParseSparseMatrix<TKey, TVal>(Split(input), keyConverter, valueConverter);
+    public static SparseMatrix<TKey, TVal> ParseSparseMatrix<TKey, TVal>(string input, Func<(int, int), object> keyConverter, IConvertomatic valueConverter) => ParseSparseMatrix<TKey, TVal>(Split(input), keyConverter, valueConverter);
 
-    public static Dictionary<TKey, TVal> ParseSparseMatrix<TKey, TVal>(IEnumerable<string> input, Func<(int, int), object> keyConverter, IConvertomatic valueConverter)
+    public static SparseMatrix<TKey, TVal> ParseSparseMatrix<TKey, TVal>(IEnumerable<string> input, Func<(int, int), object> keyConverter, IConvertomatic valueConverter)
     {
-        int height = input.Count();
-        int width = input.First().Length;
-        var dic = new Dictionary<TKey, TVal>();
+        var mtx = new SparseMatrix<TKey, TVal>
+        {
+            Width = input.First().Length - 1,
+            Height = input.Count() - 1,
+            Dict = []
+        };
 
         keyConverter ??= GetKeyConverter<TKey>();
         valueConverter ??= GetValueConverter<TVal>();
 
-        input.WithIndex().ForEach(line => line.Value.WithIndex().Where(ch => valueConverter.ShouldConvert(ch.Value)).ForEach(ch => dic[(TKey)keyConverter((ch.Index, line.Index))] = (TVal)valueConverter.Convert(ch.Value)));
+        input.Index().ForEach(line => line.Item.Index().Where(ch => valueConverter.ShouldConvert(ch.Item)).ForEach(ch => mtx.Dict[(TKey)keyConverter((ch.Index, line.Index))] = (TVal)valueConverter.Convert(ch.Item)));
 
-        return dic;
+        return mtx;
     }
 
-    public class AutoParse<T>(string data) : IEnumerable<T>
+    public class SparseMatrix<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary, IReadOnlyDictionary<TKey, TValue>, ISerializable, IDeserializationCallback where TKey : notnull
     {
-        readonly T[] Resolved = RegexParse<T>(data).ToArray();
+        public TValue this[TKey key] { get => ((IDictionary<TKey, TValue>)Dict)[key]; set => ((IDictionary<TKey, TValue>)Dict)[key] = value; }
+        public object this[object key] { get => ((IDictionary)Dict)[key]; set => ((IDictionary)Dict)[key] = value; }
 
-        public int Length => Resolved.Length;
+        public Dictionary<TKey, TValue> Dict { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
 
-        public T this[int index] => Resolved[index];
+        public IEnumerable<TKey> Keys => Dict.Keys;
+        public IEnumerable<TValue> Values => Dict.Values;
 
-        public static implicit operator AutoParse<T>(string s) => new(s);
+        public int Count => ((ICollection<KeyValuePair<TKey, TValue>>)Dict).Count;
 
-        public IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)Resolved).GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => Resolved.GetEnumerator();
-    }
+        public bool IsReadOnly => ((ICollection<KeyValuePair<TKey, TValue>>)Dict).IsReadOnly;
 
-    public class AutoParse<DT, FT>(string data) : IEnumerable<DT> where FT : class
-    {
-        public DT[] Resolved = Util.RegexFactory<DT, FT>(data).ToArray();
+        public bool IsFixedSize => ((IDictionary)Dict).IsFixedSize;
 
-        public int Length => Resolved.Length;
+        public bool IsSynchronized => ((ICollection)Dict).IsSynchronized;
 
-        public DT this[int index] => Resolved[index];
+        public object SyncRoot => ((ICollection)Dict).SyncRoot;
 
-        public IEnumerator<DT> GetEnumerator() => ((IEnumerable<DT>)Resolved).GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => Resolved.GetEnumerator();
+        ICollection<TKey> IDictionary<TKey, TValue>.Keys => ((IDictionary<TKey, TValue>)Dict).Keys;
 
-        public static implicit operator AutoParse<DT, FT>(string s) => new(s);
-        public static implicit operator DT[](AutoParse<DT, FT> ap) => ap.Resolved;
+        ICollection IDictionary.Keys => ((IDictionary)Dict).Keys;
 
+        ICollection<TValue> IDictionary<TKey, TValue>.Values => ((IDictionary<TKey, TValue>)Dict).Values;
+
+        ICollection IDictionary.Values => ((IDictionary)Dict).Values;
+
+        public void Add(TKey key, TValue value) => ((IDictionary<TKey, TValue>)Dict).Add(key, value);
+        public void Add(KeyValuePair<TKey, TValue> item) => ((ICollection<KeyValuePair<TKey, TValue>>)Dict).Add(item);
+        public void Add(object key, object value) => ((IDictionary)Dict).Add(key, value);
+        public void Clear() => ((ICollection<KeyValuePair<TKey, TValue>>)Dict).Clear();
+        public bool Contains(KeyValuePair<TKey, TValue> item) => ((ICollection<KeyValuePair<TKey, TValue>>)Dict).Contains(item);
+        public bool Contains(object key) => ((IDictionary)Dict).Contains(key);
+        public bool ContainsKey(TKey key) => ((IDictionary<TKey, TValue>)Dict).ContainsKey(key);
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) => ((ICollection<KeyValuePair<TKey, TValue>>)Dict).CopyTo(array, arrayIndex);
+        public void CopyTo(Array array, int index) => ((ICollection)Dict).CopyTo(array, index);
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => ((IEnumerable<KeyValuePair<TKey, TValue>>)Dict).GetEnumerator();
+#pragma warning disable SYSLIB0050 // Type or member is obsolete
+        public void GetObjectData(SerializationInfo info, StreamingContext context) => ((ISerializable)Dict).GetObjectData(info, context);
+#pragma warning restore SYSLIB0050 // Type or member is obsolete
+        public void OnDeserialization(object sender) => ((IDeserializationCallback)Dict).OnDeserialization(sender);
+        public bool Remove(TKey key) => ((IDictionary<TKey, TValue>)Dict).Remove(key);
+        public bool Remove(KeyValuePair<TKey, TValue> item) => ((ICollection<KeyValuePair<TKey, TValue>>)Dict).Remove(item);
+        public void Remove(object key) => ((IDictionary)Dict).Remove(key);
+        public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value) => ((IDictionary<TKey, TValue>)Dict).TryGetValue(key, out value);
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)Dict).GetEnumerator();
+        IDictionaryEnumerator IDictionary.GetEnumerator() => ((IDictionary)Dict).GetEnumerator();
+
+        //public static implicit operator Factory(string data) => Parser.RegexFactory<Factory>(data);
+        public static implicit operator Dictionary<TKey, TValue>(SparseMatrix<TKey, TValue> data) => data.Dict;
     }
 
     public static IEnumerable<(T1 item1, T2 item2)> Matrix<T1, T2>(IEnumerable<T1> set1, IEnumerable<T2> set2) => set1.SelectMany(x => set2.Select(y => (x, y)));
@@ -870,7 +584,7 @@ public partial class Util
     public static ushort MakeTwoCC(char c1, char c2) => (ushort)(c1 + (c2 << 8));
     public static string UnMakeTwoCC(ushort val) => ((char[])[(char)((val >> 8) & 0xff), (char)(val & 0xff)]).AsString();
 
-    public static uint MakeFourCC(string name) => (name.Length > 4 ? name[3] : 0U) + ((uint)name[2] << 8) + ((uint)name[1] << 16) + ((uint)name[0] << 24);
+    public static uint MakeFourCC(string name) => (name.Length > 3 ? name[3] : 0U) + ((uint)name[2] << 8) + ((uint)name[1] << 16) + ((uint)name[0] << 24);
     public static string UnMakeFourCC(uint val) => ((char[])[(char)((val >> 24) & 0xff), (char)((val >> 16) & 0xff), (char)((val >> 8) & 0xff), (char)((val) & 0xff)]).AsString();
 
     public static (T min, T max) MinMax<T>(params T[] input) where T : IBinaryInteger<T> => (input.Min(), input.Max());

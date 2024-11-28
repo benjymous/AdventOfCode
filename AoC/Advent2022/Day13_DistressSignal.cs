@@ -1,8 +1,9 @@
 ﻿namespace AoC.Advent2022;
 public class Day13 : IPuzzle
 {
-    class Element : IComparable<Element>
+    public class Element : IComparable<Element>
     {
+        [Regex("(.+)")]
         public Element(string data)
         {
             Data = data;
@@ -56,24 +57,26 @@ public class Day13 : IPuzzle
                 if (compare != 0) return compare;
             }
         }
+
+        public override string ToString() => Data;
     }
 
     public static int Part1(string input)
     {
         return input.SplitSections()
-                    .Select(group => Util.Parse<Element>(group).TakePair())
-                    .WithIndex(1)
-                    .Where(e => e.Value.Item1.CompareTo(e.Value.Item2) < 0)
+                    .Select(group => Parser.Parse<Element>(group).ToArray().TakePair())
+                    .Index(1)
+                    .Where(e => e.Item.Item1.CompareTo(e.Item.Item2) < 0)
                     .Sum(e => e.Index);
     }
 
     public static int Part2(string input)
     {
-        return (int)Util.Parse<Element>(input.Replace("\n\n", "\n"))
+        return (int)Parser.Parse<Element>(input.Replace("\n\n", "\n"))
                         .AppendMultiple(new("[[2]]") { IsMarker = true }, new("[[6]]") { IsMarker = true })
                         .Order()
-                        .WithIndex(1)
-                        .Where(e => e.Value.IsMarker)
+                        .Index(1)
+                        .Where(e => e.Item.IsMarker)
                         .Product(e => e.Index);
     }
 

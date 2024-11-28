@@ -3,15 +3,27 @@ public class Day04 : IPuzzle
 {
     class Board
     {
-        public Board(string input) => Util.Split(input)
-                .WithIndex()
-                .ForEach(line =>
-                    Util.ParseNumbers<int>(line.Value, " ")
-                         .WithIndex()
-                         .ForEach(row =>
-                            Put(row.Index, line.Index, row.Value)
-                          )
-                 );
+        [Regex("^(.+\n.+\n.+\n.+\n.+)$")]
+        public Board(string input)
+            => Util.Split(input)
+                   .Index()
+                   .ForEach(line =>
+                       Util.ParseNumbers<int>(line.Item, " ")
+                            .Index()
+                            .ForEach(row => Put(row.Index, line.Index, row.Item))
+                    );
+
+        //[Regex("^(.+\n.+\n.+\n.+\n.+)$")]
+        //public Board(int[][] input)
+        //{
+        //    for (int y = 0; y < 5; ++y)
+        //    {
+        //        for (int x = 0; x < 5; ++x)
+        //        {
+        //            Put(x, y, input[y][x]);
+        //        }
+        //    }
+        //}
 
         void Put(int x, int y, int num)
         {
@@ -47,7 +59,7 @@ public class Day04 : IPuzzle
         var chunks = input.SplitSections();
         var rnd = Util.ParseNumbers<int>(chunks[0]);
 
-        var boards = Util.Parse<Board>(chunks.Skip(1)).ToHashSet();
+        var boards = Parser.Parse<Board>(chunks.Skip(1)).ToHashSet();
 
         foreach (var num in rnd)
         {

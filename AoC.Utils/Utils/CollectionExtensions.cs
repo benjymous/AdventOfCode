@@ -56,6 +56,8 @@ namespace AoC.Utils
             foreach (var k in keys) dict.Remove(k);
         }
 
+        public static IEnumerable<TKey> KeysWithValue<TKey, TValue>(this IDictionary<TKey, TValue> dict, TValue val) => dict.Where(kvp => kvp.Value.Equals(val)).Select(kvp => kvp.Key);
+
         public static void RemoveRange<T>(this HashSet<T> dict, IEnumerable<T> values)
         {
             foreach (var v in values) dict.Remove(v);
@@ -114,7 +116,7 @@ namespace AoC.Utils
 
         public static IEnumerable<(T, T)> UniquePairs<T>(this IEnumerable<T> set)
         {
-            foreach (var (i1, el1) in set.WithIndex())
+            foreach (var (i1, el1) in set.Index())
             {
                 foreach (var el2 in set.Skip(i1))
                 {
@@ -370,7 +372,7 @@ namespace AoC.Utils
             return maxIndex;
         }
 
-        public static IEnumerable<(int Index, T Value)> WithIndex<T>(this IEnumerable<T> sequence, int startFrom = 0) => sequence.Select((v, i) => (i + startFrom, v));
+        public static IEnumerable<(int Index, T Item)> Index<T>(this IEnumerable<T> sequence, int startFrom) => sequence.Select((v, i) => (i + startFrom, v));
 
         public static void Add<T>(this Queue<T> queue, T item) => queue.Enqueue(item);
 

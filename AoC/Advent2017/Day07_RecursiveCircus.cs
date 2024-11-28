@@ -6,7 +6,7 @@ public class Day07 : IPuzzle
         [Regex(@"(.+) \((\d+)\) -> (.+)")] public static (string, int, IEnumerable<string>) ParentNode(string key, int value, [Split(", ")] string[] children) => (key, value, children);
         [Regex(@"(.+) \((\d+)\)")] public static (string, int, IEnumerable<string>) LeafNode(string key, int value) => (key, value, []);
 
-        public static Tree<string, int> Build(Util.AutoParse<(string key, int value, IEnumerable<string> children), TreeBuilder> input) => input.ToTree();
+        public static Tree<string, int> Build(Parser.AutoArray<(string key, int value, IEnumerable<string> children), TreeBuilder> input) => input.ToTree();
     }
 
     static int GetChildScore(TreeNode<string, int> node) => node.Value + node.Children.Sum(GetChildScore);

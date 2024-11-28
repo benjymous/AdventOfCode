@@ -15,27 +15,25 @@ public class Day15 : IPuzzle
         public void RemoveLens(string label) => Box(label).RemoveLens(label);
     }
 
-    public record class LensBox(int BoxIndex)
+    public class LensBox(int BoxIndex) : List<(string Label, int FocalLength)>
     {
-        public readonly List<(string Label, int FocalLength)> Lenses = [];
-
         public void AddLens((string Label, int FocalLength) lens)
         {
-            var existing = Lenses.FirstOrDefault(l => l.Label == lens.Label);
+            var existing = FindIndex(l => l.Label == lens.Label);
 
-            if (existing != default) Lenses[Lenses.IndexOf(existing)] = lens;
-            else Lenses.Add(lens);
+            if (existing != -1) this[existing] = lens;
+            else Add(lens);
         }
 
-        public void RemoveLens(string label) => Lenses.Remove(Lenses.FirstOrDefault(l => l.Label == label));
+        public void RemoveLens(string label) => Remove(Find(l => l.Label == label));
 
-        public int GetPower() => Lenses.WithIndex().Sum(entry => (BoxIndex + 1) * (entry.Index + 1) * entry.Value.FocalLength);
+        public int GetPower() => this.Index().Sum(entry => (BoxIndex + 1) * (entry.Index + 1) * entry.Item.FocalLength);
     }
 
     public static int Part1(string input) => Util.Split(input).Sum(CalculateHASH);
 
     public static int Part2(string input)
-        => Util.RegexFactory<Factory>(Util.Split(input)).Boxes.Sum(b => b.GetPower());
+        => Parser.Factory<Factory>(Util.Split(input)).Boxes.Sum(b => b.GetPower());
 
     public void Run(string input, ILogger logger)
     {

@@ -15,24 +15,21 @@ public class Day16 : IPuzzle
         public readonly bool Validate(int input) => ranges.Any(r => r.InRange(input));
     }
 
-    public class Ticket(string input)
+    [method: Regex("(.+)")]
+    public class Ticket(int[] vals)
     {
-        public int[] Values = Util.ParseNumbers<int>(input);
+        public int[] Values = vals;
 
         public IEnumerable<(string key, int value)> Decode(Dictionary<string, int> lookup) => lookup.Select(kvp => (kvp.Key, Values[kvp.Value]));
     }
 
-    static List<Ticket> ParseTickets(string input) => [.. Util.Parse<Ticket>(input.Trim().Split("\n").Skip(1))];
-
     public class TicketScanner
     {
         public TicketScanner(string input)
-        {
-            var sections = input.SplitSections();
-            Rules = Util.RegexParse<TicketRule>(sections[0]).ToList();
-            YourTicket = ParseTickets(sections[1]).Single();
-            NearbyTickets = ParseTickets(sections[2]);
-        }
+         => (Rules, YourTicket, NearbyTickets) = input.ParseSections(@"\n\n(?:your ticket:\n|nearby tickets:\n)?",
+                rules => Parser.Parse<TicketRule>(rules).ToList(),
+                yourTicket => Parser.FromString<Ticket>(yourTicket),
+                nearby => Parser.Parse<Ticket>(nearby).ToList());
 
         public HashSet<(Ticket ticket, int rate)> InvalidTickets() => NearbyTickets.SelectMany(ticket => ticket.Values.Where(val => !Rules.Any(r => r.Validate(val))).Select(val => (ticket, val))).ToHashSet();
         public IEnumerable<Ticket> ValidTickets() => NearbyTickets.Except(InvalidTickets().Select(v => v.ticket));

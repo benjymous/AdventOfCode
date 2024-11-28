@@ -13,7 +13,7 @@ public class Day10 : IPuzzle
         public override string ToString() => $"{position} - {velocity}";
     }
 
-    public static (int steps, string message) Solve(Util.AutoParse<Drone> drones)
+    public static (int steps, string message) Solve(Parser.AutoArray<Drone> drones)
     {
         int steps = 0;
 

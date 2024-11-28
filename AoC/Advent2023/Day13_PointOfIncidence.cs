@@ -46,7 +46,7 @@ public class Day13 : IPuzzle
     public static int FindMirror(IEnumerable<IEnumerable<char>> input, QuestionPart part)
     {
         string[] vals = input.Select(c => c.AsString()).ToArray();
-        var groups = DoGrouping(vals.WithIndex(1).Select(c => (c.Index, value: c.Value)).ToArray(), part);
+        var groups = DoGrouping(vals.Index(1).Select(c => (c.Index, value: c.Item)).ToArray(), part);
 
         return groups.Select(g => ValidateGroup(g.Value, vals, groups))
                      .FirstOrDefault(v => v.found && v.isBlotchy == part.Two()).position;

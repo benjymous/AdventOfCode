@@ -11,10 +11,8 @@ public class Day12 : IPuzzle
         public void ApplyVelocity(int component) => position[component] += velocity[component];
     }
 
-    public class System(string input)
+    public class System(Parser.AutoArray<Body> bodies)
     {
-        readonly Body[] bodies = Util.RegexParse<Body>(input).ToArray();
-
         public void Step(int component)
         {
             for (int i = 0; i < bodies.Length; ++i)
