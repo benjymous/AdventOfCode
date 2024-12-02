@@ -71,6 +71,9 @@ public partial class Util
     public static T[] ParseNumbers<T>(IEnumerable<string> input, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Any) where T : INumberBase<T>
         => input.WithoutNullOrWhiteSpace().Select(line => T.Parse(line, style, null)).ToArray();
 
+    public static T[][] ParseNumberList<T>(string input) where T : INumberBase<T>
+        => Split(input).Select(v => ParseNumbers<T>(v, " ")).ToArray();
+
     public interface IConvertomatic
     {
         public abstract object Convert(char c);

@@ -3,7 +3,7 @@ public class Day01 : IPuzzle
 {
     private static (int[], int[]) Parse(string input)
     {
-        var data = Util.Split(input).Select(Util.ExtractNumbers).ToList();
+        var data = Util.ParseNumberList<int>(input);
         return (data.Select(v => v[0]).ToArray(), data.Select(v => v[1]).ToArray());
     }
 
