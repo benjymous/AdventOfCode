@@ -6,35 +6,35 @@ namespace AoC.Advent2024.Test;
 [TestClass]
 public class Day03Test
 {
-    readonly string input = ""; // Util.GetInput<Day03>();
+    readonly string input = Util.GetInput<Day03>();
+    readonly string test1 = "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))";
+    readonly string test2 = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))";
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _01Test(string input, int expected)
+    [TestMethod]
+    public void Multiplication_01Test()
     {
-        Assert.AreEqual(expected, Day03.Part1(input));
+        Assert.AreEqual(161, Day03.Part1(test1));
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _02Test(string input, int expected)
+    [TestMethod]
+    public void Multiplication_02Test()
     {
-        Assert.AreEqual(expected, Day03.Part2(input));
+        Assert.AreEqual(48, Day03.Part2(test2));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void Muls_Part1_Regression()
     {
-        Assert.AreEqual(0, Day03.Part1(input));
+        Assert.AreEqual(157621318, Day03.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void Muls_Part2_Regression()
     {
-        Assert.AreEqual(0, Day03.Part2(input));
+        Assert.AreEqual(79845780, Day03.Part2(input));
     }
 }

@@ -14,19 +14,15 @@ namespace AoC.Utils.Parser
                  .Select(line => RegexCreate<T>(line, constructors));
         }
 
-        static IEnumerable<object> Parse(Type t, IEnumerable<string> input)
-        {
-            (ConstructorInfo tc, RegexAttribute attr)[] constructors = GetPotentialConstructors(t).ToArray();
-            return input.WithoutNullOrWhiteSpace()
-                 .Select(line => RegexCreate(t, line, constructors));
-        }
-
         public static IEnumerable<T> Parse<T>(string input, string splitter = "\n")
             => Parse<T>(input.Split(splitter));
 
         public static IEnumerable<T> Factory<T, FT>(IEnumerable<string> input, FT factory) where FT : class
             => input.WithoutNullOrWhiteSpace()
                  .Select(line => RegexFactoryCreate<T, FT>(line, factory));
+
+        public static IEnumerable<T> Factory<T, FT>(string input, FT factory) where FT : class, IAutoSplit
+            => Factory<T, FT>(Split<FT>(input), factory);
 
         public static IEnumerable<T> Factory<T, FT>(string input, FT factory = null, string splitter = "\n") where FT : class
             => Factory<T, FT>(input.Split(splitter), factory);
@@ -38,10 +34,7 @@ namespace AoC.Utils.Parser
         {
             FT factory = new();
 
-            foreach (var line in input)
-            {
-                RegexFactoryPerform(line, factory);
-            }
+            Factory(input, factory);
 
             return factory;
         }
@@ -91,6 +84,25 @@ namespace AoC.Utils.Parser
             public int IndexOf(DT item) => Array.IndexOf(Resolved, item);
         }
 
+        public static IEnumerable<string> Split<FT>(string input) where FT : IAutoSplit
+        {
+            List<string> parts = [];
+
+            foreach (var func in typeof(FT).GetMethods())
+            {
+                if (func.GetCustomAttributes(typeof(RegexAttribute), true)
+                    .FirstOrDefault() is not RegexAttribute attribute) continue; // skip function if it doesn't have attr
+
+                parts.Add(attribute.Regex.ToString());
+            }
+
+            var combined = "(" + string.Join("|", parts) + ")";
+
+            return Regex.Matches(input, combined).Select(m => m.Groups[0].Captures[0].Value);
+        }
+
+        public interface IAutoSplit { }
+
         #region Internals
 
         static T RegexFactoryCreate<T, FT>(string line, FT factory) where FT : class
@@ -108,7 +120,8 @@ namespace AoC.Utils.Parser
 
                 object[] convertedParams = ConstructParams(matches, paramInfo);
 
-                return (T)func.Invoke(factory, convertedParams);
+                var res = func.Invoke(factory, convertedParams);
+                return res != null ? (T)res : default;
 
             }
             throw new Exception($"RegexFactory failed to find suitable factory function for {line}");
@@ -231,6 +244,13 @@ namespace AoC.Utils.Parser
             return obj;
         }
 
+        static IEnumerable<object> Parse(Type t, IEnumerable<string> input)
+        {
+            (ConstructorInfo tc, RegexAttribute attr)[] constructors = GetPotentialConstructors(t).ToArray();
+            return input.WithoutNullOrWhiteSpace()
+                 .Select(line => RegexCreate(t, line, constructors));
+        }
+
         static object ConvertFromString(Type destinationType, string input, Dictionary<Type, Attribute> attrs = null)
         {
             if (string.IsNullOrEmpty(input)) return Activator.CreateInstance(destinationType); // appropriate empty value
@@ -299,6 +319,7 @@ namespace AoC.Utils.Parser
 
         static object[] ConstructParams(MatchCollection matches, ParameterInfo[] paramInfo)
         {
+            if (paramInfo.Length == 0) return default;
             int skip = matches.Count == 1 && matches[0].Groups.Count == 1 && paramInfo.Length == 1 ? 0 : 1;
 
             var regexValues = matches[0]

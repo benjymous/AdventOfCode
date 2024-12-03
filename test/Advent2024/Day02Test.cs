@@ -48,6 +48,7 @@ public class Day02Test
     [DataRow("1 3 2 4 5", true)]
     [DataRow("8 6 4 4 1", true)]
     [DataRow("1 3 6 7 9", true)]
+
     [DataTestMethod]
     public void DeerReport_02aTest(string input, bool isSafe)
     {
