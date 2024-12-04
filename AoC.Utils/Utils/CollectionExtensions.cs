@@ -4,10 +4,10 @@ namespace AoC.Utils
 {
     public static class CollectionExtensions
     {
-        public static void IncrementAtIndex<T>(this Dictionary<T, int> dict, T key, int val = 1) => IncrementAtIndex<T, int>(dict, key, val);
-        public static void IncrementAtIndex<T>(this Dictionary<T, long> dict, T key, long val = 1) => IncrementAtIndex<T, long>(dict, key, val);
+        public static void IncrementAtIndex<T>(this IDictionary<T, int> dict, T key, int val = 1) => IncrementAtIndex<T, int>(dict, key, val);
+        public static void IncrementAtIndex<T>(this IDictionary<T, long> dict, T key, long val = 1) => IncrementAtIndex<T, long>(dict, key, val);
 
-        public static void IncrementAtIndex<T, V>(this Dictionary<T, V> dict, T key, V val) where V : INumber<V>
+        public static void IncrementAtIndex<T, V>(this IDictionary<T, V> dict, T key, V val) where V : INumber<V>
         {
             if (dict.ContainsKey(key))
             {
@@ -29,9 +29,9 @@ namespace AoC.Utils
             }
         }
 
-        public static T2 GetOrDefault<T1, T2>(this Dictionary<T1, T2> dict, T1 key) => dict.TryGetValue(key, out T2 val) ? val : default;
+        public static T2 GetOrDefault<T1, T2>(this IDictionary<T1, T2> dict, T1 key) => dict.TryGetValue(key, out T2 val) ? val : default;
 
-        public static T GetOrCalculate<K, T>(this Dictionary<K, T> dict, K key, Func<K, T> predicate)
+        public static T GetOrCalculate<K, T>(this IDictionary<K, T> dict, K key, Func<K, T> predicate)
         {
             if (!dict.TryGetValue(key, out T val))
             {
@@ -40,7 +40,7 @@ namespace AoC.Utils
             return val;
         }
 
-        public static T GetOrCreate<K, T>(this Dictionary<K, T> dict, K key) where T : new()
+        public static T GetOrCreate<K, T>(this IDictionary<K, T> dict, K key) where T : new()
         {
             if (!dict.TryGetValue(key, out T val))
             {
@@ -49,9 +49,9 @@ namespace AoC.Utils
             return val;
         }
 
-        public static T GetIndexBit<K, T>(this Dictionary<K, T> dict, K key) where T : INumber<T> => dict.GetOrCalculate(key, _ => T.CreateChecked(1 << dict.Count));
+        public static T GetIndexBit<K, T>(this IDictionary<K, T> dict, K key) where T : INumber<T> => dict.GetOrCalculate(key, _ => T.CreateChecked(1 << dict.Count));
 
-        public static void RemoveRange<K, T>(this Dictionary<K, T> dict, IEnumerable<K> keys)
+        public static void RemoveRange<K, T>(this IDictionary<K, T> dict, IEnumerable<K> keys)
         {
             foreach (var k in keys) dict.Remove(k);
         }
@@ -208,7 +208,7 @@ namespace AoC.Utils
                     yield return (x, y);
         }
 
-        public static IEnumerable<((int x, int y) key, T value)> Entries<T>(this T[,] array2d)
+        public static IEnumerable<((int x, int y) Key, T Value)> Entries<T>(this T[,] array2d)
         {
             for (int y = 0; y < array2d.Height(); ++y)
                 for (int x = 0; x < array2d.Width(); ++x)
@@ -560,7 +560,7 @@ namespace AoC.Utils
 
         public static Dictionary<TVal, TKey> InvertSolo<TKey, TVal>(this Dictionary<TKey, TVal> dict) => dict.Where(kvp => kvp.Value != null).GroupBy(kvp => kvp.Value).ToDictionary(g => g.Key, g => g.Select(kvp => kvp.Key).First());
 
-        public static Dictionary<TVal, IEnumerable<(int x, int y)>> Invert<TVal>(this TVal[,] dict) => dict.Entries().GroupBy(kvp => kvp.value).ToDictionary(g => g.Key, g => g.Select(kvp => kvp.key));
+        public static Dictionary<TVal, IEnumerable<(int x, int y)>> Invert<TVal>(this TVal[,] dict) => dict.Entries().GroupBy(kvp => kvp.Value).ToDictionary(g => g.Key, g => g.Select(kvp => kvp.Key));
 
         public static bool TryGetValue<TVal>(this TVal[,] dict, (int x, int y) key, out TVal val)
         {
@@ -574,7 +574,9 @@ namespace AoC.Utils
             return true;
         }
 
-        public static bool SmallerThanSeen(this Dictionary<int, int> cache, object key, int newValue)
+        public static IEnumerable<(int x, int y)> KeysWithValue<TVal>(this TVal[,] array2d, TVal val) => array2d.Entries().Where(kvp => kvp.Value.Equals(val)).Select(kvp => kvp.Key);
+
+        public static bool SmallerThanSeen(this IDictionary<int, int> cache, object key, int newValue)
         {
             var keyval = key.GetHashCode();
             if (cache.TryGetValue(keyval, out var val))
@@ -795,7 +797,7 @@ namespace AoC.Utils
             return newArr;
         }
 
-        public static bool FindCycle<TFingerPrint>(this Dictionary<TFingerPrint, int> dict, TFingerPrint fingerprint, int currentIteration, int finalIteration, out int shortcutIteration)
+        public static bool FindCycle<TFingerPrint>(this IDictionary<TFingerPrint, int> dict, TFingerPrint fingerprint, int currentIteration, int finalIteration, out int shortcutIteration)
         {
             if (dict.TryGetValue(fingerprint, out var previousSeen))
             {
@@ -811,7 +813,7 @@ namespace AoC.Utils
             }
         }
 
-        public static void AddRange<TKey, TValue>(this Dictionary<TKey, TValue> dict, IEnumerable<(TKey key, TValue val)> values)
+        public static void AddRange<TKey, TValue>(this IDictionary<TKey, TValue> dict, IEnumerable<(TKey key, TValue val)> values)
         {
             foreach (var (key, val) in values)
             {

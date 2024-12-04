@@ -6,35 +6,43 @@ namespace AoC.Advent2024.Test;
 [TestClass]
 public class Day04Test
 {
-    readonly string input = ""; // Util.GetInput<Day04>();
+    readonly string input = Util.GetInput<Day04>();
+    readonly string test = @"MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX";
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _01Test(string input, int expected)
+    [TestMethod]
+    public void Wordsearch_01Test()
     {
-        Assert.AreEqual(expected, Day04.Part1(input));
+        Assert.AreEqual(18, Day04.Part1(test));
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
     [DataTestMethod]
-    public void _02Test(string input, int expected)
+    public void Wordsearch_02Test()
     {
-        Assert.AreEqual(expected, Day04.Part2(input));
+        Assert.AreEqual(9, Day04.Part2(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void Wordsearch_Part1_Regression()
     {
-        Assert.AreEqual(0, Day04.Part1(input));
+        Assert.AreEqual(2662, Day04.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void Wordsearch_Part2_Regression()
     {
-        Assert.AreEqual(0, Day04.Part2(input));
+        Assert.AreEqual(2034, Day04.Part2(input));
     }
 }

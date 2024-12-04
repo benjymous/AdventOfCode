@@ -15,7 +15,7 @@ public class Day11 : IPuzzle
             foreach (var (x, y) in Cells.Keys()) Cells[x, y]++;
 
             // flash reaction
-            var toFlash = Cells.Entries().Where(entry => entry.value > 9);
+            var toFlash = Cells.Entries().Where(entry => entry.Value > 9);
             while (toFlash.Any())
             {
                 foreach (var (key, value) in toFlash)
@@ -26,8 +26,8 @@ public class Day11 : IPuzzle
             }
 
             // reset flashed
-            var flashed = Cells.Entries().Where(entry => entry.value < 0).ToList();
-            flashed.ForEach(entry => Cells[entry.key.x, entry.key.y] = 0);
+            var flashed = Cells.Entries().Where(entry => entry.Value < 0).ToList();
+            flashed.ForEach(entry => Cells[entry.Key.x, entry.Key.y] = 0);
 
             return flashed.Count;
         }

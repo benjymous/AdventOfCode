@@ -5,16 +5,15 @@ public class Day15 : IPuzzle
     {
         public Map(string input, QuestionPart part)
         {
-            var raw = Util.ParseMatrix<int>(input);
-            Data = raw.Entries().ToDictionary(kvp => (PackedPos32)kvp.key, kvp => kvp.value);
+            Data = Util.ParseSparseMatrix<PackedPos32, int>(input);
 
             if (part.One())
             {
-                (RealX, RealY) = (MaxX, MaxY) = (raw.Width() - 1, raw.Height() - 1);
+                (RealX, RealY) = (MaxX, MaxY) = (Data.Width, Data.Height);
             }
             else
             {
-                (RealX, RealY) = (raw.Width(), raw.Height());
+                (RealX, RealY) = (Data.Width + 1, Data.Height + 1);
                 (MaxX, MaxY) = ((RealX * 5) - 1, (RealY * 5) - 1);
             }
 
@@ -23,7 +22,7 @@ public class Day15 : IPuzzle
         }
 
         readonly int MaxX, MaxY, RealX, RealY;
-        readonly Dictionary<PackedPos32, int> Data;
+        readonly Util.SparseMatrix<PackedPos32, int> Data;
 
         public IEnumerable<PackedPos32> GetNeighbours(PackedPos32 location) =>
         [
