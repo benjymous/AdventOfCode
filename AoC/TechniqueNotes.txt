@@ -1,7 +1,7 @@
 ﻿
 
 # auto convert from string
-       public static implicit operator Factory(string data) => Parser.RegexFactory<Factory>(data);
+       public static implicit operator Factory(string data) => Parser.Factory<Factory>(data);
        public static implicit operator MyClass(string data) => new(data);
 
 # RegexParse    
