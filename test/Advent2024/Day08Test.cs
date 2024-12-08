@@ -6,35 +6,45 @@ namespace AoC.Advent2024.Test;
 [TestClass]
 public class Day08Test
 {
-    readonly string input = ""; // Util.GetInput<Day08>();
+    readonly string input = Util.GetInput<Day08>();
+    readonly string test = @"............
+........0...
+.....0......
+.......0....
+....0.......
+......A.....
+............
+............
+........A...
+.........A..
+............
+............".Replace("\r", "");
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _01Test(string input, int expected)
+    [TestMethod]
+    public void NodePositions_01Test()
     {
-        Assert.AreEqual(expected, Day08.Part1(input));
+        Assert.AreEqual(14, Day08.Part1(test));
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _02Test(string input, int expected)
+    [TestMethod]
+    public void NodePositions_02Test()
     {
-        Assert.AreEqual(expected, Day08.Part2(input));
+        Assert.AreEqual(34, Day08.Part2(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void NodePositions_Part1_Regression()
     {
-        Assert.AreEqual(0, Day08.Part1(input));
+        Assert.AreEqual(398, Day08.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void NodePositions_Part2_Regression()
     {
-        Assert.AreEqual(0, Day08.Part2(input));
+        Assert.AreEqual(1333, Day08.Part2(input));
     }
 }
