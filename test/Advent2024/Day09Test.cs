@@ -6,35 +6,34 @@ namespace AoC.Advent2024.Test;
 [TestClass]
 public class Day09Test
 {
-    readonly string input = ""; // Util.GetInput<Day09>();
+    readonly string input = Util.GetInput<Day09>();
+    readonly string test = "2333133121414131402";
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _01Test(string input, int expected)
+    [TestMethod]
+    public void Defrag_01Test()
     {
-        Assert.AreEqual(expected, Day09.Part1(input));
+        Assert.AreEqual(1928, Day09.Part1(test));
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _02Test(string input, int expected)
+    [TestMethod]
+    public void Defrag_02Test()
     {
-        Assert.AreEqual(expected, Day09.Part2(input));
+        Assert.AreEqual(2858, Day09.Part2(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void Defrag_Part1_Regression()
     {
-        Assert.AreEqual(0, Day09.Part1(input));
+        Assert.AreEqual(6471961544878, Day09.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void Defrag_Part2_Regression()
     {
-        Assert.AreEqual(0, Day09.Part2(input));
+        Assert.AreEqual(6511178035564, Day09.Part2(input));
     }
 }
