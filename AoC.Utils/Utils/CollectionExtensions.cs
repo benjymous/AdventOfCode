@@ -820,5 +820,7 @@ namespace AoC.Utils
                 dict.Add(key, val);
             }
         }
+
+        public static IEnumerable<TSource> If<TSource>(this IEnumerable<TSource> source, bool condition, Func<IEnumerable<TSource>, IEnumerable<TSource>> branch) => condition ? branch(source) : source;
     }
 }
