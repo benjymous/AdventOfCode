@@ -562,6 +562,8 @@ namespace AoC.Utils
 
         public static Dictionary<TVal, IEnumerable<(int x, int y)>> Invert<TVal>(this TVal[,] dict) => dict.Entries().GroupBy(kvp => kvp.Value).ToDictionary(g => g.Key, g => g.Select(kvp => kvp.Key));
 
+        public static Dictionary<TVal, TCount> CountUniqueElements<TVal, TCount>(this IEnumerable<TVal> values) where TCount : IBinaryInteger<TCount> => values.GroupBy(v => v).ToDictionary(g => g.Key, g => TCount.CreateChecked(g.Count()));
+
         public static bool TryGetValue<TVal>(this TVal[,] dict, (int x, int y) key, out TVal val)
         {
             if (key.x < 0 || key.y < 0 || key.x >= dict.Width() || key.y >= dict.Height())
