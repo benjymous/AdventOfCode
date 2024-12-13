@@ -109,6 +109,8 @@
             }
         }
 
+        public static bool IsInteger(this double d) => (long)d == d;
+
         public static int SumOfFactors(this int n)
         {
 
