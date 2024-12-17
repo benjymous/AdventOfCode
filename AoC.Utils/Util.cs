@@ -443,7 +443,7 @@ public partial class Util
         Console.WriteLine(actual);
     }
 
-    public static int[] ExtractNumbers(IEnumerable<char> input) => Util.ExtractNumbers<int>(input);
+    public static int[] ExtractNumbers(IEnumerable<char> input) => ExtractNumbers<int>(input);
 
     public static T[] ExtractNumbers<T>(IEnumerable<char> input) where T : IBinaryInteger<T> => input.Where(c => c is ' ' or '-' or (>= '0' and <= '9')).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(s => T.Parse(s, System.Globalization.NumberStyles.Any, null)).ToArray();
 
@@ -456,8 +456,8 @@ public partial class Util
 
     public static (TInput input, TResult result) BinarySearch<TInput, TResult>(TInput min, TInput max, Func<TInput, (bool success, TResult res)> test) where TInput : IBinaryInteger<TInput>
     {
-        TInput two = TInput.One + TInput.One;
-        TInput three = TInput.One + TInput.One + TInput.One;
+        TInput two = TInput.CreateChecked(2);
+        TInput three = TInput.CreateChecked(3);
 
         Dictionary<TInput, TResult> results = [];
 
@@ -485,7 +485,8 @@ public partial class Util
 
         while (max - min > TInput.One)
         {
-            var mid = (max + min) / two;
+
+            TInput mid = (max + min) / two;
             var res = test(mid);
             if (res.success)
             {
@@ -501,6 +502,26 @@ public partial class Util
     }
 
     public static TInput BinarySearch<TInput>(TInput min, TInput max, Func<TInput, bool> test) where TInput : IBinaryInteger<TInput> => BinarySearch<TInput, object>(min, max, input => (test(input), null)).input;
+
+    public static int TwoPowi(int i) => i switch
+    {
+        0 => 1,
+        1 => 2,
+        2 => 4,
+        3 => 8,
+        4 => 16,
+        5 => 32,
+        6 => 64,
+        7 => 128,
+        8 => 256,
+        9 => 512,
+        10 => 1024,
+        11 => 2048,
+        12 => 4096,
+        13 => 8192,
+        14 => 16384,
+        _ => throw new ArgumentException("not implemented"),
+    };
 
     public static int Log2i(ulong num) => num switch
     {
