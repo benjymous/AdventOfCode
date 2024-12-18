@@ -186,11 +186,7 @@ public partial class Util
         public int Width { get; set; }
         public int Height { get; set; }
 
-        public bool IsInside((int x, int y) pos)
-        {
-            return pos.x >= 0 && pos.y >= 0 && pos.x <= Width && pos.y <= Height;
-        }
-
+        public bool IsInside((int x, int y) pos) => pos.x >= 0 && pos.y >= 0 && pos.x <= Width && pos.y <= Height;
         public IEnumerable<TKey> Keys => Dict.Keys;
         public IEnumerable<TValue> Values => Dict.Values;
 

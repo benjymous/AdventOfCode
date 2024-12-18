@@ -6,35 +6,58 @@ namespace AoC.Advent2024.Test;
 [TestClass]
 public class Day18Test
 {
-    readonly string input = ""; // Util.GetInput<Day18>();
+    readonly string input = Util.GetInput<Day18>();
+    readonly string test = @"5,4
+4,2
+4,5
+3,0
+2,1
+6,3
+2,4
+1,5
+0,6
+3,3
+2,6
+5,1
+1,2
+5,5
+2,5
+6,5
+1,4
+0,4
+6,4
+1,1
+6,1
+1,0
+0,5
+1,6
+2,0";
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
     [DataTestMethod]
-    public void _01Test(string input, int expected)
+    public void MemoryMap_01Test()
     {
-        Assert.AreEqual(expected, Day18.Part1(input));
+        Assert.AreEqual(22, Day18.Part1(test, 6, 6, 12));
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
     [DataTestMethod]
-    public void _02Test(string input, int expected)
+    public void MemoryMap_02Test()
     {
-        Assert.AreEqual(expected, Day18.Part2(input));
+        Assert.AreEqual("6,1", Day18.Part2(test, 6, 6));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void MemoryMap_Part1_Regression()
     {
-        Assert.AreEqual(0, Day18.Part1(input));
+        Assert.AreEqual(372, Day18.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void MemoryMap_Part2_Regression()
     {
-        Assert.AreEqual(0, Day18.Part2(input));
+        Assert.AreEqual("25,6", Day18.Part2(input));
     }
 }

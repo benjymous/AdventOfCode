@@ -140,7 +140,7 @@ public class Day17 : IPuzzle
         var test = Util.Split(Util.Split(input, "\n").Last()[9..], ",").Select(int.Parse).ToArray();
 
         // Find where the output stops being the right length
-        long regA = Util.BinarySearch(0, long.MaxValue, (i) => (TestCPU(i).Count() > test.Length, "")).input;
+        long regA = Util.BinarySearch(0, long.MaxValue, (i) => TestCPU(i).Count() > test.Length);
 
         long lastResult = 0;
 
