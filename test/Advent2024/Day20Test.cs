@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace AoC.Advent2024.Test;
 
@@ -6,35 +7,48 @@ namespace AoC.Advent2024.Test;
 [TestClass]
 public class Day20Test
 {
-    readonly string input = ""; // Util.GetInput<Day20>();
+    readonly string input = Util.GetInput<Day20>();
+    readonly string test = @"###############
+#...#...#.....#
+#.#.#.#.#.###.#
+#S#...#.#.#...#
+#######.#.#.###
+#######.#.#...#
+#######.#.###.#
+###..E#...#...#
+###.#######.###
+#...###...#...#
+#.#####.#.###.#
+#.#...#.#.#...#
+#.#.#.#.#.#.###
+#...#...#...###
+###############".Replace("\r", "");
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
     [DataTestMethod]
-    public void _01Test(string input, int expected)
+    public void CheatFinder_01Test()
     {
-        Assert.AreEqual(expected, Day20.Part1(input));
+        Assert.AreEqual(44, Day20.FindCheats(test, 2).Count());
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
     [DataTestMethod]
-    public void _02Test(string input, int expected)
+    public void CheatFinder_02Test()
     {
-        Assert.AreEqual(expected, Day20.Part2(input));
+        Assert.AreEqual(285, Day20.FindCheats(test, 20).Count(c => c >= 50));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void Race_Part1_Regression()
     {
-        Assert.AreEqual(0, Day20.Part1(input));
+        Assert.AreEqual(1381, Day20.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void Race_Part2_Regression()
     {
-        Assert.AreEqual(0, Day20.Part2(input));
+        Assert.AreEqual(982124, Day20.Part2(input));
     }
 }
