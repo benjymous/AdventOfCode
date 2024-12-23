@@ -11,7 +11,7 @@ namespace AoC.Utils.Collections
 
         public TreeNode<TKeyType, TDataType> Parent = null;
 
-        public List<TreeNode<TKeyType, TDataType>> Children { get; set; } = [];
+        public HashSet<TreeNode<TKeyType, TDataType>> Children { get; set; } = [];
 
         int cachedChildCount = -1;
         public int GetDescendantCount()
@@ -21,6 +21,7 @@ namespace AoC.Utils.Collections
         }
 
         public override string ToString() => Key.ToString();
+        public override int GetHashCode() => Key.GetHashCode();
     }
 
     public class Tree<TKeyType> : Tree<TKeyType, object> { }
