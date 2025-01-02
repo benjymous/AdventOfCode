@@ -1,47 +1,24 @@
 ﻿namespace AoC.Advent2024;
 public class Day25 : IPuzzle
 {
+    static bool CheckFit(int[] l, int[] k)
+    {
+        for (int i = 0; i < 5; ++i)
+        {
+            if (l[i] < k[i]) return false;            
+        }
+
+        return true;
+    }
+
     public static int Part1(string input)
     {
-        var parts = input.SplitSections();
+        var grids = input.SplitSections().Select(Util.ParseMatrix<bool>);
 
-        List<int[]> locks = [];
-        List<int[]> keys = [];
+        var locks = grids.Where(g => g.Row(0).All(v => v)).Select(g => g.Columns().Select(c => c.Count(v => !v)).ToArray()).ToList();
+        var keys = grids.Where(g => !g.Row(0).Any(v => v)).Select(g => g.Columns().Select(c => c.Count(v => v)).ToArray()).ToList();
 
-        foreach (var part in parts)
-        {
-            var grid = Util.ParseMatrix<bool>(part);
-            var r = grid.Row(0);
-            if (r.All(v => v))
-            {
-                var sig = grid.Columns().Select(c => c.Count(v => !v));
-                locks.Add(sig.ToArray());
-            }
-            else
-            {
-                var sig = grid.Columns().Select(c => c.Count(v => v));
-                keys.Add(sig.ToArray());
-            }
-        }
-
-        int count = 0;
-        foreach (var l in locks)
-        {
-            foreach (var k in keys)
-            {
-                bool fit = true;
-                for (int i = 0; i < 5; ++i)
-                {
-                    if (l[i] < k[i])
-                    {
-                        fit = false; break;
-                    }
-                }
-                if (fit) count++;
-            }
-        }
-
-        return count;
+        return locks.SelectMany(l => keys.Select(k => (l, k))).Count(v => CheckFit(v.l, v.k));
     }
 
     public void Run(string input, ILogger logger)

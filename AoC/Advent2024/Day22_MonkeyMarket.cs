@@ -1,4 +1,6 @@
-﻿namespace AoC.Advent2024;
+﻿using System.Linq;
+
+namespace AoC.Advent2024;
 public class Day22 : IPuzzle
 {
     public static int Prune(long val) => (int)(val % 16777216);
@@ -50,20 +52,11 @@ public class Day22 : IPuzzle
             tables.Add(res);
         }
 
-        List<(int val, (int d0, int d1, int d2, int d3) diffs)[]> tables2 = [];
+        List<(int val, (int d0, int d1, int d2, int d3) diffs)[]> tables2 
+            = tables.Select(t => t.Windows(4).Where(t => t[3].val >= 3).Select(t => (t[3].val, (t[0].diff, t[1].diff, t[2].diff, t[3].diff))).ToArray()).ToList();
 
-        foreach (var t in tables)
-        {
-            var w = t.Windows(4).Where(t => t[3].val >= 3).Select(t => (t[3].val, (t[0].diff, t[1].diff, t[2].diff, t[3].diff))).ToArray();
-            tables2.Add(w);
-        }
-
-        List<Dictionary<(int d0, int d1, int d2, int d3), int>> dicts = [];
-        foreach (var t2 in tables2)
-        {
-            var dict = t2.DistinctBy(v => v.diffs).ToDictionary(v => v.diffs, v => v.val);
-            dicts.Add(dict);
-        }
+        List<Dictionary<(int d0, int d1, int d2, int d3), int>> dicts
+            = tables2.Select(t2 => t2.DistinctBy(v => v.diffs).ToDictionary(v => v.diffs, v => v.val)).ToList();
 
         int best = 0;
 
@@ -79,15 +72,10 @@ public class Day22 : IPuzzle
                     int sum = row.Value;
                     for (int i1 = i + 1; i1 < dicts.Count; i1++)
                     {
-                        Dictionary<(int d0, int d1, int d2, int d3), int> d1 = dicts[i1];
-                        if (d1.TryGetValue(row.Key, out int value))
+                        if (dicts[i1].TryGetValue(row.Key, out int value))
                         {
                             sum += value;
                         }
-                    }
-                    if (sum > best)
-                    {
-                        Console.WriteLine($"{sum}: {row.Key}");
                     }
                     best = Math.Max(best, sum);
                 }

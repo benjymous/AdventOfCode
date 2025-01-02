@@ -6,35 +6,58 @@ namespace AoC.Advent2024.Test;
 [TestClass]
 public class Day25Test
 {
-    readonly string input = ""; // Util.GetInput<Day25>();
+    readonly string input = Util.GetInput<Day25>();
+    readonly string test = @"#####
+.####
+.####
+.####
+.#.#.
+.#...
+.....
+
+#####
+##.##
+.#.##
+...##
+...#.
+...#.
+.....
+
+.....
+#....
+#....
+#...#
+#.#.#
+#.###
+#####
+
+.....
+.....
+#.#..
+###..
+###.#
+###.#
+#####
+
+.....
+.....
+.....
+#....
+#.#..
+#.#.#
+#####";
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _01Test(string input, int expected)
+    [TestMethod]
+    public void _01Test()
     {
-        Assert.AreEqual(expected, Day25.Part1(input));
-    }
-
-    [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _02Test(string input, int expected)
-    {
-        Assert.AreEqual(expected, Day25.Part2(input));
+        Assert.AreEqual(3, Day25.Part1(test.Replace("\r","")));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
     public void _Part1_Regression()
     {
-        Assert.AreEqual(0, Day25.Part1(input));
-    }
-
-    [TestCategory("Regression")]
-    [DataTestMethod]
-    public void _Part2_Regression()
-    {
-        Assert.AreEqual(0, Day25.Part2(input));
+        Assert.AreEqual(3397, Day25.Part1(input));
     }
 }
