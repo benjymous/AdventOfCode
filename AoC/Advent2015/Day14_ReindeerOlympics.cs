@@ -23,7 +23,7 @@ public class Day14 : IPuzzle
         }
     }
 
-    static int MaxDistanceAfterTime(IEnumerable<Reindeer> deer, int seconds) => deer.Select(d => d.Distance().Skip(seconds).First()).Max();
+    private static int MaxDistanceAfterTime(IEnumerable<Reindeer> deer, int seconds) => deer.Select(d => d.Distance().Skip(seconds).First()).Max();
 
     public static int MaxScoreAfterTime(IEnumerable<Reindeer> deer, int seconds)
     {

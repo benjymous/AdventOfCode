@@ -3,7 +3,7 @@ public class Day19 : IPuzzle
 {
     public class TestDrone(string program)
     {
-        readonly NPSA.IntCPU cpu = new(program, 1000);
+        private readonly NPSA.IntCPU cpu = new(program, 1000);
 
         public int Scans { get; private set; } = 0;
 
@@ -26,7 +26,7 @@ public class Day19 : IPuzzle
         return Util.Matrix(scanSize, scanSize).Select((pos) => drone.Visit(pos.x, pos.y)).Sum();
     }
 
-    static bool BoxFit(TestDrone drone, int x, int y, int boxSize)
+    private static bool BoxFit(TestDrone drone, int x, int y, int boxSize)
     {
         int size = boxSize - 1;
 

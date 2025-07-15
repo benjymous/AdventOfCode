@@ -1,7 +1,7 @@
 namespace AoC.Advent2019.NPSA
 {
 
-    abstract class ASCIITerminal(string program, int reserve = 0) : IntCPU(program, reserve), ICPUInterrupt
+    internal abstract class ASCIITerminal(string program, int reserve = 0) : IntCPU(program, reserve), ICPUInterrupt
     {
         protected ASCIIBuffer buffer = new();
 
@@ -52,14 +52,14 @@ namespace AoC.Advent2019.NPSA
                 {
                     Console.Write("?> ");
                     var input = Console.ReadLine();
-                    AddInput(input.Select(c => (long)c).ToArray());
+                    AddInput([.. input.Select(c => (long)c)]);
                     AddInput('\n');
                 }
             }
         }
     }
 
-    class InteractiveTerminal : ASCIITerminal
+    internal class InteractiveTerminal : ASCIITerminal
     {
         public InteractiveTerminal(string program) : base(program)
         {
@@ -72,7 +72,7 @@ namespace AoC.Advent2019.NPSA
 
     public class ASCIIBuffer
     {
-        readonly Dictionary<PackedPos32, char> screenBuffer = [];
+        private readonly Dictionary<PackedPos32, char> screenBuffer = [];
 
         public ManhattanVector2 Cursor { get; } = new ManhattanVector2(0, 0);
 
@@ -133,6 +133,6 @@ namespace AoC.Advent2019.NPSA
             throw new Exception("Not found");
         }
 
-        public HashSet<PackedPos32> FindAll(char c) => screenBuffer.KeysWithValue(c).ToHashSet();
+        public HashSet<PackedPos32> FindAll(char c) => [.. screenBuffer.KeysWithValue(c)];
     }
 }

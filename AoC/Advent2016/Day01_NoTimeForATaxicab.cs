@@ -2,7 +2,7 @@
 public class Day01 : IPuzzle
 {
     [Regex(@"(L|R)(\d+)")]
-    record class Instruction(char Turn, int Distance);
+    private record class Instruction(char Turn, int Distance);
 
     private static int FollowPath(string input, QuestionPart part)
     {
@@ -17,7 +17,7 @@ public class Day01 : IPuzzle
         {
             direction.Turn(instruction.Turn);
 
-            if (part.One())
+            if (part.One)
             {
                 position.Offset(direction, instruction.Distance);
             }

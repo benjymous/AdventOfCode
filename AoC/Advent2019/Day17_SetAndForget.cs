@@ -1,10 +1,10 @@
 ﻿using AoC.Advent2019.NPSA;
 namespace AoC.Advent2019;
-class Hoovamatic(string input) : ASCIITerminal(input)
+internal class Hoovamatic(string input) : ASCIITerminal(input)
 {
     public long Run(bool activate = false) { if (activate) Poke(0, 2); base.Run(); return finalOutput; }
 
-    static int CountNeighbours(HashSet<PackedPos32> items, PackedPos32 pos) => Util.CountTrue(items.Contains(pos + (-1, 0)), items.Contains(pos + (+1, 0)), items.Contains(pos + (0, -1)), items.Contains(pos + (0, +1)));
+    private static int CountNeighbours(HashSet<PackedPos32> items, PackedPos32 pos) => Util.CountTrue(items.Contains(pos + (-1, 0)), items.Contains(pos + (+1, 0)), items.Contains(pos + (0, -1)), items.Contains(pos + (0, +1)));
 
     public IEnumerable<PackedPos32> FindIntersections()
     {
@@ -20,7 +20,7 @@ class Hoovamatic(string input) : ASCIITerminal(input)
                     yield return value.Substring(i, j);
     }
 
-    static bool NeedsToShrink(string s) => s.Contains('L') || s.Contains('R');
+    private static bool NeedsToShrink(string s) => s.Contains('L') || s.Contains('R');
 
     public static string Filter(string input) => input.Replace("-", "").Trim(',');
 
@@ -50,7 +50,7 @@ class Hoovamatic(string input) : ASCIITerminal(input)
 
     public override IEnumerable<string> AutomaticInput() => [.. FindSubstitutions(string.Concat(BuildPath()), []), buffer.DisplayLive ? "y" : "n"];
 
-    IEnumerable<string> BuildPath()
+    private IEnumerable<string> BuildPath()
     {
         var scaffolds = buffer.FindAll('#');
         var position = buffer.FindCharacter('^');

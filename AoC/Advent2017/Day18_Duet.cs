@@ -1,18 +1,18 @@
 ﻿namespace AoC.Advent2017;
 public class Day18 : IPuzzle
 {
-    class Part1Port : NorthCloud.IOutputPort
+    private class Part1Port : NorthCloud.IOutputPort
     {
         public long Value { get; private set; }
 
         public void Write(long value) => Value = value;
     }
 
-    class Part2Port : NorthCloud.IInputPort, NorthCloud.IOutputPort
+    private class Part2Port : NorthCloud.IInputPort, NorthCloud.IOutputPort
     {
         public int SendCount { get; internal set; } = 0;
 
-        readonly Queue<long> values = [];
+        private readonly Queue<long> values = [];
 
         public void Write(long value)
         {

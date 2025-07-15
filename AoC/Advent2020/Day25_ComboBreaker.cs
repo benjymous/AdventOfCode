@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2020;
 public class Day25 : IPuzzle
 {
-    const int MagicNumber = 20201227;
+    private const int MagicNumber = 20201227;
 
     public static IEnumerable<(int loop, long val)> LoopVals(int subject)
     {

@@ -6,8 +6,8 @@ public class Day08 : IPuzzle
         public Data(string input)
         {
             grid = Util.ParseMatrix<char>(input);
-            rows = grid.Rows().Select(c => c.ToArray()).ToArray();
-            cols = grid.Columns().Select(c => c.ToArray()).ToArray();
+            rows = [.. grid.Rows().Select(c => c.ToArray())];
+            cols = [.. grid.Columns().Select(c => c.ToArray())];
         }
         public char[,] grid;
         public char[][] rows;
@@ -18,7 +18,7 @@ public class Day08 : IPuzzle
         public bool VisibleFromEdge((int x, int y) pos)
             => VisibleFromEdge(rows[pos.y], pos.x) || VisibleFromEdge(cols[pos.x], pos.y);
 
-        static bool VisibleFromEdge(char[] values, int index)
+        private static bool VisibleFromEdge(char[] values, int index)
         {
             if (index == 0 || index == values.Length - 1) return true;
             var tree = values[index];
@@ -29,7 +29,7 @@ public class Day08 : IPuzzle
             return visibleLeft || visibleRight;
         }
 
-        static int CountVisible(IEnumerable<char> values, int compare) => values.Index(1).Where(v => v.Item >= compare).Select(v => v.Index).FirstOrDefault(values.Count());
+        private static int CountVisible(IEnumerable<char> values, int compare) => values.Index(1).Where(v => v.Item >= compare).Select(v => v.Index).FirstOrDefault(values.Count());
 
         public int ScenicScore((int x, int y) pos)
         {

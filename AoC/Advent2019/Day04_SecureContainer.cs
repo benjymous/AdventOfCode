@@ -22,14 +22,14 @@ public class Day04 : IPuzzle
         return false;
     }
 
-    static int ToNumber(int[] digits)
+    private static int ToNumber(int[] digits)
     {
         int res = 0;
         for (int i = 5, mult = 1; i >= 0; --i, mult *= 10) res += digits[i] * mult;
         return res;
     }
 
-    static void IncDigits(int[] digits, int digit = 5)
+    private static void IncDigits(int[] digits, int digit = 5)
     {
         if (++digits[digit] > 9)
         {

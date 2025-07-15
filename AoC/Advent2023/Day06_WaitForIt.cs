@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2023;
 public class Day06 : IPuzzle
 {
-    static IEnumerable<(T time, T recordDistance)> Parse<T>(string input) where T : IBinaryInteger<T>
+    private static IEnumerable<(T time, T recordDistance)> Parse<T>(string input) where T : IBinaryInteger<T>
         => Util.Split(input).Select(Util.ExtractNumbers<T>).ZipTwo();
 
     public static bool WillBeat<T>(T charge, (T maxTime, T record) entry) where T : IBinaryInteger<T>

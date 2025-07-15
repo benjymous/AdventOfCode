@@ -6,7 +6,7 @@ public class Day24 : IPuzzle
         [Regex(@"(.+)\/(.+)")] public static (int x, int y, int s) Component(int x, int y) => (x, y, x + y);
     }
 
-    public static ((int length, int strength) longstrong, int strongest) GetChains(string input) => GetChains(0, Parser.Factory<(int x, int y, int s), Factory>(input).ToArray());
+    public static ((int length, int strength) longstrong, int strongest) GetChains(string input) => GetChains(0, [.. Parser.Factory<(int x, int y, int s), Factory>(input)]);
 
     public static ((int length, int strength) longstrong, int strongest) GetChains(int currentPort, (int x, int y, int s)[] inputs)
     {
@@ -15,7 +15,7 @@ public class Day24 : IPuzzle
 
         foreach (var component in inputs.Where(c => c.x == currentPort || c.y == currentPort))
         {
-            var childResult = GetChains(component.x == currentPort ? component.y : component.x, inputs.Where(c => c != component).ToArray());
+            var childResult = GetChains(component.x == currentPort ? component.y : component.x, [.. inputs.Where(c => c != component)]);
 
             strongest = Math.Max(strongest, component.s + childResult.strongest);
             childResult.longstrong.length++;

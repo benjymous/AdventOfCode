@@ -3,9 +3,9 @@ public class Day17 : IPuzzle
 {
     public class State(int dimensions)
     {
-        public State(string input, int dimensions) : this(dimensions) => Cells = Util.ParseSparseMatrix<char>(input).Where(kvp => kvp.Value == '#').Select(kvp => (kvp.Key.x, kvp.Key.y, 0, 0)).ToHashSet();
+        public State(string input, int dimensions) : this(dimensions) => Cells = [.. Util.ParseSparseMatrix<char>(input).Where(kvp => kvp.Value == '#').Select(kvp => (kvp.Key.x, kvp.Key.y, 0, 0))];
 
-        readonly int Dimensions = dimensions;
+        private readonly int Dimensions = dimensions;
         public HashSet<(int x, int y, int z, int w)> Cells { get; private set; } = [];
 
         public IEnumerable<(int x, int y, int z, int w)> Positions()
@@ -21,7 +21,7 @@ public class Day17 : IPuzzle
 
             return range.Iterate();
         }
-        readonly IEnumerable<(int x, int y, int z, int w)> directions = Directions(dimensions).ToList();
+        private readonly IEnumerable<(int x, int y, int z, int w)> directions = Directions(dimensions).ToList();
 
         public static IEnumerable<(int x, int y, int z, int w)> Directions(int dimensions) => (-1, -1, -1, dimensions == 4 ? -1 : 0, 1, 1, 1, dimensions == 4 ? 1 : 0).Iterate().Where(pos => pos.x != 0 || pos.y != 0 || pos.z != 0 || pos.w != 0);
 
@@ -37,7 +37,7 @@ public class Day17 : IPuzzle
         }
     }
 
-    static (State, State) Tick(State oldState, State newState)
+    private static (State, State) Tick(State oldState, State newState)
     {
         newState.Cells.Clear();
 

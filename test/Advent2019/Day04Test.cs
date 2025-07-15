@@ -12,7 +12,7 @@ namespace AoC.Advent2019.Test
 
         static int[] ToArray(string input)
         {
-            return input.Select(x => x.AsDigit()).ToArray();
+            return [.. input.Select(x => x.AsDigit())];
         }
 
         [TestCategory("Test")]

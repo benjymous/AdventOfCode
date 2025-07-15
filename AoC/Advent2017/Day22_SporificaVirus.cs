@@ -32,10 +32,10 @@ public class Day22 : IPuzzle
         return infections;
     }
 
-    const char Clean = '.';
-    const char Infected = '#';
-    const char Weakened = 'W';
-    const char Flagged = 'F';
+    private const char Clean = '.';
+    private const char Infected = '#';
+    private const char Weakened = 'W';
+    private const char Flagged = 'F';
 
     public static int Part2(string input)
     {

@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2021;
 public class Day04 : IPuzzle
 {
-    class Board
+    private class Board
     {
         [Regex("^(.+\n.+\n.+\n.+\n.+)$")]
         public Board(string input)
@@ -25,14 +25,14 @@ public class Day04 : IPuzzle
         //    }
         //}
 
-        void Put(int x, int y, int num)
+        private void Put(int x, int y, int num)
         {
             numbers[x, y] = num;
             index[num] = (x, y);
         }
 
-        readonly Dictionary<int, (int x, int y)> index = [];
-        readonly int[,] numbers = new int[5, 5];
+        private readonly Dictionary<int, (int x, int y)> index = [];
+        private readonly int[,] numbers = new int[5, 5];
 
         public bool PlayNumber(int num)
         {
@@ -47,14 +47,14 @@ public class Day04 : IPuzzle
             return false;
         }
 
-        bool CheckRow(int y) => numbers.Row(y).All(i => i == -1);
+        private bool CheckRow(int y) => numbers.Row(y).All(i => i == -1);
 
-        bool CheckCol(int x) => numbers.Column(x).All(i => i == -1);
+        private bool CheckCol(int x) => numbers.Column(x).All(i => i == -1);
 
         public int CalcScore(int turn) => index.Keys.Sum() * turn;
     }
 
-    static int RunGame(string input, QuestionPart part)
+    private static int RunGame(string input, QuestionPart part)
     {
         var chunks = input.SplitSections();
         var rnd = Util.ParseNumbers<int>(chunks[0]);
@@ -67,7 +67,7 @@ public class Day04 : IPuzzle
             {
                 if (board.PlayNumber(num))
                 {
-                    if (part.One() || boards.Count == 1)
+                    if (part.One || boards.Count == 1)
                         return board.CalcScore(num);
 
                     boards.Remove(board);

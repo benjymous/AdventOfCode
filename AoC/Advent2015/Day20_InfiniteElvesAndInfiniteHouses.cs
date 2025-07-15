@@ -3,12 +3,12 @@ public class Day20 : IPuzzle
 {
     private static int Solve(string input, QuestionPart part)
     {
-        int multiplier = part.One() ? 10 : 11;
+        int multiplier = part.One ? 10 : 11;
         int target = int.Parse(input);
         int[] numPresents = new int[1000000];
         for (int i = 1; i < numPresents.Length; i++)
         {
-            for (int j = i, count = part.Two() ? 50 : int.MaxValue; j < numPresents.Length && count > 0; j += i, count--)
+            for (int j = i, count = part.Two ? 50 : int.MaxValue; j < numPresents.Length && count > 0; j += i, count--)
             {
                 numPresents[j] += i * multiplier;
             }

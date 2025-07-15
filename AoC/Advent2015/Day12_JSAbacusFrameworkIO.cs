@@ -28,7 +28,7 @@ public class Day12 : IPuzzle
         }
     }
 
-    static bool HasRed(dynamic jsonObj)
+    private static bool HasRed(dynamic jsonObj)
     {
         if (jsonObj.red != null) return true;
 
@@ -41,7 +41,7 @@ public class Day12 : IPuzzle
         return false;
     }
 
-    static int GetSum(dynamic jsonObj)
+    private static int GetSum(dynamic jsonObj)
     {
         if (jsonObj.Type == JTokenType.String) return 0;
         if (jsonObj.Type == JTokenType.Integer) return (int)jsonObj;

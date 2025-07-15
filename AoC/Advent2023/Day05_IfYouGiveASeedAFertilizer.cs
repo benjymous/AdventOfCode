@@ -3,7 +3,7 @@ public class Day05 : IPuzzle
 {
     public class Mapper
     {
-        readonly List<(long from, long delta, long count)> ranges = [];
+        private readonly List<(long from, long delta, long count)> ranges = [];
         public void AddRange(long to, long from, long count) => ranges.Add((from, to - from, count));
 
         public long Remap(bool forwards, long source)

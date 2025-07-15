@@ -31,7 +31,7 @@ public class Day16 : IPuzzle
                 yourTicket => Parser.FromString<Ticket>(yourTicket),
                 nearby => Parser.Parse<Ticket>(nearby).ToList());
 
-        public HashSet<(Ticket ticket, int rate)> InvalidTickets() => NearbyTickets.SelectMany(ticket => ticket.Values.Where(val => !Rules.Any(r => r.Validate(val))).Select(val => (ticket, val))).ToHashSet();
+        public HashSet<(Ticket ticket, int rate)> InvalidTickets() => [.. NearbyTickets.SelectMany(ticket => ticket.Values.Where(val => !Rules.Any(r => r.Validate(val))).Select(val => (ticket, val)))];
         public IEnumerable<Ticket> ValidTickets() => NearbyTickets.Except(InvalidTickets().Select(v => v.ticket));
 
         public IEnumerable<(string key, int value)> DecodeTickets()
@@ -56,10 +56,10 @@ public class Day16 : IPuzzle
             return YourTicket.Decode(Lookup);
         }
 
-        readonly List<TicketRule> Rules;
-        readonly Ticket YourTicket;
-        readonly List<Ticket> NearbyTickets;
-        readonly Dictionary<string, int> Lookup = [];
+        private readonly List<TicketRule> Rules;
+        private readonly Ticket YourTicket;
+        private readonly List<Ticket> NearbyTickets;
+        private readonly Dictionary<string, int> Lookup = [];
     }
 
     public static int Part1(string input) => new TicketScanner(input).InvalidTickets().Sum(v => v.rate);

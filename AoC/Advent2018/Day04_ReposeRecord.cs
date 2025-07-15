@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2018;
 public class Day04 : IPuzzle
 {
-    enum EntryType
+    private enum EntryType
     {
         begins_shift,
         falls_asleep,
@@ -9,14 +9,14 @@ public class Day04 : IPuzzle
     }
 
     [method: Regex(@"\[....-..-.. (..:..)\] (?:Guard #(\d+) )?(falls asleep|wakes up|begins shift)")]
-    class Entry(string timecode, int guardId, EntryType type)
+    private class Entry(string timecode, int guardId, EntryType type)
     {
         public readonly int Timestamp = int.Parse(timecode.Replace(":", ""));
         public readonly EntryType EntryType = type;
         public readonly int GuardId = guardId;
     }
 
-    static (Dictionary<int, Dictionary<int, int>>, Dictionary<int, int> durations) Parse(string input)
+    private static (Dictionary<int, Dictionary<int, int>>, Dictionary<int, int> durations) Parse(string input)
     {
         int id = -1;
         int sleepStart = 0;

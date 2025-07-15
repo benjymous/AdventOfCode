@@ -12,11 +12,10 @@ public class Day10 : IPuzzle
     {
         var data = Util.ParseSparseMatrix<bool>(input).Keys;
 
-        return data.Select(a1 => data.GroupBy(a2 => AngleBetween(a1, a2), a2 => (a2.x * 100) + a2.y))
+        return [.. data.Select(a1 => data.GroupBy(a2 => AngleBetween(a1, a2), a2 => (a2.x * 100) + a2.y))
             .MaxBy(e => e.Count())
             .OrderBy(group => group.Key)
-            .Select(group => group.First())
-            .ToArray();
+            .Select(group => group.First())];
     }
 
     public static int Part1(string input) => FindBestLocation(input).Length;

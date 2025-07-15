@@ -6,23 +6,26 @@ public class Day18 : IPuzzle
         public int Value = 0;
         public Val first, second, parent, left, right;
 
-        public static Val Parse(string data) => Parse([.. data]);
+        [Regex(".+")]
+        public Val(string s) : this([.. s]) { }
 
-        static Val Parse(Queue<char> data, Val parent = null)
+        protected Val(Queue<char> data, Val parent = null)
         {
-            var v = new Val { parent = parent };
+            this.parent = parent;
             while (true)
             {
                 var ch = data.Dequeue();
                 switch (ch)
                 {
-                    case '[': v.first = Parse(data, v); continue;
-                    case ',': v.second = Parse(data, v); continue;
-                    case >= '0' and <= '9': v.Value = ch.AsDigit(); break;
+                    case '[': first = new Val(data, this); continue;
+                    case ',': second = new Val(data, this); continue;
+                    case >= '0' and <= '9': this.Value = ch.AsDigit(); break;
                 }
-                return v;
+                break;
             }
         }
+
+        public Val() { }
 
         public bool IsPair => first != null;
         public int Depth => parent == null ? 0 : parent.Depth + 1;
@@ -30,10 +33,10 @@ public class Day18 : IPuzzle
 
         public Val Reduce() { while (TryExplode() || TrySplit()) ; return this; }
 
-        IEnumerable<Val> Flatten() => IsPair ? first.Flatten().Concat(second.Flatten()) : [this];
+        private IEnumerable<Val> Flatten() => IsPair ? first.Flatten().Concat(second.Flatten()) : [this];
 
         public bool TrySplit() => Split() || (IsPair && (first.TrySplit() || second.TrySplit()));
-        bool Split()
+        private bool Split()
         {
             if (IsPair || Value < 10) return false;
             (first, second) = (new Val { Value = Value / 2, parent = this }, new Val { Value = (Value / 2) + (Value % 2), parent = this });
@@ -41,7 +44,7 @@ public class Day18 : IPuzzle
         }
 
         public bool TryExplode() => Explode() || (IsPair && (first.TryExplode() || second.TryExplode()));
-        bool Explode()
+        private bool Explode()
         {
             if (parent == null)
             {
@@ -69,9 +72,9 @@ public class Day18 : IPuzzle
         public static Val operator +(Val lhs, Val rhs) => (lhs.parent = rhs.parent = new Val { first = lhs, second = rhs }).Reduce();
     }
 
-    public static long Part1(string input) => Util.Split(input, "\n").Sum(Val.Parse).Magnitude;
+    public static long Part1(Parser.AutoArray<Val> input) => input.Sum().Magnitude;
 
-    public static long Part2(string input) => Util.Matrix2(Util.Split(input, "\n")).AsParallel().Max(pair => (Val.Parse(pair.item1) + Val.Parse(pair.item2)).Magnitude);
+    public static long Part2(string input) => Util.Matrix2(Util.Split(input, "\n")).AsParallel().Max(pair => (new Val(pair.item1) + new Val(pair.item2)).Magnitude);
 
     public void Run(string input, ILogger logger)
     {

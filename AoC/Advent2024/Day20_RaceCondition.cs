@@ -1,26 +1,32 @@
 ﻿namespace AoC.Advent2024;
 public class Day20 : IPuzzle
 {
-    static readonly PackedPos32[] neighbours = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+    private static readonly PackedPos32[] neighbours = [(-1, 0), (1, 0), (0, -1), (0, 1)];
 
-    public static IEnumerable<int> FindCheats(string input, int maxCheatSteps)
+    public static int FindCheats(string input, int maxCheatSteps, int minSaving)
     {
         var grid = Util.ParseSparseMatrix<PackedPos32, char>(input, new Util.Convertomatic.SkipChars('#'));
 
         var walkable = grid.Keys.ToHashSet();
-        var fromStart = FloodFill(walkable.Select(k => (k, int.MaxValue)).ToDictionary(), grid.KeysWithValue('S').Single());
-
-        var normalLength = fromStart[grid.KeysWithValue('E').Single()];
+        var fromStart = FloodFill(walkable.Select(k => (k, int.MaxValue)).ToDictionary(), grid.SingleWithValue('S'));
 
         var cheatNeighbours = GetNeighbourOffsets(maxCheatSteps).ToList();
 
-        return walkable.SelectMany(p => cheatNeighbours.Select(n => (from: p, to: p + n.offset, n.dist))
-                                                       .Where(n => walkable.Contains(n.to)))
-                       .Select(n => fromStart[n.to] - fromStart[n.from] - n.dist)
-                       .Where(l => l > 0);
+        int count = 0;
+
+        foreach (var (from, fromDist) in fromStart)
+        {
+            foreach (var (offset, dist) in cheatNeighbours)
+            {
+                if (fromStart.TryGetValue(from + offset, out var toDist) && toDist - fromDist - dist >= minSaving)
+                    count++;
+            }
+        }
+
+        return count;
     }
 
-    static IEnumerable<(PackedPos32 offset, int dist)> GetNeighbourOffsets(int length)
+    private static IEnumerable<(PackedPos32 offset, int dist)> GetNeighbourOffsets(int length)
     {
         for (int y = -length; y <= length; ++y)
             for (int x = -length; x <= length; ++x)
@@ -30,7 +36,7 @@ public class Day20 : IPuzzle
             }
     }
 
-    static Dictionary<PackedPos32, int> FloodFill(Dictionary<PackedPos32, int> map, PackedPos32 pos, int current = 0)
+    private static Dictionary<PackedPos32, int> FloodFill(Dictionary<PackedPos32, int> map, PackedPos32 pos, int current = 0)
     {
         if (!map.TryGetValue(pos, out var prev) || prev <= current) return map;
 
@@ -40,10 +46,10 @@ public class Day20 : IPuzzle
     }
 
     public static int Part1(string input)
-        => FindCheats(input, 2).Count(c => c >= 100);
+        => FindCheats(input, 2, 100);
 
     public static int Part2(string input)
-        => FindCheats(input, 20).Count(c => c >= 100);
+        => FindCheats(input, 20, 100);
 
     public void Run(string input, ILogger logger)
     {

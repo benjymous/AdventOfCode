@@ -3,17 +3,17 @@
 public class Snafu : ISummable<Snafu>
 {
     [Regex("(.+)")]
-    public Snafu(string value) => components = value.Reverse().Select(ToDecimal).ToArray();
-    public Snafu(long value = 0) => components = value.While(value => value > 0, value => { var res = DivRemBalance(value, out value); return (value, res); }).ToArray();
+    public Snafu(string value) => components = [.. value.Reverse().Select(ToDecimal)];
+    public Snafu(long value = 0) => components = [.. value.While(value => value > 0, value => { var res = DivRemBalance(value, out value); return (value, res); })];
 
-    Snafu(IEnumerable<sbyte> comp) => (components, balanced) = (comp.ToArray(), false);
+    private Snafu(IEnumerable<sbyte> comp) => (components, balanced) = ([.. comp], false);
 
-    readonly sbyte[] components;
-    bool balanced = true;
+    private readonly sbyte[] components;
+    private bool balanced = true;
 
     public static Snafu operator +(Snafu a, Snafu b) => new(a.components.ZipLongest(b.components).Select(pair => (sbyte)(pair.Item1 + pair.Item2)));
 
-    Snafu Balance()
+    private Snafu Balance()
     {
         if (!balanced)
         {
@@ -28,7 +28,7 @@ public class Snafu : ISummable<Snafu>
         return this;
     }
 
-    static sbyte DivRemBalance(long input, out long next)
+    private static sbyte DivRemBalance(long input, out long next)
     {
         next = input / 5;
         input -= next * 5;
@@ -41,8 +41,8 @@ public class Snafu : ISummable<Snafu>
     public long ToDecimal() => components.Reverse().Aggregate(0L, (current, val) => (current * 5) + val);
     public override string ToString() => Balance().components.Reverse().Select(ToChar).AsString();
 
-    static sbyte ToDecimal(char c) => c switch { '=' => -2, '-' => -1, _ => (sbyte)c.AsDigit() };
-    static char ToChar(sbyte v) => v switch { -2 => '=', -1 => '-', _ => (char)('0' + v) };
+    private static sbyte ToDecimal(char c) => c switch { '=' => -2, '-' => -1, _ => (sbyte)c.AsDigit() };
+    private static char ToChar(sbyte v) => v switch { -2 => '=', -1 => '-', _ => (char)('0' + v) };
 }
 
 public class Day25 : IPuzzle

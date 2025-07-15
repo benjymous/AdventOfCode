@@ -3,9 +3,9 @@
 namespace AoC.Advent2016;
 public class Day25 : IPuzzle
 {
-    const int SAMPLE_SIZE = 10;
+    private const int SAMPLE_SIZE = 10;
 
-    static int Signal(Instruction[] program, int input)
+    private static int Signal(Instruction[] program, int input)
     {
         int responseCount = 0;
         var cpu = new BunnyCPU(program)

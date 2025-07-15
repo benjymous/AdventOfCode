@@ -2,21 +2,20 @@
 public class Day14 : IPuzzle
 {
     [Regex(@"p=(.+) v=(.+)")]
-    record struct Guard([Regex(@"(\d+),(\d+)")] (int x, int y) pos, [Regex(@"(-?\d+),(-?\d+)")] (int x, int y) speed)
+    private record struct Guard([Regex(@"(\d+),(\d+)")] (int x, int y) Pos, [Regex(@"(-?\d+),(-?\d+)")] (int x, int y) Speed)
     {
-        public (int,int) StepGuard(int steps, int width, int height)
+        public (int, int) StepGuard(int steps, int width, int height)
         {
-            var finalPos = pos.OffsetBy(speed, steps);
-            while (finalPos.x < width) finalPos.x += width;
-            while (finalPos.y < height) finalPos.y += height;
-            finalPos.x %= width;
-            finalPos.y %= height;
-            pos = finalPos;
-            return finalPos;
+            var (x, y) = Pos.OffsetBy(Speed, steps);
+
+            x.ModWrap(width);
+            y.ModWrap(height);
+
+            return Pos = (x, y);
         }
     }
 
-    public static long SolvePt1(string input, int width, int height)
+    public static long Part1(string input, int width = 101, int height = 103)
     {
         var data = Parser.Parse<Guard>(input).ToArray();
 
@@ -26,9 +25,8 @@ public class Day14 : IPuzzle
         }
 
         int[] quadrants = new int[4];
-        var hw = width / 2;
-        var hh = height / 2;
-        foreach (var (x, y) in data.Select(g => g.pos))
+        int hw = width / 2, hh = height / 2;
+        foreach (var (x, y) in data.Select(g => g.Pos))
         {
             if (x < hw && y < hh) quadrants[0]++;
             else if (x < hw && y > hh) quadrants[1]++;
@@ -38,8 +36,6 @@ public class Day14 : IPuzzle
 
         return quadrants.Product();
     }
-
-    public static long Part1(string input) => SolvePt1(input, 101, 103);
 
     public static int Part2(string input)
     {
@@ -56,11 +52,12 @@ public class Day14 : IPuzzle
 
             for (int i = 0; i < data.Length; ++i)
             {
-                unique &= dupes.Add(data[i].StepGuard(1, width, height));
+                var pos = data[i].StepGuard(1, width, height);
+                if (unique) unique &= dupes.Add(pos);
             }
 
             if (unique) return iter;
-            
+
             iter++;
         }
     }

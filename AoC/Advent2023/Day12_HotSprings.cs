@@ -4,7 +4,7 @@ public class Day12 : IPuzzle
     [method: Regex(@"(.+) (.+)")]
     public record class Row(string Input, List<int> Lengths);
 
-    static List<T> Unfold<T>(IEnumerable<T> input, bool addJoiner = false, T join = default)
+    private static List<T> Unfold<T>(IEnumerable<T> input, bool addJoiner = false, T join = default)
     {
         List<T> output = [];
         for (int i = 0; i < 5; ++i)

@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2022;
 public class Day07 : IPuzzle
 {
-    class DirNode
+    private class DirNode
     {
         public DirNode Parent = null;
         public List<DirNode> ChildDirs = [];
@@ -39,7 +39,7 @@ public class Day07 : IPuzzle
                 current.FileSize += fileSize;
             }
         }
-        return index.Select(d => d.Size).ToArray();
+        return [.. index.Select(d => d.Size)];
     }
 
     public static int Part1(string input) => BuildTree(input).Where(size => size <= 100000).Sum();

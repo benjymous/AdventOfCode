@@ -3,15 +3,15 @@ public class Day11 : IPuzzle
 {
     public class EmergencyHullPainterRobot(string program) : NPSA.IntCPU(program, 1200), NPSA.ICPUInterrupt
     {
-        readonly ManhattanVector2 position = new(0, 0);
-        readonly Dictionary<(int x, int y), bool> hullColours = [];
-        readonly Direction2 direction = new(0, -1);
+        private readonly ManhattanVector2 position = new(0, 0);
+        private readonly Dictionary<(int x, int y), bool> hullColours = [];
+        private readonly Direction2 direction = new(0, -1);
 
-        int readState = 0;
+        private int readState = 0;
 
-        void Forwards() => position.Offset(direction);
+        private void Forwards() => position.Offset(direction);
         public void PaintHull(bool colour) => hullColours[position] = colour;
-        bool ReadCamera() => hullColours.GetOrDefault(position);
+        private bool ReadCamera() => hullColours.GetOrDefault(position);
         public int GetPaintedTileCount() => hullColours.Count;
 
         public void RequestInput() => AddInput(ReadCamera() ? 1 : 0);

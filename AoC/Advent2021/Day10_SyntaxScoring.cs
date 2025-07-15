@@ -1,13 +1,13 @@
 ﻿namespace AoC.Advent2021;
 public class Day10 : IPuzzle
 {
-    static char ExpectedClose(char opener) => opener switch
+    private static char ExpectedClose(char opener) => opener switch
     { '(' => ')', '[' => ']', '{' => '}', '<' => '>', _ => '!' };
 
-    static (int part1, int part2) Score(char ch) => ch switch
+    private static (int part1, int part2) Score(char ch) => ch switch
     { ')' => (3, 1), ']' => (57, 2), '}' => (1197, 3), '>' => (25137, 4), _ => (0, 0) };
 
-    static (char found, Stack<char> stack) CheckLine(string line)
+    private static (char found, Stack<char> stack) CheckLine(string line)
     {
         var stack = new Stack<char>();
         foreach (var c in line)

@@ -1,11 +1,11 @@
 ﻿namespace AoC.Advent2022;
 public class Day17 : IPuzzle
 {
-    readonly static (int x, int y)[][] Shapes = Util.Values("####", ".#.,###,.#.", "###,..#,..#", "#,#,#,#", "##,##").Select(part => Util.ParseSparseMatrix<bool>(part).Keys.OrderByDescending(k => k.y).ToArray()).ToArray();
+    private static readonly (int x, int y)[][] Shapes = [.. Util.Values("####", ".#.,###,.#.", "###,..#,..#", "#,#,#,#", "##,##").Select(part => Util.ParseSparseMatrix<bool>(part).Keys.OrderByDescending(k => k.y).ToArray())];
 
-    class State(string input)
+    private class State(string input)
     {
-        readonly int[] map = new int[10000], windData = input.Trim().Select(c => c == '<' ? -1 : 1).ToArray();
+        private readonly int[] map = new int[10000], windData = [.. input.Trim().Select(c => c == '<' ? -1 : 1)];
         public int WindIdx { get; private set; } = 0;
         public int MaxHeight { get; private set; } = 0;
 
@@ -16,7 +16,7 @@ public class Day17 : IPuzzle
             return res;
         }
 
-        bool Blocked((int x, int y) pos) => pos.y <= 0 || pos.x <= 0 || pos.x >= 8 || (MaxHeight + 1 > pos.y && ((map[pos.y] & (1 << pos.x)) != 0));
+        private bool Blocked((int x, int y) pos) => pos.y <= 0 || pos.x <= 0 || pos.x >= 8 || (MaxHeight + 1 > pos.y && ((map[pos.y] & (1 << pos.x)) != 0));
         public bool CheckBlocked((int x, int y)[] shape, int dx, int dy) => shape.Any((pos) => Blocked((pos.x + dx, pos.y + dy)));
 
         public void FinishBlock((int x, int y)[] shape, (int x, int y) pos)

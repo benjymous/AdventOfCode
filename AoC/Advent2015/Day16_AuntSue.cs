@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2015;
 public class Day16 : IPuzzle
 {
-    static readonly Dictionary<string, int> clues = Parser.FromString<Dictionary<string, int>>("children: 3, cats: 7, samoyeds: 2, pomeranians: 3, akitas: 0, vizslas: 0, goldfish: 5, trees: 3, cars: 2, perfumes: 1");
+    private static readonly Dictionary<string, int> clues = new() { { "children", 3 }, { "cats", 7 }, { "samoyeds", 2 }, { "pomeranians", 3 }, { "akitas", 0 }, { "vizslas", 0 }, { "goldfish", 5 }, { "trees", 3 }, { "cars", 2 }, { "perfumes", 1 } };
 
     [Regex(@"Sue (\d+): (.+)")]
     public record class Sue(int Id, [Split(", ", @"(?<key>.+): (?<value>.+)")] Dictionary<string, int> Inventory)
@@ -40,7 +40,7 @@ public class Day16 : IPuzzle
         }
     }
 
-    private static int Solve(Parser.AutoArray<Sue> input, QuestionPart part) => input.Select(a => (part.One() ? a.ScorePart1(clues) : a.ScorePart2(clues), a)).MaxBy(t => t.Item1).a.Id;
+    private static int Solve(Parser.AutoArray<Sue> input, QuestionPart part) => input.Select(a => (part.One ? a.ScorePart1(clues) : a.ScorePart2(clues), a)).MaxBy(t => t.Item1).a.Id;
 
     public static int Part1(string input) => Solve(input, QuestionPart.Part1);
 

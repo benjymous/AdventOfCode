@@ -9,28 +9,28 @@ public class Day11 : IPuzzle
             var data = Util.ParseSparseMatrix<PackedPos32, char>(input, new Util.Convertomatic.SkipChars('.'));
             (Width, Height) = (data.Width, data.Height);
             Seats = [.. data.Keys];
-            Occupied = data.KeysWithValue('#').ToHashSet();
+            Occupied = [.. data.KeysWithValue('#')];
         }
 
         public State(State other) => (Width, Height, part, Seats) = (other.Width, other.Height, other.part, other.Seats);
 
-        readonly int Height, Width;
-        readonly QuestionPart part;
+        private readonly int Height, Width;
+        private readonly QuestionPart part;
         public readonly HashSet<PackedPos32> Occupied = [], Seats = [];
 
-        int MaxOccupancy => part.One() ? 4 : 5;
+        private int MaxOccupancy => part.One ? 4 : 5;
 
         public int Neighbours(PackedPos32 pos) => directions.Count(d => CheckDirection(pos, d) == true);
-        bool Inside(PackedPos32 pos) => (pos.X >= 0) && (pos.X <= Width) && (pos.Y >= 0) && (pos.Y <= Height);
+        private bool Inside(PackedPos32 pos) => (pos.X >= 0) && (pos.X <= Width) && (pos.Y >= 0) && (pos.Y <= Height);
 
         public bool CheckDirection(PackedPos32 pos, int dir)
         {
-            if (part.One()) return Occupied.Contains(pos + dir);
+            if (part.One) return Occupied.Contains(pos + dir);
             else while (Inside(pos += dir)) if (Seats.Contains(pos)) return Occupied.Contains(pos);
             return false;
         }
 
-        static readonly PackedPos32[] directions = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)];
+        private static readonly PackedPos32[] directions = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)];
 
         public bool Tick(State oldState, PackedPos32 pos)
         {

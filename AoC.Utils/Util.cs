@@ -8,25 +8,14 @@ using System.Security.Cryptography;
 
 namespace AoC;
 
-public enum QuestionPart
+public class QuestionPart(bool part1)
 {
-    Part1 = 1,
-    Part2 = 2,
+    public static readonly QuestionPart Part1 = new(true);
+    public static readonly QuestionPart Part2 = new(false);
+
+    public bool One => part1;
+    public bool Two => !part1;
 }
-
-public static class QuestionPartExtensions
-{
-    public static bool One(this QuestionPart part) => part == QuestionPart.Part1;
-    public static bool Two(this QuestionPart part) => part == QuestionPart.Part2;
-
-}
-
-// coming soon, maybe?
-//public implicit extension QuestionPartExtension for QuestionPart
-//{
-//    public bool One
-//        => this == QuestionPart.Part1
-//}
 
 public partial class Util
 {
@@ -46,12 +35,12 @@ public partial class Util
             int commaCount = input.Count(c => c == ',');
             int linefeedCount = input.Count(c => c == '\n');
             return linefeedCount > commaCount
-                ? input.Split("\n").Where(x => !string.IsNullOrEmpty(x)).ToArray()
-                : input.Split(",").Select(e => e.Replace("\n", "")).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                ? [.. input.Split("\n").Where(x => !string.IsNullOrEmpty(x))]
+                : [.. input.Split(",").Select(e => e.Replace("\n", "")).Where(x => !string.IsNullOrEmpty(x))];
         }
         else
         {
-            return input.Split(splitter).Select(e => e.Replace("\n", "")).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+            return [.. input.Split(splitter).Select(e => e.Replace("\n", "")).Where(x => !string.IsNullOrEmpty(x))];
         }
     }
 
@@ -63,16 +52,16 @@ public partial class Util
         int.TryParse(entry, out var v) ? (null, v) : (entry, 0));
     }
 
-    public static List<T> CreateMultiple<T>(int count) where T : new() => Enumerable.Repeat(0, count).Select(_ => new T()).ToList();
+    public static List<T> CreateMultiple<T>(int count) where T : new() => [.. Enumerable.Repeat(0, count).Select(_ => new T())];
 
     public static T[] ParseNumbers<T>(string input, string splitter = null, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Any) where T : INumberBase<T>
         => ParseNumbers<T>(Split(input, splitter), style);
 
     public static T[] ParseNumbers<T>(IEnumerable<string> input, System.Globalization.NumberStyles style = System.Globalization.NumberStyles.Any) where T : INumberBase<T>
-        => input.WithoutNullOrWhiteSpace().Select(line => T.Parse(line, style, null)).ToArray();
+        => [.. input.WithoutNullOrWhiteSpace().Select(line => T.Parse(line, style, null))];
 
     public static T[][] ParseNumberList<T>(string input) where T : INumberBase<T>
-        => Split(input).Select(v => ParseNumbers<T>(v, " ")).ToArray();
+        => [.. Split(input).Select(v => ParseNumbers<T>(v, " "))];
 
     public interface IConvertomatic
     {
@@ -441,7 +430,7 @@ public partial class Util
 
     public static int[] ExtractNumbers(IEnumerable<char> input) => ExtractNumbers<int>(input);
 
-    public static T[] ExtractNumbers<T>(IEnumerable<char> input) where T : IBinaryInteger<T> => input.Where(c => c is ' ' or '-' or (>= '0' and <= '9')).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(s => T.Parse(s, System.Globalization.NumberStyles.Any, null)).ToArray();
+    public static T[] ExtractNumbers<T>(IEnumerable<char> input) where T : IBinaryInteger<T> => [.. input.Where(c => c is ' ' or '-' or (>= '0' and <= '9')).AsString().Trim().Split(" ").Where(w => !string.IsNullOrEmpty(w)).Select(s => T.Parse(s, System.Globalization.NumberStyles.Any, null))];
 
     public static void SetBit(ref long value, int i) => value |= (1L) << i;
 
@@ -680,7 +669,7 @@ public partial class Util
 
 public class AutoArray<DataType>(IEnumerable<DataType> input) : IEnumerable<DataType>
 {
-    DataType[] data = input.ToArray();
+    DataType[] data = [.. input];
 
     DataType Get(int key) => key >= data.Length ? default : data[key];
 

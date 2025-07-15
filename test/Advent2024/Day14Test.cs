@@ -27,7 +27,7 @@ p=9,5 v=-3,-3";
         int width = 11;
         int height = 7;
 
-        var r = Day14.SolvePt1(test, width, height);
+        var r = Day14.Part1(test, width, height);
 
         Assert.AreEqual(12, r);
     }

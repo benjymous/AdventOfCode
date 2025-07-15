@@ -11,28 +11,28 @@ public class Day09Test
 
     [TestCategory("Test")]
     [TestMethod]
-    public void Defrag_01Test()
+    public void Fragment_01Test()
     {
         Assert.AreEqual(1928, Day09.Part1(test));
     }
 
     [TestCategory("Test")]
     [TestMethod]
-    public void Defrag_02Test()
+    public void Fragment_02Test()
     {
         Assert.AreEqual(2858, Day09.Part2(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void Defrag_Part1_Regression()
+    public void Fragment_Part1_Regression()
     {
         Assert.AreEqual(6471961544878, Day09.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void Defrag_Part2_Regression()
+    public void Fragment_Part2_Regression()
     {
         Assert.AreEqual(6511178035564, Day09.Part2(input));
     }

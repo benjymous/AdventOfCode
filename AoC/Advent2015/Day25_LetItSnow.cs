@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2015;
 public class Day25 : IPuzzle
 {
-    static int FindCode(int row, int col)
+    private static int FindCode(int row, int col)
     {
         int iterTarget = ((row + col - 2) * (row + col - 1) / 2) + col;
 

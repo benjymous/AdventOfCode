@@ -39,7 +39,7 @@ public class Day19 : IPuzzle
             while (generation.Length != 0)
             {
                 best = generation.Max(state => state.NumGeode);
-                generation = generation.SelectMany(s => s.PossibleMoves(self)).Distinct().OrderByDescending(state => state.GetResourceScore(self)).Take(64).ToArray();
+                generation = [.. generation.SelectMany(s => s.PossibleMoves(self)).Distinct().OrderByDescending(state => state.GetResourceScore(self)).Take(64)];
             }
             return (best * Id, best);
         }
@@ -53,7 +53,7 @@ public class Day19 : IPuzzle
             return Mins == 0 ? [] : bp.PossibleMoves(this).Select(m => m.Tick(self));
         }
 
-        State Tick(State parent)
+        private State Tick(State parent)
         {
             NumOre += parent.NumOreRobots;
             NumClay += parent.NumClayRobots;

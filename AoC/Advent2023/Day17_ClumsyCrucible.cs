@@ -3,7 +3,7 @@
 using State = (int x, int y, int dir, int dirSteps, int heatLoss);
 public class Day17 : IPuzzle
 {
-    static readonly Direction2[] Directions = [Direction2.North, Direction2.East, Direction2.South, Direction2.West];
+    private static readonly Direction2[] Directions = [Direction2.North, Direction2.East, Direction2.South, Direction2.West];
 
     private static int Solve(string input, QuestionPart part)
     {
@@ -11,7 +11,7 @@ public class Day17 : IPuzzle
 
         (int x, int y) target = (grid.Width() - 1, grid.Height() - 1);
 
-        int maxStraight = part.One() ? 3 : 10, minStop = part.One() ? 1 : 4;
+        int maxStraight = part.One ? 3 : 10, minStop = part.One ? 1 : 4;
 
         return Solver<State>.Solve((0, 0, 1, 0, 0), (state, solver) =>
         {
@@ -27,7 +27,7 @@ public class Day17 : IPuzzle
                     AddNext(solver, grid, state, state.dir, target);
                 }
 
-                if (part.One() || state.dirSteps is >= 4 or 0)
+                if (part.One || state.dirSteps is >= 4 or 0)
                 {
                     AddNext(solver, grid, state, state.dir - 1, target);
                     AddNext(solver, grid, state, state.dir + 1, target);

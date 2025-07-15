@@ -18,8 +18,8 @@ public class Day18 : IPuzzle
     private static int CountOuterEdges(IEnumerable<Node> cells)
         => cells.SelectMany(cell => cell.Edges()).GetUniqueItems().Count();
 
-    static readonly (int dx, int dy, int dz)[] Neighbours = [(-1, 0, 0), (1, 0, 0), (0, -1, 0), (0, 1, 0), (0, 0, -1), (0, 0, 1)];
-    static void FloodFill((int x, int y, int z) pos, HashSet<(int x, int y, int z)> matrix)
+    private static readonly (int dx, int dy, int dz)[] Neighbours = [(-1, 0, 0), (1, 0, 0), (0, -1, 0), (0, 1, 0), (0, 0, -1), (0, 0, 1)];
+    private static void FloodFill((int x, int y, int z) pos, HashSet<(int x, int y, int z)> matrix)
     {
         if (matrix.Remove(pos))
         {

@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2015;
 public class Day15 : IPuzzle
 {
-    const int Calories = 4;
+    private const int Calories = 4;
 
     public class Factory
     {
@@ -9,7 +9,7 @@ public class Day15 : IPuzzle
         public static int[] Ingredient(int capacity, int durability, int flavor, int texture, int calories) => [capacity, durability, flavor, texture, calories];
     }
 
-    static int CalcScore(int[] weights, int[][] ingredients, bool countCalories)
+    private static int CalcScore(int[] weights, int[][] ingredients, bool countCalories)
     {
         if (countCalories)
         {

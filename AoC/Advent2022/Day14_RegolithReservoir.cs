@@ -17,8 +17,8 @@ public class Day14 : IPuzzle
         }
     }
 
-    static readonly int[] moves = [0, -1, 1];
-    static (bool blocked, int pos) FindStep(HashSet<PackedPos32> map, int pos, int floor, Stack<int> lastBranch)
+    private static readonly int[] moves = [0, -1, 1];
+    private static (bool blocked, int pos) FindStep(HashSet<PackedPos32> map, int pos, int floor, Stack<int> lastBranch)
     {
         if (pos < floor)
         {
@@ -40,7 +40,7 @@ public class Day14 : IPuzzle
         var map = BuildMap(input).ToHashSet();
 
         int maxY = (map.Max(kvp => kvp >> 16) + 2) << 16;
-        int floor = part.Two() ? (maxY - (1 << 16)) : int.MaxValue;
+        int floor = part.Two ? (maxY - (1 << 16)) : int.MaxValue;
 
         int count = 0, source = 500, sandPos = source;
         Stack<int> lastBranch = new();

@@ -12,7 +12,7 @@ public class Day02 : IPuzzle
 
     public static long Part1(string input) => RunProgram(input, 12, 2);
 
-    const int Part2_Target = 19690720;
+    private const int Part2_Target = 19690720;
 
     public static int Part2(string input)
     {

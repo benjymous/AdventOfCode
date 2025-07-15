@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2023;
 public class Day14 : IPuzzle
 {
-    static IEnumerable<List<(int x, int y)>> FindZones(HashSet<(int x, int y)> obstacles, int gridSize)
+    private static IEnumerable<List<(int x, int y)>> FindZones(HashSet<(int x, int y)> obstacles, int gridSize)
     {
         for (int x = 0; x < gridSize; ++x)
         {
@@ -20,14 +20,14 @@ public class Day14 : IPuzzle
         }
     }
 
-    public static HashSet<(int x, int y)> RotateGrid(IEnumerable<(int x, int y)> input, int gridSize) => input.Select(p => (gridSize - 1 - p.y, p.x)).ToHashSet();
+    public static HashSet<(int x, int y)> RotateGrid(IEnumerable<(int x, int y)> input, int gridSize) => [.. input.Select(p => (gridSize - 1 - p.y, p.x))];
 
-    static (HashSet<(int x, int y)> rocks, HashSet<(int x, int y)> obstacles, int gridSize) Init(string input)
+    private static (HashSet<(int x, int y)> rocks, HashSet<(int x, int y)> obstacles, int gridSize) Init(string input)
     {
         var grid = Util.ParseSparseMatrix<char>(input);
 
-        return (rocks: grid.KeysWithValue('O').ToHashSet(),
-            obstacles: grid.KeysWithValue('#').ToHashSet(),
+        return (rocks: [.. grid.KeysWithValue('O')],
+            obstacles: [.. grid.KeysWithValue('#')],
              gridSize: grid.Width + 1);
     }
 
@@ -47,7 +47,7 @@ public class Day14 : IPuzzle
         List<(int x, int y)>[][] zones = [null, null, null, null];
         for (int i = 0; i < 4; ++i)
         {
-            zones[i] = FindZones(obstacles, gridSize).ToArray();
+            zones[i] = [.. FindZones(obstacles, gridSize)];
             if (i < 3) obstacles = RotateGrid(obstacles, gridSize);
         }
 

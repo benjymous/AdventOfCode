@@ -2,9 +2,9 @@
 public class Day21 : IPuzzle
 {
     [Regex(@"(.+) \(contains (.+)\)")]
-    record class Food([Split(" ")] string[] Ingredients, [Split(", ")] string[] Allergens);
+    private record class Food([Split(" ")] string[] Ingredients, [Split(", ")] string[] Allergens);
 
-    class Foods
+    private class Foods
     {
         public Foods(string input)
         {
@@ -47,7 +47,7 @@ public class Day21 : IPuzzle
             }
         }
 
-        readonly Dictionary<string, Dictionary<string, int>> Counts = [];
+        private readonly Dictionary<string, Dictionary<string, int>> Counts = [];
 
         public Dictionary<string, HashSet<int>> Ingredients = [];
         public Dictionary<string, string> Allergens = [];

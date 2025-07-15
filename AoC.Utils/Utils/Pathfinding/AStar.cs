@@ -141,7 +141,7 @@ namespace AoC.Utils.Pathfinding
                     current = nodeLinks[current];
                 }
 
-                return (path as IEnumerable<TCoordinateType>).Reverse().ToArray();
+                return [.. (path as IEnumerable<TCoordinateType>).Reverse()];
             }
         }
     }

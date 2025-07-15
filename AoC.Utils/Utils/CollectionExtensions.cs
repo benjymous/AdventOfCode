@@ -58,6 +58,7 @@ namespace AoC.Utils
 
         public static IEnumerable<TKey> KeysWithValue<TKey, TValue>(this IDictionary<TKey, TValue> dict, TValue val) => dict.Where(kvp => kvp.Value.Equals(val)).Select(kvp => kvp.Key);
 
+        public static TKey SingleWithValue<TKey, TValue>(this IDictionary<TKey, TValue> dict, TValue val) => dict.KeysWithValue(val).Single();
         public static void RemoveRange<T>(this HashSet<T> dict, IEnumerable<T> values)
         {
             foreach (var v in values) dict.Remove(v);
@@ -118,7 +119,7 @@ namespace AoC.Utils
         {
             foreach (var (i1, el1) in set.Index())
             {
-                foreach (var el2 in set.Skip(i1))
+                foreach (var el2 in set.Skip(i1 + 1))
                 {
                     yield return (el1, el2);
                 }
@@ -824,5 +825,25 @@ namespace AoC.Utils
         }
 
         public static IEnumerable<TSource> If<TSource>(this IEnumerable<TSource> source, bool condition, Func<IEnumerable<TSource>, IEnumerable<TSource>> branch) => condition ? branch(source) : source;
+
+        public static (IEnumerable<T> True, IEnumerable<T> False) Partition<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+        {
+            var trueList = new List<T>();
+            var falseList = new List<T>();
+
+            foreach (var item in source)
+            {
+                if (predicate(item))
+                {
+                    trueList.Add(item);
+                }
+                else
+                {
+                    falseList.Add(item);
+                }
+            }
+
+            return (trueList, falseList);
+        }
     }
 }

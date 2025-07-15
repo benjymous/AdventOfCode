@@ -4,18 +4,18 @@ public class Day22 : IPuzzle
     public class Deck
     {
         public int[] cards;
-        readonly int size;
+        private readonly int size;
 
         public Deck(int deckSize)
         {
             size = deckSize;
-            cards = Enumerable.Range(0, size).ToArray();
+            cards = [.. Enumerable.Range(0, size)];
         }
 
         protected Deck(int deckSize, IEnumerable<int> seq)
         {
             size = deckSize;
-            cards = seq.ToArray();
+            cards = [.. seq];
         }
 
         public Deck Stack() => new(size, cards.Reverse());
@@ -63,10 +63,10 @@ public class Day22 : IPuzzle
 
     public static Deck DoShuffle(int numCards, string input) => Shuffle(new Deck(numCards), input);
 
-    const long numCards = 119315717514047;
-    const long iterations = 101741582076661;
+    private const long numCards = 119315717514047;
+    private const long iterations = 101741582076661;
 
-    record struct Matrix(BigInteger A, BigInteger B, BigInteger C, BigInteger D)
+    private record struct Matrix(BigInteger A, BigInteger B, BigInteger C, BigInteger D)
     {
         public static Matrix operator *(Matrix x, Matrix y) => new(
             ((((x.A * y.A) + (x.B * y.C)) % numCards) + numCards) % numCards,
@@ -76,15 +76,15 @@ public class Day22 : IPuzzle
         );
     };
 
-    static Matrix AntiCut(BigInteger c) => new(1, c, 0, 1);
+    private static Matrix AntiCut(BigInteger c) => new(1, c, 0, 1);
 
-    static Matrix AntiRev() => new(-1, numCards - 1, 0, 1);
+    private static Matrix AntiRev() => new(-1, numCards - 1, 0, 1);
 
-    static Matrix AntiInc(BigInteger num) => new(ModInverse(num), 0, 0, 1);
+    private static Matrix AntiInc(BigInteger num) => new(ModInverse(num), 0, 0, 1);
 
-    static BigInteger ModInverse(BigInteger b) => Pow(b, numCards - 2);
+    private static BigInteger ModInverse(BigInteger b) => Pow(b, numCards - 2);
 
-    static BigInteger Pow(BigInteger baseVal, BigInteger exp)
+    private static BigInteger Pow(BigInteger baseVal, BigInteger exp)
     {
         if (exp == 0) return 1;
         var res = Pow(baseVal, exp / 2);
@@ -92,7 +92,7 @@ public class Day22 : IPuzzle
         return (exp & 1) > 0 ? res * baseVal % numCards : res;
     }
 
-    static Matrix Pow(Matrix m, BigInteger exp)
+    private static Matrix Pow(Matrix m, BigInteger exp)
     {
         if (exp == 0) return new Matrix(1, 0, 0, 1);
         var res = Pow(m, exp / 2);

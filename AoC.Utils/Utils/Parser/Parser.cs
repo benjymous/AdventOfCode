@@ -9,7 +9,7 @@ namespace AoC.Utils.Parser
 
         public static IEnumerable<T> Parse<T>(IEnumerable<string> input)
         {
-            (ConstructorInfo tc, RegexAttribute attr)[] constructors = GetPotentialConstructors(typeof(T)).ToArray();
+            var constructors = GetPotentialConstructors(typeof(T));
             return input.WithoutNullOrWhiteSpace()
                  .Select(line => RegexCreate<T>(line, constructors));
         }
@@ -46,13 +46,13 @@ namespace AoC.Utils.Parser
         {
             foreach (var line in input)
             {
-                RegexFactoryPerform(line, factory);
+                RegexFactoryCreate<object, FT>(line, factory);
             }
         }
 
         public class AutoArray<T>(string data) : IEnumerable<T>
         {
-            readonly T[] Resolved = Parse<T>(data).ToArray();
+            readonly T[] Resolved = [.. Parse<T>(data)];
 
             public int Length => Resolved.Length;
 
@@ -69,7 +69,7 @@ namespace AoC.Utils.Parser
 
         public class AutoArray<DT, FT>(string data) : IEnumerable<DT> where FT : class
         {
-            public DT[] Resolved = Factory<DT, FT>(data).ToArray();
+            public DT[] Resolved = [.. Factory<DT, FT>(data)];
 
             public int Length => Resolved.Length;
 
@@ -84,35 +84,36 @@ namespace AoC.Utils.Parser
             public int IndexOf(DT item) => Array.IndexOf(Resolved, item);
         }
 
-        public static IEnumerable<string> Split<FT>(string input) where FT : IAutoSplit
-        {
-            List<string> parts = [];
-
-            foreach (var func in typeof(FT).GetMethods())
-            {
-                if (func.GetCustomAttributes(typeof(RegexAttribute), true)
-                    .FirstOrDefault() is not RegexAttribute attribute) continue; // skip function if it doesn't have attr
-
-                parts.Add(attribute.Regex.ToString());
-            }
-
-            var combined = "(" + string.Join("|", parts) + ")";
-
-            return Regex.Matches(input, combined).Select(m => m.Groups[0].Captures[0].Value);
-        }
-
         public interface IAutoSplit { }
 
         #region Internals
 
+        static List<(MethodInfo func, RegexAttribute attr)> GetRegexMethods<FT>()
+        {
+            return Memoizer.Memoize(typeof(FT), _ =>
+            {
+                var res = new List<(MethodInfo, RegexAttribute)>();
+                foreach (var func in typeof(FT).GetMethods())
+                {
+                    if (func.GetCustomAttributes(typeof(RegexAttribute), true)
+                        .FirstOrDefault() is RegexAttribute attribute) res.Add((func, attribute));
+                }
+                return res;
+            });
+        }
+
+        static IEnumerable<string> Split<FT>(string input) where FT : IAutoSplit
+        {
+            var combinedRegex = $"({string.Join("|", GetRegexMethods<FT>().Select(v => v.attr.Regex.ToString()))})";
+
+            return Regex.Matches(input, combinedRegex).Select(m => m.Groups[0].Captures[0].Value);
+        }
+
         static T RegexFactoryCreate<T, FT>(string line, FT factory) where FT : class
         {
-            foreach (var func in typeof(FT).GetMethods())
+            foreach (var (func, attr) in GetRegexMethods<FT>())
             {
-                if (func.GetCustomAttributes(typeof(RegexAttribute), true)
-                    .FirstOrDefault() is not RegexAttribute attribute) continue; // skip function if it doesn't have attr
-
-                var matches = attribute.Regex.Matches(line); // match this function against the input line
+                var matches = attr.Regex.Matches(line); // match this function against the input line
 
                 if (matches.Count == 0) continue; // Try other functions to see if they match
 
@@ -122,56 +123,61 @@ namespace AoC.Utils.Parser
 
                 var res = func.Invoke(factory, convertedParams);
                 return res != null ? (T)res : default;
-
             }
             throw new Exception($"RegexFactory failed to find suitable factory function for {line}");
         }
 
-        static IEnumerable<(ConstructorInfo tc, RegexAttribute attr)> GetPotentialConstructors(Type t)
+        static List<(ConstructorInfo tc, RegexAttribute attr)> GetPotentialConstructors(Type t)
         {
-            if (t.GetCustomAttribute<RegexAttribute>() is RegexAttribute ownAttr)
+            return Memoizer.Memoize(t, _ =>
             {
-                var typeConstructor = t.GetConstructors().First();
-                yield return (typeConstructor, ownAttr);
-            }
-            else
-            {
-                foreach (var typeConstructor in t.GetConstructors())
+                if (t.GetCustomAttribute<RegexAttribute>() is RegexAttribute ownAttr)
                 {
-                    if (typeConstructor?.GetCustomAttributes(typeof(RegexAttribute), true)
-                        .FirstOrDefault() is not RegexAttribute attribute) continue; // skip constructor if it doesn't have attr
-
-                    yield return (typeConstructor, attribute);
+                    return [(t.GetConstructors().First(), ownAttr)];
                 }
-            }
+                else
+                {
+                    var res = new List<(ConstructorInfo tc, RegexAttribute attr)>();
+                    foreach (var typeConstructor in t.GetConstructors())
+                    {
+                        if (typeConstructor?.GetCustomAttributes(typeof(RegexAttribute), true)
+                            .FirstOrDefault() is RegexAttribute attribute) res.Add((typeConstructor, attribute));
+                    }
+                    return res;
+                }
+            });
         }
 
-        static T RegexCreate<T>(string line, (ConstructorInfo tc, RegexAttribute attr)[] potentialConstructors = null) => (T)RegexCreate(typeof(T), line, potentialConstructors);
+        static T RegexCreate<T>(string line, List<(ConstructorInfo tc, RegexAttribute attr)> potentialConstructors = null) => (T)RegexCreate(typeof(T), line, potentialConstructors);
 
-        static object RegexCreate(Type t, string line, (ConstructorInfo tc, RegexAttribute attr)[] potentialConstructors = null)
+        static object RegexCreate(Type t, string line, List<(ConstructorInfo tc, RegexAttribute attr)> potentialConstructors = null)
         {
-            if (t.IsArray)
+            var conv = TypeDescriptor.GetConverter(t);
+            if (conv.CanConvertFrom(typeof(string)))
+            {
+                return conv.ConvertFromString(line);
+            }
+            else if (t.IsArray)
             {
                 return ConvertFromString(t, line);
             }
             else
             {
-                potentialConstructors ??= GetPotentialConstructors(t).ToArray();
+                potentialConstructors ??= GetPotentialConstructors(t);
                 foreach (var (tc, attr) in potentialConstructors)
                 {
                     if (RegexCreateInternal(t, line, tc, attr, out object result)) return result;
                 }
-                throw new Exception($"RegexParse failed to find suitable constructor for '{line}' in {t.Name}");
+                throw new Exception($"RegexCreate failed to find suitable constructor for '{line}' in {t.Name}");
             }
         }
 
         static object RegexCreate(Type t, string line, RegexAttribute paramAttr)
         {
-
             var tc = t.GetConstructors().First();
             if (RegexCreateInternal(t, line, tc, paramAttr, out object result)) return result;
 
-            throw new Exception($"RegexParse failed to construct param for '{line}' in {t.Name}");
+            throw new Exception($"RegexCreate failed to construct param for '{line}' in {t.Name}");
         }
 
         static bool RegexCreateInternal(Type t, string line, ConstructorInfo typeConstructor, RegexAttribute attr, out object result)
@@ -215,38 +221,36 @@ namespace AoC.Utils.Parser
 
                 string[] expectedKeys = ["key", "value"];
 
-                data = expectedKeys.Select(k => matches[0].Groups[k].Value).ToArray();
+                data = [.. expectedKeys.Select(k => matches[0].Groups[k].Value)];
             }
             else
             {
-                data = input.Split(":");
+                data = [input];
             }
 
             var tupleParams = paramDef.Zip(data);
-            return tupleParams.Select(kvp => ConvertFromString(kvp.First, kvp.Second.Trim())).ToArray(); // convert substrings to match kvp types
+            return [.. tupleParams.Select(kvp => ConvertFromString(kvp.First, kvp.Second.Trim()))]; // convert substrings to match kvp types
         }
 
-        static IEnumerable<object[]> ParsePairs(Type[] paramDef, string[] lines, SplitAttribute splitAttr = null) => lines.Select(line => CreateObjectArray(paramDef, line, splitAttr));
+        static IEnumerable<object[]> ParseCollectionElements(Type[] paramDef, string[] lines, SplitAttribute splitAttr = null) => lines.Select(line => CreateObjectArray(paramDef, line, splitAttr));
 
         static object ConvertGenericCollection(Type destinationType, IEnumerable<object[]> kvpdata)
         {
             var collectionType = destinationType.GetGenericTypeDefinition();
             var paramDef = destinationType.GetGenericArguments();
 
-            var typeCreator = collectionType.MakeGenericType(paramDef);
+            var collection = Activator.CreateInstance(collectionType.MakeGenericType(paramDef));
 
-            var obj = Activator.CreateInstance(typeCreator);
-
-            var add = obj.GetType().GetMethod("Add", paramDef);
+            var addFunc = collection.GetType().GetMethod("Add", paramDef);
             foreach (var row in kvpdata)
-                add.Invoke(obj, row);
+                addFunc.Invoke(collection, row);
 
-            return obj;
+            return collection;
         }
 
         static IEnumerable<object> Parse(Type t, IEnumerable<string> input)
         {
-            (ConstructorInfo tc, RegexAttribute attr)[] constructors = GetPotentialConstructors(t).ToArray();
+            List<(ConstructorInfo tc, RegexAttribute attr)> constructors = GetPotentialConstructors(t);
             return input.WithoutNullOrWhiteSpace()
                  .Select(line => RegexCreate(t, line, constructors));
         }
@@ -259,11 +263,11 @@ namespace AoC.Utils.Parser
             {
                 var splitAttr = attrs.Get<SplitAttribute>();
 
-                string[] data = splitAttr != null ? input.Split(splitAttr.Splitter).WithoutNullOrWhiteSpace().ToArray() : Util.Split(input);
+                string[] data = splitAttr != null ? [.. input.Split(splitAttr.Splitter).WithoutNullOrWhiteSpace()] : Util.Split(input);
 
                 if (destinationType.Namespace == "System.Collections.Generic")
                 {
-                    var arr = ParsePairs(destinationType.GetGenericArguments(), data, splitAttr);
+                    var arr = ParseCollectionElements(destinationType.GetGenericArguments(), data, splitAttr).ToArray();
                     return ConvertGenericCollection(destinationType, arr);
                 }
                 else
@@ -274,7 +278,7 @@ namespace AoC.Utils.Parser
 
                     var arr = TypeDescriptor.GetConverter(elementType).CanConvertFrom(typeof(string))
                         ? data.Select(item => ConvertFromString(elementType, item, attrs)).ToList()
-                        : Parse(elementType, data).ToList();
+                        : [.. Parse(elementType, data)];
                     return ConvertArray(arr, elementType);
                 }
             }
@@ -326,35 +330,15 @@ namespace AoC.Utils.Parser
                 .Groups.Values
                 .Skip(skip).Select(g => g.Value).ToArray();
 
-            if (regexValues.Length != paramInfo.Length) throw new Exception("RegexParse couldn't match constructor param count");
+            if (regexValues.Length != paramInfo.Length) throw new Exception("ConstructParams couldn't match constructor param count");
 
             var instanceParams = paramInfo.Zip(regexValues); // collate parameter types and matched substrings
 
-            return instanceParams
-                .Select(kvp => ConvertFromString(kvp.First.ParameterType, kvp.Second, kvp.First.GetCustomAttributes().ToDictionary(v => v.GetType(), v => v))).ToArray(); // convert substrings to match constructor input
+            return [.. instanceParams.Select(kvp => ConvertFromString(kvp.First.ParameterType, kvp.Second, GetAttributeMap(kvp.First)))]; // convert substrings to match constructor input
         }
 
-        static void RegexFactoryPerform<FT>(string line, FT factory) where FT : class
-        {
-            foreach (var func in typeof(FT).GetMethods())
-            {
-                if (func.GetCustomAttributes(typeof(RegexAttribute), true)
-                    .FirstOrDefault() is not RegexAttribute attribute) continue; // skip function if it doesn't have attr
-
-                var matches = attribute.Regex.Matches(line); // match this function against the input line
-
-                if (matches.Count == 0) continue; // Try other functions to see if they match
-
-                var paramInfo = func.GetParameters();
-
-                object[] convertedParams = ConstructParams(matches, paramInfo);
-
-                func.Invoke(factory, convertedParams);
-                return;
-
-            }
-            throw new Exception($"RegexFactory failed to find suitable factory function for {line}");
-        }
+        static Dictionary<Type, Attribute> GetAttributeMap(ParameterInfo pi)
+            => Memoizer.Memoize(pi, _ => pi.GetCustomAttributes().ToDictionary(v => v.GetType(), v => v));
 
         #endregion
 

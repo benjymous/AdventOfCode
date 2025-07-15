@@ -1,37 +1,20 @@
 ﻿namespace AoC.Advent2022;
 public class Day21 : IPuzzle
 {
-    static readonly string HumanKey = "humn", RootKey = "root";
+    private static readonly string HumanKey = "humn", RootKey = "root";
 
-    public class Factory(string input)
+    public class Tree
     {
-        public Dictionary<string, Monkey> index = [];
-        Monkey Get(string monkey) => index.GetOrCalculate(monkey, n => new(n));
-
         [Regex("(....): (....) (.) (....)")]
-        public Monkey MonkeyLink(string name, string left, char op, string right)
-        {
-            var monkey = Get(name);
-            monkey.Left = Get(left);
-            monkey.Right = Get(right);
-            monkey.Op = op;
-
-            return monkey;
-        }
+        public void MonkeyLink(string name, string left, char op, string right) => Get(name).Link(Get(left), op, Get(right));
 
         [Regex(@"(....): (\d+)")]
-        public Monkey MonkeyValue(string name, long value)
-        {
-            var monkey = Get(name);
-            monkey.Value = value;
-            return monkey;
-        }
+        public void MonkeyValue(string name, long value) => Get(name).Value = value;
 
-        public Monkey GetRootMonkey()
-        {
-            Parser.Factory(input, this);
-            return index[RootKey];
-        }
+        public static Monkey GetRootMonkey(string input) => Memoize(input, _ => Parser.Factory<Tree>(input).index[RootKey]);
+
+        private readonly Dictionary<string, Monkey> index = [];
+        private Monkey Get(string monkey) => index.GetOrCalculate(monkey, n => new(n));
     }
 
     public class Monkey(string name)
@@ -40,17 +23,22 @@ public class Day21 : IPuzzle
         public Monkey Left, Right;
         public long? Value = null;
 
-        public static implicit operator long(Monkey m) => m.Value ??= m.Op switch
-        {
-            '+' => m.Left + m.Right,
-            '*' => m.Left * m.Right,
-            '-' => m.Left - m.Right,
-            '/' => m.Left / m.Right,
-            _ => throw new Exception("unexpected operator")
-        };
+        public void Link(Monkey left, char op, Monkey right) => (Left, Right, Op) = (left, right, op);
 
-        bool ContainsHuman => _ContainsHuman ??= (name == HumanKey || (Left != null && (Left.ContainsHuman || Right.ContainsHuman)));
-        bool? _ContainsHuman = null;
+        public static implicit operator long(Monkey m)
+        {
+            return m.Value ??= m.Op switch
+            {
+                '+' => m.Left + m.Right,
+                '*' => m.Left * m.Right,
+                '-' => m.Left - m.Right,
+                '/' => m.Left / m.Right,
+                _ => throw new Exception("unexpected operator")
+            };
+        }
+
+        private bool ContainsHuman => _ContainsHuman ??= (name == HumanKey || (Left != null && (Left.ContainsHuman || Right.ContainsHuman)));
+        private bool? _ContainsHuman = null;
 
         public long CalculateHumanValue(long targetResult = 0)
         {
@@ -70,11 +58,9 @@ public class Day21 : IPuzzle
         }
     }
 
-    private static Monkey GetRootMonkey(string input) => Memoize(input, _ => new Factory(input).GetRootMonkey());
+    public static long Part1(string input) => Tree.GetRootMonkey(input);
 
-    public static long Part1(string input) => GetRootMonkey(input);
-
-    public static long Part2(string input) => GetRootMonkey(input).CalculateHumanValue();
+    public static long Part2(string input) => Tree.GetRootMonkey(input).CalculateHumanValue();
 
     public void Run(string input, ILogger logger)
     {

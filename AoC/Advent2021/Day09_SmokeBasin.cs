@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2021;
 public class Day09 : IPuzzle
 {
-    class Map(string input)
+    private class Map(string input)
     {
         public Dictionary<(int x, int y), int> Data { get; private set; } = Util.ParseSparseMatrix<int>(input);
 
@@ -19,7 +19,7 @@ public class Day09 : IPuzzle
         public Dictionary<(int x, int y), int>.KeyCollection Coordinates => Data.Keys;
     }
 
-    static readonly (int x, int y)[] directions = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+    private static readonly (int x, int y)[] directions = [(-1, 0), (1, 0), (0, -1), (0, 1)];
 
     public static int Part1(string input)
     {

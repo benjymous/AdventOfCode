@@ -10,7 +10,7 @@ namespace AoC.Advent2019.NPSA
 
     public class IntCPU
     {
-        enum Opcode
+        private enum Opcode
         {
             ADD = 1,
             MUL = 2,
@@ -30,7 +30,7 @@ namespace AoC.Advent2019.NPSA
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static byte InstructionSize(Opcode code) => code switch
+        private static byte InstructionSize(Opcode code) => code switch
         {
             Opcode.HALT => 1,
             Opcode.GET or Opcode.OUT or Opcode.SETR => 2,
@@ -39,27 +39,27 @@ namespace AoC.Advent2019.NPSA
             _ => throw new Exception("Bad instruction"),
         };
 
-        enum ParamMode
+        private enum ParamMode
         {
             Position = 0,
             Immediate = 1,
             Relative = 2
         }
 
-        long[] Memory;
-        readonly IEnumerable<long> initialState;
-        long InstructionPointer = 0;
-        long RelBase = 0;
+        private long[] Memory;
+        private readonly IEnumerable<long> initialState;
+        private long InstructionPointer = 0;
+        private long RelBase = 0;
 
         public void AddInput(params long[] values) => Input.EnqueueRange(values);
         public Queue<long> Input { get; set; } = [];
         public Queue<long> Output { get; set; } = [];
 
-        ICPUInterrupt Interrupt { get; set; } = null;
+        private ICPUInterrupt Interrupt { get; set; } = null;
 
         public int CycleCount { get; private set; } = 0;
-        double speed = 0;
-        double runTimeSecs = 0;
+        private double speed = 0;
+        private double runTimeSecs = 0;
 
         public IntCPU(string program, int reserve = 0, long[] initialInput = null)
         {
@@ -85,7 +85,7 @@ namespace AoC.Advent2019.NPSA
 
         public void Reset(int reserve = 0)
         {
-            Memory = initialState.ToArray();
+            Memory = [.. initialState];
             InstructionPointer = 0;
             RelBase = 0;
             CycleCount = 0;
@@ -96,11 +96,11 @@ namespace AoC.Advent2019.NPSA
 
         public void Reserve(int memorySize) => Array.Resize(ref Memory, Math.Max(memorySize, Memory.Length));
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        long GetValue(int paramIdx) => Memory[GetAddr(paramIdx)];
+        private long GetValue(int paramIdx) => Memory[GetAddr(paramIdx)];
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void PutValue(int paramIdx, long value) => Memory[GetAddr(paramIdx)] = value;
+        private void PutValue(int paramIdx, long value) => Memory[GetAddr(paramIdx)] = value;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        long GetAddr(int paramIdx)
+        private long GetAddr(int paramIdx)
         {
             long offset = InstructionPointer + paramIdx;
             return paramMode[paramIdx - 1] switch
@@ -112,12 +112,12 @@ namespace AoC.Advent2019.NPSA
             };
         }
 
-        static ParamMode[][] paramCache = null;
-        static readonly Lock paramLock = new();
+        private static ParamMode[][] paramCache = null;
+        private static readonly Lock paramLock = new();
 
-        ParamMode[] paramMode;
+        private ParamMode[] paramMode;
 
-        long ReadInput()
+        private long ReadInput()
         {
             if (Input.Count == 0)
             {

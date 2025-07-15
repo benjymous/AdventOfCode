@@ -3,9 +3,9 @@ public class Day13 : IPuzzle
 {
     public class NPVGS(string program) : NPSA.IntCPU(program, 3200), NPSA.ICPUInterrupt
     {
-        readonly HashSet<long> blocks = [];
+        private readonly HashSet<long> blocks = [];
 
-        enum Tile
+        private enum Tile
         {
             Empty = 0,
             Wall = 1,
@@ -14,12 +14,12 @@ public class Day13 : IPuzzle
             Ball = 4
         }
 
-        long ballPos, paddlePos, score;
+        private long ballPos, paddlePos, score;
 
         public long Run(QuestionPart part)
         {
             base.Run();
-            return part.One() ? blocks.Count : score;
+            return part.One ? blocks.Count : score;
         }
 
         public void InsertCoin() => Poke(0, 2);

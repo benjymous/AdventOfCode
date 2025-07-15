@@ -31,10 +31,10 @@ public class Day14 : IPuzzle
 
     public static (long Value, long QuantumBits) ApplyMaskV2(long value, (long Value, long QuantumBits) mask) => (value | mask.Value, mask.QuantumBits & ~mask.Value);
 
-    class MemoryContainer<T>
+    private class MemoryContainer<T>
     {
-        readonly Queue<T> items = new(255);
-        readonly HashSet<T> seen = new(255);
+        private readonly Queue<T> items = new(255);
+        private readonly HashSet<T> seen = new(255);
         public void Push(T v)
         {
             if (seen.IsUnseen(v)) items.Enqueue(v);
@@ -46,7 +46,7 @@ public class Day14 : IPuzzle
 
     public static IEnumerable<long> Combinations((long Value, long QuantumBits) input) => input.QuantumBits.BitSequence().Combinations().Select(combo => (input.Value & ~input.QuantumBits) | combo.Sum());
 
-    static IEnumerable<Statement> Flatten(IEnumerable<Statement> inputs)
+    private static IEnumerable<Statement> Flatten(IEnumerable<Statement> inputs)
     {
         var mask = (0L, 0L);
 

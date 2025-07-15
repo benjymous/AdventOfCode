@@ -6,16 +6,16 @@ public class Day11 : IPuzzle
         public State(string input, QuestionPart part)
         {
             Dictionary<string, byte> nameLookup = [];
-            Floors = Util.Split(input, "\n").Select(line => ((byte chips, byte generators))line.Split(' ').Select(v => v.Length > 3 ? v[..3] : v).OverlappingPairs().Select(pair => (pair.second == "mic" ? nameLookup.GetIndexBit(pair.first) : 0, pair.second == "gen" ? nameLookup.GetIndexBit(pair.first) : 0)).Aggregate(((byte)0, (byte)0), (curr, next) => ((byte)(curr.Item1 + next.Item1), (byte)(curr.Item2 + next.Item2)))).ToArray();
+            Floors = [.. Util.Split(input, "\n").Select(line => ((byte chips, byte generators))line.Split(' ').Select(v => v.Length > 3 ? v[..3] : v).OverlappingPairs().Select(pair => (pair.second == "mic" ? nameLookup.GetIndexBit(pair.first) : 0, pair.second == "gen" ? nameLookup.GetIndexBit(pair.first) : 0)).Aggregate(((byte)0, (byte)0), (curr, next) => ((byte)(curr.Item1 + next.Item1), (byte)(curr.Item2 + next.Item2))))];
 
-            if (part.Two())
+            if (part.Two)
             {
                 byte nextTwoIds = (byte)(nameLookup.Values.Last() * 6);
                 Floors[0].chips += nextTwoIds; Floors[0].generators += nextTwoIds;
             }
         }
 
-        State(State previous, int newFloor, int moveChips, int moveGens)
+        private State(State previous, int newFloor, int moveChips, int moveGens)
         {
             Steps = previous.Steps + 1;
             CurrentFloor = newFloor;
@@ -57,7 +57,7 @@ public class Day11 : IPuzzle
             }
         }
 
-        readonly (byte chips, byte generators)[] Floors;
+        private readonly (byte chips, byte generators)[] Floors;
         public readonly int CurrentFloor = 0, Steps = 0, Remaining = int.MaxValue;
 
         public override int GetHashCode() => ((Floors.Take(3).Aggregate(0UL, (prev, curr) => (prev << 14) + (ulong)(curr.chips << 7) + curr.generators) << 4) + (ulong)CurrentFloor).GetHashCode();

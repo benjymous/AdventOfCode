@@ -4,11 +4,11 @@ public class Day08 : IPuzzle
     public class DataRow
     {
         [Regex(@"(.+) \| (.+)")]
-        public DataRow([Split(" ")] List<string> diag, [Split(" ")] List<string> outp) => (diagnostic, output) = (diag.Select(Convert).ToArray(), outp.Select(Convert).ToArray());
+        public DataRow([Split(" ")] List<string> diag, [Split(" ")] List<string> outp) => (diagnostic, output) = ([.. diag.Select(Convert)], [.. outp.Select(Convert)]);
 
-        static uint Convert(string chars) => (uint)chars.Sum(c => 1 << (c - 'a'));
+        private static uint Convert(string chars) => (uint)chars.Sum(c => 1 << (c - 'a'));
 
-        readonly uint[] diagnostic, output;
+        private readonly uint[] diagnostic, output;
 
         public int CountOutputMatches(int size) => output.Count(v => v.CountBits() == size);
 

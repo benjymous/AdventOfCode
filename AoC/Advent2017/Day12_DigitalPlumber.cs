@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2017;
 public class Day12 : IPuzzle
 {
-    class Pools
+    private class Pools
     {
         public Pools(string input)
         {
@@ -12,7 +12,7 @@ public class Day12 : IPuzzle
             }
         }
 
-        List<HashSet<int>> pools = [];
+        private List<HashSet<int>> pools = [];
 
         public void AddGroup(HashSet<int> group)
         {

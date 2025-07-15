@@ -8,7 +8,7 @@ public class Day18 : IPuzzle
     public readonly struct RoomPath(IEnumerable<char> path)
     {
         public bool IsWalkable(int heldKeys) => (Doors & heldKeys) == Doors;
-        readonly int Doors = path.Where(c => c is >= 'A' and <= 'Z').Sum(KeyCode);
+        private readonly int Doors = path.Where(c => c is >= 'A' and <= 'Z').Sum(KeyCode);
         public readonly int Length = path.Count();
     }
 
@@ -28,7 +28,7 @@ public class Day18 : IPuzzle
             var keyPositions = Data.Where(kvp => kvp.Value is >= 'a' and <= 'z').Select(kvp => (KeyCode(kvp.Value), kvp.Key)).ToDictionary();
             AllKeys = keyPositions.Keys.Sum();
 
-            if (part.Two() && startPositions.Count == 1)
+            if (part.Two && startPositions.Count == 1)
             {
                 var (x, y) = startPositions.First();
                 startPositions = [(x - 1, y - 1), (x + 1, y - 1), (x - 1, y + 1), (x + 1, y + 1)];

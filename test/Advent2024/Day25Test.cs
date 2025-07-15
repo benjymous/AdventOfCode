@@ -49,14 +49,14 @@ public class Day25Test
 
     [TestCategory("Test")]
     [TestMethod]
-    public void _01Test()
+    public void KeyChecker_01Test()
     {
-        Assert.AreEqual(3, Day25.Part1(test.Replace("\r","")));
+        Assert.AreEqual(3, Day25.Part1(test.Replace("\r", "")));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void KeyChecker_Part1_Regression()
     {
         Assert.AreEqual(3397, Day25.Part1(input));
     }

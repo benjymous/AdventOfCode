@@ -2,7 +2,7 @@
 public class Day22 : IPuzzle
 {
     public const char ROCKY = '.', WET = '=', NARROW = '|', BLOCKED = '#';
-    const string TerrainKey = ".=|#";
+    private const string TerrainKey = ".=|#";
 
     public record class Cave((int x, int y) Target, int Depth)
     {
@@ -19,7 +19,7 @@ public class Day22 : IPuzzle
 
     public readonly record struct State((int x, int y) Position, Tool Tool = Tool.Torch)
     {
-        static bool ToolValid(char cell, Tool tool) => (cell == ROCKY && tool != Tool.None) || (cell == WET && tool != Tool.Torch) || (cell == NARROW && tool != Tool.ClimbingGear);
+        private static bool ToolValid(char cell, Tool tool) => (cell == ROCKY && tool != Tool.None) || (cell == WET && tool != Tool.Torch) || (cell == NARROW && tool != Tool.ClimbingGear);
 
         public IEnumerable<(State state, int cost)> GetPotentialMoves(Cave cave)
         {
@@ -71,7 +71,7 @@ public class Day22 : IPuzzle
                 else if (time < best) best = time;
             }
 
-            generation = nextGen.OrderBy(v => v.distance).Take(64).ToList();
+            generation = [.. nextGen.OrderBy(v => v.distance).Take(64)];
         }
 
         return best;

@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2020;
 public class Day23 : IPuzzle
 {
-    static Circle<int> CreateCircle(IEnumerable<int> vals, bool part2)
+    private static Circle<int> CreateCircle(IEnumerable<int> vals, bool part2)
     {
         var start = new Circle<int>(vals.First());
         var node = start.InsertRange(vals.Skip(1));
@@ -11,10 +11,10 @@ public class Day23 : IPuzzle
         return start;
     }
 
-    static Circle<int>[] Take(Circle<int> circle)
+    private static Circle<int>[] Take(Circle<int> circle)
         => [circle.PopNext(), circle.PopNext(), circle.PopNext()];
 
-    static Circle<int> FindDestination(Circle<int> current, Circle<int>[] vals, bool part2)
+    private static Circle<int> FindDestination(Circle<int> current, Circle<int>[] vals, bool part2)
     {
         var (v1, v2, v3) = (vals[0].Value, vals[1].Value, vals[2].Value);
         int max = part2 ? 1000000 : 9;

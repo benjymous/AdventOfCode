@@ -12,7 +12,6 @@ namespace AoC.Advent2021.Test
         readonly string input = Util.GetInput<Day18>();
 
         static string AsString(Val v) => v.IsPair ? $"[{AsString(v.first)},{AsString(v.second)}]" : v.Value.ToString();
-        public static Val Parse(string data) => Val.Parse(data);
 
         [TestCategory("Test")]
 
@@ -24,7 +23,7 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void TestSingleExplode(string data, string expected)
         {
-            var number = Parse(data);
+            Val number = new(data);
             Assert.AreEqual(data, AsString(number));
             number.TryExplode();
             var result = AsString(number);
@@ -47,7 +46,7 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void TestReduce(string data, string expected)
         {
-            var number = Parse(data);
+            Val number = new(data);
             Assert.AreEqual(data, AsString(number));
             number.Reduce();
             var result = AsString(number);
@@ -110,13 +109,13 @@ namespace AoC.Advent2021.Test
         public void TestAdd(string[] values, string expected)
         {
             var first = values.First();
-            var number = Parse(first);
+            Val number = new(first);
             Assert.AreEqual(first, AsString(number));
 
             foreach (var next in values.Skip(1))
             {
                 Console.WriteLine($"  {number}");
-                var v = Parse(next);
+                Val v = new(next);
                 Console.WriteLine($"+ {v}");
                 Assert.AreEqual(next, AsString(v));
 
@@ -141,7 +140,7 @@ namespace AoC.Advent2021.Test
         [DataTestMethod]
         public void TestMagnitude(string data, int expected)
         {
-            var number = Parse(data);
+            Val number = new(data);
             var result = number.Magnitude;
             Assert.AreEqual(expected, result);
         }

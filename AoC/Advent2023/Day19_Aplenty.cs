@@ -2,7 +2,7 @@
 public class Day19 : IPuzzle
 {
     [method: Regex(@"(.)(.)(\d+):(.+)")]
-    record class Rule(char Key, char Op, int Value, string Dest)
+    private record class Rule(char Key, char Op, int Value, string Dest)
     {
         [Regex(@"(.+)")] public Rule(string dest) : this('.', '!', 0, dest) { }
 
@@ -16,15 +16,15 @@ public class Day19 : IPuzzle
         };
     }
 
-    [Regex(@"(.+){(.+)}")] record class Workflow(string WorkflowId, Rule[] Rules);
+    [Regex(@"(.+){(.+)}")] private record class Workflow(string WorkflowId, Rule[] Rules);
 
     [Regex(@"{(.+)}")]
-    record class PartQualities([Split(",", "(?<key>.)=(?<value>.+)")] Dictionary<char, int> Qualities)
+    private record class PartQualities([Split(",", "(?<key>.)=(?<value>.+)")] Dictionary<char, int> Qualities)
     {
         public readonly int[] AsArray = [Qualities['x'], Qualities['m'], Qualities['a'], Qualities['s']];
     }
 
-    record class RangeSet((int min, int max)[] Ranges)
+    private record class RangeSet((int min, int max)[] Ranges)
     {
         public RangeSet() : this([(1, 4000), (1, 4000), (1, 4000), (1, 4000)]) { }
 
@@ -49,7 +49,7 @@ public class Day19 : IPuzzle
         }
     }
 
-    static IEnumerable<int> RunRules(string[] sections)
+    private static IEnumerable<int> RunRules(string[] sections)
     {
         var workflows = Parser.Parse<Workflow>(sections[0]).ToDictionary(w => w.WorkflowId, w => w.Rules);
         foreach (var part in Parser.Parse<PartQualities>(sections[1]).Select(pq => pq.AsArray))
@@ -62,7 +62,7 @@ public class Day19 : IPuzzle
         }
     }
 
-    static IEnumerable<long> CountCombinations(Dictionary<string, Rule[]> workflows, string targetFlow = "in", RangeSet current = null)
+    private static IEnumerable<long> CountCombinations(Dictionary<string, Rule[]> workflows, string targetFlow = "in", RangeSet current = null)
     {
         if (targetFlow == "A") yield return current.Ranges.Product(v => v.max - v.min + 1);
         else if (targetFlow != "R")

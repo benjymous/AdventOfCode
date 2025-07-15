@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2017;
 public class Day06 : IPuzzle
 {
-    static void Redistribute(ref int[] banks)
+    private static void Redistribute(ref int[] banks)
     {
         int i = banks.MaxIndex();
 

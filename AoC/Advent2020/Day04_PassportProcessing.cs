@@ -11,8 +11,8 @@ public class Day04 : IPuzzle
             .Count(r => r.Intersect(expectedFields).Count() == expectedFields.Count);
     }
 
-    static readonly HashSet<string> eyeCols = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
-    static readonly HashSet<string> expectedFields = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"];
+    private static readonly HashSet<string> eyeCols = ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"];
+    private static readonly HashSet<string> expectedFields = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"];
     private static bool ValidateEntry(string key, string val)
     {
         try

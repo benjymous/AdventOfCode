@@ -5,7 +5,7 @@ public class Day05 : IPuzzle
 
     public static bool HasRun(string line) => line.OverlappingPairs().Any(pair => pair.first == pair.second);
 
-    static readonly string[] bads = ["ab", "cd", "pq", "xy"];
+    private static readonly string[] bads = ["ab", "cd", "pq", "xy"];
     public static bool NoBads(string line) => !bads.Any(line.Contains);
 
     public static bool IsNice1(string line) => HasVowels(line, 3) && HasRun(line) && NoBads(line);

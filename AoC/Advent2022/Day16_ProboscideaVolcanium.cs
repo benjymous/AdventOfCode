@@ -2,12 +2,12 @@
 public class Day16 : IPuzzle
 {
     [method: Regex("Valve (..) has flow rate=(.+); tunnels? leads? to valves? (.+)")]
-    record class Valve(TwoCC Id, int Rate, [Split(", ")] TwoCC[] Neighbours)
+    private record class Valve(TwoCC Id, int Rate, [Split(", ")] TwoCC[] Neighbours)
     {
         public uint BitIndex;
     }
 
-    record MapData(Dictionary<TwoCC, TwoCC[]> Data) : IMap<TwoCC> { public IEnumerable<TwoCC> GetNeighbours(TwoCC location) => Data[location]; }
+    private record MapData(Dictionary<TwoCC, TwoCC[]> Data) : IMap<TwoCC> { public IEnumerable<TwoCC> GetNeighbours(TwoCC location) => Data[location]; }
 
     private static (Dictionary<uint, int> routes, Dictionary<uint, int> valveRates, uint availableNodes) Init(string input)
     {
@@ -56,7 +56,7 @@ public class Day16 : IPuzzle
                 }
             }
 
-            generation = nextGen.OrderByDescending(GetScore).Take(15).ToList();
+            generation = [.. nextGen.OrderByDescending(GetScore).Take(15)];
         }
 
         return best;

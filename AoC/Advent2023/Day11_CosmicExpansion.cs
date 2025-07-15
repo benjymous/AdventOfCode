@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2023;
 public class Day11 : IPuzzle
 {
-    static int CountGaps(int v1, int v2, int[] gaps)
+    private static int CountGaps(int v1, int v2, int[] gaps)
     {
         var (min, max) = Util.MinMax(v1, v2);
         int count = 0;

@@ -1,13 +1,13 @@
 ﻿namespace AoC.Advent2015;
 public class Day22 : IPuzzle
 {
-    static readonly List<(int mana, int duration, Action<State> cast, Action<State, int> tick)> Spells = new()
+    private static readonly List<(int mana, int duration, Action<State> cast, Action<State, int> tick)> Spells = new()
     { 
-        /* Magic Missile */ { ( 53,0, (State s) => s.BossHP -= 4,                       (State s, int duration) => { }) }, 
-        /* Drain         */ { ( 73,0, (State s) => { s.BossHP -= 2; s.PlayerHP += 2; }, (State s, int duration) => { }) }, 
-        /* Shield        */ { (113,6, (State s) => s.PlayerArmour += 7,                 (State s, int duration) => { if (duration == 0) s.PlayerArmour -= 7;}) }, 
-        /* Poison        */ { (173,6, (State s) => { },                                 (State s, int duration) => s.BossHP -= 3) }, 
-        /* Recharge      */ { (229,5, (State s) => { },                                 (State s, int duration) => s.PlayerMana += 101) }
+        /* Magic Missile */ { ( 53,0, s => s.BossHP -= 4,                       (s, duration) => { }) }, 
+        /* Drain         */ { ( 73,0, s => { s.BossHP -= 2; s.PlayerHP += 2; }, (s, duration) => { }) }, 
+        /* Shield        */ { (113,6, s => s.PlayerArmour += 7,                 (s, duration) => { if (duration == 0) s.PlayerArmour -= 7;}) }, 
+        /* Poison        */ { (173,6, s => { },                                 (s, duration) => s.BossHP -= 3) }, 
+        /* Recharge      */ { (229,5, s => { },                                 (s, duration) => s.PlayerMana += 101) }
     };
 
     public class State
@@ -15,7 +15,7 @@ public class Day22 : IPuzzle
         [Regex(@"Hit Points: (\d+)\nDamage: (\d+)")]
         public State(int bossHP, int bossDamage) => (BossHP, BossDamage) = (bossHP, bossDamage);
 
-        State(State state, (int mana, int duration, Action<State> cast, Action<State, int> tick) spell)
+        private State(State state, (int mana, int duration, Action<State> cast, Action<State, int> tick) spell)
         {
             (PlayerHP, PlayerArmour, PlayerMana, BossHP, BossDamage, ManaSpend, PlayerTurn, ActiveEffects) = (state.PlayerHP, state.PlayerArmour, state.PlayerMana - spell.mana, state.BossHP, state.BossDamage, state.ManaSpend + spell.mana, !state.PlayerTurn, new Dictionary<int, (Action<State, int> effect, int remaining)>(state.ActiveEffects).Plus(spell.mana, (spell.tick, spell.duration)));
             spell.cast(this);
@@ -23,7 +23,7 @@ public class Day22 : IPuzzle
 
         public int PlayerHP = 50, PlayerArmour = 0, PlayerMana = 500, ManaSpend = 0, BossHP, BossDamage;
 
-        bool PlayerTurn = true;
+        private bool PlayerTurn = true;
 
         public Dictionary<int, (Action<State, int> effect, int remaining)> ActiveEffects = [];
 

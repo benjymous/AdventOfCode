@@ -20,7 +20,7 @@ public class Day12 : IPuzzle
 
         public readonly PackedPos32 Start, End;
 
-        static readonly PackedPos32[] neighbours = [(0, 1), (0, -1), (1, 0), (-1, 0)];
+        private static readonly PackedPos32[] neighbours = [(0, 1), (0, -1), (1, 0), (-1, 0)];
         public virtual IEnumerable<PackedPos32> GetNeighbours(PackedPos32 center)
         {
             var maxClimb = Grid[center] + 1;

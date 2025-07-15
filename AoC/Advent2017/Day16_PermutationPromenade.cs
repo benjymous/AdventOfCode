@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2017;
 public class Day16 : IPuzzle
 {
-    class InstructionFactory
+    private class InstructionFactory
     {
         [Regex(@"s(\d+)")]
         public static Func<char[], char[]> Spin(int count) => order => [.. order[^count..], .. order[..(order.Length - count)]];
@@ -21,7 +21,7 @@ public class Day16 : IPuzzle
         };
     }
 
-    private static Func<char[], char[]>[] ParseRules(string input) => Parser.Factory<Func<char[], char[]>, InstructionFactory>(input, null, ",").ToArray();
+    private static Func<char[], char[]>[] ParseRules(string input) => [.. Parser.Factory<Func<char[], char[]>, InstructionFactory>(input, null, ",")];
 
     public static string DoDance(string input, string players) => DoDance(ParseRules(input), [.. players]).AsString();
 

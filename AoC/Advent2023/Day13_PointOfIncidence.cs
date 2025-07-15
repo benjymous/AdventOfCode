@@ -15,7 +15,7 @@ public class Day13 : IPuzzle
     private static (bool found, int position, bool isBlotchy) ValidateGroup(HashSet<int> group, string[] vals, Dictionary<int, HashSet<int>> dict)
         => group.Where(v => group.Contains(v + 1)).Select(v => ValidatePairs(vals, dict, v)).FirstOrDefault(r => r.valid);
 
-    static Dictionary<int, HashSet<int>> DoGrouping((int index, string value)[] data, QuestionPart part)
+    private static Dictionary<int, HashSet<int>> DoGrouping((int index, string value)[] data, QuestionPart part)
     {
         Dictionary<int, HashSet<int>> dict = [];
 
@@ -26,7 +26,7 @@ public class Day13 : IPuzzle
             {
                 var v2 = data[j];
 
-                if (part.Two() ? StringsDifferByNoMoreThanOne(v1.value, v2.value) : v1.value == v2.value)
+                if (part.Two ? StringsDifferByNoMoreThanOne(v1.value, v2.value) : v1.value == v2.value)
                 {
                     if (dict.TryGetValue(v1.index, out HashSet<int> value))
                     {
@@ -45,11 +45,11 @@ public class Day13 : IPuzzle
 
     public static int FindMirror(IEnumerable<IEnumerable<char>> input, QuestionPart part)
     {
-        string[] vals = input.Select(c => c.AsString()).ToArray();
-        var groups = DoGrouping(vals.Index(1).Select(c => (c.Index, value: c.Item)).ToArray(), part);
+        string[] vals = [.. input.Select(c => c.AsString())];
+        var groups = DoGrouping([.. vals.Index(1).Select(c => (c.Index, value: c.Item))], part);
 
         return groups.Select(g => ValidateGroup(g.Value, vals, groups))
-                     .FirstOrDefault(v => v.found && v.isBlotchy == part.Two()).position;
+                     .FirstOrDefault(v => v.found && v.isBlotchy == part.Two).position;
     }
 
     public static int GetMirrorScore(string input, QuestionPart part)

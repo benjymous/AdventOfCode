@@ -1,22 +1,22 @@
 ﻿namespace AoC.Advent2015;
 public class Day09 : IPuzzle
 {
-    class Factory
+    private class Factory
     {
         [Regex(@"(.+) to (.+) = (.+)")]
         public void Parse(string from, string to, int distance) => Atlas[Remap(from) | Remap(to)] = distance;
 
-        int Remap(string name) => MappingDict.GetIndexBit(name);
+        private int Remap(string name) => MappingDict.GetIndexBit(name);
 
         public int[] LocationKeys => [.. MappingDict.Values];
 
-        readonly Dictionary<string, int> MappingDict = [];
+        private readonly Dictionary<string, int> MappingDict = [];
         public readonly Dictionary<int, int> Atlas = [];
 
         public static implicit operator Factory(string data) => Parser.Factory<Factory>(data);
     }
 
-    static (int min, int max) MeasureRoutes(IEnumerable<int> remaining, Dictionary<int, int> atlas, int current = 0)
+    private static (int min, int max) MeasureRoutes(IEnumerable<int> remaining, Dictionary<int, int> atlas, int current = 0)
     {
         if (!remaining.Any()) return (0, 0);
         int min = int.MaxValue, max = int.MinValue;
@@ -32,7 +32,7 @@ public class Day09 : IPuzzle
         return (min, max);
     }
 
-    static (int min, int max) Solve(Factory data) => MeasureRoutes(data.LocationKeys, data.Atlas);
+    private static (int min, int max) Solve(Factory data) => MeasureRoutes(data.LocationKeys, data.Atlas);
 
     public static int Part1(string input) => Solve(input).min;
 

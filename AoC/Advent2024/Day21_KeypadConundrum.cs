@@ -1,9 +1,8 @@
 ﻿namespace AoC.Advent2024;
-
 public class Day21 : IPuzzle
 {
-    static readonly string numericKeypad = "789\n456\n123\n 0A";
-    static readonly string directionPad = " ^A\n<v>";
+    private static readonly string numericKeypad = "789\n456\n123\n 0A";
+    private static readonly string directionPad = " ^A\n<v>";
 
     public static long GetScore(string line, int level = 2)
     {
@@ -15,7 +14,7 @@ public class Day21 : IPuzzle
 
     private static long CalculateScore(string line, int level, Dictionary<(int, int), char> numPad, Dictionary<(int, int), char> dirPad)
     {
-        if (level == 0 || line=="A")
+        if (level == 0 || line == "A")
         {
             return line.Length;
         }
@@ -32,45 +31,42 @@ public class Day21 : IPuzzle
         }
     }
 
-    public static long GetKeyCombos(char from, char to, int level, Dictionary<(int, int), char> numPad, Dictionary<(int, int), char> dirPad)
+    public static long GetKeyCombos(char from, char to, int level, Dictionary<(int, int), char> numPad, Dictionary<(int, int), char> dirPad) => Memoize((from, to, level), _ =>
     {
-        return Memoize((from, to, level), _ =>
+        Dictionary<(int x, int y), char> pad = from.IsDigit() || to.IsDigit() ? numPad : dirPad;
+
+        Queue<(string current, (int x, int y) position)> queue = [];
+        queue.Enqueue(("", pad.SingleWithValue(from)));
+
+        long smallest = long.MaxValue;
+        var desired = pad.SingleWithValue(to);
+
+        while (queue.TryDequeue(out var state))
         {
-            Dictionary<(int x, int y), char> pad = from.IsDigit() || to.IsDigit() ? numPad : dirPad;
+            if (!pad.ContainsKey(state.position)) continue;
 
-            Queue<(string current, (int x, int y) position)> queue = [];
-            queue.Enqueue(("", pad.KeysWithValue(from).Single()));
-
-            long smallest = long.MaxValue;
-            var desired = pad.KeysWithValue(to).Single();
-
-            while (queue.TryDequeue(out var state))
+            if (state.position == desired)
             {
-                if (!pad.ContainsKey(state.position)) continue;
+                smallest = Math.Min(smallest, CalculateScore(state.current + 'A', level - 1, numPad, dirPad));
+            }
+            else
+            {
+                var dx = Math.Sign(desired.x - state.position.x);
+                var dy = Math.Sign(desired.y - state.position.y);
 
-                if (state.position == desired)
+                if (dx != 0)
                 {
-                    smallest = Math.Min(smallest, CalculateScore(state.current + 'A', level - 1, numPad, dirPad));
+                    queue.Enqueue((state.current + (dx == -1 ? '<' : '>'), (state.position.x + dx, state.position.y)));
                 }
-                else
+                if (dy != 0)
                 {
-                    var dx = Math.Sign(desired.x - state.position.x);
-                    var dy = Math.Sign(desired.y - state.position.y);
-
-                    if (dx != 0)
-                    {
-                        queue.Enqueue((state.current + (dx == -1 ? '<' : '>'), (state.position.x + dx, state.position.y)));
-                    }
-                    if (dy != 0)
-                    {
-                        queue.Enqueue((state.current + (dy == -1 ? '^' : 'v'), (state.position.x, state.position.y + dy)));
-                    }
+                    queue.Enqueue((state.current + (dy == -1 ? '^' : 'v'), (state.position.x, state.position.y + dy)));
                 }
             }
+        }
 
-            return smallest;
-        });
-    }
+        return smallest;
+    });
 
     public static long Part1(string input) => Util.Split(input).Sum(line => GetScore(line));
 

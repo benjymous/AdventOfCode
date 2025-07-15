@@ -2,9 +2,9 @@
 public class Day05 : IPuzzle
 {
     [method: Regex(@"move (\d+) from (\d+) to (\d+)")]
-    readonly struct Instruction(int count, int from, int to)
+    private readonly struct Instruction(int count, int from, int to)
     {
-        readonly int From = from - 1, To = to - 1;
+        private readonly int From = from - 1, To = to - 1;
 
         public void ApplyV1(Stack<char>[] stacks) => Transfer(stacks[From], stacks[To], count);
 
@@ -14,13 +14,13 @@ public class Day05 : IPuzzle
             Transfer(grab, stacks[To], count);
         }
 
-        static void Transfer(Stack<char> from, Stack<char> to, int count)
+        private static void Transfer(Stack<char> from, Stack<char> to, int count)
         {
             for (int i = 0; i < count; ++i) to.Push(from.Pop());
         }
     }
 
-    static (IEnumerable<Instruction>, Stack<char>[]) ParseData(string input)
+    private static (IEnumerable<Instruction>, Stack<char>[]) ParseData(string input)
     {
         var (layout, instructions) = input.ParseSections(stack => Util.Split(stack),
                                                          instr => Parser.Parse<Instruction>(instr));

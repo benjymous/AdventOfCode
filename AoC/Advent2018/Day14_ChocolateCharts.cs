@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2018;
 public class Day14 : IPuzzle
 {
-    static IEnumerable<int> Combine(int sum)
+    private static IEnumerable<int> Combine(int sum)
     {
         if (sum > 9) yield return sum / 10;
         yield return sum % 10;

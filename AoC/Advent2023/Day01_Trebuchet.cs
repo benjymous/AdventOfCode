@@ -6,7 +6,7 @@ public partial class Day01 : IPuzzle
     {
         private IEnumerable<int> SplitDigitsAndWords(QuestionPart part) =>
             SplitterRegex().Split(raw).WithoutNullOrWhiteSpace().Select(entry =>
-            int.TryParse(entry, out var v) ? v : (part.Two() ? Parse(entry) : default)).Where(v => v != default);
+            int.TryParse(entry, out var v) ? v : (part.Two ? Parse(entry) : default)).Where(v => v != default);
 
         [GeneratedRegex(@"(\d|one|two|three|four|five|six|seven|eight|nine)")] private static partial Regex SplitterRegex();
 
@@ -16,7 +16,7 @@ public partial class Day01 : IPuzzle
             return (digits.First() * 10) + digits.Last();
         }
 
-        static int Parse(string word) => word switch
+        private static int Parse(string word) => word switch
         {
             "one" => 1,
             "two" => 2,

@@ -7,17 +7,17 @@ public class Day24 : IPuzzle
 
         public readonly Dictionary<int, uint> cells = [];
 
-        static uint Bit(int x, int y) => 1U << ((y * 5) + x);
+        private static uint Bit(int x, int y) => 1U << ((y * 5) + x);
 
-        void Set(int x, int y, int level = 0) => cells[level] = cells.TryGetValue(level, out uint value) ? value | Bit(x, y) : Bit(x, y);
+        private void Set(int x, int y, int level = 0) => cells[level] = cells.TryGetValue(level, out uint value) ? value | Bit(x, y) : Bit(x, y);
 
-        bool Get(int x, int y, int level = 0) => cells.TryGetValue(level, out var v) && x >= 0 && y >= 0 && x < 5 && y < 5 && (v & Bit(x, y)) > 0;
+        private bool Get(int x, int y, int level = 0) => cells.TryGetValue(level, out var v) && x >= 0 && y >= 0 && x < 5 && y < 5 && (v & Bit(x, y)) > 0;
 
-        (int x, int y, int level)[] GetNeighbours(int x, int y, int level) => this.Memoize(x + (y << 3) + (level << 6), _ => Infinite ? GetNeighboursInfinite(x, y, level).SelectMany(v => v).ToArray() : GetNeighboursFlat(x, y, level));
+        private (int x, int y, int level)[] GetNeighbours(int x, int y, int level) => this.Memoize(x + (y << 3) + (level << 6), _ => Infinite ? [.. GetNeighboursInfinite(x, y, level).SelectMany(v => v)] : GetNeighboursFlat(x, y, level));
 
-        static (int x, int y, int level)[] GetNeighboursFlat(int x, int y, int level) => [(x - 1, y, level), (x + 1, y, level), (x, y - 1, level), (x, y + 1, level)];
+        private static (int x, int y, int level)[] GetNeighboursFlat(int x, int y, int level) => [(x - 1, y, level), (x + 1, y, level), (x, y - 1, level), (x, y + 1, level)];
 
-        static IEnumerable<(int x, int y, int level)[]> GetNeighboursInfinite(int x, int y, int level)
+        private static IEnumerable<(int x, int y, int level)[]> GetNeighboursInfinite(int x, int y, int level)
         {
             foreach (var n in GetNeighboursFlat(x, y, level))
             {

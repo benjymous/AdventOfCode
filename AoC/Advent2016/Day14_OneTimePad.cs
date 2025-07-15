@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2016;
 public class Day14 : IPuzzle
 {
-    static IEnumerable<(int run, char repeat, string hash)> CheckRuns(int index, string input, bool stretch)
+    private static IEnumerable<(int run, char repeat, string hash)> CheckRuns(int index, string input, bool stretch)
     {
         string hash = $"{input}{index}".GetMD5String(true);
         if (stretch)

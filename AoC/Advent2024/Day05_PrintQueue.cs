@@ -3,7 +3,7 @@ public class Day05 : IPuzzle
 {
     public class UpdatePackage() : IComparer<int>
     {
-        readonly HashSet<(int Before, int After)> Rules = [];
+        private readonly HashSet<(int Before, int After)> Rules = [];
         public readonly List<List<int>> ValidSets = [], InvalidSets = [];
 
         [Regex(@"(\d+)\|(\d+)")] public void Rule(int before, int after) => Rules.Add((before, after));
@@ -11,7 +11,7 @@ public class Day05 : IPuzzle
 
         public int Compare(int x, int y) => Rules.Contains((x, y)) ? -1 : 1;
 
-        bool IsValid(List<int> pages)
+        private bool IsValid(List<int> pages)
             => pages.OverlappingPairs().All(p => Compare(p.first, p.second) == -1);
 
         public static implicit operator UpdatePackage(string data) => Parser.Factory<UpdatePackage>(data);

@@ -10,16 +10,16 @@ public class Day13 : IPuzzle
             if (int.TryParse(data, out var v)) Value = v;
         }
 
-        readonly string Data;
-        readonly int Value = -1;
+        private readonly string Data;
+        private readonly int Value = -1;
 
-        Element[] _children;
-        Element[] Children => _children ??= Tokenize(Data).ToArray();
+        private Element[] _children;
+        private Element[] Children => _children ??= [.. Tokenize(Data)];
 
-        bool IsList => Value == -1;
+        private bool IsList => Value == -1;
         public bool IsMarker { get; init; }
 
-        static IEnumerable<Element> Tokenize(string data)
+        private static IEnumerable<Element> Tokenize(string data)
         {
             StringBuilder token = new(data.Length);
             int depth = 0;
@@ -48,7 +48,7 @@ public class Day13 : IPuzzle
             (false, true) => Promote().CompareTo(other),           // non-list, list
         };
 
-        static int CompareList(Element[] lhs, Element[] rhs)
+        private static int CompareList(Element[] lhs, Element[] rhs)
         {
             for (int i = 0; true; ++i)
             {

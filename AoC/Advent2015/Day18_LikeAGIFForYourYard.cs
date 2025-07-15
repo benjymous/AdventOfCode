@@ -5,13 +5,13 @@ public class Day18 : IPuzzle
     {
         public State(State other) => (Width, Height, corners) = (other.Width, other.Height, other.corners);
 
-        readonly int Width, Height;
-        readonly HashSet<int> cells = [], corners = [];
+        private readonly int Width, Height;
+        private readonly HashSet<int> cells = [], corners = [];
 
         public State(string input, bool stuckCorners)
         {
             var raw = Util.ParseSparseMatrix<bool>(input);
-            cells = raw.Keys.Select(v => v.x + (v.y << 8)).ToHashSet();
+            cells = [.. raw.Keys.Select(v => v.x + (v.y << 8))];
 
             Width = raw.Width;
             Height = raw.Height;
@@ -19,8 +19,8 @@ public class Day18 : IPuzzle
             if (stuckCorners) corners = [0, Width, Height << 8, Width + (Height << 8)];
         }
 
-        readonly int[] neighbours = [-1, +1, 1 << 8, -1 << 8, -1 + (1 << 8), +1 + (1 << 8), -1 - (1 << 8), +1 - (1 << 8),];
-        int Neighbours(int p)
+        private readonly int[] neighbours = [-1, +1, 1 << 8, -1 << 8, -1 + (1 << 8), +1 + (1 << 8), -1 - (1 << 8), +1 - (1 << 8),];
+        private int Neighbours(int p)
         {
             int count = 0;
             foreach (var n in neighbours) if (cells.Contains(p + n)) count++;

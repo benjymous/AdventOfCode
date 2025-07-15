@@ -2,18 +2,18 @@
 namespace AoC.Advent2024;
 public class Day03 : IPuzzle
 {
-    class Factory(QuestionPart part) : Parser.IAutoSplit
+    private class Factory(QuestionPart part) : Parser.IAutoSplit
     {
-        bool enabled = true;
+        private int enabled = 1;
 
         [Regex(@"mul\((\d+),(\d+)\)")]
-        public int Multiply(int a, int b) => enabled ? a * b : 0;
+        public int Multiply(int a, int b) => enabled * a * b;
 
         [Regex(@"do\(\)")]
-        public void Activate() => enabled = true;
+        public void Activate() => enabled = 1;
 
         [Regex(@"don't\(\)")]
-        public void Deactivate() => enabled = part != QuestionPart.Part2;
+        public void Deactivate() => enabled = part == QuestionPart.Part2 ? 0 : 1;
     }
 
     public static int Solve(string input, QuestionPart part)

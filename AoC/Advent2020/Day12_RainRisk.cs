@@ -3,28 +3,28 @@ public class Day12 : IPuzzle
 {
     public class FactoryPt1
     {
-        [Regex(@"N(\d+)")] public static Action<ManhattanVector2, Direction2> ActionN(int val) => (ManhattanVector2 v, Direction2 d) => v.Offset(Direction2.North, val);
-        [Regex(@"S(\d+)")] public static Action<ManhattanVector2, Direction2> ActionS(int val) => (ManhattanVector2 v, Direction2 d) => v.Offset(Direction2.South, val);
-        [Regex(@"E(\d+)")] public static Action<ManhattanVector2, Direction2> ActionE(int val) => (ManhattanVector2 v, Direction2 d) => v.Offset(Direction2.East, val);
-        [Regex(@"W(\d+)")] public static Action<ManhattanVector2, Direction2> ActionW(int val) => (ManhattanVector2 v, Direction2 d) => v.Offset(Direction2.West, val);
+        [Regex(@"N(\d+)")] public static Action<ManhattanVector2, Direction2> ActionN(int val) => (v, d) => v.Offset(Direction2.North, val);
+        [Regex(@"S(\d+)")] public static Action<ManhattanVector2, Direction2> ActionS(int val) => (v, d) => v.Offset(Direction2.South, val);
+        [Regex(@"E(\d+)")] public static Action<ManhattanVector2, Direction2> ActionE(int val) => (v, d) => v.Offset(Direction2.East, val);
+        [Regex(@"W(\d+)")] public static Action<ManhattanVector2, Direction2> ActionW(int val) => (v, d) => v.Offset(Direction2.West, val);
 
-        [Regex(@"L(\d+)")] public static Action<ManhattanVector2, Direction2> ActionL(int val) => (ManhattanVector2 v, Direction2 d) => d.TurnLeftByDegrees(val);
-        [Regex(@"R(\d+)")] public static Action<ManhattanVector2, Direction2> ActionR(int val) => (ManhattanVector2 v, Direction2 d) => d.TurnRightByDegrees(val);
+        [Regex(@"L(\d+)")] public static Action<ManhattanVector2, Direction2> ActionL(int val) => (v, d) => d.TurnLeftByDegrees(val);
+        [Regex(@"R(\d+)")] public static Action<ManhattanVector2, Direction2> ActionR(int val) => (v, d) => d.TurnRightByDegrees(val);
 
-        [Regex(@"F(\d+)")] public static Action<ManhattanVector2, Direction2> ActionF(int val) => (ManhattanVector2 v, Direction2 d) => v.Offset(d, val);
+        [Regex(@"F(\d+)")] public static Action<ManhattanVector2, Direction2> ActionF(int val) => (v, d) => v.Offset(d, val);
     }
 
     public class FactoryPt2
     {
-        [Regex(@"N(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionN(int val) => (ManhattanVector2 ship, ManhattanVector2 wp) => wp.Offset(Direction2.North, val);
-        [Regex(@"S(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionS(int val) => (ManhattanVector2 ship, ManhattanVector2 wp) => wp.Offset(Direction2.South, val);
-        [Regex(@"E(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionE(int val) => (ManhattanVector2 ship, ManhattanVector2 wp) => wp.Offset(Direction2.East, val);
-        [Regex(@"W(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionW(int val) => (ManhattanVector2 ship, ManhattanVector2 wp) => wp.Offset(Direction2.West, val);
+        [Regex(@"N(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionN(int val) => (ship, wp) => wp.Offset(Direction2.North, val);
+        [Regex(@"S(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionS(int val) => (ship, wp) => wp.Offset(Direction2.South, val);
+        [Regex(@"E(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionE(int val) => (ship, wp) => wp.Offset(Direction2.East, val);
+        [Regex(@"W(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionW(int val) => (ship, wp) => wp.Offset(Direction2.West, val);
 
-        [Regex(@"L(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionL(int val) => (ManhattanVector2 ship, ManhattanVector2 wp) => wp.TurnLeftBy(val);
-        [Regex(@"R(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionR(int val) => (ManhattanVector2 ship, ManhattanVector2 wp) => wp.TurnRightBy(val);
+        [Regex(@"L(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionL(int val) => (ship, wp) => wp.TurnLeftBy(val);
+        [Regex(@"R(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionR(int val) => (ship, wp) => wp.TurnRightBy(val);
 
-        [Regex(@"F(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionF(int val) => (ManhattanVector2 ship, ManhattanVector2 wp) => ship.Offset(wp, val);
+        [Regex(@"F(\d+)")] public static Action<ManhattanVector2, ManhattanVector2> ActionF(int val) => (ship, wp) => ship.Offset(wp, val);
     }
 
     public static int Part1(Parser.AutoArray<Action<ManhattanVector2, Direction2>, FactoryPt1> input)

@@ -49,11 +49,11 @@ public class Day07 : IPuzzle
         _ => HandType.HighCard
     };
 
-    static IEnumerable<(char Key, int Count)> GroupCards(string hand) => hand.GroupBy(c => c).Select(g => (g.Key, Count: g.Count())).OrderByDescending(g => g.Count);
+    private static IEnumerable<(char Key, int Count)> GroupCards(string hand) => hand.GroupBy(c => c).Select(g => (g.Key, Count: g.Count())).OrderByDescending(g => g.Count);
 
     public static IEnumerable<Hand> SortCards(IEnumerable<Hand> cards) => cards.OrderBy(h => (h.HandType, -h.Ordering));
 
-    static int Solve(string input) => SortCards(Parser.Parse<Hand>(input).ToArray()).Index(1).ToArray().Sum(h => h.Index * h.Item.Bid);
+    private static int Solve(string input) => SortCards(Parser.Parse<Hand>(input).ToArray()).Index(1).ToArray().Sum(h => h.Index * h.Item.Bid);
 
     public static int Part1(string input) => Solve(input);
 

@@ -19,8 +19,8 @@ public class Day07 : IPuzzle
             else strValue = val;
         }
 
-        readonly string strValue = null;
-        readonly int? intValue = null;
+        private readonly string strValue = null;
+        private readonly int? intValue = null;
 
         public bool IsNumeric => intValue.HasValue;
         public int IntValue => intValue.Value;
@@ -66,7 +66,7 @@ public class Day07 : IPuzzle
             return comp.Resolved.Value;
         }
 
-        readonly Dictionary<string, Component> index = Parser.Parse<Component>(input).ToDictionary(c => c.OutName.StringValue);
+        private readonly Dictionary<string, Component> index = Parser.Parse<Component>(input).ToDictionary(c => c.OutName.StringValue);
     }
 
     public static int Part1(string input) => new Circuit(input).Solve("a");

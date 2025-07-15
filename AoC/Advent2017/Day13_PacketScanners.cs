@@ -45,7 +45,7 @@ public class Day13 : IPuzzle
 
     public static int Part2(string input)
     {
-        (int Key, int Mod)[] scanners = GetScanners(input).Select(s => (s.Key, Mod: s.Value.Frequency)).ToArray();
+        (int Key, int Mod)[] scanners = [.. GetScanners(input).Select(s => (s.Key, Mod: s.Value.Frequency))];
         int blockSize = 1000;
         for (int i = 0; true; i += blockSize)
         {

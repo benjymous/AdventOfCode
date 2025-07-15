@@ -2,7 +2,7 @@
 public class Day05 : IPuzzle
 {
     [Regex(@"(\d+),(\d+) -> (\d+),(\d+)")]
-    record struct Line(int X1, int Y1, int X2, int Y2)
+    private record struct Line(int X1, int Y1, int X2, int Y2)
     {
         public readonly IEnumerable<(int, int)> Points
         {
@@ -45,7 +45,7 @@ public class Day05 : IPuzzle
     private static int Solve(string input, QuestionPart part)
     {
         var lines = Parser.Parse<Line>(input).ToArray();
-        if (part.One()) lines = lines.Where(l => l.IsAxial).ToArray();
+        if (part.One) lines = [.. lines.Where(l => l.IsAxial)];
 
         return lines.SelectMany(line => line.Points)
                     .GroupBy(p => p)

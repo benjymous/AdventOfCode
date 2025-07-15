@@ -1,9 +1,9 @@
 ﻿namespace AoC.Advent2018;
 public class Day08 : IPuzzle
 {
-    static Node BuildTree(string input) => new([.. Util.ParseNumbers<int>(input, " ")]);
+    private static Node BuildTree(string input) => new([.. Util.ParseNumbers<int>(input, " ")]);
 
-    class Node
+    private class Node
     {
         public Node(Queue<int> data)
         {
@@ -17,8 +17,8 @@ public class Day08 : IPuzzle
         public int MetaTotal => metaData.Sum() + children.Sum(c => c.MetaTotal);
         public int Score => children.Count == 0 ? metaData.Sum() : metaData.Select(v => v - 1).Where(i => i >= 0 && i < children.Count).Sum(i => children[i].Score);
 
-        readonly List<Node> children = [];
-        readonly List<int> metaData = [];
+        private readonly List<Node> children = [];
+        private readonly List<int> metaData = [];
     }
 
     public static int Part1(string input) => BuildTree(input).MetaTotal;

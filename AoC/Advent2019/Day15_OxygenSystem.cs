@@ -1,18 +1,18 @@
 ﻿namespace AoC.Advent2019;
 public class Day15 : IPuzzle
 {
-    static readonly (int dx, int dy)[] Neighbours = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+    private static readonly (int dx, int dy)[] Neighbours = [(-1, 0), (1, 0), (0, -1), (0, 1)];
     public const int OPEN = 1, WALL = 0, OXYGEN = 2;
 
     public class RepairDrone(string input) : NPSA.IntCPU(input), NPSA.ICPUInterrupt
     {
-        (int x, int y) position = (0, 0), tryDestination;
-        Queue<(int x, int y)> path = [];
+        private (int x, int y) position = (0, 0), tryDestination;
+        private Queue<(int x, int y)> path = [];
         public GridMap<bool> map = new(new WalkableBool());
 
         public (int x, int y) OxygenLocation { get; private set; }
 
-        readonly Stack<((int x, int y) position, (int x, int y) unknownNeighbour)> unknowns = new();
+        private readonly Stack<((int x, int y) position, (int x, int y) unknownNeighbour)> unknowns = new();
 
         public void OutputReady()
         {
@@ -53,7 +53,7 @@ public class Day15 : IPuzzle
         public (int x, int y)[] FindPath((int x, int y) start, (int x, int y) end) => map.FindPath(start, end);
     }
 
-    static void FloodFill(int currentDistance, (int x, int y) position, GridMap<bool> map, Dictionary<(int, int), int> distances)
+    private static void FloodFill(int currentDistance, (int x, int y) position, GridMap<bool> map, Dictionary<(int, int), int> distances)
     {
         if (!map.IsValidNeighbour(position) || (distances.TryGetValue(position, out var prev) && prev <= currentDistance)) return;
         distances[position] = currentDistance;

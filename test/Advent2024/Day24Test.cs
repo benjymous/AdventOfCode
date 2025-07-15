@@ -59,21 +59,21 @@ tnw OR pbm -> gnj";
     [TestCategory("Test")]
     [DataRow(test2, 2024L)]
     [DataTestMethod]
-    public void _01Test(string input, long expected)
+    public void LogicFix_01Test(string input, long expected)
     {
         Assert.AreEqual(expected, Day24.Part1(input.Replace("\r", "")));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void LogicFix_Part1_Regression()
     {
         Assert.AreEqual(45923082839246L, Day24.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void LogicFix_Part2_Regression()
     {
         Assert.AreEqual("jgb,rkf,rrs,rvc,vcg,z09,z20,z24", Day24.Part2(input));
     }

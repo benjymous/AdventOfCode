@@ -5,8 +5,8 @@ public class Day15 : IPuzzle
 
     public class Factory
     {
-        public readonly LensBox[] Boxes = Enumerable.Range(0, 256).Select(i => new LensBox(i)).ToArray();
-        LensBox Box(string label) => Boxes[CalculateHASH(label)];
+        public readonly LensBox[] Boxes = [.. Enumerable.Range(0, 256).Select(i => new LensBox(i))];
+        private LensBox Box(string label) => Boxes[CalculateHASH(label)];
 
         [Regex(@"([a-z]+)=(\d+)")]
         public void AddLens(string label, int focalLength) => Box(label).AddLens((label, focalLength));

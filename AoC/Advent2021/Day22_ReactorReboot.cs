@@ -15,9 +15,9 @@ public class Day22 : IPuzzle
         public Box Box = (x1, x2 + 1, y1, y2 + 1, z1, z2 + 1);
     }
 
-    static int[] GetDivisions(params int[] values) => [.. values.Distinct().Order()];
+    private static int[] GetDivisions(params int[] values) => [.. values.Distinct().Order()];
 
-    static IEnumerable<Box> Subtract(Box b1, Box b2)
+    private static IEnumerable<Box> Subtract(Box b1, Box b2)
     {
         var divX = GetDivisions(b1.MinX, b1.MaxX, b2.MinX, b2.MaxX);
         var divY = GetDivisions(b1.MinY, b1.MaxY, b2.MinY, b2.MaxY);
@@ -32,9 +32,9 @@ public class Day22 : IPuzzle
                 }
     }
 
-    static bool Overlaps(Box box1, Box box2) => (box1.MinX < box2.MaxX) && (box1.MaxX > box2.MinX) && (box1.MinY < box2.MaxY) && (box1.MaxY > box2.MinY) && (box1.MinZ < box2.MaxZ) && (box1.MaxZ > box2.MinZ);
+    private static bool Overlaps(Box box1, Box box2) => (box1.MinX < box2.MaxX) && (box1.MaxX > box2.MinX) && (box1.MinY < box2.MaxY) && (box1.MaxY > box2.MinY) && (box1.MinZ < box2.MaxZ) && (box1.MaxZ > box2.MinZ);
 
-    static long Volume(Box box) => (box.MaxX - (long)box.MinX) * (box.MaxY - (long)box.MinY) * (box.MaxZ - (long)box.MinZ);
+    private static long Volume(Box box) => (box.MaxX - (long)box.MinX) * (box.MaxY - (long)box.MinY) * (box.MaxZ - (long)box.MinZ);
 
     public static long RunOperation(IEnumerable<Instruction> instructions)
     {

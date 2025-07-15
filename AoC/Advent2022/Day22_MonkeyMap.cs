@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2022;
 public class Day22 : IPuzzle
 {
-    class Map
+    private class Map
     {
         public Map(string input)
         {
@@ -45,7 +45,7 @@ public class Day22 : IPuzzle
 
     private static int FollowMap(Map map, QuestionPart part)
     {
-        if (part.Two()) map.OrientCubeFaces();
+        if (part.Two) map.OrientCubeFaces();
         var rowMinMax = Enumerable.Range(0, map.maxY).Select(y => map.Data.Where(kvp => kvp.Key.y == y).MinMax(kvp => kvp.Key.x)).ToArray();
         var colMinMax = Enumerable.Range(0, map.maxY).Select(x => map.Data.Where(kvp => kvp.Key.x == x).MinMax(kvp => kvp.Key.y)).ToArray();
 
@@ -53,7 +53,7 @@ public class Day22 : IPuzzle
 
         var wrapSize = map.FaceSize - 1;
 
-        var neighbourMap = part.Two() ? MapNeighbours() : null;
+        var neighbourMap = part.Two ? MapNeighbours() : null;
 
         foreach (var (tapeInstruction, tapeSteps) in map.Tape)
         {
@@ -66,7 +66,7 @@ public class Day22 : IPuzzle
                     (var nextPos, var nextDir) = (pos.OffsetBy(dir), dir);
                     if (!map.Data.ContainsKey(nextPos))
                     {
-                        if (part.One())
+                        if (part.One)
                         {
                             if (dir.DX != 0) nextPos.x = dir.DX > 0 ? rowMinMax[nextPos.y].min : rowMinMax[nextPos.y].max;
                             else nextPos.y = dir.DY > 0 ? colMinMax[nextPos.x].min : colMinMax[nextPos.x].max;
@@ -103,15 +103,15 @@ public class Day22 : IPuzzle
 
     private static Dictionary<(char from, char to), Direction2> MapNeighbours() => "fkrltb".Select(c => new Face(c, Direction2.North)).SelectMany(face => "<>^v".Select(d => (face, new Direction2(d)))).ToDictionary(r => (r.face.Name, Neighbour(r.face, r.Item2).name), r => r.Item2);
 
-    record Face(char Name, Direction2 Orientation);
+    private record Face(char Name, Direction2 Orientation);
 
-    static Face CreateNeighbour(Face current, Direction2 delta)
+    private static Face CreateNeighbour(Face current, Direction2 delta)
     {
         var (name, turnRightBy) = Neighbour(current, delta);
         return new Face(name, new Direction2(current.Orientation).TurnRightBySteps(turnRightBy));
     }
 
-    static (char name, int turnRightBy) Neighbour(Face current, Direction2 delta) => (current.Name, (current.Orientation + delta).AsChar()) switch
+    private static (char name, int turnRightBy) Neighbour(Face current, Direction2 delta) => (current.Name, (current.Orientation + delta).AsChar()) switch
     {
         ('f', '>') => ('r', 0),
         ('f', '<') => ('l', 0),

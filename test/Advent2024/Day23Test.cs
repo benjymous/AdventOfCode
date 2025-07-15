@@ -11,28 +11,28 @@ public class Day23Test
 
     [TestCategory("Test")]
     [DataTestMethod]
-    public void _01Test()
+    public void LanParty_01Test()
     {
         Assert.AreEqual(7, Day23.Part1(test));
     }
 
     [TestCategory("Test")]
     [DataTestMethod]
-    public void _02Test()
+    public void LanParty_02Test()
     {
         Assert.AreEqual("co,de,ka,ta", Day23.Part2(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void LanParty_Part1_Regression()
     {
         Assert.AreEqual(1054, Day23.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void LanParty_Part2_Regression()
     {
         Assert.AreEqual("ch,cz,di,gb,ht,ku,lu,tw,vf,vt,wo,xz,zk", Day23.Part2(input));
     }

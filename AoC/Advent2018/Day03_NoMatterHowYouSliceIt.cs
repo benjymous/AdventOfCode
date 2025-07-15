@@ -7,7 +7,7 @@ public class Day03 : IPuzzle
         public readonly IEnumerable<PackedPos32> Squares() => Util.Range2DExclusive<int, Pack16_16>((Top, Top + Height, Left, Left + Width));
     }
 
-    static HashSet<PackedPos32> FindOverlaps(IEnumerable<Shape> shapes)
+    private static HashSet<PackedPos32> FindOverlaps(IEnumerable<Shape> shapes)
     {
         Dictionary<PackedPos32, int> square = [];
         foreach (var squareId in shapes.SelectMany(s => s.Squares()))
@@ -15,7 +15,7 @@ public class Day03 : IPuzzle
             square.IncrementAtIndex(squareId);
         }
 
-        return square.Where(kvp => kvp.Value > 1).Select(kvp => kvp.Key).ToHashSet();
+        return [.. square.Where(kvp => kvp.Value > 1).Select(kvp => kvp.Key)];
     }
 
     public static int Part1(Parser.AutoArray<Shape> shapes) => FindOverlaps(shapes).Count;

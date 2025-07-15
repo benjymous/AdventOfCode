@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2019;
-class SpringDroid(string program) : NPSA.ASCIITerminal(program, 3000)
+internal class SpringDroid(string program) : NPSA.ASCIITerminal(program, 3000)
 {
-    IEnumerable<string> commandBuffer;
+    private IEnumerable<string> commandBuffer;
 
     public long Run(IEnumerable<string> program)
     {

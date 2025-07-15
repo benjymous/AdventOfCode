@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2020;
 public static class MapRowExtension
 {
-    const char Tree = '#';
+    private const char Tree = '#';
     public static bool IsTree(this string[] map, (int x, int y) pos) => map[pos.y][pos.x % map[pos.y].Length] == Tree;
 }
 

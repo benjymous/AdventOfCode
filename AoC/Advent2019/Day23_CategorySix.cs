@@ -16,7 +16,7 @@ public class Day23 : IPuzzle
         public (long x, long y) lastPacket;
 
         public long LastY = -1;
-        readonly int[] IdleCount = new int[256];
+        private readonly int[] IdleCount = new int[256];
 
         public void NotifyStarvation(int id) => IdleCount[id]++;
         public void NotifySeen(int id) => IdleCount[id] = 0;
@@ -40,13 +40,13 @@ public class Day23 : IPuzzle
 
     public class NetworkController
     {
-        readonly List<NetworkNode> nodes = [];
-        readonly Dictionary<int, Queue<(long x, long y)>> messageQueues = [];
+        private readonly List<NetworkNode> nodes = [];
+        private readonly Dictionary<int, Queue<(long x, long y)>> messageQueues = [];
         public NAT Nat = null;
 
-        Queue<(long x, long y)> MessageQueue(int index) => messageQueues.GetOrCreate(index);
+        private Queue<(long x, long y)> MessageQueue(int index) => messageQueues.GetOrCreate(index);
 
-        public NetworkController(string program) => nodes = Enumerable.Range(0, 50).Select(i => new NetworkNode(program, i, this)).ToList();
+        public NetworkController(string program) => nodes = [.. Enumerable.Range(0, 50).Select(i => new NetworkNode(program, i, this))];
 
         public void EnqueuePacket(int id, (long x, long y) vec)
         {

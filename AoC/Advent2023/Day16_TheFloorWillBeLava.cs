@@ -1,10 +1,10 @@
 ﻿namespace AoC.Advent2023;
 public class Day16 : IPuzzle
 {
-    static void Step((int x, int y) pos, Direction2 dir, char[,] map, int[,] beams)
+    private static void Step((int x, int y) pos, Direction2 dir, char[,] map, int[,] beams)
         => DoBeam(pos.OffsetBy(dir), dir, map, beams);
 
-    static int[,] DoBeam((int x, int y) pos, Direction2 dir, char[,] map, int[,] beams = default)
+    private static int[,] DoBeam((int x, int y) pos, Direction2 dir, char[,] map, int[,] beams = default)
     {
         if (beams == default) beams = new int[map.Width(), map.Height()];
         if (map.Contains(pos))

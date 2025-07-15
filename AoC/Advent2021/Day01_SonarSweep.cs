@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2021;
 public class Day01 : IPuzzle
 {
-    static IEnumerable<int> Sliding3s(IEnumerable<int> input) =>
+    private static IEnumerable<int> Sliding3s(IEnumerable<int> input) =>
         input.Windows(3).Select(set => set.Sum());
 
     private static int AscendingDepths(IEnumerable<int> depths) =>

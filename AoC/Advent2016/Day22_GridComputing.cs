@@ -2,15 +2,15 @@
 public class Day22 : IPuzzle
 {
     [method: Regex(@"\/dev\/grid\/node-x(\S+)-y(\S+)\s+(\S+)T\s+(\S+)T\s+(\S+)T\s+\S+%")]
-    class Node(int x, int y, int size, int used, int free)
+    private class Node(int x, int y, int size, int used, int free)
     {
         public readonly (int x, int y) Position = (x, y);
         public readonly int Size = size, Used = used, Free = free;
     }
 
-    static Node[] Parse(string input) => Parser.Parse<Node>(Util.Split(input).Where(line => line.StartsWith("/dev/"))).ToArray();
+    private static Node[] Parse(string input) => [.. Parser.Parse<Node>(Util.Split(input).Where(line => line.StartsWith("/dev/")))];
 
-    record struct Walkable(int MaxMovable) : IIsWalkable<Node>
+    private record struct Walkable(int MaxMovable) : IIsWalkable<Node>
     {
         public readonly bool IsWalkable(Node cell) => cell.Used <= MaxMovable;
     }

@@ -25,7 +25,7 @@ public class Day24 : IPuzzle
                               && entry.Pair.Item2.Entry.IsFuture(entry.Intersect.Value));
     }
 
-    static decimal SolvePt2((Entry a, Entry b, Entry c) input)
+    private static decimal SolvePt2((Entry a, Entry b, Entry c) input)
     {
         var min = input.a.Pos;
 

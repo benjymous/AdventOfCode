@@ -2,14 +2,14 @@
 public class Day13 : IPuzzle
 {
     [method: Regex(@"fold along ([x|y])=(\d+)")]
-    class Fold(char dir, int foldLine)
+    private class Fold(char dir, int foldLine)
     {
         public IEnumerable<(int x, int y)> Perform(IEnumerable<(int x, int y)> dots)
           => dots.Select(dot => dir == 'x' ? dot.x < foldLine ? dot : (foldLine - (dot.x - foldLine), dot.y)
                                             : dot.y < foldLine ? dot : (dot.x, foldLine - (dot.y - foldLine)));
     }
 
-    static string Display(HashSet<(int x, int y)> dots)
+    private static string Display(HashSet<(int x, int y)> dots)
     {
         StringBuilder sb = new();
         sb.AppendLine();
@@ -29,7 +29,7 @@ public class Day13 : IPuzzle
         return sb.ToString();
     }
 
-    static (IEnumerable<(int x, int y)>, IEnumerable<Fold>) Parse(string input)
+    private static (IEnumerable<(int x, int y)>, IEnumerable<Fold>) Parse(string input)
     {
         return input.ParseSections(coordinates => Parser.Parse<ManhattanVector2>(coordinates).Select(v => v.AsSimple()),
                                    folds => Parser.Parse<Fold>(folds).ToArray());

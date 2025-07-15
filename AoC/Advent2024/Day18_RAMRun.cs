@@ -2,11 +2,11 @@
 public class Day18 : IPuzzle
 {
     public static (int x, int y)[] ParseData(string input)
-        => Parser.Parse<ManhattanVector2>(input).Select(p => p.AsSimple()).ToArray();
+        => [.. Parser.Parse<ManhattanVector2>(input).Select(p => p.AsSimple())];
 
     public record class Map(HashSet<(int, int)> Data, (int x, int y) Target) : IMap<(int, int)>
     {
-        readonly static (int dx, int dy)[] Neighbours = [(1, 0), (0, 1), (0, -1), (-1, 0)];
+        private static readonly (int dx, int dy)[] Neighbours = [(1, 0), (0, 1), (0, -1), (-1, 0)];
 
         public bool IsInside((int x, int y) p)
             => p.x >= 0 && p.y >= 0 && p.x <= Target.x && p.y <= Target.y;
@@ -31,6 +31,7 @@ public class Day18 : IPuzzle
             var m = new Map([.. fallen], (targetX, targetY));
             return (m.FindPath() == 0, fallen.Last());
         }).result;
+
         return $"{x},{y}";
     }
 

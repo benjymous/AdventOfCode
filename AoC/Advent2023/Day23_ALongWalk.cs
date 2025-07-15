@@ -1,12 +1,12 @@
 ﻿namespace AoC.Advent2023;
 public class Day23 : IPuzzle
 {
-    static readonly Direction2[] neighbours = [Direction2.East, Direction2.West, Direction2.North, Direction2.South];
+    private static readonly Direction2[] neighbours = [Direction2.East, Direction2.West, Direction2.North, Direction2.South];
 
-    class Map : IMap<(int x, int y)>
+    private class Map : IMap<(int x, int y)>
     {
         public readonly Util.SparseMatrix<(int x, int y), char> Data;
-        readonly List<(int x, int y)> Waypoints;
+        private readonly List<(int x, int y)> Waypoints;
         public readonly Dictionary<int, Dictionary<int, int>> Routes = [];
         public readonly int EndKey = -1;
 
@@ -23,7 +23,7 @@ public class Day23 : IPuzzle
 
             EndKey = Waypoints.Count - 1;
 
-            if (!part.One())
+            if (!part.One)
             {
                 Data.Where(kvp => kvp.Value is not '.').ForEach(kvp => Data[kvp.Key] = '.');
             }

@@ -3,7 +3,7 @@
 namespace AoC.Advent2016;
 public class Day21 : IPuzzle
 {
-    class InstructionFactory
+    private class InstructionFactory
     {
         [Regex(@"rotate right (\d+) step")]
         public static CharFunc RotRight(int count) => pwd => RotateRight(pwd, count);
@@ -18,7 +18,7 @@ public class Day21 : IPuzzle
         public static CharFunc SwapPosition(int from, int to) => pwd => pwd.SwapIndices(from, to);
 
         [Regex(@"reverse positions (.) through (.)")]
-        public static CharFunc Reverse(int start, int end) => pwd => pwd.Take(start).Concat(pwd.Skip(start).Take(end - start + 1).Reverse()).Concat(pwd.Skip(end + 1)).ToArray();
+        public static CharFunc Reverse(int start, int end) => pwd => [.. pwd.Take(start), .. pwd.Skip(start).Take(end - start + 1).Reverse(), .. pwd.Skip(end + 1)];
 
         [Regex(@"move position (.) to position (.)")]
         public static CharFunc Move(int from, int to) => pwd => [.. pwd.ToList().MoveIndex(from, to)];
@@ -65,8 +65,8 @@ public class Day21 : IPuzzle
 
     private static string Scramble(CharFunc[] instructions, char[] password) => instructions.Aggregate(password, (current, instr) => instr(current)).AsString();
 
-    public static CharFunc[] ParseInstructions(string input) => Parser.Factory<CharFunc, InstructionFactory>(input).ToArray();
-    public static CharFunc[] ReverseInstructions(string input) => Parser.Factory<CharFunc, InstructionFactory>(input.Split('\n').Select(Reverse).Reverse(), new InstructionFactory()).ToArray();
+    public static CharFunc[] ParseInstructions(string input) => [.. Parser.Factory<CharFunc, InstructionFactory>(input)];
+    public static CharFunc[] ReverseInstructions(string input) => [.. Parser.Factory<CharFunc, InstructionFactory>(input.Split('\n').Select(Reverse).Reverse(), new InstructionFactory())];
 
     public static string Reverse(string rule) => rule.StartsWith("rotate based ")
             ? $"UNROTATE {rule[35]}"

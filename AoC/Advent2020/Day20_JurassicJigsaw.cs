@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2020;
 public class Day20 : IPuzzle
 {
-    enum Edge { top = 0, right, bottom, left }
+    private enum Edge { top = 0, right, bottom, left }
 
     public class Tile
     {
@@ -22,14 +22,14 @@ public class Day20 : IPuzzle
         {
             Orientation = (Orientation + 1) % 8;
             Edges = [Edges[3], Edges[0], Edges[1], Edges[2]]; // rotate clockwise
-            if (Orientation is 0 or 4) Edges = Edges.Select(e => e.Reversed()).Reverse().ToArray(); // flip over
+            if (Orientation is 0 or 4) Edges = [.. Edges.Select(e => e.Reversed()).Reverse()]; // flip over
         }
 
         public void RotateToFit(int edgePos, string matchingEdge) => Util.RepeatWhile(() => Edges[edgePos] != matchingEdge, Twizzle);
 
-        readonly Func<int, int, int, (int x, int y)>[] Transforms = [(x, y, size) => (x, y), (x, y, size) => (y, size - x), (x, y, size) => (size - x, size - y), (x, y, size) => (size - y, x), (x, y, size) => (y, x), (x, y, size) => (size - x, y), (x, y, size) => (size - y, size - x), (x, y, size) => (x, size - y)];
+        private readonly Func<int, int, int, (int x, int y)>[] Transforms = [(x, y, size) => (x, y), (x, y, size) => (y, size - x), (x, y, size) => (size - x, size - y), (x, y, size) => (size - y, x), (x, y, size) => (y, x), (x, y, size) => (size - x, y), (x, y, size) => (size - y, size - x), (x, y, size) => (x, size - y)];
 
-        char GetCell((int x, int y) pos) => Grid[pos.y][pos.x];
+        private char GetCell((int x, int y) pos) => Grid[pos.y][pos.x];
         public char GetCellTransformed(int x, int y) => GetCell(Transforms[Orientation](x, y, Size));
     }
 
@@ -37,7 +37,7 @@ public class Day20 : IPuzzle
     {
         public JigsawSolver(string input)
         {
-            Tiles = Parser.Parse<Tile>(input.Trim().SplitSections().Select(s => s.Replace("\n", "-"))).ToList();
+            Tiles = [.. Parser.Parse<Tile>(input.Trim().SplitSections().Select(s => s.Replace("\n", "-")))];
             EdgeMap = Tiles.SelectMany(t => t.Edges.Select(e => (t, e))).SelectMany(v => Util.Values((v.t, v.e), (v.t, v.e.Reversed()))).GroupBy(v => v.Item2).ToDictionary(g => g.Key, g => g.Select(x => x.t).ToArray());
             foreach (var tile in Tiles) tile.Borders = tile.Edges.Count(e => EdgeMap[e].Length == 1);
         }
@@ -45,7 +45,7 @@ public class Day20 : IPuzzle
         public readonly List<Tile> Tiles;
         public readonly Dictionary<string, Tile[]> EdgeMap;
 
-        Tile FindNeighbour(Tile nextTo, Edge position)
+        private Tile FindNeighbour(Tile nextTo, Edge position)
         {
             var edge = nextTo.Edges[(int)position];
 
@@ -67,7 +67,7 @@ public class Day20 : IPuzzle
                     if ((tile = FindNeighbour(tile, Edge.right)) != null) solution[pos = (pos.x + 1, pos.y)] = tile;
                     else if ((tile = FindNeighbour(solution[(0, pos.y)], Edge.bottom)) != null) solution[pos = (0, pos.y + 1)] = tile;
 
-                HashSet<int> bitmap = solution.Select(kvp => (pos: kvp.Key, cell: kvp.Value)).SelectMany(v => Util.Range2DExclusive((0, 8, 0, 8)).Where(cellPos => v.cell.GetCellTransformed(cellPos.x + 1, cellPos.y + 1) == '#').Select(cellPos => (v.pos.x * 8) + cellPos.x + (((v.pos.y * 8) + cellPos.y) << 16))).ToHashSet();
+                HashSet<int> bitmap = [.. solution.Select(kvp => (pos: kvp.Key, cell: kvp.Value)).SelectMany(v => Util.Range2DExclusive((0, 8, 0, 8)).Where(cellPos => v.cell.GetCellTransformed(cellPos.x + 1, cellPos.y + 1) == '#').Select(cellPos => (v.pos.x * 8) + cellPos.x + (((v.pos.y * 8) + cellPos.y) << 16)))];
                 var nessies = Util.Range2DExclusive((0, ((pos.y + 1) * 8) - 2, 0, ((pos.x + 1) * 8) - 19)).Select(offset => nessieIdentifier.Select(e => offset.x + e.x + ((offset.y + e.y) << 16))).Where(keys => keys.All(k => bitmap.Contains(k))).SelectMany(v => v).Count();
                 if (nessies != 0) return bitmap.Count - nessies;
             }

@@ -1,15 +1,15 @@
 ﻿namespace AoC.Advent2017;
 public class Day25 : IPuzzle
 {
-    static int ToKey(char c) => c - 'A';
+    private static int ToKey(char c) => c - 'A';
 
-    class Program
+    private class Program
     {
         public Program(string input) => Parser.Factory(input.SplitSections(), this);
 
-        int Start = 0, Diagnostic = 0, TapePosition = 0;
-        readonly List<(Action action, int move, int next)[]> States = [];
-        readonly HashSet<int> Tape = [];
+        private int Start = 0, Diagnostic = 0, TapePosition = 0;
+        private readonly List<(Action action, int move, int next)[]> States = [];
+        private readonly HashSet<int> Tape = [];
 
         [Regex(@"Begin in state (.).\nPerform a diagnostic checksum after (\d+) steps.")]
         public void Initialiser(char start, int diagnostic) => (Start, Diagnostic) = (ToKey(start), diagnostic);

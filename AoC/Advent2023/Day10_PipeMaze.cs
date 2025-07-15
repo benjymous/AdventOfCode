@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2023;
 public class Day10 : IPuzzle
 {
-    static Dictionary<(int x, int y), Direction2[]> GetLoop(string input) => Memoize(input, _ =>
+    private static Dictionary<(int x, int y), Direction2[]> GetLoop(string input) => Memoize(input, _ =>
     {
         var grid = Util.ParseSparseMatrix<char>(input);
         var pos = grid.Single(kvp => kvp.Value == 'S').Key;
@@ -24,7 +24,7 @@ public class Day10 : IPuzzle
         }
     });
 
-    static string PossibleDirections(char current) => current switch
+    private static string PossibleDirections(char current) => current switch
     {
         'S' => "^>v<",
         '|' => "^v",
@@ -36,9 +36,9 @@ public class Day10 : IPuzzle
         _ => "",
     };
 
-    static bool ValidateDirection(Dictionary<(int x, int y), char> map, (int x, int y) position, Direction2 dir) => PossibleDirections(map[position.OffsetBy(dir)]).Contains(dir + 2);
+    private static bool ValidateDirection(Dictionary<(int x, int y), char> map, (int x, int y) position, Direction2 dir) => PossibleDirections(map[position.OffsetBy(dir)]).Contains(dir + 2);
 
-    static int FloodFill((int x, int y) pos, Dictionary<(int x, int y), Direction2[]> matrix)
+    private static int FloodFill((int x, int y) pos, Dictionary<(int x, int y), Direction2[]> matrix)
     {
         if (matrix.ContainsKey(pos)) return 0;
         matrix[pos] = [];

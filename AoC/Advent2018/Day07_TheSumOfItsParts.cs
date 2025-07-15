@@ -9,12 +9,12 @@ public class Day07 : IPuzzle
             steps = [.. dependencies.Keys, .. dependencies.SelectMany(kvp => kvp.Value)];
         }
 
-        void AddDependency((char dependency, char task) entry) => dependencies.GetOrCalculate(entry.task, _ => []).Add(entry.dependency);
+        private void AddDependency((char dependency, char task) entry) => dependencies.GetOrCalculate(entry.task, _ => []).Add(entry.dependency);
 
-        readonly HashSet<char> steps;
-        readonly Dictionary<char, HashSet<char>> dependencies = [];
+        private readonly HashSet<char> steps;
+        private readonly Dictionary<char, HashSet<char>> dependencies = [];
 
-        readonly SortedSet<char> ready = [];
+        private readonly SortedSet<char> ready = [];
 
         public bool WorkToDo => steps.Count != 0;
         public bool WorkReady => ready.Count != 0;
@@ -33,10 +33,10 @@ public class Day07 : IPuzzle
         public void CompleteTask(char task) => dependencies.Where(kvp => kvp.Value.Remove(task) && kvp.Value.Count == 0).ForEach(kvp => dependencies.Remove(kvp.Key));
     }
 
-    class Worker
+    private class Worker
     {
-        char task;
-        int timeRemaining = 0;
+        private char task;
+        private int timeRemaining = 0;
         public bool Busy => timeRemaining > 0;
 
         public void DoWork(Factory factory)

@@ -13,13 +13,13 @@ public class Day18 : IPuzzle
         return Count(next);
     }
 
-    static int Count(IEnumerable<bool> line) => line.Count(x => x);
+    private static int Count(IEnumerable<bool> line) => line.Count(x => x);
 
     public static int BuildMap(string input, int numLines)
     {
         var states = new bool[2][]
         {
-            input.Select(c => c=='.').ToArray(),
+            [.. input.Select(c => c=='.')],
             new bool[input.Length]
         };
 

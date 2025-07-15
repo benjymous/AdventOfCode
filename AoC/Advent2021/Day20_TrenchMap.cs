@@ -1,10 +1,10 @@
 ﻿namespace AoC.Advent2021;
 public class Day20 : IPuzzle
 {
-    class State
+    private class State
     {
         private readonly HashSet<PackedPos32> data = [];
-        int MinX, MaxX, MinY, MaxY;
+        private int MinX, MaxX, MinY, MaxY;
 
         public State(IEnumerable<(int x, int y)> input) => Set(input);
 
@@ -29,13 +29,12 @@ public class Day20 : IPuzzle
         public int Count => data.Count;
     }
 
-    static (int x, int y)[] Step(State input, bool[] rules, int margin, bool crop, (int minY, int maxY, int minX, int maxX) cropSize)
-        => Util.Range2DInclusive(input.GetRange(margin))
-               .Where(pos => rules[GetRuleIndex(input, pos)] && (!crop || (pos.x >= cropSize.minX && pos.x <= cropSize.maxX && pos.y >= cropSize.minY && pos.y <= cropSize.maxY))).ToArray();
+    private static (int x, int y)[] Step(State input, bool[] rules, int margin, bool crop, (int minY, int maxY, int minX, int maxX) cropSize)
+        => [.. Util.Range2DInclusive(input.GetRange(margin)).Where(pos => rules[GetRuleIndex(input, pos)] && (!crop || (pos.x >= cropSize.minX && pos.x <= cropSize.maxX && pos.y >= cropSize.minY && pos.y <= cropSize.maxY)))];
 
-    static readonly PackedPos32[] Offsets = [(-1, -1), (0, -1), (1, -1), (-1, 0), (0, 0), (1, 0), (-1, 1), (0, 1), (1, 1)];
+    private static readonly PackedPos32[] Offsets = [(-1, -1), (0, -1), (1, -1), (-1, 0), (0, 0), (1, 0), (-1, 1), (0, 1), (1, 1)];
 
-    static int GetRuleIndex(State input, PackedPos32 key)
+    private static int GetRuleIndex(State input, PackedPos32 key)
     {
         int result = 0;
         for (int i = 0; i < 9; ++i)

@@ -15,11 +15,11 @@ public class Day17 : IPuzzle
         public HashSet<(int x, int y)> Vals = [];
     }
 
-    static bool IsWall(int x, int y, Dictionary<(int x, int y), char> grid) => grid.TryGetValue((x, y), out var c) && c == '#';
+    private static bool IsWall(int x, int y, Dictionary<(int x, int y), char> grid) => grid.TryGetValue((x, y), out var c) && c == '#';
 
-    static bool IsFilled(int x, int y, Dictionary<(int x, int y), char> grid) => (grid.TryGetValue((x, y), out var c) && c == '#') || c == '~';
+    private static bool IsFilled(int x, int y, Dictionary<(int x, int y), char> grid) => (grid.TryGetValue((x, y), out var c) && c == '#') || c == '~';
 
-    static void Set((int x, int y) pos, Dictionary<(int x, int y), char> grid, int maxY)
+    private static void Set((int x, int y) pos, Dictionary<(int x, int y), char> grid, int maxY)
     {
         if (grid.ContainsKey(pos)) return;
 

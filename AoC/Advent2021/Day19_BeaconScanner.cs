@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2021;
 public class Day19 : IPuzzle
 {
-    static readonly Func<(int x, int y, int z), (int x, int y, int z)>[] Transforms = [v => (v.x, v.y, v.z), v => (-v.y, v.x, v.z), v => (-v.x, -v.y, v.z), v => (v.y, -v.x, v.z), v => (-v.z, v.y, v.x), v => (-v.y, -v.z, v.x), v => (v.z, -v.y, v.x), v => (v.y, v.z, v.x), v => (-v.x, v.y, -v.z), v => (-v.y, -v.x, -v.z), v => (v.x, -v.y, -v.z), v => (v.y, v.x, -v.z), v => (v.z, v.y, -v.x), v => (-v.y, v.z, -v.x), v => (-v.z, -v.y, -v.x), v => (v.y, -v.z, -v.x), v => (v.x, v.z, -v.y), v => (-v.z, v.x, -v.y), v => (-v.x, -v.z, -v.y), v => (v.z, -v.x, -v.y), v => (-v.x, v.z, v.y), v => (-v.z, -v.x, v.y), v => (v.x, -v.z, v.y), v => (v.z, v.x, v.y)];
+    private static readonly Func<(int x, int y, int z), (int x, int y, int z)>[] Transforms = [v => (v.x, v.y, v.z), v => (-v.y, v.x, v.z), v => (-v.x, -v.y, v.z), v => (v.y, -v.x, v.z), v => (-v.z, v.y, v.x), v => (-v.y, -v.z, v.x), v => (v.z, -v.y, v.x), v => (v.y, v.z, v.x), v => (-v.x, v.y, -v.z), v => (-v.y, -v.x, -v.z), v => (v.x, -v.y, -v.z), v => (v.y, v.x, -v.z), v => (v.z, v.y, -v.x), v => (-v.y, v.z, -v.x), v => (-v.z, -v.y, -v.x), v => (v.y, -v.z, -v.x), v => (v.x, v.z, -v.y), v => (-v.z, v.x, -v.y), v => (-v.x, -v.z, -v.y), v => (v.z, -v.x, -v.y), v => (-v.x, v.z, v.y), v => (-v.z, -v.x, v.y), v => (v.x, -v.z, v.y), v => (v.z, v.x, v.y)];
 
     public readonly struct Group(int id, IEnumerable<(int x, int y, int z)> input, (int x, int y, int z) origin = default)
     {
@@ -27,10 +27,10 @@ public class Day19 : IPuzzle
         public readonly int Id = id;
         public readonly (int x, int y, int z) Origin = origin;
         public readonly (int x, int y, int z)[] Points = [.. input];
-        public readonly HashSet<int> Fingerprint = input.Select(p1 => input.Where(p2 => p2 != p1).Select(p2 => p1.Distance(p2)).Order().Take(2).ToArray()).Select(a => a[0] + (a[1] << 16)).ToHashSet();
-        readonly Dictionary<(int x, int y, int z), HashSet<(int x, int y, int z)>> Offsets = input.Select(point => (point, input.Select(other => point.Subtract(other)).ToHashSet())).ToDictionary();
+        public readonly HashSet<int> Fingerprint = [.. input.Select(p1 => input.Where(p2 => p2 != p1).Select(p2 => p1.Distance(p2)).Order().Take(2).ToArray()).Select(a => a[0] + (a[1] << 16))];
+        private readonly Dictionary<(int x, int y, int z), HashSet<(int x, int y, int z)>> Offsets = input.Select(point => (point, input.Select(other => point.Subtract(other)).ToHashSet())).ToDictionary();
 
-        static HashSet<(int x, int y, int z)> Transform(int transformIdx, HashSet<(int x, int y, int z)> data) => data.Select(point => Transforms[transformIdx](point)).ToHashSet();
+        private static HashSet<(int x, int y, int z)> Transform(int transformIdx, HashSet<(int x, int y, int z)> data) => [.. data.Select(point => Transforms[transformIdx](point))];
     }
 
     private static List<Group> AlignGroups(string input) => Memoize(input, _ =>
@@ -45,7 +45,7 @@ public class Day19 : IPuzzle
         var mostMatches = overlaps.OrderByDescending(v => v.Value).First().Key;
 
         List<Group> aligned = [groups[mostMatches]];
-        Queue<Group> unaligned = groups.Where(g => g.Id != mostMatches).ToQueue();
+        Queue<Group> unaligned = [.. groups.Where(g => g.Id != mostMatches)];
 
         unaligned.Operate((group) =>
         {

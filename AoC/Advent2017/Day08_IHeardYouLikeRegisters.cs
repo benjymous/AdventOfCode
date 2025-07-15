@@ -1,17 +1,17 @@
 ﻿namespace AoC.Advent2017;
 public class Day08 : IPuzzle
 {
-    class Factory
+    private class Factory
     {
         public readonly Dictionary<string, int> RegLookup = [];
 
         [Regex(@"(.+) (inc|dec) (-?\d+) if (.+) (<|<=|==|!=|>=|>) (-?\d+)")]
         public Action<int[]> Instr(string regToChange, string action, int amount, string regToCheck, string oper, int checkVal)
-            => (int[] regs) => regs[RegIndex(regToChange)] += Operator(oper, regs[RegIndex(regToCheck)], checkVal) ? (action == "inc" ? amount : -amount) : 0;
+            => regs => regs[RegIndex(regToChange)] += Operator(oper, regs[RegIndex(regToCheck)], checkVal) ? (action == "inc" ? amount : -amount) : 0;
 
         private int RegIndex(string name) => RegLookup.GetOrCalculate(name, _ => RegLookup.Count);
 
-        static bool Operator(string op, int lhs, int rhs) => op switch
+        private static bool Operator(string op, int lhs, int rhs) => op switch
         {
             "==" => lhs == rhs,
             "!=" => lhs != rhs,

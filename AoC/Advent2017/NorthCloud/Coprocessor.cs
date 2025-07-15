@@ -39,7 +39,7 @@ namespace AoC.Advent2017.NorthCloud
         public override string ToString() => IsReg ? ((char)(Value + 'a')).ToString() : $"{Value}";
     }
 
-    class Instructions
+    internal class Instructions
     {
         public static IEnumerable<(string key, Func<Variant[], DataBus, int> instr)> Get(string sets)
         {
@@ -47,14 +47,14 @@ namespace AoC.Advent2017.NorthCloud
 
             if (isets.Contains("Common"))
             {
-                yield return ("set", (Variant[] v, DataBus bus) =>
+                yield return ("set", (v, bus) =>
                 {
                     bus.Registers[v[0].Value] = v[1];
                     return 1;
                 }
                 );
 
-                yield return ("mul", (Variant[] v, DataBus bus) =>
+                yield return ("mul", (v, bus) =>
                 {
                     bus.Registers[v[0].Value] *= v[1];
                     return 1;
@@ -64,38 +64,38 @@ namespace AoC.Advent2017.NorthCloud
 
             if (isets.Contains("Day18"))
             {
-                yield return ("snd", (Variant[] v, DataBus bus) =>
+                yield return ("snd", (v, bus) =>
                 {
                     bus.Output.Write(v[0]);
                     return 1;
                 }
                 );
 
-                yield return ("add", (Variant[] v, DataBus bus) =>
+                yield return ("add", (v, bus) =>
                 {
                     bus.Registers[v[0].Value] += v[1];
                     return 1;
                 }
                 );
 
-                yield return ("mod", (Variant[] v, DataBus bus) =>
+                yield return ("mod", (v, bus) =>
                 {
                     bus.Registers[v[0].Value] %= v[1];
                     return 1;
                 }
                 );
 
-                yield return ("jgz", (Variant[] v, DataBus bus) => v[0] > 0 ? (int)v[1] : 1);
+                yield return ("jgz", (v, bus) => v[0] > 0 ? (int)v[1] : 1);
             }
 
             if (isets.Contains("Day18Part1"))
             {
-                yield return ("rcv", (Variant[] v, DataBus bus) => v[0] != 0 ? 9999 : 1);
+                yield return ("rcv", (v, bus) => v[0] != 0 ? 9999 : 1);
             }
 
             if (isets.Contains("Day18Part2"))
             {
-                yield return ("rcv", (Variant[] v, DataBus bus) =>
+                yield return ("rcv", (v, bus) =>
                 {
                     if (bus?.Input.HasData() == true)
                     {
@@ -114,9 +114,9 @@ namespace AoC.Advent2017.NorthCloud
 
             if (isets.Contains("Day23"))
             {
-                yield return ("jnz", (Variant[] v, DataBus bus) => v[0] != 0 ? (int)v[1] : 1);
+                yield return ("jnz", (v, bus) => v[0] != 0 ? (int)v[1] : 1);
 
-                yield return ("sub", (Variant[] v, DataBus bus) =>
+                yield return ("sub", (v, bus) =>
                 {
                     bus.Registers[v[0].Value] -= v[1];
                     return 1;
@@ -133,12 +133,12 @@ namespace AoC.Advent2017.NorthCloud
 
     public class Coprocessor
     {
-        readonly InstructionLine[] Program;
+        private readonly InstructionLine[] Program;
 
         public readonly DataBus Bus = new();
 
-        System.Diagnostics.Stopwatch sw;
-        long CycleCount = 0;
+        private System.Diagnostics.Stopwatch sw;
+        private long CycleCount = 0;
 
         public Func<InstructionLine, bool> Debugger = null;
 
@@ -192,7 +192,7 @@ namespace AoC.Advent2017.NorthCloud
             return $"{CycleCount} cycles - {speed.ToEngineeringNotation()}hz";
         }
 
-        int InstructionPointer = 0;
+        private int InstructionPointer = 0;
 
         public long Get(char idx) => Bus.Registers[idx - 'a'];
         public void Set(char idx, int val) => Bus.Registers[idx - 'a'] = val;

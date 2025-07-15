@@ -12,7 +12,7 @@ public class Day05 : IPuzzle
         {
             int offset = instructions[position];
 
-            instructions[position] += (part.Two() && (offset >= 3)) ? -1 : 1;
+            instructions[position] += (part.Two && (offset >= 3)) ? -1 : 1;
 
             position += offset;
             steps++;

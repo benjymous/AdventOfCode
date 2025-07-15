@@ -27,9 +27,9 @@ public class Day16 : IPuzzle
                 if (stream.ReadBit() == 0) // length type
                 {
                     var endPos = stream.ReadInteger(15) + stream.Position;
-                    Children = Util.RepeatWhile(stream.ReadPacket, _ => stream.Position < endPos).ToArray();
+                    Children = [.. Util.RepeatWhile(stream.ReadPacket, _ => stream.Position < endPos)];
                 }
-                else Children = Util.Repeat(stream.ReadPacket, stream.ReadInteger(11)).ToArray();
+                else Children = [.. Util.Repeat(stream.ReadPacket, stream.ReadInteger(11))];
 
                 Value = Header.Type switch
                 {
@@ -67,9 +67,9 @@ public class Day16 : IPuzzle
         public int ReadInteger(int numBits) => Util.Repeat(ReadBit, numBits).Aggregate(0, (total, val) => (total << 1) + val);
         public int ReadBit() => stream.Pop().val;
 
-        static IEnumerable<(int, int)> Bits(string raw) => raw.Select(ch => ch.ParseHex()).SelectMany(n => n.BinarySequenceBigEndian(8)).Index().Select(v => (v.Item, v.Index));
-        (bool continueRead, int value) ReadChunk() => (ReadBit() == 1, ReadInteger(4));
-        readonly IEnumerator<(int val, int idx)> stream;
+        private static IEnumerable<(int, int)> Bits(string raw) => raw.Select(ch => ch.ParseHex()).SelectMany(n => n.BinarySequenceBigEndian(8)).Index().Select(v => (v.Item, v.Index));
+        private (bool continueRead, int value) ReadChunk() => (ReadBit() == 1, ReadInteger(4));
+        private readonly IEnumerator<(int val, int idx)> stream;
     }
 
     public static int Part1(Packet packet) => packet.VersionSum();

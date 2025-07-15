@@ -58,7 +58,7 @@ public class Day24 : IPuzzle
             if (g.Length > smallestGroup) break;
 
             var qe = g.Product();
-            if (qe < QE && CanCreateChildGroups(parcels.Except(g).ToArray(), groupSize))
+            if (qe < QE && CanCreateChildGroups([.. parcels.Except(g)], groupSize))
             {
                 QE = qe;
                 smallestGroup = g.Length;

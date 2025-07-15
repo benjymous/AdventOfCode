@@ -4,9 +4,9 @@ public class Day17 : IPuzzle
     public class Cpu
     {
         public long[] Registers = new long[3];
-        int[] Program;
+        private int[] Program;
 
-        enum OpCode
+        private enum OpCode
         {
             adv = 0,
             bxl = 1,
@@ -18,7 +18,7 @@ public class Day17 : IPuzzle
             cdv = 7,
         }
 
-        const int RegA = 0, RegB = 1, RegC = 2;
+        private const int RegA = 0, RegB = 1, RegC = 2;
 
         public static Cpu Create(string input) => Parser.Factory<Cpu>(input);
 
@@ -130,7 +130,7 @@ public class Day17 : IPuzzle
                 => i is "A" or "B" or "C" ? $"TwoPow((int){i})" : Util.TwoPowi(int.Parse(i)).ToString();
         }
 
-        long Combo(int operand)
+        private long Combo(int operand)
             => operand is > 3 and < 7 ? Registers[operand - 4] : operand;
     }
 
@@ -159,7 +159,7 @@ public class Day17 : IPuzzle
         return lastResult;
     }
 
-    static int Match(int[] v, int[] v2)
+    private static int Match(int[] v, int[] v2)
     {
         if (v.Length != v2.Length) return 0;
 

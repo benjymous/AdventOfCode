@@ -9,88 +9,88 @@ namespace AoC.Advent2018.ChronMatic
 #pragma warning disable IDE1006 // Naming Styles
     namespace Instructions
     {
-        class @addr : IInstr
+        internal class @addr : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] + regs[args[1]];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} + r{b};";
         }
-        class @addi : IInstr
+        internal class @addi : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] + args[1];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} + {b};";
         }
 
-        class @mulr : IInstr
+        internal class @mulr : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] * regs[args[1]];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} * r{b};";
         }
-        class @muli : IInstr
+        internal class @muli : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] * args[1];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} * {b};";
         }
 
-        class @banr : IInstr
+        internal class @banr : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] & regs[args[1]];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} & r{b};";
         }
-        class @bani : IInstr
+        internal class @bani : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] & args[1];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} & {b};";
         }
 
-        class @borr : IInstr
+        internal class @borr : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] | regs[args[1]];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} | r{b};";
         }
-        class @bori : IInstr
+        internal class @bori : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]] | (long)args[1];
             public string Dump(int a, int b, int c) => $"r{c} = r{a} | {b};";
         }
 
-        class @setr : IInstr
+        internal class @setr : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = regs[args[0]];
             public string Dump(int a, int b, int c) => $"r{c} = r{a};";
         }
-        class @seti : IInstr
+        internal class @seti : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = args[0];
             public string Dump(int a, int b, int c) => $"r{c} = {a};";
         }
 
-        class @gtir : IInstr
+        internal class @gtir : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = (args[0] > regs[args[1]]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = ({a} > r{b}) ? 1 : 0;";
         }
-        class @gtri : IInstr
+        internal class @gtri : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = (regs[args[0]] > args[1]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} > {b}) ? 1 : 0;";
         }
-        class @gtrr : IInstr
+        internal class @gtrr : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = (regs[args[0]] > regs[args[1]]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} > r{b}) ? 1 : 0;";
         }
 
-        class @eqir : IInstr
+        internal class @eqir : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = (args[0] == regs[args[1]]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = ({a} == r{b}) ? 1 : 0;";
         }
-        class @eqri : IInstr
+        internal class @eqri : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = (regs[args[0]] == args[1]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} == {b}) ? 1 : 0;";
         }
-        class @eqrr : IInstr
+        internal class @eqrr : IInstr
         {
             public void Do(int[] args, ref long[] regs) => regs[args[2]] = (regs[args[0]] == regs[args[1]]) ? 1 : 0;
             public string Dump(int a, int b, int c) => $"r{c} = (r{a} == r{b}) ? 1 : 0;";
@@ -108,7 +108,7 @@ namespace AoC.Advent2018.ChronMatic
         public static string Name(this IInstr instr) => instr.GetType().Name;
     }
 
-    struct InstructionLine(IInstr i, int[] v)
+    internal struct InstructionLine(IInstr i, int[] v)
     {
         public IInstr instr = i;
         public int[] values = v;
@@ -121,12 +121,12 @@ namespace AoC.Advent2018.ChronMatic
 
         public static IEnumerable<IInstr> GetInstructions() => ChronMatic.Instructions.All.Get();
 
-        readonly Dictionary<int, IInstr> InstrMap;
-        readonly InstructionLine[] Instructions;
+        private readonly Dictionary<int, IInstr> InstrMap;
+        private readonly InstructionLine[] Instructions;
 
-        long[] Registers = [0, 0, 0, 0, 0, 0];
+        private long[] Registers = [0, 0, 0, 0, 0, 0];
 
-        System.Diagnostics.Stopwatch sw;
+        private System.Diagnostics.Stopwatch sw;
         private int CycleCount = 0;
 
         public ChronCPU(string program, Dictionary<int, IInstr> instrMap = null) : this(Util.Split(program, "\n"), instrMap)
@@ -178,7 +178,7 @@ namespace AoC.Advent2018.ChronMatic
                         var codes = Util.ExtractNumbers(line);
                         if (codes.Length == 4)
                         {
-                            instrs.Add(new InstructionLine(InstrMap[codes[0]], codes.Skip(1).ToArray()));
+                            instrs.Add(new InstructionLine(InstrMap[codes[0]], [.. codes.Skip(1)]));
                         }
                         else
                         {
@@ -235,8 +235,8 @@ namespace AoC.Advent2018.ChronMatic
             return $"{CycleCount} cycles - {speed.ToEngineeringNotation()}hz";
         }
 
-        long pc = 0;
-        bool pcIsRef = false;
+        private long pc = 0;
+        private bool pcIsRef = false;
         public long InstructionPointer
         {
             get => pcIsRef ? Registers[pc] : pc;
@@ -256,7 +256,7 @@ namespace AoC.Advent2018.ChronMatic
         public long Get(int idx) => Registers[idx];
         public void Set(int idx, int val) => Registers[idx] = val;
 
-        void Preprocess(string line)
+        private void Preprocess(string line)
         {
             if (line.StartsWith("#ip"))
             {

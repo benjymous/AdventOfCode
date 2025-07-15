@@ -9,8 +9,8 @@ public class Day13 : IPuzzle
 
     public class TrainSim
     {
-        readonly Dictionary<(int x, int y), Train> trains;
-        readonly Dictionary<(int x, int y), char> map;
+        private readonly Dictionary<(int x, int y), Train> trains;
+        private readonly Dictionary<(int x, int y), char> map;
 
         public bool StopOnCrash { get; set; } = true;
 

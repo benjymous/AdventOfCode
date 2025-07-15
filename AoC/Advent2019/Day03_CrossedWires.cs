@@ -7,7 +7,7 @@ public class Day03 : IPuzzle
         Shortest
     }
 
-    static IEnumerable<IEnumerable<(int direction, int count)>> ParseData(string input)
+    private static IEnumerable<IEnumerable<(int direction, int count)>> ParseData(string input)
     {
         var lines = Util.Split(input, "\n");
         foreach (var line in lines)

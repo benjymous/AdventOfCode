@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2018;
 public class Day12 : IPuzzle
 {
-    struct State
+    private struct State
     {
         public State(HashSet<int> rules, int[] initial)
         {
@@ -11,7 +11,7 @@ public class Day12 : IPuzzle
         public State(HashSet<int> rules) => Rules = rules;
 
         public readonly HashSet<int> Rules;
-        readonly HashSet<int> data = [];
+        private readonly HashSet<int> data = [];
         public int Left { get; private set; } = 0;
         public int Right { get; private set; } = 0;
 
@@ -41,13 +41,13 @@ public class Day12 : IPuzzle
         public readonly long Score(long offset = 0) => data.Sum() + ((Left + offset) * data.Count);
     }
 
-    static int DecodeRule(string rule) => rule.Aggregate(0, (val, ch) => (val << 1) + (ch == '#' ? 1 : 0));
+    private static int DecodeRule(string rule) => rule.Aggregate(0, (val, ch) => (val << 1) + (ch == '#' ? 1 : 0));
 
     private static void ParseInput(string input, out State initialState)
     {
         var lines = Util.Split(input);
         var rules = lines.Skip(1).Select(line => line.Split(" => ")).Where(bits => bits[1][0] == '#').Select(bits => DecodeRule(bits[0])).ToHashSet();
-        initialState = new(rules, lines[0].Split(": ")[1].Select(ch => ch == '#' ? 1 : 0).ToArray());
+        initialState = new(rules, [.. lines[0].Split(": ")[1].Select(ch => ch == '#' ? 1 : 0)]);
     }
 
     public static long Solve(string input, long generations)

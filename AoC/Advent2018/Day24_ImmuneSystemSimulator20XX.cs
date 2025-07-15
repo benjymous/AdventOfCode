@@ -23,7 +23,7 @@ public class Day24 : IPuzzle
         public int AttackType = 1 << damageType-'a';
         public uint EffectivePower => UnitCount * AttackDamage;
 
-        readonly Dictionary<AttrType, int> Attributes = attributes.ToDictionary(a => a.Type, a => a.Elements);
+        private readonly Dictionary<AttrType, int> Attributes = attributes.ToDictionary(a => a.Type, a => a.Elements);
         public bool CheckAffinity(AttrType type, int attr) => Attributes.TryGetValue(type, out var hash) && (hash & attr)!=0;
 
         public uint EstimateDamage(Group attacker) => CheckAffinity(AttrType.immune, attacker.AttackType) ? 0 : (attacker.EffectivePower * (CheckAffinity(AttrType.weak, attacker.AttackType) ? 2u : 1u));
@@ -54,7 +54,7 @@ public class Day24 : IPuzzle
 
             if (groups.Sum(g => g.DoAttack()) == 0) break;
 
-            groups = groups.Where(g => g.UnitCount > 0).ToArray();
+            groups = [.. groups.Where(g => g.UnitCount > 0)];
         }
 
         return (groups.All(g => g.ImmuneSystem), groups.Sum(g => g.UnitCount));

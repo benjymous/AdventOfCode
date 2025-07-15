@@ -16,7 +16,7 @@ public class Day20 : IPuzzle
         }
     }
 
-    static IEnumerable<Particle> FilterCollisions(IEnumerable<Particle> particles) => particles.GroupBy(p => p.pos).Where(g => g.Count() == 1).SelectMany(x => x);
+    private static IEnumerable<Particle> FilterCollisions(IEnumerable<Particle> particles) => particles.GroupBy(p => p.pos).Where(g => g.Count() == 1).SelectMany(x => x);
 
     public static int Part1(Parser.AutoArray<Particle> particles)
     {
@@ -32,7 +32,7 @@ public class Day20 : IPuzzle
         while (true)
         {
             int lastCount = particles.Length;
-            particles = FilterCollisions(particles.Select(p => p.Step())).ToArray();
+            particles = [.. FilterCollisions(particles.Select(p => p.Step()))];
             if (particles.Length < lastCount) lastCol = 0;
 
             if (++lastCol > 10) return particles.Length;

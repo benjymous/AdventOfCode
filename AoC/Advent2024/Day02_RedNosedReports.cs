@@ -1,18 +1,19 @@
 ﻿namespace AoC.Advent2024;
 public class Day02 : IPuzzle
 {
-    public static bool AllDecrease(IEnumerable<int> vals)
-        => vals.OverlappingPairs().All(v => (v.first - v.second) is >= 1 and <= 3);
-    public static bool AllIncrease(IEnumerable<int> vals)
-        => vals.OverlappingPairs().All(v => (v.second - v.first) is >= 1 and <= 3);
+    public static bool StableIncline(IEnumerable<int> vals)
+    {
+        var incline = Math.Sign(vals.First() - vals.Skip(1).First());
+        return vals.OverlappingPairs().Select(v => v.first - v.second).All(diff => Math.Sign(diff) == incline && Math.Abs(diff) is >= 1 and <= 3);
+    }
 
     public static IEnumerable<IEnumerable<int>> DampenedCombos(int[] vals)
         => Enumerable.Range(0, vals.Length).Select(idx => DampenAt(vals, idx));
-    public static IEnumerable<int> DampenAt(IEnumerable<int> vals, int idx)
-        => vals.Index().Where(v => v.Index != idx).Select(v => v.Item);
+    public static IEnumerable<int> DampenAt(int[] vals, int idx)
+        => vals.Where((v, i) => i != idx);
 
-    public static bool Safe(IEnumerable<int> vals) => AllIncrease(vals) || AllDecrease(vals);
-    public static bool SafeIfDampened(int[] vals) => DampenedCombos(vals).Any(Safe);
+    public static bool Safe(IEnumerable<int> vals) => StableIncline(vals);
+    public static bool SafeIfDampened(int[] vals) => Safe(vals) || DampenedCombos(vals).Any(Safe);
 
     public static int Part1(string input) => Util.ParseNumberList<int>(input).Count(Safe);
 

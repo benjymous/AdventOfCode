@@ -4,7 +4,7 @@ public class Day25 : IPuzzle
     [Regex(@"(.+): (.+)")]
     public record class Connection(StringInt6 Element, [Split(" ")] StringInt6[] Connections);
 
-    class Map : IMap<int>
+    private class Map : IMap<int>
     {
         public Map(Parser.AutoArray<Connection> input)
         {
@@ -17,10 +17,10 @@ public class Day25 : IPuzzle
                 }
             }
         }
-        int StartNode = 0, EndNode = 0;
-        readonly Dictionary<int, HashSet<int>> connections = [];
+        private int StartNode = 0, EndNode = 0;
+        private readonly Dictionary<int, HashSet<int>> connections = [];
 
-        void AddConnection(int from, int to) => connections.GetOrCalculate(from, _ => []).Add(to);
+        private void AddConnection(int from, int to) => connections.GetOrCalculate(from, _ => []).Add(to);
         public IEnumerable<int> GetNeighbours(int location) => location == StartNode ? connections[location].Except([EndNode]) : connections[location];
 
         public int FindLoopLength(int start, int end) => this.FindPath(StartNode = start, EndNode = end).Length;

@@ -1,17 +1,17 @@
 ﻿namespace AoC.Advent2024;
 public class Day09 : IPuzzle
 {
-    class Filesystem
+    private class Filesystem
     {
         public Filesystem(string input)
         {
-            Queue<int> buffer = input.Replace("\n", "").Select(c => c.AsDigit()).ToQueue();
+            Queue<int> buffer = [.. input.Replace("\n", "").Select(c => c.AsDigit())];
 
             int blockCount = 0;
 
             while (buffer.TryDequeue(out int numBlocks))
             {
-                Files.Add(Enumerable.Range(blockCount, numBlocks).ToList());
+                Files.Add([.. Enumerable.Range(blockCount, numBlocks)]);
                 blockCount += numBlocks;
 
                 if (buffer.TryDequeue(out int numSpaces))
@@ -22,7 +22,7 @@ public class Day09 : IPuzzle
             }
         }
 
-        int GetContiguousSpace(int space)
+        private int GetContiguousSpace(int space)
         {
             for (int i = 0; i < FreeBlocks.Count - space; ++i)
             {
@@ -36,7 +36,7 @@ public class Day09 : IPuzzle
             return int.MaxValue;
         }
 
-        bool MoveFile(List<int> file)
+        private bool MoveFile(List<int> file)
         {
             foreach (var from in file.ToArray().Reverse())
             {
@@ -49,7 +49,7 @@ public class Day09 : IPuzzle
             return true;
         }
 
-        bool MoveFileContiguous(List<int> file)
+        private bool MoveFileContiguous(List<int> file)
         {
             int sizeNeeded = file.Count;
             var destination = GetContiguousSpace(sizeNeeded);
@@ -65,13 +65,13 @@ public class Day09 : IPuzzle
         {
             foreach (var blocks in ((IEnumerable<List<int>>)Files).Reverse())
             {
-                if (!(part.One() ? MoveFile(blocks) : MoveFileContiguous(blocks))) break;
+                if (!(part.One ? MoveFile(blocks) : MoveFileContiguous(blocks))) break;
             }
             return Files.Index().Sum(f => ((long)f.Index) * f.Item.Sum());
         }
 
-        readonly List<List<int>> Files = [];
-        readonly List<int> FreeBlocks = [];
+        private readonly List<List<int>> Files = [];
+        private readonly List<int> FreeBlocks = [];
     }
 
     public static long PerformDefrag(string input, QuestionPart part) => new Filesystem(input).Defrag(part);

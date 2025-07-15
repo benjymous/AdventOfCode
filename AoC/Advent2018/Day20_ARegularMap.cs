@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2018;
 public class Day20 : IPuzzle
 {
-    static readonly (int dx, int dy)[] Directions = [(0, -1), (1, 0), (0, 1), (-1, 0)];
+    private static readonly (int dx, int dy)[] Directions = [(0, -1), (1, 0), (0, 1), (-1, 0)];
 
     public class Cell
     {
@@ -10,7 +10,7 @@ public class Day20 : IPuzzle
         public int DoorDistance { get; set; } = int.MaxValue;
     }
 
-    static IEnumerable<char[]> SplitOptions(char[] input)
+    private static IEnumerable<char[]> SplitOptions(char[] input)
     {
         List<List<char>> parts = [];
 
@@ -41,7 +41,7 @@ public class Day20 : IPuzzle
         foreach (var p in parts) yield return [.. p, .. rest];
     }
 
-    static Dictionary<(int x, int y), Cell> BuildMap(string input)
+    private static Dictionary<(int x, int y), Cell> BuildMap(string input)
     {
         var map = new Dictionary<(int x, int y), Cell> { { (0, 0), new() { DoorDistance = 0 } } };
 

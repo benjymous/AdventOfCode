@@ -28,10 +28,8 @@ public class Day02Test
     public void DeerReport_01aTest(string input, bool increasing, bool decreasing)
     {
         var vals = Util.ExtractNumbers(input);
-        var inc = Day02.AllIncrease(vals);
-        var dec = Day02.AllDecrease(vals);
-        Assert.AreEqual(increasing, inc);
-        Assert.AreEqual(decreasing, dec);
+        var incline = Day02.StableIncline(vals);
+        Assert.AreEqual(increasing || decreasing, incline);
     }
 
     [TestCategory("Test")]

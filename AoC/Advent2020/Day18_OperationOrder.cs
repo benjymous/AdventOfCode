@@ -1,14 +1,14 @@
 ﻿namespace AoC.Advent2020;
 public class Day18 : IPuzzle
 {
-    enum Operation
+    private enum Operation
     {
         blank,
         add,
         multiply
     }
 
-    static long Solve(Queue<char> data, QuestionPart part)
+    private static long Solve(Queue<char> data, QuestionPart part)
     {
         var stack = new Stack<long>();
         long result = 0;
@@ -37,7 +37,7 @@ public class Day18 : IPuzzle
             }
             else if (ch == '*')
             {
-                if (part.One())
+                if (part.One)
                 {
                     op = Operation.multiply;
                 }
@@ -68,7 +68,7 @@ public class Day18 : IPuzzle
         return result;
     }
 
-    static Queue<char> ToQueue(string input) => [.. input.Replace(" ", "")];
+    private static Queue<char> ToQueue(string input) => [.. input.Replace(" ", "")];
 
     public static long Solve1(string input) => Solve(ToQueue(input), QuestionPart.Part1);
 

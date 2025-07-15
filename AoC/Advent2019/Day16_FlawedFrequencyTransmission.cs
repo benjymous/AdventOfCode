@@ -1,11 +1,11 @@
 ﻿namespace AoC.Advent2019;
 public class Day16 : IPuzzle
 {
-    static readonly int[] initialPattern = [0, 1, 0, -1];
+    private static readonly int[] initialPattern = [0, 1, 0, -1];
 
     public static int SequenceAt(int iter, int pos) => initialPattern[(pos + 1) / (iter + 1) % 4];
 
-    static IEnumerable<int> ApplyFFT(int[] input)
+    private static IEnumerable<int> ApplyFFT(int[] input)
     {
         for (int i = 0; i < input.Length; ++i)
         {
@@ -24,7 +24,7 @@ public class Day16 : IPuzzle
         var current = initial.Trim().Select(ch => ch.AsDigit()).ToArray();
         for (var i = 0; i < repeats; ++i)
         {
-            current = ApplyFFT(current).ToArray();
+            current = [.. ApplyFFT(current)];
         }
         return current.Select(c => (char)('0' + c)).AsString();
     }
@@ -33,7 +33,7 @@ public class Day16 : IPuzzle
     // All 1s in second half, past leading zeroes
     // based on algorithm here:
     // https://github.com/FirescuOvidiu/Advent-of-Code-2019/blob/master/Day%2016/day16-part2/day16-part2.cpp
-    static int[] ProcessSignal(int[] sequence)
+    private static int[] ProcessSignal(int[] sequence)
     {
         var newSequence = new int[sequence.Length];
         int sizeSequence = sequence.Length;
@@ -60,7 +60,7 @@ public class Day16 : IPuzzle
     {
         var initial = string.Concat(Enumerable.Repeat(input.Trim(), 10000)).Select(c => (int)c);
 
-        var signal = ProcessSignal(initial.ToArray());
+        var signal = ProcessSignal([.. initial]);
 
         int messageOffset = int.Parse(input[..7]);
 

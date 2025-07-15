@@ -12,7 +12,7 @@ public class Day13 : IPuzzle
         }
     }
 
-    static (double A, double B) SolveLinearEquations(
+    private static (double A, double B) SolveLinearEquations(
         (double x1, double x2, double y1, double y2) coefficients,
         (double x3, double y3) constants)
     {

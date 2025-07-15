@@ -1,11 +1,11 @@
 ﻿namespace AoC.Advent2019;
 public class Day08 : IPuzzle
 {
-    readonly static int Width = 25, Height = 6;
+    private static readonly int Width = 25, Height = 6;
 
-    class Image(string data)
+    private class Image(string data)
     {
-        readonly int[][] groups = data.Trim().Select(ch => ch.AsDigit()).Chunk(Width * Height).ToArray();
+        private readonly int[][] groups = [.. data.Trim().Select(ch => ch.AsDigit()).Chunk(Width * Height)];
 
         public int GetChecksum()
         {

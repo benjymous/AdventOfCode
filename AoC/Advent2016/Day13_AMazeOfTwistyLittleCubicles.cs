@@ -3,15 +3,15 @@ public class Day13 : IPuzzle
 {
     public class CubicleMap(string seed) : IMap<(int x, int y)>
     {
-        readonly int Seed = int.Parse(seed);
+        private readonly int Seed = int.Parse(seed);
 
-        readonly (int dx, int dy)[] Neighbours = [(-1, 0), (1, 0), (0, 1), (0, -1)];
+        private readonly (int dx, int dy)[] Neighbours = [(-1, 0), (1, 0), (0, 1), (0, -1)];
 
         public virtual IEnumerable<(int x, int y)> GetNeighbours((int x, int y) center) => Neighbours.Select(n => center.OffsetBy(n)).Where(IsValidNeighbour);
 
-        bool IsValidNeighbour((int x, int y) pt) => pt.x >= 0 && pt.y >= 0 && Memoize(pt, _ => IsOpen(pt.x, pt.y));
+        private bool IsValidNeighbour((int x, int y) pt) => pt.x >= 0 && pt.y >= 0 && Memoize(pt, _ => IsOpen(pt.x, pt.y));
 
-        bool IsOpen(int x, int y) => (Seed + (x * x) + (3 * x) + (2 * x * y) + y + (y * y)).CountBits() % 2 == 0;
+        private bool IsOpen(int x, int y) => (Seed + (x * x) + (3 * x) + (2 * x * y) + y + (y * y)).CountBits() % 2 == 0;
 
         public int Heuristic((int x, int y) location1, (int x, int y) location2) => location1.Distance(location2);
     }

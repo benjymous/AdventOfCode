@@ -12,7 +12,7 @@ public class Day03 : IPuzzle
 
             var filter = (count1 >= current.Length - count1) ? c1 : c2;
 
-            current = current.Where(l => l[i] == filter).ToArray();
+            current = [.. current.Where(l => l[i] == filter)];
 
             if (current.Length == 1) break;
         }

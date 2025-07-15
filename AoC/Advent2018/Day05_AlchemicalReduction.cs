@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2018;
 public class Day05 : IPuzzle
 {
-    static int Reduce(IEnumerable<char> inp)
+    private static int Reduce(IEnumerable<char> inp)
     {
         var input = inp.ToList();
         bool replaced;

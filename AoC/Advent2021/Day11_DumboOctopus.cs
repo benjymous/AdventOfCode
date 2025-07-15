@@ -1,13 +1,13 @@
 ﻿namespace AoC.Advent2021;
 public class Day11 : IPuzzle
 {
-    class State(string input)
+    private class State(string input)
     {
         public int[,] Cells { get; private set; } = Util.ParseMatrix<int>(input);
 
-        static readonly (int dx, int dy)[] directions = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)];
+        private static readonly (int dx, int dy)[] directions = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)];
 
-        static IEnumerable<(int x, int y)> Neighbours((int x, int y) pos) => from dir in directions select (pos.x + dir.dx, pos.y + dir.dy);
+        private static IEnumerable<(int x, int y)> Neighbours((int x, int y) pos) => from dir in directions select (pos.x + dir.dx, pos.y + dir.dy);
 
         public int Step()
         {

@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2016;
 public class Day16 : IPuzzle
 {
-    static readonly bool[] pad = [false];
+    private static readonly bool[] pad = [false];
 
     public static IEnumerable<bool> Fill(bool[] input, int size)
     {
@@ -17,7 +17,7 @@ public class Day16 : IPuzzle
         return result.Take(size).ToArray();
     }
 
-    public static bool[] Input(IEnumerable<char> input) => input.Select(c => c == '1').ToArray();
+    public static bool[] Input(IEnumerable<char> input) => [.. input.Select(c => c == '1')];
 
     public static string Output(IEnumerable<bool> output) => output.Select(b => b ? '1' : '0').AsString();
 

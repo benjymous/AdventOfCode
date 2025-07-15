@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2019;
 public class Day20 : IPuzzle
 {
-    class PortalMap
+    private class PortalMap
     {
         public PortalMap(string[] lines)
         {
@@ -9,7 +9,7 @@ public class Day20 : IPuzzle
             var partPortals = new Dictionary<int, char>();
             var (width, height) = (lines[0].Length, lines.Length);
 
-            WalkableSpaces = lines.Chars().Where(v => v.c == '.').Select(v => GetKey(v.x, v.y)).ToHashSet();
+            WalkableSpaces = [.. lines.Chars().Where(v => v.c == '.').Select(v => GetKey(v.x, v.y))];
             foreach (var (x, y, c) in lines.Chars().Where(v => v.c is >= 'A' and <= 'Z'))
             {
                 if (partPortals.TryGetValue(GetKey(x - 1, y), out var leftNeighbour))
@@ -33,14 +33,14 @@ public class Day20 : IPuzzle
             (Start, End) = (portals.OrderBy(p => p.name).First().location, portals.OrderBy(p => p.name).Last().location);
         }
 
-        static int GetKey(int x, int y) => x + (y << 8);
+        private static int GetKey(int x, int y) => x + (y << 8);
 
-        readonly Dictionary<int, (int destination, int travelDirection)> Portals = [];
-        readonly HashSet<int> WalkableSpaces = [];
+        private readonly Dictionary<int, (int destination, int travelDirection)> Portals = [];
+        private readonly HashSet<int> WalkableSpaces = [];
 
         public readonly int Start, End, MaxDepth = 25;
 
-        static readonly int[] neighbours = [-1, +1, -(1 << 8), 1 << 8];
+        private static readonly int[] neighbours = [-1, +1, -(1 << 8), 1 << 8];
         public IEnumerable<int> GetNeighbours(int key) => neighbours.Select(offset => key + offset).Where(WalkableSpaces.Contains);
 
         public IEnumerable<int> GetNeighbours1(int location)
@@ -63,7 +63,7 @@ public class Day20 : IPuzzle
     public static int Solve(string input, QuestionPart part)
     {
         var map = new PortalMap(Util.Split(input));
-        Func<int, IEnumerable<int>> getNeighbours = part.One() ? map.GetNeighbours1 : map.GetNeighbours2;
+        Func<int, IEnumerable<int>> getNeighbours = part.One ? map.GetNeighbours1 : map.GetNeighbours2;
 
         return Solver<(int location, int distance)>.Solve((map.End, 0), (entry, solver) =>
         {

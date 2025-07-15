@@ -8,18 +8,18 @@ public class Day22 : IPuzzle
         [Regex(@"(\d+),(\d+),(\d+)~(\d+),(\d+),(\d+)")]
         public Brick(int x1, int y1, int z1, int x2, int y2, int z2)
         {
-            _Cubes = Util.Range3DInclusive<int, Pack8_8_16>((z1, z2, y1, y2, x1, x2)).ToArray();
-            _Bottom = _Cubes.Where(c => c.Z == z1).Select(c => c - (0, 0, 1)).ToArray();
+            _Cubes = [.. Util.Range3DInclusive<int, Pack8_8_16>((z1, z2, y1, y2, x1, x2))];
+            _Bottom = [.. _Cubes.Where(c => c.Z == z1).Select(c => c - (0, 0, 1))];
             Lowest = z1;
         }
 
-        readonly PackedPos[] _Cubes = [], _Bottom = [];
+        private readonly PackedPos[] _Cubes = [], _Bottom = [];
         public int Lowest = 0, OffsetZ = 0;
         public IEnumerable<PackedPos> Cubes => _Cubes.Select(c => c + (0, 0, OffsetZ));
 
         public HashSet<Brick> Supporting = [], SupportedBy = [];
 
-        bool Stable = false;
+        private bool Stable = false;
 
         public bool Update(Dictionary<PackedPos, Brick> index)
         {
@@ -68,7 +68,7 @@ public class Day22 : IPuzzle
     private static bool IsFreelyRemovable(Brick brick) => brick.Supporting.Count == 0 || !brick.Supporting.Any(s => s.SupportedBy.Count == 1);
     private static bool WillCauseReaction(Brick brick) => !IsFreelyRemovable(brick);
 
-    static int CountWillFall(Brick brick)
+    private static int CountWillFall(Brick brick)
     {
         HashSet<Brick> fallen = [];
         var active = new Queue<Brick>() { brick };

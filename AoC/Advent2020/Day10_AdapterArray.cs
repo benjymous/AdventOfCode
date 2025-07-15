@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2020;
 public class Day10 : IPuzzle
 {
-    static List<int> GetValues(string input)
+    private static List<int> GetValues(string input)
     {
         var values = Util.ParseNumbers<int>(input).Order().ToList();
         return [0, .. values, values[^1] + 3];
@@ -23,7 +23,7 @@ public class Day10 : IPuzzle
         return diff1 * diff3;
     }
 
-    static Dictionary<int, long> GetCombinations(IEnumerable<int> values)
+    private static Dictionary<int, long> GetCombinations(IEnumerable<int> values)
     {
         var results = new Dictionary<int, long> { { 0, 1 } };
 

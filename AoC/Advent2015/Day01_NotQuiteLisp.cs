@@ -13,7 +13,7 @@ public class Day01 : IPuzzle
             if (c == '(') count++;
             if (c == ')') count--;
 
-            if (part.Two() && count == -1) return pos;
+            if (part.Two && count == -1) return pos;
         }
 
         return count;

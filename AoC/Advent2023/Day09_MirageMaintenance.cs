@@ -9,7 +9,7 @@ public class Day09 : IPuzzle
             : last + GetNext([.. sequence.Windows(2).Select(pair => pair[1] - pair[0])]);
     }
 
-    public static int GetPrev(int[] sequence) => GetNext(sequence.Reverse().ToArray());
+    public static int GetPrev(int[] sequence) => GetNext([.. sequence.Reverse()]);
 
     public static int Part1(string input) => Util.ParseNumberList<int>(input).Sum(GetNext);
 

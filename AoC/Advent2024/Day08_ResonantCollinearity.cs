@@ -8,11 +8,11 @@ public class Day08 : IPuzzle
         HashSet<(int, int)> nodes = [];
 
         foreach (var pair in map.GroupBy(kvp => kvp.Value)
-            .SelectMany(group => group.Select(kvp => kvp.Key).Pairs().Where(pair => pair.Item1 != pair.Item2)))
+            .SelectMany(group => group.Select(kvp => kvp.Key).Pairs()))
         {
             var distance = pair.Item1.Subtract(pair.Item2);
 
-            if (part.One())
+            if (part.One)
             {
                 var newPos = pair.Item1.OffsetBy(distance);
                 if (map.IsInside(newPos))

@@ -4,9 +4,9 @@ public class Day05 : IPuzzle
 {
     public class BinSearch(int min, int max)
     {
-        int Min = min, Max = max;
+        private int Min = min, Max = max;
 
-        int Range => Max - Min + 1;
+        private int Range => Max - Min + 1;
 
         public void Lower() => Max -= Math.Max(1, Range / 2);
         public void Upper() => Min += Math.Max(1, Range / 2);
@@ -45,7 +45,7 @@ public class Day05 : IPuzzle
         public readonly int ID;
     }
 
-    static HashSet<int> ParsePasses(string input) => Memoize(input, _ => Parser.Parse<BoardingPass>(input).Select(p => p.ID).ToHashSet());
+    private static HashSet<int> ParsePasses(string input) => Memoize(input, _ => Parser.Parse<BoardingPass>(input).Select(p => p.ID).ToHashSet());
 
     public static int Part1(string input) => ParsePasses(input).Max();
 

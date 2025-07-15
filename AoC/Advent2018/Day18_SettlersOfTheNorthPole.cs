@@ -1,9 +1,9 @@
 ﻿namespace AoC.Advent2018;
 public class Day18 : IPuzzle
 {
-    const char OPEN = '.';
-    const char TREES = '|';
-    const char LUMBERYARD = '#';
+    private const char OPEN = '.';
+    private const char TREES = '|';
+    private const char LUMBERYARD = '#';
 
     public static char Step(char current, IEnumerable<char> neighbours) => current switch
     {
@@ -25,7 +25,7 @@ public class Day18 : IPuzzle
 
     public static int CalcHash(ref char[,] state) => state.Values().GetCombinedHashCode();
 
-    static int Count(char type, ref char[,] state) => state.Values().Count(c => c == type);
+    private static int Count(char type, ref char[,] state) => state.Values().Count(c => c == type);
 
     public static int Run(string input, int iterations)
     {

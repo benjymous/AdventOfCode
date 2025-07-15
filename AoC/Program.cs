@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace AoC
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
 
 #if DEBUG

@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2020;
 public class Day15 : IPuzzle
 {
-    class Entry(int v1 = -1, int v2 = -1)
+    private class Entry(int v1 = -1, int v2 = -1)
     {
         public int Push(int v)
         {
@@ -10,7 +10,7 @@ public class Day15 : IPuzzle
         }
     }
 
-    class Storage
+    private class Storage
     {
         public Storage(string input, int reserve)
         {
@@ -18,7 +18,7 @@ public class Day15 : IPuzzle
             Util.ParseNumbers<int>(input).ForEach(i => AddNumber(i));
         }
 
-        (int, int) AddNumber(int val) => (val, (values[val] ??= new()).Push(++Count));
+        private (int, int) AddNumber(int val) => (val, (values[val] ??= new()).Push(++Count));
 
         public int Populate(int required)
         {
@@ -32,7 +32,7 @@ public class Day15 : IPuzzle
 
         public int Count { get; private set; } = 0;
 
-        readonly Entry[] values;
+        private readonly Entry[] values;
     }
 
     public static int Solve(string input, int count) => new Storage(input, count).Populate(count);

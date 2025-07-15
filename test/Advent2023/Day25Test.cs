@@ -24,14 +24,14 @@ frs: qnr lhk lsr".Replace("\r", "");
 
     [TestCategory("Test")]
     [TestMethod]
-    public void _01Test()
+    public void Connections_01Test()
     {
         Assert.AreEqual(54, Day25.Part1(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void Connections_Part1_Regression()
     {
         Assert.AreEqual(602151, Day25.Part1(input));
     }

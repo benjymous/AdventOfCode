@@ -3,16 +3,16 @@ public class Day23 : IPuzzle
 {
     public record class CPU(string Input, int[] Registers)
     {
-        int programCounter = 0;
-        readonly Action<CPU>[] program = Parser.Factory<Action<CPU>, CPU>(Input).ToArray();
+        private int programCounter = 0;
+        private readonly Action<CPU>[] program = [.. Parser.Factory<Action<CPU>, CPU>(Input)];
 
-        [Regex(@"jmp ([\+|\-]\d+)")] public static Action<CPU> InstrJmp(int jump) => (CPU c) => c.programCounter += jump - 1;
-        [Regex(@"jio (.), \+?(\-?\d+)")] public static Action<CPU> InstrJio(char reg, int jump) => (CPU c) => c.programCounter += (c.Registers[reg - 'a'] == 1) ? jump - 1 : 0;
-        [Regex(@"jie (.), ([\+|\-]\d+)")] public static Action<CPU> InstrJie(char reg, int jump) => (CPU c) => c.programCounter += ((c.Registers[reg - 'a'] % 2) == 0) ? jump - 1 : 0;
+        [Regex(@"jmp ([\+|\-]\d+)")] public static Action<CPU> InstrJmp(int jump) => c => c.programCounter += jump - 1;
+        [Regex(@"jio (.), \+?(\-?\d+)")] public static Action<CPU> InstrJio(char reg, int jump) => c => c.programCounter += (c.Registers[reg - 'a'] == 1) ? jump - 1 : 0;
+        [Regex(@"jie (.), ([\+|\-]\d+)")] public static Action<CPU> InstrJie(char reg, int jump) => c => c.programCounter += ((c.Registers[reg - 'a'] % 2) == 0) ? jump - 1 : 0;
 
-        [Regex(@"inc (.)")] public static Action<CPU> InstrInc(char reg) => (CPU c) => c.Registers[reg - 'a']++;
-        [Regex(@"tpl (.)")] public static Action<CPU> InstrTpl(char reg) => (CPU c) => c.Registers[reg - 'a'] *= 3;
-        [Regex(@"hlf (.)")] public static Action<CPU> InstrHlf(char reg) => (CPU c) => c.Registers[reg - 'a'] /= 2;
+        [Regex(@"inc (.)")] public static Action<CPU> InstrInc(char reg) => c => c.Registers[reg - 'a']++;
+        [Regex(@"tpl (.)")] public static Action<CPU> InstrTpl(char reg) => c => c.Registers[reg - 'a'] *= 3;
+        [Regex(@"hlf (.)")] public static Action<CPU> InstrHlf(char reg) => c => c.Registers[reg - 'a'] /= 2;
 
         public int Run()
         {

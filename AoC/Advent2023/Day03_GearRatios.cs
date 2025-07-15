@@ -21,7 +21,7 @@ public class Day03 : IPuzzle
         }
     }
 
-    static int Seek(Dictionary<(int x, int y), char> numbers, int x, int y, int direction) => Util.Sequence(x, direction).First(x => !(numbers.TryGetValue((x, y), out var v) && v.IsDigit())) - direction;
+    private static int Seek(Dictionary<(int x, int y), char> numbers, int x, int y, int direction) => Util.Sequence(x, direction).First(x => !(numbers.TryGetValue((x, y), out var v) && v.IsDigit())) - direction;
 
     private static int FindNumber((int x, int y) value, Dictionary<(int x, int y), char> numbers)
     {

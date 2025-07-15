@@ -4,14 +4,14 @@ public class Day21 : IPuzzle
     public class DeterministicDice
     {
         public int Rolls { get; private set; } = 0;
-        int Roll() => (Rolls++ % 100) + 1;
+        private int Roll() => (Rolls++ % 100) + 1;
 
         public int Roll3() => Roll() + Roll() + Roll();
     }
 
-    static readonly (int roll, int weight)[] weights = [(3, 1), (4, 3), (5, 6), (6, 7), (7, 6), (8, 3), (9, 1)];
+    private static readonly (int roll, int weight)[] weights = [(3, 1), (4, 3), (5, 6), (6, 7), (7, 6), (8, 3), (9, 1)];
 
-    static (long p1Won, long p2Won) DoStep(int p1Pos, int p2Pos, int p1Score = 0, int p2Score = 0, int turn = 0, Dictionary<int, (long, long)> cache = null)
+    private static (long p1Won, long p2Won) DoStep(int p1Pos, int p2Pos, int p1Score = 0, int p2Score = 0, int turn = 0, Dictionary<int, (long, long)> cache = null)
     {
         if (p1Score >= 21) return (1, 0);
         if (p2Score >= 21) return (0, 1);

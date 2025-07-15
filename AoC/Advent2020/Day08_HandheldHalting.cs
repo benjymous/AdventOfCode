@@ -2,13 +2,13 @@
 namespace AoC.Advent2020;
 public class Day08 : IPuzzle
 {
-    enum HaltType
+    private enum HaltType
     {
         Loop,
         Halt,
     }
 
-    static HaltType CheckHalt(Elf80 cpu, ref HashSet<int> seen, ref int cyclesTested)
+    private static HaltType CheckHalt(Elf80 cpu, ref HashSet<int> seen, ref int cyclesTested)
     {
         seen.Add(0);
         int pc = 0;

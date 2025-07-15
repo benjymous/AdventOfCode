@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2016;
 public class Day19 : IPuzzle
 {
-    class Elf(int i, int n)
+    private class Elf(int i, int n)
     {
         public int id = i;
         public int numPresents = n;
@@ -11,7 +11,7 @@ public class Day19 : IPuzzle
         public override string ToString() => $"Elf {id} with {numPresents.MultipleWithS("present")}";
     }
 
-    static Circle<Elf> CreateCircle(int numElves)
+    private static Circle<Elf> CreateCircle(int numElves)
     {
         Circle<Elf> start = new(new Elf(1, 1));
         var node = start;

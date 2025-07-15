@@ -45,11 +45,11 @@ namespace AoC.Advent2016.BunniTek
 
     public class BunnyCPU(Instruction[] program)
     {
-        readonly Instruction[] Instructions = [.. program];
-        readonly int[] Registers = [0, 0, 0, 0];
+        private readonly Instruction[] Instructions = [.. program];
+        private readonly int[] Registers = [0, 0, 0, 0];
 
-        System.Diagnostics.Stopwatch sw;
-        long CycleCount = 0;
+        private System.Diagnostics.Stopwatch sw;
+        private long CycleCount = 0;
 
         public Func<int, bool> Output = null;
 
@@ -63,7 +63,7 @@ namespace AoC.Advent2016.BunniTek
         public int Get(Value source) => source.IsInt ? source.IntVal : Registers[source.IntVal];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        bool GetInstr(int idx, out Instruction instr) => (instr = idx >= 0 && idx < Instructions.Length ? Instructions[idx] : null) != null;
+        private bool GetInstr(int idx, out Instruction instr) => (instr = idx >= 0 && idx < Instructions.Length ? Instructions[idx] : null) != null;
 
         public void Run()
         {

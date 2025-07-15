@@ -55,6 +55,13 @@
             return num;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ModWrap<T>(this ref T num, T rhs) where T : struct, IBinaryInteger<T>
+        {
+            num %= rhs;
+            while (num < T.Zero) num += rhs;
+        }
+
         public static IEnumerable<T> BinarySequenceBigEndian<T>(this T v, T start) where T : IBinaryInteger<T>
         {
             for (T i = start; i > T.Zero; i >>= 1)

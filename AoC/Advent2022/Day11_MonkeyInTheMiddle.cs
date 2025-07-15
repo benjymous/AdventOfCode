@@ -26,8 +26,8 @@ public class Day11 : IPuzzle
         readonly public int Id, Divisor;
         public int Score;
         readonly public List<int> Items;
-        readonly Func<long, long> Operation;
-        readonly int TargetIfTrue, TargetIfFalse;
+        private readonly Func<long, long> Operation;
+        private readonly int TargetIfTrue, TargetIfFalse;
 
         public void DoRound(int reduceWorry, long filter, Monkey[] others)
         {

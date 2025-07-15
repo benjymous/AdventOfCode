@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2016;
 public class Day07 : IPuzzle
 {
-    static bool HasAbba(string address)
+    private static bool HasAbba(string address)
     {
         bool hasAbba = false;
         int bracketCount = 0;
@@ -25,7 +25,7 @@ public class Day07 : IPuzzle
         return hasAbba;
     }
 
-    static bool HasAbaBab(string address)
+    private static bool HasAbaBab(string address)
     {
         int bracketCount = 0;
 

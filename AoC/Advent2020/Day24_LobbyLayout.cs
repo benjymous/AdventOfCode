@@ -2,9 +2,9 @@
 public partial class Day24 : IPuzzle
 {
     [GeneratedRegex("(ne|nw|se|sw|e|w)")] private static partial Regex DirectionSplitter();
-    static IEnumerable<string> SplitCommands(string line) => DirectionSplitter().Split(line).WithoutNullOrWhiteSpace();
+    private static IEnumerable<string> SplitCommands(string line) => DirectionSplitter().Split(line).WithoutNullOrWhiteSpace();
 
-    static HexVectorPointy FollowPath(string path) => SplitCommands(path).Aggregate(new HexVectorPointy(), (prev, step) => prev.TranslateHex(step));
+    private static HexVectorPointy FollowPath(string path) => SplitCommands(path).Aggregate(new HexVectorPointy(), (prev, step) => prev.TranslateHex(step));
 
     public class State
     {
@@ -67,7 +67,7 @@ public partial class Day24 : IPuzzle
         return s1.Cells.Count;
     }
 
-    static HashSet<HexVectorPointy> GetInitialState(string input) => input.Trim().Split("\n").Select(line => FollowPath(line)).GroupBy(v => v).Where(group => group.Count() % 2 == 1).Select(group => group.First()).ToHashSet();
+    private static HashSet<HexVectorPointy> GetInitialState(string input) => [.. input.Trim().Split("\n").Select(line => FollowPath(line)).GroupBy(v => v).Where(group => group.Count() % 2 == 1).Select(group => group.First())];
 
     public static int Part1(string input) => GetInitialState(input).Count;
 

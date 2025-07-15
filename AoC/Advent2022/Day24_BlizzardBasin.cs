@@ -1,9 +1,9 @@
 ﻿namespace AoC.Advent2022;
 public class Day24 : IPuzzle
 {
-    static PackedPos32 ToDirection(char dir) => dir switch { '>' => (1, 0), '<' => (-1, 0), '^' => (0, -1), 'v' => (0, 1), _ => 0 };
+    private static PackedPos32 ToDirection(char dir) => dir switch { '>' => (1, 0), '<' => (-1, 0), '^' => (0, -1), 'v' => (0, 1), _ => 0 };
 
-    static readonly PackedPos32[] Directions = [(0, -1), (1, 0), (0, 1), (-1, 0), 0];
+    private static readonly PackedPos32[] Directions = [(0, -1), (1, 0), (0, 1), (-1, 0), 0];
 
     private static int Solve(string input, QuestionPart part)
     {
@@ -27,14 +27,14 @@ public class Day24 : IPuzzle
 
         var (start, end) = ((1, 0), (w, h + 1));
 
-        Queue<PackedPos32> waypoints = part.One() ? [end] : [end, start, end];
+        Queue<PackedPos32> waypoints = part.One ? [end] : [end, start, end];
         HashSet<PackedPos32> generation = [start];
 
         for (int step = 0; ; ++step)
         {
-            generation = generation.SelectMany(p => Directions.Select(dir => p + dir))
+            generation = [.. generation.SelectMany(p => Directions.Select(dir => p + dir))
                 .Where(newPos => !blizStepsH[step % w].Contains(newPos) && !blizStepsV[step % h].Contains(newPos) && !walls.Contains(newPos))
-                .OrderBy(p => Math.Abs(p.X - waypoints.Peek().X)).Take(50).ToHashSet();
+                .OrderBy(p => Math.Abs(p.X - waypoints.Peek().X)).Take(50)];
 
             if (generation.Contains(waypoints.Peek()))
             {
@@ -51,7 +51,7 @@ public class Day24 : IPuzzle
             var pos = blizzards[i].pos + blizzards[i].dir;
             blizzards[i].pos = (((pos.X + w - 1) % w) + 1, ((pos.Y + h - 1) % h) + 1);
         }
-        return blizzards.Select(b => b.pos).ToHashSet();
+        return [.. blizzards.Select(b => b.pos)];
     }
 
     public static int Part1(string input) => Solve(input, QuestionPart.Part1);

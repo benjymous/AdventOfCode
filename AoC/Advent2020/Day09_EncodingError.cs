@@ -1,11 +1,11 @@
 ﻿namespace AoC.Advent2020;
 public class Day09 : IPuzzle
 {
-    static bool ValidateNumber(int index, int preamble, long[] numbers) =>
+    private static bool ValidateNumber(int index, int preamble, long[] numbers) =>
         numbers.Skip(index - preamble).Take(preamble)
             .Pairs().Any(p => p.Item1 + p.Item2 == numbers[index]);
 
-    static long FindInvalid(long[] numbers, int preamble) =>
+    private static long FindInvalid(long[] numbers, int preamble) =>
         Enumerable.Range(preamble, numbers.Length)
             .Where(i => !ValidateNumber(i, preamble, numbers))
             .Select(i => numbers[i]).First();

@@ -11,7 +11,7 @@ public class Day21Test
 
     [TestCategory("Test")]
     [DataTestMethod]
-    public void _01Test()
+    public void KeypadChain_01Test()
     {
         Assert.AreEqual(126384, Day21.Part1(test));
     }
@@ -31,29 +31,21 @@ public class Day21Test
     [DataRow("083A", 66 * 83)]
 
     [DataTestMethod]
-    public void _01aTest(string input, int expected)
+    public void KeypadScoreTest(string input, int expected)
     {
         Assert.AreEqual(expected, Day21.GetScore(input));
     }
 
-    [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _02Test(string input, int expected)
-    {
-        Assert.AreEqual(expected, Day21.Part2(input));
-    }
-
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void KeypadChain_Part1_Regression()
     {
         Assert.AreEqual(177814, Day21.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void KeypadChain_Part2_Regression()
     {
         Assert.AreEqual(220493992841852, Day21.Part2(input));
     }

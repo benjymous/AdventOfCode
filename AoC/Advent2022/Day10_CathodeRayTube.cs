@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2022;
 public class Day10 : IPuzzle
 {
-    class Factory
+    private class Factory
     {
         [Regex("noop")] public static int Noop() => 0;
         [Regex("addx (.+)")] public static int Addx(int v) => v;

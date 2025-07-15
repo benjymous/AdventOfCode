@@ -1,83 +1,44 @@
 ﻿namespace AoC.Advent2024;
 public class Day24 : IPuzzle
 {
-    static Dictionary<string, int> GetInputs(string section)
+    private static Dictionary<string, bool> GetInputs(string section)
     {
-        Dictionary<string, int> values = [];
+        Dictionary<string, bool> values = [];
 
         foreach (var line in Util.Split(section).WithoutNullOrWhiteSpace())
         {
             var parts = line.Split(": ");
-            values[parts[0]] = parts[1] == "1" ? 1 : 0;
+            values[parts[0]] = parts[1] == "1";
         }
 
         return values;
     }
 
-    record class Op(string in1, string in2, string op, string res);
-
-    static string Swap(string from, string to, string current)
+    [Regex(@"(...) (.+) (...) -> (...)")]
+    private record class Action(string In1, string Op, string In2, string Res)
     {
-        if (current == from) return to;
-        else if (current == to) return from;
-        else return current;
+        public bool HasInput(string a) => In1 == a || In2 == a;
+        public bool HasInputs(string a, string b) => (In1 == a && In2 == b) || (In2 == a && In1 == b);
     }
 
-    static Op DoSwaps(HashSet<(string from, string to)> subs, Op op)
-    {
-        foreach (var (from, to) in subs)
-        {
-            op = new(op.in1, op.in2, op.op, Swap(from, to, op.res));
-        }
-        return op;
-    }
+    private static long GetZResult(Dictionary<string, bool> values)
+        => values.Where(kvp => kvp.Key.StartsWith('z')).Aggregate(0L, (a, b) => a |= (b.Value ? 1L : 0) << int.Parse(b.Key[1..]));
 
-    static IEnumerable<Op> GetActions(string section)
-    {
-        foreach (var line in Util.Split(section).WithoutNullOrWhiteSpace())
-        {
-            var parts1 = line.Split(" -> ");
-            var parts2 = parts1[0].Split(" ");
-
-            string[] toSort = [(parts2[0]), (parts2[2])];
-            var sorted = toSort.Order().ToArray();
-
-            yield return new Op(sorted[0], sorted[1], parts2[1], parts1[1]);
-        }
-    }
-
-    static long GetZResult(Dictionary<string, int> values)
-    {
-        var zValues = values.Where(kvp => kvp.Key.StartsWith('z'));
-
-        long bitResult = 0;
-        foreach (var b in zValues)
-        {
-            var idx = int.Parse(b.Key.Substring(1));
-            long bit = (long)b.Value << idx;
-            bitResult |= bit;
-        }
-
-        return bitResult;
-    }
-
-    static long RunAdder(Dictionary<string, int> values, IEnumerable<Op> actions)
+    private static long RunAdder(Dictionary<string, bool> values, IEnumerable<Action> actions)
     {
         var queue = actions.ToQueue();
 
         while (queue.TryDequeue(out var entry))
         {
-            if (values.TryGetValue(entry.in1, out var in1) && values.TryGetValue(entry.in2, out var in2))
+            if (values.TryGetValue(entry.In1, out var in1) && values.TryGetValue(entry.In2, out var in2))
             {
-                var result = entry.op switch
+                values[entry.Res] = entry.Op switch
                 {
                     "AND" => in1 & in2,
                     "OR" => in1 | in2,
                     "XOR" => in1 ^ in2,
                     _ => throw new InvalidOperationException(),
                 };
-
-                values[entry.res] = result;
             }
             else
             {
@@ -88,12 +49,10 @@ public class Day24 : IPuzzle
         return GetZResult(values);
     }
 
-    static (string, string) Sort((string a, string b) v) => v.a.CompareTo(v.b) < 0 ? (v.a, v.b) : (v.b, v.a);
-
     public static long Part1(string input)
     {
         var sections = input.SplitSections();
-        return RunAdder(GetInputs(sections[0]), GetActions(sections[1]));
+        return RunAdder(GetInputs(sections[0]), Parser.Parse<Action>(sections[1]));
     }
 
     public static string Part2(string input)
@@ -101,99 +60,30 @@ public class Day24 : IPuzzle
         var sections = input.SplitSections();
 
         var testValues = GetInputs(sections[0]);
-        var actions = GetActions(sections[1]);
 
-        HashSet<(string from, string to)> fullSubs = [];
+        var actions = Parser.Parse<Action>(sections[1]).Where(a => a.Op == "XOR").ToArray();
 
-        List<Op[]> validated = [];
-    
-        var remaining = actions.ToHashSet();
+        List<string> subs = [];
 
-        HashSet<string> keys = testValues.Keys.Where(k => k.StartsWith('x')).ToHashSet();
+        HashSet<string> keys = [.. testValues.Keys.Where(k => k.StartsWith('x'))];
         keys.Remove("x00"); // this one is a half adder, and seems to be ok
 
-        while (true)
+        foreach (var (x, y, z) in keys.Select(x => (x, x.Replace("x", "y"), x.Replace("x", "z"))))
         {
-            List<Op[]> invalid = [];
+            var xor1 = actions.Single(a => a.HasInputs(x, y));
+            var xor2 = actions.Single(v => v.HasInput(xor1.Res) || v.Res == z);
 
-            HashSet<(string from, string to)> allSubs = [];
-
-            foreach (var key in keys)
+            if (xor2.Res != z)
             {
-                var op1 = FindOperation(actions, key, key.Replace("x", "y"), "XOR");
-                var op2 = FindOperation(actions, key, key.Replace("x", "y"), "AND");
-
-                var mid1 = op1.res;
-                var mid2 = op2.res;
-
-                var op3 = FindOperation(actions, mid1, "", "XOR", key.Replace("x", "z"));
-                var op4 = FindOperation(actions, op3.in1, op3.in2, "AND");
-
-                var mid3 = op4?.res;
-
-                var op5 = FindOperation(actions, mid2, mid3, "OR");
-
-                Op[] set = [op1, op2, op3, op4, op5];
-
-                var (isValid, subs) = Validate(op1, op2, op3, op4, op5);
-
-                if (isValid)
-                {
-                    validated.Add(set);
-                    remaining.RemoveRange(set);
-                    keys.Remove(key);
-                }
-                else
-                {
-                    invalid.Add(set);
-                    allSubs.UnionWith(subs.Select(Sort));
-                }
+                subs.AddRange(z, xor2.Res);
             }
-
-            if (invalid.Count == 0 || allSubs.Count == 0) break;
-
-            fullSubs.UnionWith(allSubs);
-            actions = actions.Select(a => DoSwaps(allSubs, a)).ToArray();
-        }
-
-        return string.Join(",", fullSubs.SelectMany(v => new string[] { v.from, v.to }).Order());
-    }
-
-    static bool HasInput(Op op, string input) => op.in1 == input || op.in2 == input;
-
-    static (bool, List<(string from, string to)>) Validate(Op op1, Op op2, Op op3, Op op4, Op op5)
-    {
-        var mid1 = op1.res;
-        var sum = op3.res;
-
-        var sumExpected = string.Concat("z", op1.in2.AsSpan(1));
-        return sum != sumExpected ? (false, [(sumExpected, sum)]) : !HasInput(op3, mid1) ? (false, [(mid1, op3.in2)]) : (true, []);
-    }
-
-    private static Op FindOperation(IEnumerable<Op> actions, string a, string b, string op, string res = null)
-    {
-        if (string.IsNullOrEmpty(b))
-        {
-            var found = actions.SingleOrDefault(v => (v.in1 == a || v.in2 == a) && v.op == op);
-
-            if (res != null && found == default)
+            else if (!xor2.HasInput(xor1.Res))
             {
-                found = actions.SingleOrDefault(v => (v.in1 == a || v.in2 == a) && v.op == op && v.res == res);
-                if (found == default)
-                {
-                    found = actions.SingleOrDefault(v => v.op == op && v.res == res);
-                }
+                subs.AddRange(xor1.Res, xor2.In2);
             }
-
-            return found;
         }
-        else
-        {
-            string[] vals = [a, b];
-            var sorted = vals.Order().ToArray();
 
-            return actions.SingleOrDefault(v => v.in1 == sorted[0] && v.in2 == sorted[1] && v.op == op);
-        }
+        return string.Join(",", subs.Order());
     }
 
     public void Run(string input, ILogger logger)

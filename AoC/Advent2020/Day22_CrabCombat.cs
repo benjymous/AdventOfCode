@@ -1,11 +1,11 @@
 ﻿namespace AoC.Advent2020;
 public class Day22 : IPuzzle
 {
-    static Queue<int>[] ParseData(string input) => input.SplitSections().Select(group => Util.ParseNumbers<int>(group.Split("\n").Skip(1)).ToQueue()).ToArray();
+    private static Queue<int>[] ParseData(string input) => [.. input.SplitSections().Select(group => Util.ParseNumbers<int>(group.Split("\n").Skip(1)).ToQueue())];
 
-    static int GetKey(Queue<int>[] decks) => decks[0].Take(4).GetCombinedHashCode();
+    private static int GetKey(Queue<int>[] decks) => decks[0].Take(4).GetCombinedHashCode();
 
-    static int PlayRound(Queue<int>[] decks, bool recursive = false, bool subgame = false)
+    private static int PlayRound(Queue<int>[] decks, bool recursive = false, bool subgame = false)
     {
         var seen = new HashSet<int>();
 
@@ -23,8 +23,8 @@ public class Day22 : IPuzzle
             if (recursive && decks[0].Count >= taken[0] && decks[1].Count >= taken[1])
             {
                 var result = PlayRound([
-                    decks[0].Take(taken[0]).ToQueue(),
-                    decks[1].Take(taken[1]).ToQueue()
+                    [.. decks[0].Take(taken[0])],
+                    [.. decks[1].Take(taken[1])]
                 ], true, true);
 
                 decks[result].EnqueueRange(result == 0 ? taken : taken.Reverse());

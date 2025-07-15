@@ -1,10 +1,10 @@
 ﻿namespace AoC.Advent2022;
 public class Day23 : IPuzzle
 {
-    static readonly PackedPos32[] Neighbours = [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)];
-    static bool HasNeighbour(HashSet<PackedPos32> map, PackedPos32 pos) => Neighbours.Any(offset => map.Contains(pos + offset));
+    private static readonly PackedPos32[] Neighbours = [(-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1)];
+    private static bool HasNeighbour(HashSet<PackedPos32> map, PackedPos32 pos) => Neighbours.Any(offset => map.Contains(pos + offset));
 
-    static bool DirectionFree(HashSet<PackedPos32> map, PackedPos32 pos, int direction, out int newPos)
+    private static bool DirectionFree(HashSet<PackedPos32> map, PackedPos32 pos, int direction, out int newPos)
     {
         newPos = default;
         for (int i = 0; i < 3; ++i)
@@ -16,7 +16,7 @@ public class Day23 : IPuzzle
         return true;
     }
 
-    static readonly PackedPos32[,] CheckDirs = new PackedPos32[,]
+    private static readonly PackedPos32[,] CheckDirs = new PackedPos32[,]
     {
         { (0, -1),(-1, -1),(1, -1) }, // check North
         { (0, 1),(-1, 1),(1, 1) }, // check South
@@ -55,7 +55,7 @@ public class Day23 : IPuzzle
         return CountEmpty(positions.Select(i => (x: i.X, y: i.Y)));
     }
 
-    static int CountEmpty(IEnumerable<(int x, int y)> positions) => ((positions.Max(v => v.x) - positions.Min(v => v.x) + 1) * (positions.Max(v => v.y) - positions.Min(v => v.y) + 1)) - positions.Count();
+    private static int CountEmpty(IEnumerable<(int x, int y)> positions) => ((positions.Max(v => v.x) - positions.Min(v => v.x) + 1) * (positions.Max(v => v.y) - positions.Min(v => v.y) + 1)) - positions.Count();
 
     public static int Part1(string input) => RunSimulation(input, 10);
 

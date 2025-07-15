@@ -1,26 +1,24 @@
 ﻿namespace AoC.Advent2024;
 public class Day04 : IPuzzle
 {
-    static readonly (int, int)[] directions = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)];
+    private static readonly (int, int)[] directions = [(0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1), (-1, 0), (-1, 1)];
 
-    static bool Check(char[,] data, (int, int) pos, char expected)
-        => data.TryGetValue(pos, out char v) && v == expected;
+    private static bool IsItXmas(char[,] data, (int, int) pos, (int, int) dir)
+        => data.GetOrDefault(pos.OffsetBy(dir)) == 'M' &&
+           data.GetOrDefault(pos.OffsetBy(dir, 2)) == 'A' &&
+           data.GetOrDefault(pos.OffsetBy(dir, 3)) == 'S';
 
-    static bool IsItXmas(char[,] data, (int, int) pos, (int, int) dir)
-        => Check(data, pos.OffsetBy(dir), 'M') &&
-           Check(data, pos.OffsetBy(dir, 2), 'A') &&
-           Check(data, pos.OffsetBy(dir, 3), 'S');
+    private static bool IsItX_mas(char[,] data, (int, int) pos)
+        => ((data.GetOrDefault(pos.OffsetBy((-1, -1))) == 'M' && data.GetOrDefault(pos.OffsetBy((1, 1))) == 'S') ||
+            (data.GetOrDefault(pos.OffsetBy((-1, -1))) == 'S' && data.GetOrDefault(pos.OffsetBy((1, 1))) == 'M')) &&
 
-    static bool IsItX_mas(char[,] data, (int, int) pos)
-        => ((Check(data, pos.OffsetBy((-1, -1)), 'M') && Check(data, pos.OffsetBy((1, 1)), 'S')) ||
-            (Check(data, pos.OffsetBy((-1, -1)), 'S') && Check(data, pos.OffsetBy((1, 1)), 'M'))) &&
-
-           ((Check(data, pos.OffsetBy((1, -1)), 'M') && Check(data, pos.OffsetBy((-1, 1)), 'S')) ||
-            (Check(data, pos.OffsetBy((1, -1)), 'S') && Check(data, pos.OffsetBy((-1, 1)), 'M')));
+           ((data.GetOrDefault(pos.OffsetBy((1, -1))) == 'M' && data.GetOrDefault(pos.OffsetBy((-1, 1))) == 'S') ||
+            (data.GetOrDefault(pos.OffsetBy((1, -1))) == 'S' && data.GetOrDefault(pos.OffsetBy((-1, 1))) == 'M'));
 
     public static int Part1(string input)
     {
         var data = Util.ParseMatrix<char>(input);
+
         return data.KeysWithValue('X').Sum(pos => directions.Count(dir => IsItXmas(data, pos, dir)));
     }
 

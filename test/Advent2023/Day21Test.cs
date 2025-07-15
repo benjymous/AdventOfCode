@@ -21,21 +21,21 @@ public class Day21Test
 
     [TestCategory("Test")]
     [TestMethod]
-    public void _01Test()
+    public void StepCount_01Test()
     {
         Assert.AreEqual(16, Day21.Part1(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void StepCount_Part1_Regression()
     {
         Assert.AreEqual(3682, Day21.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void StepCount_Part2_Regression()
     {
         Assert.AreEqual(609012263058042, Day21.Part2(input));
     }

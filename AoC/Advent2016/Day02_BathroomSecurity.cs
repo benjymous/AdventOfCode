@@ -1,19 +1,19 @@
 ﻿namespace AoC.Advent2016;
 public class Day02 : IPuzzle
 {
-    static readonly string keypad1 =
+    private static readonly string keypad1 =
                             "123\n" +
                             "456\n" +
                             "789";
 
-    static readonly string keypad2 =
+    private static readonly string keypad2 =
                             "  1  \n" +
                             " 234 \n" +
                             "56789\n" +
                             " ABC \n" +
                             "  D  \n";
 
-    static FrozenDictionary<(int x, int y), char> ParseKeypad(string kp) => Util.ParseSparseMatrix<char>(kp, new Util.Convertomatic.SkipChars()).Dict.ToFrozenDictionary();
+    private static FrozenDictionary<(int x, int y), char> ParseKeypad(string kp) => Util.ParseSparseMatrix<char>(kp, new Util.Convertomatic.SkipChars()).Dict.ToFrozenDictionary();
 
     public static IEnumerable<char> SimulateKeypad(string input, string keypadLayout)
     {

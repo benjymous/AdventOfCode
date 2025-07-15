@@ -2,8 +2,8 @@
 public class Day19 : IPuzzle
 {
     [Regex("(.+): \\\"?([^\\\"]+)\\\"?")]
-    record class Rule(string ID, [Split(" ")] string[] Values);
-    static string Resolve(string key, Dictionary<string, Rule> rules)
+    private record class Rule(string ID, [Split(" ")] string[] Values);
+    private static string Resolve(string key, Dictionary<string, Rule> rules)
     {
         if (!rules.TryGetValue(key, out Rule rule)) return key;
 
@@ -18,7 +18,7 @@ public class Day19 : IPuzzle
         var rules = Parser.Parse<Rule>(sections[0]).ToDictionary(v => v.ID, v => v);
         var messages = sections[1].Split("\n");
 
-        if (part.Two())
+        if (part.Two)
         {
             rules["8"] = Parser.FromString<Rule>("8: ( 42 )+");
             rules["11"] = Parser.FromString<Rule>("11: 42 ( 42 ( 42 ( 42 ( 42 ( 42 31 )* 31 )* 31 )* 31 )* 31 )* 31");

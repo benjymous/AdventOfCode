@@ -1,11 +1,11 @@
 ﻿namespace AoC.Advent2018;
 public class Day25 : IPuzzle
 {
-    class Graph
+    private class Graph
     {
         public Graph(Parser.AutoArray<ManhattanVector4> input)
         {
-            Index = input.Select((pos, idx) => new Node { position = pos.AsSimple(), links = [idx] }).ToArray();
+            Index = [.. input.Select((pos, idx) => new Node { position = pos.AsSimple(), links = [idx] })];
 
             for (int i = 0; i < Index.Length; i++)
             {
@@ -22,7 +22,7 @@ public class Day25 : IPuzzle
             }
         }
 
-        readonly Node[] Index;
+        private readonly Node[] Index;
 
         public int CountGroups()
         {
@@ -38,7 +38,7 @@ public class Day25 : IPuzzle
         }
     }
 
-    class Node
+    private class Node
     {
         public (int x, int y, int z, int w) position;
         public HashSet<int> links = [];

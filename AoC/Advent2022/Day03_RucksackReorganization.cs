@@ -18,7 +18,7 @@ public class Day03 : IPuzzle
         public readonly IEnumerable<char> All, Set1, Set2;
     }
 
-    static int Priority(char c) => c switch
+    private static int Priority(char c) => c switch
     {
         >= 'a' and <= 'z' => c - 'a' + 1,
         >= 'A' and <= 'Z' => c - 'A' + 27,

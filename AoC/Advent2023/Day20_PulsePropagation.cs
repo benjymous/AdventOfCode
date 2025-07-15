@@ -2,8 +2,8 @@
 using Signal = (TwoCC dest, TwoCC from, bool level);
 public class Day20 : IPuzzle
 {
-    const bool Low = false, High = true;
-    const char FlipFlop = '%', Conjuction = '&', Broadcaster = 'b';
+    private const bool Low = false, High = true;
+    private const char FlipFlop = '%', Conjuction = '&', Broadcaster = 'b';
 
     [method: Regex(@"([%&])(.+) -> (.+)")]
     public record class Node(char Type, TwoCC Id, [Split(", ")] TwoCC[] Outputs)
@@ -11,14 +11,14 @@ public class Day20 : IPuzzle
         [Regex(@"broadcaster -> (.+)")]
         public Node([Split(", ")] TwoCC[] outputs) : this(Broadcaster, "br", outputs) { }
 
-        bool State = false;
-        readonly Dictionary<TwoCC, bool> Memory = [];
+        private bool State = false;
+        private readonly Dictionary<TwoCC, bool> Memory = [];
 
         public HashSet<TwoCC> InputWires = [];
 
-        IEnumerable<Signal> Send(bool signal) => Outputs.Select(o => (o, Id, signal));
+        private IEnumerable<Signal> Send(bool signal) => Outputs.Select(o => (o, Id, signal));
 
-        bool DoConjunction(Signal signal)
+        private bool DoConjunction(Signal signal)
         {
             Memory[signal.from] = signal.level;
             return !InputWires.All(id => Memory.TryGetValue(id, out var value) && value);
@@ -43,7 +43,7 @@ public class Day20 : IPuzzle
             if (watchNodes != default) signals.Where(s => watchNodes.Contains(s.dest) && s.level == Low).Select(s => s.dest).ForEach(watchCallback);
             else counts = counts.OffsetBy((signals.Count(v => v.level == Low), signals.Count(v => v.level == High)));
 
-            signals = signals.Where(s => network.ContainsKey(s.dest)).SelectMany(s => network[s.dest].Operate(s)).ToList();
+            signals = [.. signals.Where(s => network.ContainsKey(s.dest)).SelectMany(s => network[s.dest].Operate(s))];
         } while (signals.Count != 0);
 
         return counts;

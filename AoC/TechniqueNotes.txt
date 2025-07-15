@@ -116,3 +116,7 @@
 
   Memoize using obj as the context
   obj.Memoize( blah, input => ... calc ...)
+
+# WordTree
+  
+  See 2024 Day 19

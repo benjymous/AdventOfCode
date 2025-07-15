@@ -6,7 +6,7 @@ public class Day14 : IPuzzle
              Day10.KnotHash($"{input}-{y}").SelectMany(h => h.BinarySequence(0xff).Reverse()).Select((v, x) => (v, x)).Where(d => d.v == 1).Select(d => (PackedPos32)(d.x, y))
         ).ToArray();
 
-    static void FloodFill(PackedPos32 pos, HashSet<PackedPos32> matrix)
+    private static void FloodFill(PackedPos32 pos, HashSet<PackedPos32> matrix)
     {
         if (!matrix.Contains(pos)) return;
         matrix.Remove(pos);

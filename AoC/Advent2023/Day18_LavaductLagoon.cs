@@ -1,7 +1,7 @@
 ﻿namespace AoC.Advent2023;
 public class Day18 : IPuzzle
 {
-    static readonly Direction2[] Directions = [Direction2.Right, Direction2.Down, Direction2.Left, Direction2.Up];
+    private static readonly Direction2[] Directions = [Direction2.Right, Direction2.Down, Direction2.Left, Direction2.Up];
 
     public record class Instr(Direction2 Dir, int Distance);
 
@@ -15,11 +15,11 @@ public class Day18 : IPuzzle
         [Regex(@". \d+ \(#(.....)(.)\)")] public InstructionV2([Base(16)] int distance, int dirIdx) : base(Directions[dirIdx], distance) { }
     }
 
-    static long Solve(IEnumerable<Instr> instructions) => PicksTheorem(GetPath((0, 0), instructions).ToList());
+    private static long Solve(IEnumerable<Instr> instructions) => PicksTheorem([.. GetPath((0, 0), instructions)]);
 
-    static IEnumerable<(int x, int y)> GetPath((int x, int y) pos, IEnumerable<Instr> instructions) => instructions.Select(instr => pos = pos.OffsetBy(instr.Dir, instr.Distance));
+    private static IEnumerable<(int x, int y)> GetPath((int x, int y) pos, IEnumerable<Instr> instructions) => instructions.Select(instr => pos = pos.OffsetBy(instr.Dir, instr.Distance));
 
-    static long PicksTheorem(List<(int x, int y)> points) // Area of integer polygon
+    private static long PicksTheorem(List<(int x, int y)> points) // Area of integer polygon
     {
         long area = 0;
         int boundaryPoints = 0, interiorPoints = 0;

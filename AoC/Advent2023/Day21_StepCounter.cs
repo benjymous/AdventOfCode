@@ -2,12 +2,12 @@
 
 public class Day21 : IPuzzle
 {
-    static (IEnumerable<int> counts, int gridSize, int distanceToEdge) ParseData(string input)
+    private static (IEnumerable<int> counts, int gridSize, int distanceToEdge) ParseData(string input)
     {
         var map = Util.ParseSparseMatrix<char>(input);
         var gridSize = map.Width + 1;
 
-        return (counts: CalcTileDistances(map.Single(kvp => kvp.Value == 'S').Key, map.Where(kvp => kvp.Value != '#').Select(kvp => kvp.Key).ToHashSet()), gridSize, gridSize == 11 ? 7 : (gridSize / 2));
+        return (counts: CalcTileDistances(map.Single(kvp => kvp.Value == 'S').Key, [.. map.Where(kvp => kvp.Value != '#').Select(kvp => kvp.Key)]), gridSize, gridSize == 11 ? 7 : (gridSize / 2));
     }
 
     public static IEnumerable<int> CalcTileDistances((int x, int y) start, HashSet<(int, int)> walkable)

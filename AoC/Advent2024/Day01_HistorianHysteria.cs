@@ -4,7 +4,7 @@ public class Day01 : IPuzzle
     private static (int[], int[]) Parse(string input)
     {
         var data = Util.ParseNumberList<int>(input);
-        return (data.Select(v => v[0]).ToArray(), data.Select(v => v[1]).ToArray());
+        return ([.. data.Select(v => v[0])], [.. data.Select(v => v[1])]);
     }
 
     public static int Part1(string input)
@@ -18,7 +18,11 @@ public class Day01 : IPuzzle
     {
         var (a, b) = Parse(input);
 
-        return a.Sum(i => i * b.Count(j => j == i));
+        var aCount = a.CountUniqueElements<int, int>();
+        var bCount = b.CountUniqueElements<int, int>();
+
+        return aCount.Keys.Intersect(bCount.Keys)
+                          .Sum(key => key * aCount[key] * bCount[key]);
     }
 
     public void Run(string input, ILogger logger)

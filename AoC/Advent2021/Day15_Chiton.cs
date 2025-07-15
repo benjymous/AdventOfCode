@@ -1,13 +1,13 @@
 ﻿namespace AoC.Advent2021;
 public class Day15 : IPuzzle
 {
-    class Map : IMap<PackedPos32>
+    private class Map : IMap<PackedPos32>
     {
         public Map(string input, QuestionPart part)
         {
             Data = Util.ParseSparseMatrix<PackedPos32, int>(input);
 
-            if (part.One())
+            if (part.One)
             {
                 (RealX, RealY) = (MaxX, MaxY) = (Data.Width, Data.Height);
             }
@@ -21,8 +21,8 @@ public class Day15 : IPuzzle
             for (int y = -1; y <= MaxY + 1; ++y) Data[(-1, y)] = Data[(MaxX + 1, y)] = 9999;
         }
 
-        readonly int MaxX, MaxY, RealX, RealY;
-        readonly Util.SparseMatrix<PackedPos32, int> Data;
+        private readonly int MaxX, MaxY, RealX, RealY;
+        private readonly Util.SparseMatrix<PackedPos32, int> Data;
 
         public IEnumerable<PackedPos32> GetNeighbours(PackedPos32 location) =>
         [

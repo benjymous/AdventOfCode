@@ -38,9 +38,9 @@ namespace AoC.Advent2020.Elforola
     {
         public Instruction[] Instructions { get; set; }
 
-        readonly int[] Registers = [0, 0];
+        private readonly int[] Registers = [0, 0];
 
-        System.Diagnostics.Stopwatch sw;
+        private System.Diagnostics.Stopwatch sw;
 
         public int CycleCount = 0;
 

@@ -3,8 +3,8 @@ public class Day08 : IPuzzle
 {
     public class Display
     {
-        readonly int GridWidth, GridHeight;
-        readonly bool[,] pixels;
+        private readonly int GridWidth, GridHeight;
+        private readonly bool[,] pixels;
 
         public Display(string input, int w, int h)
         {

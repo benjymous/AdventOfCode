@@ -1,13 +1,13 @@
 ﻿namespace AoC.Advent2022;
 public class Day02 : IPuzzle
 {
-    struct MoveP1 { internal const char Rock = 'A', Paper = 'B', Scissors = 'C'; }
-    struct MoveP2 { internal const char Rock = 'X', Paper = 'Y', Scissors = 'Z'; }
-    struct Result { internal const char Lose = 'X', Draw = 'Y', Win = 'Z'; }
+    private struct MoveP1 { internal const char Rock = 'A', Paper = 'B', Scissors = 'C'; }
+    private struct MoveP2 { internal const char Rock = 'X', Paper = 'Y', Scissors = 'Z'; }
+    private struct Result { internal const char Lose = 'X', Draw = 'Y', Win = 'Z'; }
 
     [Regex("(.) (.)")] public record struct Rule(char Theirs, char Yours);
 
-    static int Score(char theirs, char yours) => (theirs, yours) switch
+    private static int Score(char theirs, char yours) => (theirs, yours) switch
     {
         (MoveP1.Rock, MoveP2.Rock) => 3 + 1,
         (MoveP1.Paper, MoveP2.Rock) => 0 + 1,
@@ -24,7 +24,7 @@ public class Day02 : IPuzzle
         _ => throw new ArgumentException("Invalid combination")
     };
 
-    static char GetMove(char theirs, char neededResult) => (theirs, neededResult) switch
+    private static char GetMove(char theirs, char neededResult) => (theirs, neededResult) switch
     {
         (MoveP1.Rock, Result.Lose) => MoveP2.Scissors,
         (MoveP1.Rock, Result.Draw) => MoveP2.Rock,
@@ -41,9 +41,9 @@ public class Day02 : IPuzzle
         _ => throw new ArgumentException("Invalid combination")
     };
 
-    static int ScorePt1(Rule r) => Score(r.Theirs, r.Yours);
+    private static int ScorePt1(Rule r) => Score(r.Theirs, r.Yours);
 
-    static int ScorePt2(Rule r) => Score(r.Theirs, GetMove(r.Theirs, r.Yours));
+    private static int ScorePt2(Rule r) => Score(r.Theirs, GetMove(r.Theirs, r.Yours));
 
     public static int Part1(Parser.AutoArray<Rule> input) => input.Sum(ScorePt1);
 

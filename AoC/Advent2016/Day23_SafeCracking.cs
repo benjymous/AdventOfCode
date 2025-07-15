@@ -10,7 +10,7 @@ public class Day23 : IPuzzle
         return cpu.Get(BunniTek.RegisterId.a);
     }
 
-    static string Optimise(string program)
+    private static string Optimise(string program)
     {
         // replace the nested add loop with a multiply
         // brute force replace - assume this will work for any input!

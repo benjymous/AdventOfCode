@@ -1,9 +1,9 @@
 ﻿namespace AoC.Advent2016;
 public class Day09 : IPuzzle
 {
-    static (int numChars, int numRepeats) Parse(string cmd) => Util.ParseNumbers<int>(cmd, "x").Decompose2();
+    private static (int numChars, int numRepeats) Parse(string cmd) => Util.ParseNumbers<int>(cmd, "x").Decompose2();
 
-    static long Decompress(string input, bool recurse)
+    private static long Decompress(string input, bool recurse)
     {
         long length = 0;
         int i = 0;

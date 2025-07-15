@@ -1,12 +1,12 @@
 ﻿namespace AoC.Advent2016;
 public class Day24 : IPuzzle
 {
-    static uint LocationCode(char c) => 1U << (c.AsDigit());
-    static readonly uint HOME = LocationCode('0');
+    private static uint LocationCode(char c) => 1U << (c.AsDigit());
+    private static readonly uint HOME = LocationCode('0');
 
     public class MapData : IMap<PackedPos32>
     {
-        readonly HashSet<PackedPos32> Data = [];
+        private readonly HashSet<PackedPos32> Data = [];
         public readonly Dictionary<uint, PackedPos32> Locations = [];
         public readonly Dictionary<uint, int> Paths = [];
 
@@ -17,7 +17,7 @@ public class Day24 : IPuzzle
         {
             var rawdata = Util.ParseSparseMatrix<PackedPos32, char>(input, new Util.Convertomatic.SkipChars('#')).Select(kvp => (ch: kvp.Value, pos: kvp.Key));
 
-            Data = rawdata.Select(v => v.pos).ToHashSet();
+            Data = [.. rawdata.Select(v => v.pos)];
             Locations = rawdata.Where(v => v.ch is >= '0' and <= '9').ToDictionary(kvp => LocationCode(kvp.ch), kvp => kvp.pos);
             AllLocations = Locations.Keys.Sum();
             Paths = (from loc1 in Locations
@@ -30,7 +30,7 @@ public class Day24 : IPuzzle
 
         public static uint[] Bits(uint input) => Memoize(input, _ => input.BitSequence().ToArray());
 
-        static readonly PackedPos32[] Neighbours = [(1, 0), (0, 1), (-1, 0), (0, -1)];
+        private static readonly PackedPos32[] Neighbours = [(1, 0), (0, 1), (-1, 0), (0, -1)];
         public IEnumerable<PackedPos32> GetNeighbours(PackedPos32 location) => Neighbours.Select(n => location + n).Where(n => Data.Contains(n));
     }
 

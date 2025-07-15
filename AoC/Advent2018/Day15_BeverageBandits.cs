@@ -1,17 +1,17 @@
 ﻿namespace AoC.Advent2018;
 public class Day15 : IPuzzle
 {
-    enum CreatureType { Elf, Goblin };
+    private enum CreatureType { Elf, Goblin };
 
-    class Creature(CreatureType type, int ap = 3)
+    private class Creature(CreatureType type, int ap = 3)
     {
         public CreatureType Type = type;
         public int AP = ap, HP = 200;
     }
 
-    static readonly PackedPos32[] InRange = [(0, -1), (-1, 0), (1, 0), (0, 1)];
+    private static readonly PackedPos32[] InRange = [(0, -1), (-1, 0), (1, 0), (0, 1)];
 
-    class Map : IMap<PackedPos32>
+    private class Map : IMap<PackedPos32>
     {
         public Map(string input, int elfAP)
         {
@@ -21,14 +21,14 @@ public class Day15 : IPuzzle
             Creatures = data.Where(kvp => kvp.Value == 'G').ToDictionary(kvp => kvp.Key, _ => new Creature(CreatureType.Goblin)).Union(data.Where(kvp => kvp.Value == 'E').ToDictionary(kvp => kvp.Key, _ => new Creature(CreatureType.Elf, elfAP))).ToSortedDictionary();
         }
 
-        readonly HashSet<PackedPos32> Walkable;
-        readonly SortedDictionary<PackedPos32, Creature> Creatures;
+        private readonly HashSet<PackedPos32> Walkable;
+        private readonly SortedDictionary<PackedPos32, Creature> Creatures;
 
         public int ElfCount() => Creatures.Values.Count(c => c.Type == CreatureType.Elf);
 
-        bool IsClear(PackedPos32 pos) => !Creatures.ContainsKey(pos) && Walkable.Contains(pos);
+        private bool IsClear(PackedPos32 pos) => !Creatures.ContainsKey(pos) && Walkable.Contains(pos);
 
-        bool MoveUnit(KeyValuePair<PackedPos32, Creature> creature)
+        private bool MoveUnit(KeyValuePair<PackedPos32, Creature> creature)
         {
             var enemies = Creatures.Where(c => c.Value.Type != creature.Value.Type).ToDictionary();
             if (enemies.Count == 0) return false;
@@ -41,26 +41,17 @@ public class Day15 : IPuzzle
             return true;
         }
 
-        PackedPos32 FindTarget(KeyValuePair<PackedPos32, Creature> creature, Dictionary<PackedPos32, Creature> enemies)
+        private PackedPos32 FindTarget(KeyValuePair<PackedPos32, Creature> creature, Dictionary<PackedPos32, Creature> enemies)
         {
             if (InRange.Select(offset => creature.Key + offset).Any(enemies.ContainsKey)) return creature.Key;
 
             var reachable = enemies.SelectMany(target => InRange.Select(offset => target.Key + offset)).Where(pos => IsClear(pos) || pos == creature.Key).Distinct().Select(pos => (pos, path: this.FindPath(creature.Key, pos))).Where(entry => entry.path.Length != 0).OrderBy(v => (v.path.Length, v.pos)).FirstOrDefault();
 
-            return reachable == default ? creature.Key : ReadingOrderMove(creature.Key, reachable.pos, reachable.path[0]);
+            return reachable == default ? creature.Key : ReadingOrderMove(creature.Key, reachable.pos);
         }
 
-        PackedPos32 ReadingOrderMove(PackedPos32 pos, PackedPos32 dest, PackedPos32 next)
-        {
-            var v = pos.Distance(dest) == 1 ? dest : InRange.Select(offset => pos + offset).Where(IsClear).Select(newPos => (pos: newPos, dist: this.FindPath(newPos, dest).Length)).Where(v => v.dist > 0).MinBy(v => (v.dist, v.pos)).pos;
-
-            if (v != dest && v != next)
-            {
-                Console.WriteLine("oh!");
-            }
-
-            return v;
-        }
+        private PackedPos32 ReadingOrderMove(PackedPos32 pos, PackedPos32 dest)
+            => pos.Distance(dest) == 1 ? dest : InRange.Select(offset => pos + offset).Where(IsClear).Select(newPos => (pos: newPos, dist: this.FindPath(newPos, dest).Length)).Where(v => v.dist > 0).MinBy(v => (v.dist, v.pos)).pos;
 
         public bool PerformTurn() => Creatures.ToArray().Where(c => c.Value.HP > 0).All(MoveUnit);
 

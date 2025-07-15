@@ -1,13 +1,13 @@
 ﻿namespace AoC.Advent2016;
 public class Day17 : IPuzzle
 {
-    const string direction = "UDLR";
+    private const string direction = "UDLR";
 
-    static readonly int[] offsets = [-4, 4, -1, 1];
+    private static readonly int[] offsets = [-4, 4, -1, 1];
 
-    static readonly bool[][] availableDoors = GetAvailableDoors();
+    private static readonly bool[][] availableDoors = GetAvailableDoors();
 
-    static bool[][] GetAvailableDoors()
+    private static bool[][] GetAvailableDoors()
     {
         bool[][] result = new bool[16][];
         for (int i = 0; i < 16; ++i)
@@ -43,7 +43,7 @@ public class Day17 : IPuzzle
 
             if (entry.position == dest)
             {
-                if (part.One()) return entry.path;
+                if (part.One) return entry.path;
                 else if (entry.path.Length > best.Length) best = entry.path;
             }
             else

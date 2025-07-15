@@ -168,7 +168,7 @@ namespace AoC.Utils
 
         public static string MultipleWithS(this int value, string str) => value == 1 ? str : $"{value} {str}s";
 
-        public static string Reversed(this string str) => new(str.Reverse().ToArray());
+        public static string Reversed(this string str) => new([.. str.Reverse()]);
 
         public static string Pop(this StringBuilder sb)
         {

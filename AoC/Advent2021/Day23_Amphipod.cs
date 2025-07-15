@@ -2,8 +2,8 @@
 namespace AoC.Advent2021;
 public class Day23 : IPuzzle
 {
-    static readonly (CritterPos Pos, char Value)[] destinations = [((3, 2), 'A'), ((5, 2), 'B'), ((7, 2), 'C'), ((9, 2), 'D'), ((3, 3), 'A'), ((5, 3), 'B'), ((7, 3), 'C'), ((9, 3), 'D'), ((3, 4), 'A'), ((5, 4), 'B'), ((7, 4), 'C'), ((9, 4), 'D'), ((3, 5), 'A'), ((5, 5), 'B'), ((7, 5), 'C'), ((9, 5), 'D')];
-    static readonly int[] destinationCol = [3, 5, 7, 9], moveCosts = [1, 10, 100, 1000];
+    private static readonly (CritterPos Pos, char Value)[] destinations = [((3, 2), 'A'), ((5, 2), 'B'), ((7, 2), 'C'), ((9, 2), 'D'), ((3, 3), 'A'), ((5, 3), 'B'), ((7, 3), 'C'), ((9, 3), 'D'), ((3, 4), 'A'), ((5, 4), 'B'), ((7, 4), 'C'), ((9, 4), 'D'), ((3, 5), 'A'), ((5, 5), 'B'), ((7, 5), 'C'), ((9, 5), 'D')];
+    private static readonly int[] destinationCol = [3, 5, 7, 9], moveCosts = [1, 10, 100, 1000];
 
     public class PackCritterPos : ICoordinatePacker2<int>
     {
@@ -12,9 +12,9 @@ public class Day23 : IPuzzle
         public static int Set((int x, int y) v) => v.x - 1 + ((v.y - 1) * 11);
     }
 
-    static bool IsClear(int x1, int x2, State state) => !Util.RangeInclusive(Math.Min(x1, x2), Math.Max(x1, x2)).Any(x => !state.CellOpen(x - 1));
+    private static bool IsClear(int x1, int x2, State state) => !Util.RangeInclusive(Math.Min(x1, x2), Math.Max(x1, x2)).Any(x => !state.CellOpen(x - 1));
 
-    readonly record struct State(ulong OpenCells, Dictionary<CritterPos, char> Critters, int Score, int _)
+    private readonly record struct State(ulong OpenCells, Dictionary<CritterPos, char> Critters, int Score, int _)
     {
         public State(ulong openCells, Dictionary<CritterPos, char> critters, int score) : this(openCells, critters, score, 0) => Util.RepeatWhile(() => destinations.Where(kvp => critters.TryGetValue(kvp.Pos, out var other) && other == kvp.Value && ((1UL << (kvp.Pos + 11)) & openCells) == 0 && !critters.ContainsKey(kvp.Pos + 11)).Select(kvp => kvp.Pos).ForEach(key => critters.Remove(key)));
 
@@ -23,7 +23,7 @@ public class Day23 : IPuzzle
         public override readonly int GetHashCode() => (Critters.Keys.Select(k => 1UL << k).Sum(), Critters.OrderBy(kvp => kvp.Key.V).Select(kvp => (uint)(kvp.Value - 'A')).Aggregate(0U, (p, v) => (p << 2) + v)).GetHashCode();
     }
 
-    static IEnumerable<(CritterPos origin, CritterPos destination, char value, int spaces)> CritterMoves(State state, KeyValuePair<CritterPos, char> critter)
+    private static IEnumerable<(CritterPos origin, CritterPos destination, char value, int spaces)> CritterMoves(State state, KeyValuePair<CritterPos, char> critter)
     {
         if (critter.Key.Y == 1 || state.CellOpen(critter.Key - 11)) // can this critter reach its home room?
         {

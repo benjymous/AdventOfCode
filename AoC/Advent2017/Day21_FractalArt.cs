@@ -4,11 +4,11 @@ public class Day21 : IPuzzle
     public class Rule
     {
         [Regex(@"(.+) => (.+)")]
-        public Rule([Split("/")] string[] inputs, [Split("/")] string[] outputs) => (Rotations, Out) = (CalcRotations(inputs).ToArray(), Util.ParseSparseMatrix<char>(outputs, new Util.Convertomatic.SkipChars('.')).Select(kvp => ToKey(kvp.Key.x, kvp.Key.y)).ToArray());
+        public Rule([Split("/")] string[] inputs, [Split("/")] string[] outputs) => (Rotations, Out) = ([.. CalcRotations(inputs)], [.. Util.ParseSparseMatrix<char>(outputs, new Util.Convertomatic.SkipChars('.')).Select(kvp => ToKey(kvp.Key.x, kvp.Key.y))]);
 
         public int[] Rotations, Out;
 
-        static IEnumerable<int> CalcRotations(string[] input)
+        private static IEnumerable<int> CalcRotations(string[] input)
         {
             var matrix = Util.ParseSparseMatrix<char>(input, new Util.Convertomatic.SkipChars('.')).Select(kvp => kvp.Key).ToArray();
 
@@ -57,7 +57,7 @@ public class Day21 : IPuzzle
         var map = Util.ParseSparseMatrix<char>(".#.\n..#\n###", new Util.Convertomatic.SkipChars('.')).Select(kvp => ToKey(kvp.Key.x, kvp.Key.y)).ToHashSet();
 
         for (int i = 0; i < iterations; ++i)
-            map = ApplyRules(map, rules).ToHashSet();
+            map = [.. ApplyRules(map, rules)];
 
         return map.Count;
     }

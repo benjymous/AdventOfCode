@@ -20,7 +20,7 @@ public class Day10 : IPuzzle
 
         for (int i = 0; i < iterations; ++i)
         {
-            result = SayIt(result).ToArray();
+            result = [.. SayIt(result)];
         }
 
         return result.Length;

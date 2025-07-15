@@ -18,7 +18,7 @@ public class Day13 : IPuzzle
 
     public static int GetKey(char p1, char p2) => p1 * p2;
 
-    static int TryPermutations(char first, char prev, IEnumerable<char> remaining, Dictionary<int, int> scores)
+    private static int TryPermutations(char first, char prev, IEnumerable<char> remaining, Dictionary<int, int> scores)
     {
         return !remaining.Any()
             ? scores[GetKey(first, prev)]

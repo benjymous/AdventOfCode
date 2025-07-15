@@ -9,7 +9,7 @@ public class Day07 : IPuzzle
         public static Tree<string, int> Build(Parser.AutoArray<(string key, int value, IEnumerable<string> children), TreeBuilder> input) => input.ToTree();
     }
 
-    static int GetChildScore(TreeNode<string, int> node) => node.Value + node.Children.Sum(GetChildScore);
+    private static int GetChildScore(TreeNode<string, int> node) => node.Value + node.Children.Sum(GetChildScore);
 
     public static string Part1(string input) => TreeBuilder.Build(input).GetRootKey();
 

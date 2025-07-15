@@ -16,28 +16,28 @@ public class Day24Test
 
     [TestCategory("Test")]
     [TestMethod]
-    public void _01Test()
+    public void Intersection_01Test()
     {
         Assert.AreEqual(2, Day24.CheckTestArea(test, 7, 27));
     }
 
     [TestCategory("Test")]
     [TestMethod]
-    public void _02Test()
+    public void Intersection_02Test()
     {
         Assert.AreEqual(47, Day24.Part2(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void Intersection_Part1_Regression()
     {
         Assert.AreEqual(29142, Day24.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void Intersection_Part2_Regression()
     {
         Assert.AreEqual(848947587263033, Day24.Part2(input));
     }

@@ -3,8 +3,8 @@ public class Day10 : IPuzzle
 {
     public record class Entity(string Id)
     {
-        Entity High, Low;
-        readonly List<int> parts = [];
+        private Entity High, Low;
+        private readonly List<int> parts = [];
 
         public void Take(int num) => parts.Add(num);
         public int Value => parts.First();

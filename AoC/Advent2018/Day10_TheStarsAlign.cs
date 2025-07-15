@@ -6,7 +6,7 @@ public class Day10 : IPuzzle
     public class Drone(ManhattanVector2 pos, ManhattanVector2 vel)
     {
         public (int X, int Y) position = pos;
-        readonly (int X, int Y) velocity = vel;
+        private readonly (int X, int Y) velocity = vel;
 
         public void Step() => position = position.OffsetBy(velocity);
 

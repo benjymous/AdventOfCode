@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
 
 namespace AoC.Advent2024.Test;
 
@@ -28,14 +27,14 @@ public class Day20Test
     [DataTestMethod]
     public void CheatFinder_01Test()
     {
-        Assert.AreEqual(44, Day20.FindCheats(test, 2).Count());
+        Assert.AreEqual(44, Day20.FindCheats(test, 2, 1));
     }
 
     [TestCategory("Test")]
     [DataTestMethod]
     public void CheatFinder_02Test()
     {
-        Assert.AreEqual(285, Day20.FindCheats(test, 20).Count(c => c >= 50));
+        Assert.AreEqual(285, Day20.FindCheats(test, 20, 50));
     }
 
     [TestCategory("Regression")]

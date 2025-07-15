@@ -63,7 +63,7 @@ namespace AoC.Utils
         {
             lock (DataLock)
             {
-                var dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AoCData", GetYear(puzzleType));
+                var dataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AoCData", GetYear(puzzleType));
                 if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
                 var expectedFile = Path.Combine(dataPath, $"{GetYear(puzzleType)}-{GetDay(puzzleType)}.txt");
 

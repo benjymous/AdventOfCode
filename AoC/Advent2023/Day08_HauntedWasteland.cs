@@ -4,7 +4,7 @@ public class Day08 : IPuzzle
     public class GhostMap
     {
         public Dictionary<string, Dictionary<char, string>> Paths = [];
-        string Route;
+        private string Route;
 
         [Regex(@"(...) = \((...), (...)\)")]
         public void AddNode(string location, string left, string right)

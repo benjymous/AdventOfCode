@@ -76,7 +76,7 @@ namespace Test.Utils.Strings
         {
             PackedString<uint, PackFourCC> v1 = str;
             PackedString<uint, PackFourCC> v2 = new(str);
-            PackedString<uint, PackFourCC> v3 = new($"{str.Substring(0, 3)}-");
+            PackedString<uint, PackFourCC> v3 = new($"{str[..3]}-");
 
             uint val = v1;
             uint val2 = 12345;

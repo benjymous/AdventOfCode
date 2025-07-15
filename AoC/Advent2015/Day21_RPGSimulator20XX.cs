@@ -2,15 +2,15 @@
 public class Day21 : IPuzzle
 {
     [Regex(@"^\s?(\d+) .+\s+(\d+)\s+(\d)\s+(\d+)$")]
-    record class Item(int Id, int Cost, int Damage, int Armour);
+    private record class Item(int Id, int Cost, int Damage, int Armour);
 
-    static readonly Parser.AutoArray<Item> Weapons = "0 Dagger 8 4 0\n 1 Shortsword 10 5 0\n 2 Warhammer 25 6 0\n 3 Longsword 40 7 0\n 4 Greataxe 74 8 0";
-    static readonly Parser.AutoArray<Item> Armour = "5 Leather 13 0 1\n 6 Chainmail 31 0 2\n 7 Splintmail 53 0 3\n 8 Bandedmail 75 0 4\n 9 Platemail 102 0 5\n";
-    static readonly Parser.AutoArray<Item> Rings = "10 Damage+1 25 1 0\n 11 Damage+2 50 2 0\n 12 Damage+3 100 3 0\n 13 Defense+1 20 0 1\n 14 Defense+2 40 0 2\n 15 Defense+3 80 0 3\n";
+    private static readonly Parser.AutoArray<Item> Weapons = "0 Dagger 8 4 0\n 1 Shortsword 10 5 0\n 2 Warhammer 25 6 0\n 3 Longsword 40 7 0\n 4 Greataxe 74 8 0";
+    private static readonly Parser.AutoArray<Item> Armour = "5 Leather 13 0 1\n 6 Chainmail 31 0 2\n 7 Splintmail 53 0 3\n 8 Bandedmail 75 0 4\n 9 Platemail 102 0 5\n";
+    private static readonly Parser.AutoArray<Item> Rings = "10 Damage+1 25 1 0\n 11 Damage+2 50 2 0\n 12 Damage+3 100 3 0\n 13 Defense+1 20 0 1\n 14 Defense+2 40 0 2\n 15 Defense+3 80 0 3\n";
 
-    static int MakeId(params Item[] items) => items.Sum(item => 1 << item.Id);
+    private static int MakeId(params Item[] items) => items.Sum(item => 1 << item.Id);
 
-    class Entity(bool isPlayer, int hp, int dmg, int armour)
+    private class Entity(bool isPlayer, int hp, int dmg, int armour)
     {
         public readonly bool IsPlayer = isPlayer;
         public int HP = hp;
@@ -18,7 +18,7 @@ public class Day21 : IPuzzle
         public readonly int Damage = dmg, Armour = armour;
     }
 
-    static IEnumerable<(int id, int damage, int armour, int cost)> GetInventoryCombinations(int gold)
+    private static IEnumerable<(int id, int damage, int armour, int cost)> GetInventoryCombinations(int gold)
     {
         foreach (var weapon in Weapons.Where(w => w.Cost <= gold))
         {
@@ -40,7 +40,7 @@ public class Day21 : IPuzzle
         }
     }
 
-    static bool DoFight(int enemyHp, int enemyDmg, int enemyArmour, int itemDmg, int itemArmour)
+    private static bool DoFight(int enemyHp, int enemyDmg, int enemyArmour, int itemDmg, int itemArmour)
     {
         var (attacker, defender) = (new Entity(true, 100, itemDmg, itemArmour), new Entity(false, enemyHp, enemyDmg, enemyArmour));
 
