@@ -83,8 +83,8 @@ public class Day25 : IPuzzle
         private static IEnumerable<string> RouteFind(Room currentRoom, Room destinationRoom, HashSet<string> tried = null)
         {
             if (currentRoom.Exits.TryGet(destinationRoom, out var found)) return [found];
-            var (route, exit) = currentRoom.Exits.ValuesNonNull.Where(e => tried == null || !tried.Contains(e.Name)).Select(exit => (RouteFind(exit, destinationRoom, [.. (tried ??= []), currentRoom.Name]), exit)).FirstOrDefault(v => v.Item1 != null);
-            return route != default ? ([currentRoom.Exits[exit], .. route]) : null;
+            var (route, exit) = currentRoom.Exits.ValuesNonNull.Where(e => tried == null || !tried.Contains(e.Name)).Select(exit => (RouteFind(exit, destinationRoom, [.. tried ??= [], currentRoom.Name]), exit)).FirstOrDefault(v => v.Item1 != null);
+            return route != default ? [currentRoom.Exits[exit], .. route] : null;
         }
     }
 

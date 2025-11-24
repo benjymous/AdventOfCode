@@ -10,7 +10,7 @@ public class Day24 : IPuzzle
     public class Attribute(AttrType type, [Split(", ")] string[] elements)
     {
         public AttrType Type = type;
-        public int Elements = elements.Sum(e => (1 << e[0]-'a'));
+        public int Elements = elements.Sum(e => 1 << e[0]-'a');
     }
     [Regex(@"(\d+) units each with (\d+) hit points ?\(?(.+)?\)? with an attack that does (\d+) (.).+ damage at initiative (\d+)")]
     public class Group(uint unitCount, uint hitPoints, [Split("; ")] List<Attribute> attributes, uint attackDamage, char damageType, uint initiative)

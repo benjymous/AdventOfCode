@@ -6,7 +6,7 @@ public class Day10 : IPuzzle
 
     private static IEnumerable<(int, int)> FindRoutes(char[,] map, (int, int) position, int current = START)
         => current == END
-            ? ([position])
+            ? [position]
             : neighbours.Select(dir => position.OffsetBy(dir))
                         .Where(nextPos => map.TryGetValue(nextPos, out var nextCell) && nextCell == current + 1)
                         .SelectMany(nextPos => FindRoutes(map, nextPos, current + 1));

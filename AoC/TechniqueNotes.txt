@@ -119,4 +119,6 @@
 
 # WordTree
   
+  Create with enumerable of words
+
   See 2024 Day 19

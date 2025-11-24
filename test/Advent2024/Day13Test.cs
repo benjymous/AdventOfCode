@@ -32,7 +32,7 @@ Prize: X=18641, Y=10279".Replace("\r","");
     [DataTestMethod]
     public void TestSolver(int x1, int x2, int x3, int y1, int y2, int y3, int expectedA, int expectedB)
     {
-        Assert.AreEqual(((expectedA*3) + expectedB), new Day13.ClawMachine(x1, y1, x2, y2, x3, y3).Solve());
+        Assert.AreEqual((expectedA*3) + expectedB, new Day13.ClawMachine(x1, y1, x2, y2, x3, y3).Solve());
     }
 
     [TestCategory("Test")]

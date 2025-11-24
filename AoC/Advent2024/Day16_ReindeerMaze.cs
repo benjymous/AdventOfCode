@@ -48,7 +48,7 @@ public class Day16 : IPuzzle
                 seen[(step.pos, step.dir)] = score;
 
                 queue.EnqueueRange(GetMoves(walkable, step.pos, step.dir)
-                     .Select(m => ((m.newPos, m.newDir, (PackedPos32[])([m.newPos, .. step.history])), score + m.cost)));
+                     .Select(m => ((m.newPos, m.newDir, (PackedPos32[])[m.newPos, .. step.history]), score + m.cost)));
             }
             return (best, bestVisited.Count);
         });

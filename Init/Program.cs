@@ -1,7 +1,7 @@
 ﻿
 using Fluid;
 
-var year = "2024";
+var year = "2025";
 var yearFolder = Path.Combine("AoC", $"Advent{year}");
 var testFolder = Path.Combine("test", $"Advent{year}");
 
@@ -16,7 +16,7 @@ Console.WriteLine(Directory.GetCurrentDirectory());
 if (!Directory.Exists(yearFolder)) _ = Directory.CreateDirectory(yearFolder);
 if (!Directory.Exists(testFolder)) _ = Directory.CreateDirectory(testFolder);
 
-for (int day = 1; day <= 25; ++day)
+for (int day = 1; day <= 12; ++day)
 {
 
     var model = new { Year = year, Day = day.ToString().PadLeft(2, '0') };
