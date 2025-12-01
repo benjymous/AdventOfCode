@@ -8,10 +8,7 @@ public class Day14 : IPuzzle
         {
             var (x, y) = Pos.OffsetBy(Speed, steps);
 
-            x.ModWrap(width);
-            y.ModWrap(height);
-
-            return Pos = (x, y);
+            return Pos = (x.ModWrap(width), y.ModWrap(height));
         }
     }
 

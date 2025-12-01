@@ -2,43 +2,25 @@
 
 public class Day01 : IPuzzle
 {
-    [Regex("(.)(.+)")]
-    public record class Instruction(char Dir, int Value);
-
-    static int FindPasscode(Parser.AutoArray<Instruction> instructions, QuestionPart part)
+    [Regex(@"(L|R)(\d+)")]
+    public class Instruction(char Dir, int Value)
     {
-        int pos = 50, count = 0;
-        foreach (var i in instructions)
+        public (int pos, int count) Apply(QuestionPart part, (int pos, int count) state)
         {
-            (pos, count) = RotateDial(part, pos, count, i.Value * (i.Dir == 'R' ? 1 : -1));
-        }
+            int delta = Value * (Dir == 'R' ? 1 : -1);
+            int newPos = (state.pos + delta).ModWrap(100);
 
-        return count;
+            if (part.One) return (newPos, newPos == 0 ? state.count + 1 : state.count);
+
+            int boundaryDistance = ((delta > 0) ? (100 - state.pos) : state.pos) % 100;
+            if (boundaryDistance == 0) boundaryDistance = 100;
+
+            return (newPos, state.count + (Value >= boundaryDistance ? 1 + (Value - boundaryDistance) / 100 : 0));
+        }
     }
 
-    static (int pos, int count) RotateDial(QuestionPart part, int position, int count, int delta)
-    {
-        if (part.One)
-        {
-            position += delta;
-            position.ModWrap(100);
-            return (position, position == 0 ? count + 1 : count);
-        }
-        else
-        {
-            var s = Math.Sign(delta);
-            while (delta != 0)
-            {
-                position += s;
-                delta -= s;
-                if (position < 0) position = 99;
-                if (position > 99) position = 0;
-                if (position == 0) count++;
-            }
-
-            return (position, count);
-        }
-    }
+    static int FindPasscode(Parser.AutoArray<Instruction> instructions, QuestionPart part) 
+        => instructions.Aggregate<Instruction, (int pos, int count)>((50, 0), (state, i) => i.Apply(part, state)).count;
 
     public static int Part1(string input) => FindPasscode(input, QuestionPart.Part1);
 

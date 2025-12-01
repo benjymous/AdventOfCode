@@ -844,6 +844,6 @@ namespace AoC.Utils
             }
 
             return (trueList, falseList);
-        }
+        }        
     }
 }
