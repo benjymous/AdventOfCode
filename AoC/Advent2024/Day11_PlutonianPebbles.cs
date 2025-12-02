@@ -1,11 +1,11 @@
 ﻿namespace AoC.Advent2024;
 public class Day11 : IPuzzle
 {
-    private static int CountDigits(long number) => ((int)Math.Log10(number)) + 1;
+    private static int CountDigits(long number) => (Util.Log10i(number)) + 1;
 
     private static long[] SplitNumber(long number, int digits)
     {
-        int divisor = (int)Math.Pow(10, digits / 2);
+        int divisor = (int)Util.Pow10(digits / 2);
         return [number / divisor, number % divisor];
     }
 

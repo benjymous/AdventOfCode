@@ -577,6 +577,78 @@ public partial class Util
         _ => throw new ArgumentException("input out of range")
     };
 
+    public static int Log10i(ulong value) => value switch
+    {
+        ulong n when (n is >= 1 and < 10) => 0,
+        ulong n when (n is >= 10 and < 100) => 1,
+        ulong n when (n is >= 100 and < 1000) => 2,
+        ulong n when (n is >= 1000 and < 10000) => 3,
+        ulong n when (n is >= 10000 and < 100000) => 4,
+        ulong n when (n is >= 100000 and < 1000000) => 5,
+        ulong n when (n is >= 1000000 and < 10000000) => 6,
+        ulong n when (n is >= 10000000 and < 100000000) => 7,
+        ulong n when (n is >= 100000000 and < 1000000000) => 8,
+        ulong n when (n is >= 1000000000 and < 10000000000) => 9,
+        ulong n when (n is >= 10000000000 and < 100000000000) => 10,
+        ulong n when (n is >= 100000000000 and < 1000000000000) => 11,
+        ulong n when (n is >= 1000000000000 and < 10000000000000) => 12,
+        ulong n when (n is >= 10000000000000 and < 100000000000000) => 13,
+        ulong n when (n is >= 100000000000000 and < 1000000000000000) => 14,
+        ulong n when (n is >= 1000000000000000 and < 10000000000000000) => 15,
+        ulong n when (n is >= 10000000000000000 and < 100000000000000000) => 16,
+        ulong n when (n is >= 100000000000000000 and < 1000000000000000000) => 17,
+        ulong n when (n is >= 1000000000000000000) => 18,
+        _ => throw new ArgumentException("input out of range"),
+    };
+
+    public static int Log10i(long value) => value switch
+    {
+        long n when (n is >= 1 and < 10) => 0,
+        long n when (n is >= 10 and < 100) => 1,
+        long n when (n is >= 100 and < 1000) => 2,
+        long n when (n is >= 1000 and < 10000) => 3,
+        long n when (n is >= 10000 and < 100000) => 4,
+        long n when (n is >= 100000 and < 1000000) => 5,
+        long n when (n is >= 1000000 and < 10000000) => 6,
+        long n when (n is >= 10000000 and < 100000000) => 7,
+        long n when (n is >= 100000000 and < 1000000000) => 8,
+        long n when (n is >= 1000000000 and < 10000000000) => 9,
+        long n when (n is >= 10000000000 and < 100000000000) => 10,
+        long n when (n is >= 100000000000 and < 1000000000000) => 11,
+        long n when (n is >= 1000000000000 and < 10000000000000) => 12,
+        long n when (n is >= 10000000000000 and < 100000000000000) => 13,
+        long n when (n is >= 100000000000000 and < 1000000000000000) => 14,
+        long n when (n is >= 1000000000000000 and < 10000000000000000) => 15,
+        long n when (n is >= 10000000000000000 and < 100000000000000000) => 16,
+        long n when (n is >= 100000000000000000) => 17,
+        _ => throw new ArgumentException("input out of range"),
+    };
+
+    public static long Pow10(int exp) => exp switch
+    {
+        0 => 1,
+        1 => 10,
+        2 => 100,
+        3 => 1000,
+        4 => 10000,
+        5 => 100000,
+        6 => 1000000,
+        7 => 10000000,
+        8 => 100000000,
+        9 => 1000000000,
+        10 => 10000000000,
+        11 => 100000000000,
+        12 => 1000000000000,
+        13 => 10000000000000,
+        14 => 100000000000000,
+        15 => 1000000000000000,
+        16 => 10000000000000000,
+        17 => 100000000000000000,
+        18 => 1000000000000000000,
+        _ => throw new ArgumentException("input out of range"),
+    };
+   
+
     public static string FormatMs(long ms)
     {
         var span = TimeSpan.FromMilliseconds(ms);
@@ -727,7 +799,7 @@ public static class HashBreaker
         var outputSpan = outputBuffer.AsSpan();
 
         int index = start;
-        int digits = index == 0 ? 0 : (int)Math.Log10(index);
+        int digits = index == 0 ? 0 : Util.Log10i(index);
         while (true)
         {
             MD5.TryHashData(inputSpan, outputSpan, out var _);
@@ -736,7 +808,7 @@ public static class HashBreaker
             if (outputBuffer[0] == 0 && outputBuffer[1] == 0 && ((numZeroes == 5 && ((outputBuffer[2] & 0xf0) == 0)) || (numZeroes == 6 && outputBuffer[2] == 0))) return (index, outputBuffer.GetHexChars());
 
             index++;
-            int newDigits = (int)Math.Log10(index);
+            int newDigits = Util.Log10i(index);
             if (newDigits != digits)
             {
                 digits = newDigits;

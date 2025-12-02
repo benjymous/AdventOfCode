@@ -68,7 +68,7 @@ public class Day24 : IPuzzle
     private static long Reconstruct(Dictionary<int, (int w, int z)> cache, int prevZ, int digit)
     {
         var (w, z) = cache[digit + (prevZ << 8)];
-        return (w * (long)Math.Pow(10, 13 - digit)) + ((digit > 0) ? Reconstruct(cache, z, digit - 1) : 0);
+        return (w * Util.Pow10(13 - digit)) + ((digit > 0) ? Reconstruct(cache, z, digit - 1) : 0);
     }
 
     public static long Part1(string _) => FindModelNumber(biggest: true);
