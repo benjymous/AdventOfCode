@@ -22,6 +22,7 @@ public class Day02 : IPuzzle
         public static bool IsInvalid(long value, QuestionPart part)
         {
             var digits = Util.Log10i(value) + 1;
+
             if (part.One)
                 return IsRepeat(value, 2, digits);
 

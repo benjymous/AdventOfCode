@@ -6,35 +6,34 @@ namespace AoC.Advent2025.Test;
 [TestClass]
 public class Day03Test
 {
-    readonly string input = ""; // Util.GetInput<Day03>();
+    readonly string input = Util.GetInput<Day03>();
+    string test = "987654321111111\n811111111111119\n234234234234278\n818181911112111";
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _01Test(string input, int expected)
+    [TestMethod]
+    public void Joltage_01Test()
     {
-        Assert.AreEqual(expected, Day03.Part1(input));
+        Assert.AreEqual(357, Day03.Part1(test));
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _02Test(string input, int expected)
+    [TestMethod]
+    public void Joltage_02Test()
     {
-        Assert.AreEqual(expected, Day03.Part2(input));
+        Assert.AreEqual(3121910778619, Day03.Part2(test));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
-    public void _Part1_Regression()
+    [TestMethod]
+    public void Lobby_Part1_Regression()
     {
-        Assert.AreEqual(0, Day03.Part1(input));
+        Assert.AreEqual(17311, Day03.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
-    public void _Part2_Regression()
+    [TestMethod]
+    public void Lobby_Part2_Regression()
     {
-        Assert.AreEqual(0, Day03.Part2(input));
+        Assert.AreEqual(171419245422055, Day03.Part2(input));
     }
 }
