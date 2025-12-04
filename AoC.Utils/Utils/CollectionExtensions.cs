@@ -216,6 +216,30 @@ namespace AoC.Utils
                     yield return ((x, y), array2d[x, y]);
         }
 
+        public static IEnumerable<((int x, int y) Key, T Value)> Neighbours<T>(this T[,] array2d, (int x, int y) p, bool includeDiagonals = true)
+        {
+
+            (int, int)[] deltas = includeDiagonals ?
+            [
+                (-1, -1), (0, -1), (1, -1),
+                (-1, 0),           (1, 0),
+                (-1, 1),  (0, 1),  (1, 1)
+            ] :
+            [
+                (0, -1), (-1, 0), (1, 0), (0, 1)
+            ];
+
+            foreach (var (dx, dy) in deltas)
+            {
+                int nx = p.x + dx;
+                int ny = p.y + dy;
+                if (array2d.Contains(nx, ny))
+                {
+                    yield return ((nx, ny), array2d[nx, ny]);
+                }
+            }
+        }
+
         public static IEnumerable<T> Row<T>(this T[,] array2d, int row)
         {
             for (int col = 0; col < array2d.Width(); col++)
@@ -302,6 +326,52 @@ namespace AoC.Utils
             }
 
             return dict;
+        }
+
+        public static IEnumerable<((int x, int y) Key, T Value)> Neighbours<T>(this IDictionary<(int, int), T> array2d, (int x, int y) p, bool includeDiagonals = true)
+        {
+
+            (int, int)[] deltas = includeDiagonals ?
+            [
+                (-1, -1), (0, -1), (1, -1),
+                (-1, 0),           (1, 0),
+                (-1, 1),  (0, 1),  (1, 1)
+            ] :
+            [
+                (0, -1), (-1, 0), (1, 0), (0, 1)
+            ];
+
+            foreach (var (dx, dy) in deltas)
+            {
+                int nx = p.x + dx;
+                int ny = p.y + dy;
+                if (array2d.ContainsKey((nx, ny)))
+                {
+                    yield return ((nx, ny), array2d[(nx, ny)]);
+                }
+            }
+        }
+
+        public static IEnumerable<PackedPos32> Neighbours(this HashSet<PackedPos32> array2d, PackedPos32 p, bool includeDiagonals = true)
+        {
+            PackedPos32[] deltas = includeDiagonals ?
+            [
+                (-1, -1), (0, -1), (1, -1),
+                            (-1, 0),           (1, 0),
+                            (-1, 1),  (0, 1),  (1, 1)
+            ] :
+            [
+                (0, -1), (-1, 0), (1, 0), (0, 1)
+            ];
+
+            foreach (var d in deltas)
+            {
+                int np = p + d;
+                if (array2d.Contains(np))
+                {
+                    yield return np;
+                }
+            }
         }
 
         public static int Height<T>(this T[,] array2d) => array2d.GetLength(1);
@@ -844,6 +914,6 @@ namespace AoC.Utils
             }
 
             return (trueList, falseList);
-        }        
+        }
     }
 }

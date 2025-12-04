@@ -969,4 +969,5 @@ public static class Extensions
     public static TAttribute Get<TAttribute>(this Dictionary<Type, Attribute> attrs) where TAttribute : Attribute => attrs == null ? default : (TAttribute)attrs.GetOrDefault(typeof(TAttribute));
 
     public static Boxed<T> Wrap<T>(this T item) => new(item);
+
 }
