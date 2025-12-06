@@ -6,35 +6,34 @@ namespace AoC.Advent2025.Test;
 [TestClass]
 public class Day05Test
 {
-    readonly string input = ""; // Util.GetInput<Day05>();
+    readonly string input = Util.GetInput<Day05>();
+    readonly string test = "3-5\n10-14\n16-20\n12-18\n\n1\n5\n8\n11\n17\n32";
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _01Test(string input, int expected)
+    [TestMethod]
+    public void Freshness_01Test()
     {
-        Assert.AreEqual(expected, Day05.Part1(input));
+        Assert.AreEqual(3, Day05.Part1(test));
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
     [DataTestMethod]
-    public void _02Test(string input, int expected)
+    public void Freshness_02Test()
     {
-        Assert.AreEqual(expected, Day05.Part2(input));
+        Assert.AreEqual(14ul, Day05.Part2(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void Cafeteria_Part1_Regression()
     {
-        Assert.AreEqual(0, Day05.Part1(input));
+        Assert.AreEqual(811, Day05.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void Cafeteria_Part2_Regression()
     {
-        Assert.AreEqual(0, Day05.Part2(input));
+        Assert.AreEqual(338189277144473ul, Day05.Part2(input));
     }
 }
