@@ -6,35 +6,34 @@ namespace AoC.Advent2025.Test;
 [TestClass]
 public class Day07Test
 {
-    readonly string input = ""; // Util.GetInput<Day07>();
+    readonly string input =  Util.GetInput<Day07>();
+    readonly string test = ".......S.......\n...............\n.......^.......\n...............\n......^.^......\n...............\n.....^.^.^.....\n...............\n....^.^...^....\n...............\n...^.^...^.^...\n...............\n..^...^.....^..\n...............\n.^.^.^.^.^...^.\n...............";
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _01Test(string input, int expected)
+    [TestMethod]
+    public void Splitters_01Test()
     {
-        Assert.AreEqual(expected, Day07.Part1(input));
+        Assert.AreEqual(21, Day07.Part1(test));
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _02Test(string input, int expected)
+    [TestMethod]
+    public void Splitters_02Test()
     {
-        Assert.AreEqual(expected, Day07.Part2(input));
+        Assert.AreEqual(40, Day07.Part2(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void Teleportation_Part1_Regression()
     {
-        Assert.AreEqual(0, Day07.Part1(input));
+        Assert.AreEqual(1630, Day07.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void Teleportation_Part2_Regression()
     {
-        Assert.AreEqual(0, Day07.Part2(input));
+        Assert.AreEqual(47857642990160, Day07.Part2(input));
     }
 }
