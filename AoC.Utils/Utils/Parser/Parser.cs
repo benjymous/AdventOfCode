@@ -157,7 +157,7 @@ namespace AoC.Utils.Parser
             {
                 return conv.ConvertFromString(line);
             }
-            else if (t.IsArray)
+            else if (t.IsArray || t.Name.StartsWith("ValueTuple`"))
             {
                 return ConvertFromString(t, line);
             }
@@ -284,6 +284,8 @@ namespace AoC.Utils.Parser
             }
             else
             {
+                var paramAttr = attrs.Get<RegexAttribute>();
+
                 if (destinationType == typeof(string)) return input;
 
                 if (destinationType == typeof(int))
@@ -303,6 +305,16 @@ namespace AoC.Utils.Parser
                     return input.Trim()[0].AsBool();
                 }
 
+                if (paramAttr == null && destinationType.Name.StartsWith("ValueTuple`"))
+                {
+                    var parts = Util.Split(input, ",");
+                    var typeConstructor = destinationType.GetConstructors().First();
+                    var paramInfo = typeConstructor.GetParameters();
+
+                    object[] convertedParams = ConstructParams(parts, paramInfo);
+                    return Activator.CreateInstance(destinationType, convertedParams);
+                }
+
                 var nullableType = Nullable.GetUnderlyingType(destinationType);
                 if (nullableType != null)
                 {
@@ -314,8 +326,6 @@ namespace AoC.Utils.Parser
                 {
                     return conv.ConvertFromString(input);
                 }
-
-                var paramAttr = attrs.Get<RegexAttribute>();
 
                 return paramAttr != null ? RegexCreate(destinationType, input, paramAttr) : RegexCreate(destinationType, input);
             }
@@ -332,7 +342,14 @@ namespace AoC.Utils.Parser
 
             if (regexValues.Length != paramInfo.Length) throw new Exception("ConstructParams couldn't match constructor param count");
 
-            var instanceParams = paramInfo.Zip(regexValues); // collate parameter types and matched substrings
+            return ConstructParams(regexValues, paramInfo);
+        }
+
+        static object[] ConstructParams(string[] values, ParameterInfo[] paramInfo)
+        {
+            if (paramInfo.Length == 0) return default;
+
+            var instanceParams = paramInfo.Zip(values); // collate parameter types and matched substrings
 
             return [.. instanceParams.Select(kvp => ConvertFromString(kvp.First.ParameterType, kvp.Second, GetAttributeMap(kvp.First)))]; // convert substrings to match constructor input
         }
