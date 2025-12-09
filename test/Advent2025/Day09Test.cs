@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AoC.Utils.Parser;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AoC.Advent2025.Test;
 
@@ -6,35 +7,34 @@ namespace AoC.Advent2025.Test;
 [TestClass]
 public class Day09Test
 {
-    readonly string input = ""; // Util.GetInput<Day09>();
+    readonly string input = Util.GetInput<Day09>();
+    readonly string test = "7,1\n11,1\n11,7\n9,7\n9,5\n2,5\n2,3\n7,3";
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _01Test(string input, int expected)
+    [TestMethod]
+    public void TileSize_01Test()
     {
-        Assert.AreEqual(expected, Day09.Part1(input));
+        Assert.AreEqual(50, Day09.Part1(test));
     }
 
     [TestCategory("Test")]
-    [DataRow("???", 0)]
-    [DataTestMethod]
-    public void _02Test(string input, int expected)
+    [TestMethod]
+    public void TileSize_02Test()
     {
-        Assert.AreEqual(expected, Day09.Part2(input));
+        Assert.AreEqual(24, Day09.Part2(test));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part1_Regression()
+    public void TileFlipping_Part1_Regression()
     {
-        Assert.AreEqual(0, Day09.Part1(input));
+        Assert.AreEqual(4749838800, Day09.Part1(input));
     }
 
     [TestCategory("Regression")]
     [DataTestMethod]
-    public void _Part2_Regression()
+    public void TileFlipping_Part2_Regression()
     {
-        Assert.AreEqual(0, Day09.Part2(input));
+        Assert.AreEqual(1624057680, Day09.Part2(input));
     }
 }
