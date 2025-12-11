@@ -116,7 +116,7 @@
             }
         }
 
-        public static bool IsInteger(this double d) => (long)d == d;
+        public static bool IsInteger(this double d, double delta = 0.000001) => Math.Abs((long)d-d) < delta;
 
         public static int SumOfFactors(this int n)
         {

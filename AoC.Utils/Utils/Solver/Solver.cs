@@ -94,6 +94,14 @@
             }
         }
 
+        public void Stop()
+        {
+            queue.Clear();
+        }
+
+
+        public int Count => queue.Count;
+
         public void CullQueue(int max)
         {
             if (queue.Count > max + (max / 3))
