@@ -653,7 +653,6 @@ public partial class Util
     public static long SqDistance((long x, long y, long z) p1, (long x, long y, long z) p2)
         => PowTwoi(p2.x - p1.x) + PowTwoi(p2.y - p1.y) + PowTwoi(p2.z - p1.z);
 
-
     public static string FormatMs(long ms)
     {
         var span = TimeSpan.FromMilliseconds(ms);
