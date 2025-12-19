@@ -1,18 +1,17 @@
-﻿using System.Linq;
+﻿namespace AoC.Advent2025;
 
-namespace AoC.Advent2025;
 public class Day04 : IPuzzle
 {
-    private static List<((int x, int y) Pos, char)> PerformStep(char[,] grid) 
-        => grid.Entries().Where(e => e.Value == '@' && 
-                             grid.Neighbours(e.Key).Count(v => v.Value == '@') < 4).ToList();
+    private static List<(int x, int y)> PerformStep(HashSet<(int x, int y)> grid)
+        => grid.Where(e => grid.Neighbours(e).Count() < 4).ToList();
 
-    public static int Part1(string input) 
-        => PerformStep(Util.ParseMatrix<char>(input)).Count;
+    private static HashSet<(int, int)> Parse(string input) => Util.ParseSparseMatrix<bool>(input).Keys.ToHashSet();
+
+    public static int Part1(string input) => PerformStep(Parse(input)).Count;
 
     public static int Part2(string input)
     {
-        var grid = Util.ParseMatrix<char>(input);
+        var grid = Parse(input);
 
         int total = 0;
 
@@ -22,10 +21,7 @@ public class Day04 : IPuzzle
             if (remove.Count == 0) break;
             total += remove.Count;
 
-            foreach (var v in remove)
-            {
-                grid[v.Pos.x, v.Pos.y] = '.';
-            }
+            grid.RemoveRange(remove);
         }
 
         return total;

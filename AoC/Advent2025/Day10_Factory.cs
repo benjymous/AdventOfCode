@@ -8,34 +8,36 @@ public class Day10 : IPuzzle
     {
         bool[] TargetLights = [];
         int[] TargetJolts = [];
-        readonly List<HashSet<int>> ButtonActions = [];
+        readonly List<int[]> ButtonActions = [];
 
-        public Machine(string input) => Parser.Factory(input, this, " ");
+        [Regex("(.+)")] public Machine(string input) => Parser.Factory(input, this, " ");
 
         public int Solve(QuestionPart part)
         {
             using var ctx = new Context();
             var opt = ctx.MkOptimize();
 
-            int numTargets = TargetJolts.Length;
             int numButtons = ButtonActions.Count;
 
-            // Each button can be pressed 0 or more times
+            // Each button can be pressed 0 or more times, must be whole number
             var numPresses = new IntExpr[numButtons];
             for (int j = 0; j < numButtons; j++)
             {
-                numPresses[j] = ctx.MkIntConst($"x_{j}");
+                numPresses[j] = ctx.MkIntConst(ctx.MkSymbol(j));
                 opt.Assert(ctx.MkGe(numPresses[j], ctx.MkInt(0))); // numPresses[j] >= 0
             }
 
+            // Define how button presses effect the target values
+            // for each target, its value is the sum of all the button presses
+            // that effect that target
             if (part.One)
             {
-                // Define how button presses effect the lights
+                // lights are toggled by presses
                 foreach (var light in TargetLights.Index())
                 {
-                    var termsSum = EnumerateButtons(ctx, numPresses, light.Index);
+                    var termsSum = SumOfPressesForTarget(ctx, numPresses, light.Index);
 
-                    var lhs = ctx.MkMod((IntExpr)termsSum, ctx.MkInt(2));
+                    var lhs = ctx.MkMod((IntExpr)termsSum, ctx.MkInt(2)); // check odd (on) or even (off)
                     var rhs = ctx.MkInt(light.Item ? 1 : 0);
 
                     opt.Assert(ctx.MkEq(lhs, rhs));
@@ -43,13 +45,10 @@ public class Day10 : IPuzzle
             }
             else
             {
-                // Define how button presses effect target jolts
-                // for each target, its value is the sum of all the button presses
-                // that effect that target
+                // jolts are incremented by presses
                 foreach (var target in TargetJolts.Index())
                 {
-                    var lhs = EnumerateButtons(ctx, numPresses, target.Index);
-
+                    var lhs = SumOfPressesForTarget(ctx, numPresses, target.Index);
                     var rhs = ctx.MkInt(target.Item);
 
                     opt.Assert(ctx.MkEq(lhs, rhs));
@@ -63,30 +62,25 @@ public class Day10 : IPuzzle
             if (opt.Check() != Status.SATISFIABLE) return 0; // No solution
 
             // result 
-            var model = opt.Model;
-            return numPresses.Sum(press => ((IntNum)model.Eval(press, true)).Int);
+            return ((IntNum)opt.Model.Eval(sumPresses)).Int;
         }
 
-        private ArithExpr EnumerateButtons(Context ctx, IntExpr[] numPresses, int targetIndex)
+        private ArithExpr SumOfPressesForTarget(Context ctx, IntExpr[] numPresses, int targetIndex)
         {
-            var terms = ButtonActions.Index()
+            return ctx.MkAdd(ButtonActions.Index()
                 .Where(button => button.Item.Contains(targetIndex))
-                .Select(button => numPresses[button.Index]).ToList();
-
-            return terms.Count == 0 ? ctx.MkInt(0) : ctx.MkAdd(terms);
+                .Select(button => numPresses[button.Index]));
         }
 
         [Regex(@"\[(.+)\]")] public void ParseLights(string l) => TargetLights = [.. l.Select(c => c == '#')];
-        [Regex(@"\((.+)\)")] public void ParseButton(int[] actions) => ButtonActions.Add([.. actions]);
+        [Regex(@"\((.+)\)")] public void ParseButton(int[] actions) => ButtonActions.Add(actions);
         [Regex(@"\{(.+)\}")] public void ParseJolts(int[] jolts) => TargetJolts = jolts;
     }
 
-    static IEnumerable<Machine> Parse(string input) => Util.Split(input, "\n").Select(r => new Machine(r));
-    static int Solve(IEnumerable<Machine> machines, QuestionPart part) => machines.AsParallel().Sum(m => m.Solve(part));
+    static int Solve(Parser.AutoArray<Machine> machines, QuestionPart part) => machines.AsParallel().Sum(m => m.Solve(part));
 
-    public static int Part1(string input) => Solve(Parse(input), QuestionPart.Part1);
-
-    public static int Part2(string input) => Solve(Parse(input), QuestionPart.Part2);
+    public static int Part1(string input) => Solve(input, QuestionPart.Part1);
+    public static int Part2(string input) => Solve(input, QuestionPart.Part2);
 
     public void Run(string input, ILogger logger)
     {

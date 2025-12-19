@@ -84,8 +84,8 @@ public partial class Util
         }
         public class ConvertBool : IConvertomatic
         {
-            public object Convert(char c) => c == '#';
-            public bool ShouldConvert(char c) => c == '#';
+            public object Convert(char c) => c != '.' && c != ' ';
+            public bool ShouldConvert(char c) => c != '.' && c != ' ';
         }
         public class ConvertChar : IConvertomatic
         {

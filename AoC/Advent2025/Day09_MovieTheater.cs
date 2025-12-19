@@ -51,13 +51,11 @@ public class Day09 : IPuzzle
 
     static (int a, int b) Remap(Dictionary<int, int> map, int v1, int v2) => Util.MinMax(map[v1], map[v2]);
 
-    public static long Part1(string input)
-        => GetAreas(new Parser.AutoArray<(int x, int y)>(input)).Max(v => v.area);
+    public static long Part1(Parser.AutoArray<(int x, int y)> points)
+        => GetAreas(points).Max(v => v.area);
 
-    public static long Part2(string input)
+    public static long Part2(Parser.AutoArray<(int x, int y)> points)
     {
-        var points = new Parser.AutoArray<(int x, int y)>(input);
-
         var remapX = points.Select(p => p.x).Distinct().Order().Index().ToDictionary(x => x.Item, x => x.Index + 1);
         var remapY = points.Select(p => p.y).Distinct().Order().Index().ToDictionary(y => y.Item, y => y.Index + 1);
 

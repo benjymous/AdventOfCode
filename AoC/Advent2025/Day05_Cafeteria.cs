@@ -5,6 +5,8 @@ public class Day05 : IPuzzle
     public record class Range(ulong low, ulong high)
     {
         public bool InRange(ulong id) => id >= low && id <= high;
+
+        public Range Overlap(Range other) => new(Math.Min(low, other.low), Math.Max(high, other.high));
     }
 
     public static int Part1(string input)
@@ -33,7 +35,7 @@ public class Day05 : IPuzzle
                     var r2 = rules[i2];
                     if (r1.InRange(r2.low) || r1.InRange(r2.high))
                     {
-                        var newRule = new Range(Math.Min(r1.low, r2.low), Math.Max(r1.high, r2.high));
+                        var newRule = r1.Overlap(r2);
 
                         rules.Remove(r1);
                         rules.Remove(r2);

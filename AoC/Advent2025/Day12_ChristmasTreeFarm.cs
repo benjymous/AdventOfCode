@@ -5,7 +5,7 @@ public class Day12 : IPuzzle
     [Regex(@"\d:\s(.+\s.+\s.+)")]
     record class Shape(string Data)
     {
-        public int Count = Data.Count(v => v == '#');
+        public readonly int Count = Data.Count(v => v == '#');
     }
 
     [Regex(@"(\d+)x(\d+): (.+)")]

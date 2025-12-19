@@ -240,6 +240,30 @@ namespace AoC.Utils
             }
         }
 
+        public static IEnumerable<(int x, int y)> Neighbours(this HashSet<(int x, int y)> grid, (int x, int y) p, bool includeDiagonals = true)
+        {
+
+            (int, int)[] deltas = includeDiagonals ?
+            [
+                (-1, -1), (0, -1), (1, -1),
+                (-1, 0),           (1, 0),
+                (-1, 1),  (0, 1),  (1, 1)
+            ] :
+            [
+                (0, -1), (-1, 0), (1, 0), (0, 1)
+            ];
+
+            foreach (var (dx, dy) in deltas)
+            {
+                int nx = p.x + dx;
+                int ny = p.y + dy;
+                if (grid.Contains((nx, ny)))
+                {
+                    yield return (nx, ny);
+                }
+            }
+        }
+
         public static IEnumerable<T> Row<T>(this T[,] array2d, int row)
         {
             for (int col = 0; col < array2d.Width(); col++)

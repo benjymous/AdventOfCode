@@ -17,9 +17,12 @@ public class Day07 : IPuzzle
         var width = states[0].Length;
         int splits = 0;
 
+        int min = states[0].IndexOf('S');
+        int max = min+1;
+
         for (int i = 1; i < states.Length; i++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = min; x < max; x++)
             {
                 switch (states[i][x])
                 {
@@ -28,6 +31,8 @@ public class Day07 : IPuzzle
                         break;
                     case '^' when states[i - 1][x] == '|':
                         splits++;
+                        min = Math.Max(min-1, 0);
+                        max = Math.Min(width, max+1);
                         states[i][x - 1] = '|';
                         states[i][x + 1] = '|';
                         break;
