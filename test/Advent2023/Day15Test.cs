@@ -21,7 +21,7 @@ public class Day15Test
     [DataRow("pc-", 48)]
     [DataRow("pc=6", 214)]
     [DataRow("ot=7", 231)]
-    [DataTestMethod]
+    [TestMethod]
     public void HashTest(string input, int expected)
     {
         Assert.AreEqual(expected, Day15.CalculateHASH(input));
@@ -48,7 +48,7 @@ public class Day15Test
         Box.AddLens(Lens2);
         Box.AddLens(Lens3);
 
-        Assert.AreEqual(2, Box.Count);
+        Assert.HasCount(2, Box);
         Assert.AreEqual("A", Box[0].Label);
         Assert.AreEqual(3, Box[0].FocalLength);
         Assert.AreEqual("B", Box[1].Label);
@@ -64,14 +64,14 @@ public class Day15Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void LensLibrary_Part1_Regression()
     {
         Assert.AreEqual(507666, Day15.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void LensLibrary_Part2_Regression()
     {
         Assert.AreEqual(233537, Day15.Part2(input));

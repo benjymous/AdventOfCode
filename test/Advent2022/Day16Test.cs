@@ -21,28 +21,28 @@ Valve II has flow rate=0; tunnels lead to valves AA, JJ
 Valve JJ has flow rate=21; tunnel leads to valve II".Replace("\r", "");
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Plumbing01Test()
         {
             Assert.AreEqual(1651, Day16.Part1(test));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Plumbing02Test()
         {
             Assert.AreEqual(1707, Day16.Part2(test));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Plumbing_Part1_Regression()
         {
             Assert.AreEqual(1741, Day16.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Plumbing_Part2_Regression()
         {
             Assert.AreEqual(2316, Day16.Part2(input));

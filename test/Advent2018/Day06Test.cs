@@ -18,21 +18,21 @@ namespace AoC.Advent2018.Test
 
         [TestCategory("Test")]
         [DataRow("1, 1\n1, 6\n8, 3\n3, 4\n5, 5\n8, 9", 32, 16)]
-        [DataTestMethod]
+        [TestMethod]
         public void Coordinates02Test(string input, int maxValue, int expected)
         {
             Assert.AreEqual(expected, Day06.Part2(input, maxValue));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Chronal_Part1_Regression()
         {
             Assert.AreEqual(3890, Day06.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Chronal_Part2_Regression()
         {
             Assert.AreEqual(40284, Day06.Part2(input));

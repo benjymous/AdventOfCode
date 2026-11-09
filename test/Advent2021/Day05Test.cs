@@ -22,28 +22,28 @@ namespace AoC.Advent2021.Test
 5,5 -> 8,2";
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Vents01Test()
         {
             Assert.AreEqual(5, Day05.Part1(test));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Vents02Test()
         {
             Assert.AreEqual(12, Day05.Part2(test));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Vents_Part1_Regression()
         {
             Assert.AreEqual(5092, Day05.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Vents_Part2_Regression()
         {
             Assert.AreEqual(20484, Day05.Part2(input));

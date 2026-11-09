@@ -39,14 +39,14 @@ namespace AoC.Advent2021.Test
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Shrimp_Part1_Regression()
         {
             Assert.AreEqual(14371, Day23.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Shrimp_Part2_Regression()
         {
             Assert.AreEqual(40941, Day23.Part2(input));

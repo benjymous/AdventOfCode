@@ -40,7 +40,7 @@ namespace AoC.Advent2020.Test
                 "5: \"b\"\n" +
                 "\n" +
                 "abbbab", 1)]
-        [DataTestMethod]
+        [TestMethod]
         public void Messages01Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day19.Part1(input));
@@ -94,21 +94,21 @@ namespace AoC.Advent2020.Test
                 "aaaabbaabbaaaaaaabbbabbbaaabbaabaaa\n" +
                 "babaaabbbaaabaababbaabababaaab\n" +
                 "aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba", 12)]
-        [DataTestMethod]
+        [TestMethod]
         public void Messages02Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day19.Part2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Messages_Part1_Regression()
         {
             Assert.AreEqual(134, Day19.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Messages_Part2_Regression()
         {
             Assert.AreEqual(377, Day19.Part2(input));

@@ -18,28 +18,28 @@ namespace AoC.Advent2021.Test
 ..###".Replace("\r", "");
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Enhancement1Test()
         {
             Assert.AreEqual(35, Day20.Simulate(test, 2));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Enhancement2Test()
         {
             Assert.AreEqual(3351, Day20.Simulate(test, 50));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void TrenchEnhancement_Part1_Regression()
         {
             Assert.AreEqual(5339, Day20.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void TrenchEnhancement_Part2_Regression()
         {
             Assert.AreEqual(18395, Day20.Part2(input));

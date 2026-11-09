@@ -3,6 +3,7 @@
 namespace AoC.Advent2025.Test;
 
 [TestCategory("2025")]
+[TestCategory("Z3")]
 [TestClass]
 public class Day10Test
 {
@@ -24,7 +25,7 @@ public class Day10Test
     }
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
 
     [DataRow("[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}", 10)]
     [DataRow("[...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}", 12)]
@@ -42,14 +43,14 @@ public class Day10Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Factory_Part1_Regression()
     {
         Assert.AreEqual(484, Day10.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Factory_Part2_Regression()
     {
         Assert.AreEqual(19210, Day10.Part2(input));

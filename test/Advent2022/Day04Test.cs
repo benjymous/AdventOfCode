@@ -18,28 +18,28 @@ namespace AoC.Advent2022.Test
     2-6,4-8".Replace("\r", "");
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Cleanup01Test()
         {
             Assert.AreEqual(2, Day04.Part1(test));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Cleanup02Test()
         {
             Assert.AreEqual(4, Day04.Part2(test));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Cleanup_Part1_Regression()
         {
             Assert.AreEqual(580, Day04.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Cleanup_Part2_Regression()
         {
             Assert.AreEqual(895, Day04.Part2(input));

@@ -67,26 +67,28 @@
 
             switch (encoded)
             {
-                case "01|1010|01": return 'A';
-                case "01|01010|1010|01010|01": return 'A';
-                case "1|10101|01010": return 'B';
-                case "010|101|01010": return 'C';
-                case "1|10101|101": return 'E';
-                case "1|1010|10": return 'F';
-                case "010|10101|0101": return 'G';
-                case "010|101|10101|0101": return 'G';
-                case "010|101|10101|101010|0101": return 'G';
-                case "1|010|1": return 'H';
-                case "010|101|10": return 'J';
-                case "010|01|101|10": return 'J';
-                case "1|01010|101": return 'K';
-                case "1|010|01010|101": return 'K';
-                case "1|01": return 'L';
-                case "1|1010|010": return 'P';
-                case "1|1010|0101": return 'R';
-                case "0101|10101|1010": return 'S';
-                case "10|01|10": return 'U';
-                case "101|10101|101": return 'Z';
+                case "01|1010|01": return 'A'; //<< 2019-11
+                case "01|01010|1010|01010|01": return 'A'; // 2018-10
+                case "1|10101|01010": return 'B';  // << 2022-10
+                case "010|101|01010": return 'C';  // << // 2019-08, 2022-10
+                case "1|10101|101": return 'E'; // << 2021-13
+                case "1|1010|10": return 'F';   // << 2022-10
+                //case "010|10101|0101": return 'G';
+                case "010|101|10101|0101": return 'G';  // << // 2019-08, 2022-10
+                case "010|101|10101|101010|0101": return 'G'; // 2018-10
+                case "1|010|1": return 'H';  // << // 2019-08, 2022-10
+                case "101|1|101": return 'I'; // << from others examples
+                //case "010|101|10": return 'J';
+                case "010|01|101|10": return 'J';  // << 2022-10
+                //case "1|01010|101": return 'K';
+                case "1|010|01010|101": return 'K';  // << 2019-11
+                case "1|01": return 'L'; // << 2021-13
+                case "010|101|010": return 'O';  // << from others examples
+                case "1|1010|010": return 'P'; // << 2021-13
+                case "1|1010|0101": return 'R'; // << 2022-10
+                case "0101|10101|1010": return 'S'; // 2016-08
+                case "10|01|10": return 'U'; // 2019-08
+                case "101|10101|101": return 'Z';  // << 2022-10
 
                 default:
                     {

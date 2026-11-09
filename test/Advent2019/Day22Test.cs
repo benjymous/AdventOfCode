@@ -21,7 +21,7 @@ namespace AoC.Advent2019.Test
 
         [TestCategory("Test")]
         [DynamicData(nameof(GetData), DynamicDataSourceType.Method)]
-        [DataTestMethod]
+        [TestMethod]
         public void ShuffleTest(Day22.Deck deck, string expected)
         {
             Assert.AreEqual(expected, deck.ToString());
@@ -32,7 +32,7 @@ namespace AoC.Advent2019.Test
         [DataRow("cut 6\ndeal with increment 7\ndeal into new stack", "3, 0, 7, 4, 1, 8, 5, 2, 9, 6")]
         [DataRow("deal into new stack\ncut -2\ndeal with increment 7\ncut 8\ncut -4\ndeal with increment 7\ncut 3\ndeal with increment 9\ndeal with increment 3\ncut -1", "9, 2, 5, 8, 1, 4, 7, 0, 3, 6")]
         [DataRow("deal with increment 7\ndeal with increment 9\ncut -2", "6, 3, 0, 7, 4, 1, 8, 5, 2, 9")]
-        [DataTestMethod]
+        [TestMethod]
         public void RulesTest(string input, string expected)
         {
             var shuffled = Day22.DoShuffle(10, input);
@@ -40,14 +40,14 @@ namespace AoC.Advent2019.Test
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Shuffle_Part1_Regression()
         {
             Assert.AreEqual(1498, Day22.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Shuffle_Part2_Regression()
         {
             Assert.AreEqual(74662303452927, Day22.Part2(input));

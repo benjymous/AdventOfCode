@@ -24,28 +24,28 @@ namespace AoC.Advent2022.Test
 10R5L5R10L4R5L5".Replace("\r", "");
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void CubeMap01Test()
         {
             Assert.AreEqual(6032, Day22.Part1(test));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void CubeMap02Test()
         {
             Assert.AreEqual(5031, Day22.Part2(test));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void CubeMap_Part1_Regression()
         {
             Assert.AreEqual(162186, Day22.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void CubeMap_Part2_Regression()
         {
             Assert.AreEqual(55267, Day22.Part2(input));

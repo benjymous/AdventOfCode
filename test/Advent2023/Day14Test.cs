@@ -22,14 +22,14 @@ O.#..O.#.#
 #OO..#....".Replace("\r", "");
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
     public void RockRoll_01Test()
     {
         Assert.AreEqual(136, Day14.Part1(test));
     }
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
     public void Rotation_Test1()
     {
         string input =
@@ -74,7 +74,7 @@ O.#..O.#.#
     }
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
     public void Rotation_Test2()
     {
 
@@ -99,21 +99,21 @@ O.#..O.#.#
     }
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
     public void RockRoll_02Test()
     {
         Assert.AreEqual(64, Day14.Part2(test));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void ReflectorDish_Part1_Regression()
     {
         Assert.AreEqual(108614, Day14.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void ReflectorDish_Part2_Regression()
     {
         Assert.AreEqual(96447, Day14.Part2(input));

@@ -10,7 +10,7 @@ namespace AoC.Advent2017.Test
 
         [TestCategory("Test")]
         [DataRow("0\t2\t7\t0", 5)]
-        [DataTestMethod]
+        [TestMethod]
         public void Redistribution01Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day06.Part1(input));
@@ -25,14 +25,14 @@ namespace AoC.Advent2017.Test
         //}
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Redistribution_Part1_Regression()
         {
             Assert.AreEqual(7864, Day06.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Redistribution_Part2_Regression()
         {
             Assert.AreEqual(1695, Day06.Part2(input));

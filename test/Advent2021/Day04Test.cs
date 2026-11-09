@@ -29,28 +29,28 @@ namespace AoC.Advent2021.Test
  2  0 12  3  7";
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Squid01Test()
         {
             Assert.AreEqual(4512, Day04.Part1(test.Replace("\r", "")));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Squid02Test()
         {
             Assert.AreEqual(1924, Day04.Part2(test.Replace("\r", "")));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void SquidGame_Part1_Regression()
         {
             Assert.AreEqual(54275, Day04.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void SquidGame_Part2_Regression()
         {
             Assert.AreEqual(13158, Day04.Part2(input));

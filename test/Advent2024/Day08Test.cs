@@ -35,14 +35,14 @@ public class Day08Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void NodePositions_Part1_Regression()
     {
         Assert.AreEqual(398, Day08.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void NodePositions_Part2_Regression()
     {
         Assert.AreEqual(1333, Day08.Part2(input));

@@ -9,7 +9,7 @@ public class Day12Test
     readonly string input = Util.GetInput<Day12>();
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Presentris_Part1_Regression()
     {
         Assert.AreEqual(534, Day12.Part1(input));

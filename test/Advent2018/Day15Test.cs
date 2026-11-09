@@ -11,7 +11,7 @@ namespace AoC.Advent2018.Test
         readonly string input = Util.GetInput<Day15>();
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("#######\n#.G...#\n#...EG#\n#.#.#G#\n#..G#E#\n#.....#\n#######", 27730)]
         [DataRow("#######\n#G..#E#\n#E#E.E#\n#G.##.#\n#...#E#\n#...E.#\n#######", 36334)]
         public void ElfAttack01(string layout, int expected)
@@ -20,14 +20,14 @@ namespace AoC.Advent2018.Test
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void ElfBattle_Part1_Regression()
         {
             Assert.AreEqual(225096, Day15.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void ElfBattle_Part2_Regression()
         {
             Assert.AreEqual(35354, Day15.Part2(input));

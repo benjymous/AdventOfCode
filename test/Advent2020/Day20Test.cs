@@ -119,14 +119,14 @@ namespace AoC.Advent2020.Test
             "..#.###...";
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Jigsaw1Test()
         {
             Assert.AreEqual(20899048083289L, Day20.Part1(test));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Jigsaw2Test()
         {
             Assert.AreEqual(273, Day20.Part2(test));
@@ -154,7 +154,7 @@ namespace AoC.Advent2020.Test
 
         [DataRow("Tile 0000:\n0A1\nDXB\n3C2", 8, "0A1\nDXB\n3C2")]
         [DataRow("Tile 0000:\n0A1\nDXB\n3C2", 9, "3D0\nCXA\n2B1")]
-        [DataTestMethod]
+        [TestMethod]
         public void RotationTest(string input, int orientation, string expected)
         {
             var tile = Parser.FromString<Day20.Tile>(input.Replace("\n", "-"));
@@ -182,14 +182,14 @@ namespace AoC.Advent2020.Test
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Jigsaw_Part1_Regression()
         {
             Assert.AreEqual(8581320593371L, Day20.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Jigsaw_Part2_Regression()
         {
             Assert.AreEqual(2031, Day20.Part2(input));

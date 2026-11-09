@@ -46,14 +46,14 @@ public class Day23Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void ALongWalk_Part1_Regression()
     {
         Assert.AreEqual(2070, Day23.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void ALongWalk_Part2_Regression()
     {
         Assert.AreEqual(6498, Day23.Part2(input));

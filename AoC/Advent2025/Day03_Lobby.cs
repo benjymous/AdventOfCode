@@ -4,7 +4,7 @@ public class Day03 : IPuzzle
 {
     public static long LargestPossible(int[] row, int digits)
     {
-        var max = row[..^(digits - 1)].Max();
+        var max = row.AsSpan()[..^(digits - 1)].Max();
         if (digits == 1) return max;
 
         var nextIndex = row.IndexOf(max)+1;

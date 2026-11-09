@@ -10,7 +10,7 @@ namespace AoC.Advent2017.Test
 
         [TestCategory("Test")]
         [DataRow("5\t1\t9\t5\n7\t5\t3\n2\t4\t6\t8\n", 18)]
-        [DataTestMethod]
+        [TestMethod]
         public void Checksum01Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day02.Part1(input));
@@ -18,21 +18,21 @@ namespace AoC.Advent2017.Test
 
         [TestCategory("Test")]
         [DataRow("5\t9\t2\t8\n9\t4\t7\t3\n3\t8\t6\t5\n", 9)]
-        [DataTestMethod]
+        [TestMethod]
         public void Checksum02Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day02.Part2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Checksum_Part1_Regression()
         {
             Assert.AreEqual(46402, Day02.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Checksum_Part2_Regression()
         {
             Assert.AreEqual(265, Day02.Part2(input));

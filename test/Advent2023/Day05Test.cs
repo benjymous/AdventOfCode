@@ -53,7 +53,7 @@ humidity-to-location map:
     [DataRow("seed", "location", 14, 43)]
     [DataRow("seed", "location", 55, 86)]
     [DataRow("seed", "location", 13, 35)]
-    [DataTestMethod]
+    [TestMethod]
     public void ForwardMappingTest(string from, string to, int start, int expected)
     {
         var factory = (Day05.Factory)test;
@@ -84,7 +84,7 @@ humidity-to-location map:
 
     [DataRow("location", "seed", 46, 82)]
 
-    [DataTestMethod]
+    [TestMethod]
     public void ReverseMappingTest(string from, string to, int start, int expected)
     {
         var factory = (Day05.Factory)test;
@@ -106,14 +106,14 @@ humidity-to-location map:
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void SeedMapping_Part1_Regression()
     {
         Assert.AreEqual(289863851, Day05.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void SeedMapping_Part2_Regression()
     {
         Assert.AreEqual(60568880, Day05.Part2(input));

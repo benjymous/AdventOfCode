@@ -25,14 +25,14 @@ public class Day22Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void SandSlabs_Part1_Regression()
     {
         Assert.AreEqual(418, Day22.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void SandSlabs_Part2_Regression()
     {
         Assert.AreEqual(70702, Day22.Part2(input));

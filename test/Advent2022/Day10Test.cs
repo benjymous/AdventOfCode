@@ -158,21 +158,21 @@ noop
 noop".Replace("\r", "");
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void CRT01Test()
         {
             Assert.AreEqual(13140, Day10.Part1(test));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void CRT02Test()
         {
-            Assert.AreEqual("BA8737FF1F5B748145E3243169BF9978", Day10.Part2(test, new ConsoleOut()).GetMD5String());
+            Assert.AreEqual("3297A783FEB725081CD5FD24C3E32AA5", Day10.Part2(test, new ConsoleOut()).GetMD5String());
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void CRT_Part1_Regression()
         {
             Assert.AreEqual(13860, Day10.Part1(input));
@@ -180,7 +180,7 @@ noop".Replace("\r", "");
 
         [TestCategory("Regression")]
         [TestCategory("OCR")]
-        [DataTestMethod]
+        [TestMethod]
         public void CRT_Part2_Regression()
         {
             Assert.AreEqual("RZHFGJCB", Utils.OCR.TextReader.Read(Day10.Part2(input, new ConsoleOut())));

@@ -8,7 +8,7 @@ namespace AoC.Test.Utils.Vectors
     public class PackedVectTest
     {
 
-        [DataTestMethod]
+        [TestMethod]
         [TestCategory("PackedVect")]
         [DataRow(1, 1, 100)]
         [DataRow(1, 2, 200)]

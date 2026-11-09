@@ -31,7 +31,7 @@ QQQJA 483".Replace("\r", "");
     [DataRow("KTJJT", Day07.HandType.TwoPair)]
     [DataRow("QQQJA", Day07.HandType.ThreeOfAKind)]
 
-    [DataTestMethod]
+    [TestMethod]
     public void HandTypeTest1(string input, Day07.HandType expected)
     {
         Assert.AreEqual(expected, Day07.GetHandType(input));
@@ -52,7 +52,7 @@ QQQJA 483".Replace("\r", "");
     [DataRow("KTJJT", Day07.HandType.FourOfAKind)]
     [DataRow("QQQJA", Day07.HandType.FourOfAKind)]
 
-    [DataTestMethod]
+    [TestMethod]
     public void HandTypeTest2(string input, Day07.HandType expected)
     {
         Assert.AreEqual(expected, Day07.GetHandType(input.Replace("J", "*")));
@@ -67,7 +67,7 @@ QQQJA 483".Replace("\r", "");
     [DataRow("JJJJJ", "AAAAA")]
     [DataRow("JJJJK", "KKKKK")]
 
-    [DataTestMethod]
+    [TestMethod]
     public void ApplyJokersTest(string input, string expected)
     {
         Assert.AreEqual(expected, Day07.ApplyJokers(input.Replace("J", "*")));
@@ -94,28 +94,28 @@ QQQJA 483".Replace("\r", "");
     }
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
     public void CardRanking_01Test()
     {
         Assert.AreEqual(6440, Day07.Part1(test));
     }
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
     public void CardRanking_02Test()
     {
         Assert.AreEqual(5905, Day07.Part2(test));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void CamelCards_Part1_Regression()
     {
         Assert.AreEqual(251216224, Day07.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void CamelCards_Part2_Regression()
     {
         Assert.AreEqual(250825971, Day07.Part2(input));

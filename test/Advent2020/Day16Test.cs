@@ -43,27 +43,27 @@ namespace AoC.Advent2020.Test
             "15, 1, 5\n" +
             "5, 14, 9",
             "class: 12, row: 11, seat: 13")]
-        [DataTestMethod]
+        [TestMethod]
         public void Decoder1Test(string input, string expected)
         {
             Assert.AreEqual(expected, TestDecode(input));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         public void Decoder2Test()
         {
             Assert.AreEqual("arrival location: 137, arrival platform: 139, arrival station: 157, arrival track: 127, class: 151, departure date: 131, departure location: 97, departure platform: 101, departure station: 113, departure time: 109, departure track: 149, duration: 73, price: 59, route: 67, row: 103, seat: 53, train: 163, type: 71, wagon: 61, zone: 107", TestDecode(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Tickets_Part1_Regression()
         {
             Assert.AreEqual(18227, Day16.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Tickets_Part2_Regression()
         {
             Assert.AreEqual(2355350878831L, Day16.Part2(input));

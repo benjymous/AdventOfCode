@@ -20,7 +20,7 @@ public class Day11Test
 #...#.....".Replace("\r\n", "\n");
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
     public void GalaxyExpansion_01Test()
     {
         Assert.AreEqual(374, Day11.Part1(test));
@@ -29,21 +29,21 @@ public class Day11Test
     [TestCategory("Test")]
     [DataRow(10, 1030)]
     [DataRow(100, 8410)]
-    [DataTestMethod]
+    [TestMethod]
     public void GalaxyExpansion_02Test(int expansion, int expected)
     {
         Assert.AreEqual(expected, Day11.MeasureGalaxies(test, expansion));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void CosmicExpansion_Part1_Regression()
     {
         Assert.AreEqual(9445168, Day11.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void CosmicExpansion_Part2_Regression()
     {
         Assert.AreEqual(742305960572, Day11.Part2(input));

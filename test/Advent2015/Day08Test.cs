@@ -12,7 +12,7 @@ namespace AoC.Advent2015.Test
         [DataRow("\"abc\"", "abc")]
         [DataRow("\"aaa\\\"aaa\"", "aaa\"aaa")]
         [DataRow("\"\\x27\"", "'")]
-        [DataTestMethod]
+        [TestMethod]
         public void EscapeTest01(string input, string expected)
         {
             Assert.AreEqual(expected, Day08.Unescape(input));
@@ -27,14 +27,14 @@ namespace AoC.Advent2015.Test
         // }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void MatchstickEncoding_Part1_Regression()
         {
             Assert.AreEqual(1342, Day08.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void MatchStickEncoding_Part2_Regression()
         {
             Assert.AreEqual(2074, Day08.Part2(input));

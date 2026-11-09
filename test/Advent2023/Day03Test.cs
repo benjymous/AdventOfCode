@@ -83,21 +83,21 @@ public class Day03Test
 ......755.
 ...$.*....
 .664.598..", 467835)]
-    [DataTestMethod]
+    [TestMethod]
     public void Gears_02Test(string input, int expected)
     {
         Assert.AreEqual(expected, Day03.Part2(input.Replace("\r", "")));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void GearRatio_Part1_Regression()
     {
         Assert.AreEqual(533784, Day03.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void GearRatio_Part2_Regression()
     {
         Assert.AreEqual(78826761, Day03.Part2(input));

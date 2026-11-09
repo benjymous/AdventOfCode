@@ -12,29 +12,29 @@ namespace AoC.Advent2020.Test
 
         [TestCategory("Test")]
         [DataRow("1-3 a: abcde\n1-3 b: cdefg\n2-9 c: ccccccccc", 2)]
-        [DataTestMethod]
+        [TestMethod]
         public void Password01Test(string input, int expected)
         {
-            Assert.IsTrue(Day02.Part1(input) == expected);
+            Assert.AreEqual(expected, Day02.Part1(input));
         }
 
         [TestCategory("Test")]
         [DataRow("1-3 a: abcde\n1-3 b: cdefg\n2-9 c: ccccccccc", 1)]
-        [DataTestMethod]
+        [TestMethod]
         public void Password02Test(string input, int expected)
         {
-            Assert.IsTrue(Day02.Part2(input) == expected);
+            Assert.AreEqual(expected, Day02.Part2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Passwords_Part1_Regression()
         {
             Assert.AreEqual(524, Day02.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Passwords_Part2_Regression()
         {
             Assert.AreEqual(485, Day02.Part2(input));

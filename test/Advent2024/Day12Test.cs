@@ -60,14 +60,14 @@ AAAAAA".Replace("\r", "");
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Fencing_Part1_Regression()
     {
         Assert.AreEqual(1415378, Day12.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Fencing_Part2_Regression()
     {
         Assert.AreEqual(862714, Day12.Part2(input));

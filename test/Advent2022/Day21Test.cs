@@ -24,28 +24,28 @@ drzm: hmdt - zczc
 hmdt: 32";
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void MathTree01Test()
         {
             Assert.AreEqual(152L, Day21.Part1(test));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void MathTree02Test()
         {
             Assert.AreEqual(301L, Day21.Part2(test));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void MathTree_Part1_Regression()
         {
             Assert.AreEqual(10037517593724, Day21.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void MathTree_Part2_Regression()
         {
             Assert.AreEqual(3272260914328, Day21.Part2(input));

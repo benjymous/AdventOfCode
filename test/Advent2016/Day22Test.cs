@@ -10,14 +10,14 @@ namespace AoC.Advent2016.Test
         readonly string input = Util.GetInput<Day22>();
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Filesystem_Part1_Regression()
         {
             Assert.AreEqual(860, Day22.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Filesystem_Part2_Regression()
         {
             Assert.AreEqual(200, Day22.Part2(input));

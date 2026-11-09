@@ -12,7 +12,7 @@ namespace AoC.Advent2016.Test
         [DataRow("ihgpwlah", "DDRRRD")]
         [DataRow("kglvqrro", "DDUDRLRRUDRD")]
         [DataRow("ulqzkmiv", "DRURDRUDDLLDLUURRDULRLDUUDDDRR")]
-        [DataTestMethod]
+        [TestMethod]
         public void Doors01Test(string input, string expected)
         {
             Assert.AreEqual(expected, Day17.Part1(input));
@@ -22,21 +22,21 @@ namespace AoC.Advent2016.Test
         [DataRow("ihgpwlah", 370)]
         [DataRow("kglvqrro", 492)]
         [DataRow("ulqzkmiv", 830)]
-        [DataTestMethod]
+        [TestMethod]
         public void Doors02Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day17.Part2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void VaultDoors_Part1_Regression()
         {
             Assert.AreEqual("RDRRULDDDR", Day17.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void VaultDoors_Part2_Regression()
         {
             Assert.AreEqual(392, Day17.Part2(input));

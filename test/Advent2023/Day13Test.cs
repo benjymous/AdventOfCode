@@ -114,7 +114,7 @@ public class Day13Test
     [DataRow(test3, 1400)]
     [DataRow(test4, 1200)]
     [DataRow(test5, 400)]
-    [DataTestMethod]
+    [TestMethod]
     public void GetScoreTest(string input, int expected)
     {
         Assert.AreEqual(expected, Day13.GetMirrorScore(input, QuestionPart.Part1));
@@ -138,21 +138,21 @@ public class Day13Test
     [DataRow("###", "#.#", true)]
     [DataRow(".##", "#.#", false)]
     [DataRow(".##", ".##", true)]
-    [DataTestMethod]
+    [TestMethod]
     public void DiffByOneTest(string in1, string in2, bool expected)
     {
         Assert.AreEqual(expected, Day13.StringsDifferByNoMoreThanOne(in1, in2));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Mirroring_Part1_Regression()
     {
         Assert.AreEqual(37381, Day13.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Mirroring_Part2_Regression()
     {
         Assert.AreNotEqual(37381, Day13.Part2(input));

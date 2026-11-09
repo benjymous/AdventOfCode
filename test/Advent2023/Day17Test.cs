@@ -50,14 +50,14 @@ public class Day17Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Crucible_Part1_Regression()
     {
         Assert.AreEqual(771, Day17.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Crucible_Part2_Regression()
     {
         Assert.AreEqual(930, Day17.Part2(input));

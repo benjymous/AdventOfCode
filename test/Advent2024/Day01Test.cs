@@ -25,14 +25,14 @@ public class Day01Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Historian_Part1_Regression()
     {
         Assert.AreEqual(1830467, Day01.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Historian_Part2_Regression()
     {
         Assert.AreEqual(26674158, Day01.Part2(input));

@@ -28,7 +28,7 @@ public class Day25 : IPuzzle
             var items = filtered.Where(f => f.filter == 'I' && !traps.Contains(f.value)).Select(f => f.value);
 
             var room = new Room(roomName, exits);
-            if (LastRoom != null) LastRoom.Exits[LastTravelDirection] = room;
+            LastRoom?.Exits[LastTravelDirection] = room;
 
             UnvisitedDestinations.PushRange(room.GetUnvisited());
             items.ForEach(TakeItem);

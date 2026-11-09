@@ -22,27 +22,27 @@ Sensor at x=16, y=7: closest beacon is at x=15, y=3
 Sensor at x=14, y=3: closest beacon is at x=15, y=3
 Sensor at x=20, y=1: closest beacon is at x=15, y=3".Replace("\r", "");
 
-        [DataTestMethod]
+        [TestMethod]
         public void Beacons01Test()
         {
             Assert.AreEqual(26, Day15.Part1(test, 10));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         public void Beacons02Test()
         {
             Assert.AreEqual(56000011L, Day15.Part2(test, 20));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Beacons_Part1_Regression()
         {
             Assert.AreEqual(5607466, Day15.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Beacons_Part2_Regression()
         {
             Assert.AreEqual(12543202766584L, Day15.Part2(input));

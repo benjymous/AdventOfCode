@@ -9,14 +9,14 @@ namespace AoC.Advent2016.Test
         readonly string input = Util.GetInput<Day18>();
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void TrapTiles_Part1_Regression()
         {
             Assert.AreEqual(2035, Day18.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void TrapTiles_Part2_Regression()
         {
             Assert.AreEqual(20000577, Day18.Part2(input));

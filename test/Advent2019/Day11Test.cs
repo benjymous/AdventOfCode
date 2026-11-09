@@ -12,7 +12,7 @@ namespace AoC.Advent2019.Test
         readonly string input = Util.GetInput<Day11>();
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Painter_Part1_Regression()
         {
             Assert.AreEqual(2018, Day11.Part1(input));
@@ -20,7 +20,7 @@ namespace AoC.Advent2019.Test
 
         [TestCategory("Regression")]
         [TestCategory("OCR")]
-        [DataTestMethod]
+        [TestMethod]
         public void Painter_Part2_Regression()
         {
             Assert.AreEqual("APFKRKBR", Day11.Part2(input, new ConsoleOut()));

@@ -53,7 +53,7 @@ public class Day12Test
     [DataRow("?###???????? 3,2,1", 10)]
     [DataRow("??????? 2,1", 10)]
     [DataRow("#?? 2", 1)]
-    [DataTestMethod]
+    [TestMethod]
     public void Springs01aTest(string input, int expected)
     {
         Assert.AreEqual(expected, Solve1Single(input));
@@ -80,14 +80,14 @@ public class Day12Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void HotSprings_Part1_Regression()
     {
         Assert.AreEqual(7771, Day12.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void HotSprings_Part2_Regression()
     {
         Assert.AreEqual(10861030975833, Day12.Part2(input));

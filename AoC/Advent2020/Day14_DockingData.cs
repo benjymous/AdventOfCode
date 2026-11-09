@@ -33,8 +33,8 @@ public class Day14 : IPuzzle
 
     private class MemoryContainer<T>
     {
-        private readonly Queue<T> items = new(255);
-        private readonly HashSet<T> seen = new(255);
+        private readonly Queue<T> items = [with(255)];
+        private readonly HashSet<T> seen = [with(255)];
         public void Push(T v)
         {
             if (seen.IsUnseen(v)) items.Enqueue(v);

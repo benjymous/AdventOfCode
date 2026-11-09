@@ -31,28 +31,28 @@ namespace AoC.Advent2020.Test
             "wseweeenwnesenwwwswnew";
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Lobby1Test()
         {
             Assert.AreEqual(10, Day24.Part1(test));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Lobby2Test()
         {
             Assert.AreEqual(2208, Day24.Part2(test));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Lobby_Part1_Regression()
         {
             Assert.AreEqual(307, Day24.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Lobby_Part2_Regression()
         {
             Assert.AreEqual(3787, Day24.Part2(input));

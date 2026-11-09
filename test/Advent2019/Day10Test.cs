@@ -15,21 +15,21 @@ namespace AoC.Advent2019.Test
         [DataRow("#.#...#.#.,.###....#.,.#....#...,##.#.#.#.#,....#.#.#.,.##..###.#,..#...##..,..##....##,......#...,.####.###.", 35)]
         [DataRow(".#..#..###,####.###.#,....###.#.,..###.##.#,##.##.#.#.,....###..#,..#.#..#.#,#..#.#.###,,.##...##.#,.....#.#..", 41)]
         [DataRow(".#..##.###...#######,##.############..##.,.#.######.########.#,.###.#######.####.#.,#####.##.#.##.###.##,..#####..#.#########,####################,#.####....###.#.#.##,##.#################,#####.##.###..####..,..######..##.#######,####.##.####...##..#,.#####..#.######.###,##...#.##########...,#.##########.#######,.####.#.###.###.#.##,....##.##.###..#####,.#.#.###########.###,#.#.#.#####.####.###,###.##.####.##.#..##", 210)]
-        [DataTestMethod]
+        [TestMethod]
         public void AsteroidsTest(string input, int expected)
         {
             Assert.AreEqual(expected, Day10.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Asteroids_Part1_Regression()
         {
             Assert.AreEqual(278, Day10.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Asteroids_Part2_Regression()
         {
             Assert.AreEqual(1417, Day10.Part2(input, 200));

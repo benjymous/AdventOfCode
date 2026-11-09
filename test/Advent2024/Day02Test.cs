@@ -24,7 +24,7 @@ public class Day02Test
     [DataRow("1 3 2 4 5", false, false)]
     [DataRow("8 6 4 4 1", false, false)]
     [DataRow("1 3 6 7 9", true, false)]
-    [DataTestMethod]
+    [TestMethod]
     public void DeerReport_01aTest(string input, bool increasing, bool decreasing)
     {
         var vals = Util.ExtractNumbers(input);
@@ -47,7 +47,7 @@ public class Day02Test
     [DataRow("8 6 4 4 1", true)]
     [DataRow("1 3 6 7 9", true)]
 
-    [DataTestMethod]
+    [TestMethod]
     public void DeerReport_02aTest(string input, bool isSafe)
     {
         var vals = Util.ExtractNumbers(input);
@@ -55,14 +55,14 @@ public class Day02Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void DeerReport_Part1_Regression()
     {
         Assert.AreEqual(341, Day02.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void DeerReport_Part2_Regression()
     {
         Assert.AreEqual(404, Day02.Part2(input));

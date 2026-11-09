@@ -11,14 +11,14 @@ namespace AoC.Advent2019.Test
         readonly string input = Util.GetInput<Day19>();
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void TractorBeam_Part1_Regression()
         {
             Assert.AreEqual(129, Day19.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void TractorBeam_Part2_Regression()
         {
             Assert.AreEqual(14040699, Day19.Part2(input));

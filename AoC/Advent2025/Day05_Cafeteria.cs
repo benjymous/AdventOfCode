@@ -2,11 +2,11 @@
 public class Day05 : IPuzzle
 {
     [Regex(@"(\d+)-(\d+)")]
-    public record class Range(ulong low, ulong high)
+    public record class Range(ulong Low, ulong High)
     {
-        public bool InRange(ulong id) => id >= low && id <= high;
+        public bool InRange(ulong id) => id >= Low && id <= High;
 
-        public Range Overlap(Range other) => new(Math.Min(low, other.low), Math.Max(high, other.high));
+        public Range Overlap(Range other) => new(Math.Min(Low, other.Low), Math.Max(High, other.High));
     }
 
     public static int Part1(string input)
@@ -21,7 +21,7 @@ public class Day05 : IPuzzle
     public static ulong Part2(string input)
     {
         var sections = input.SplitSections();
-        var rules = Parser.Parse<Range>(sections[0]).OrderBy(r => r.low).ToList();
+        var rules = Parser.Parse<Range>(sections[0]).OrderBy(r => r.Low).ToList();
 
         bool removed = false;
         do
@@ -33,7 +33,7 @@ public class Day05 : IPuzzle
                 for (int i2 = i1 + 1; i2 < rules.Count; i2++)
                 {
                     var r2 = rules[i2];
-                    if (r1.InRange(r2.low) || r1.InRange(r2.high))
+                    if (r1.InRange(r2.Low) || r1.InRange(r2.High))
                     {
                         var newRule = r1.Overlap(r2);
 
@@ -50,7 +50,7 @@ public class Day05 : IPuzzle
             }
         } while (removed);
 
-        return rules.Select(r => r.high - r.low + 1).Sum();
+        return rules.Select(r => r.High - r.Low + 1).Sum();
     }
 
     public void Run(string input, ILogger logger)

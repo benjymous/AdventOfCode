@@ -17,14 +17,14 @@ public class Day11Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void PebbleCount_Part1_Regression()
     {
         Assert.AreEqual(217443, Day11.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void PebbleCount_Part2_Regression()
     {
         Assert.AreEqual(257246536026785, Day11.Part2(input));

@@ -109,7 +109,7 @@ on x=-53470..21291,y=-120233..-33476,z=-44150..38147
 off x=-93533..-4276,y=-16170..68771,z=-104985..-24507";
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(test0, 39)]
         [DataRow(test1, 590784)]
         [DataRow(test2, 474140)]
@@ -120,14 +120,14 @@ off x=-93533..-4276,y=-16170..68771,z=-104985..-24507";
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Reactor_Part1_Regression()
         {
             Assert.AreEqual(600458, Day22.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Reactor_Part2_Regression()
         {
             Assert.AreEqual(1334275219162622, Day22.Part2(input));

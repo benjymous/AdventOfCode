@@ -25,14 +25,14 @@ namespace AoC.Advent2022.Test
         //}
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Rucksacks_Part1_Regression()
         {
             Assert.AreEqual(8039, Day03.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Rucksacks_Part2_Regression()
         {
             Assert.AreEqual(2510, Day03.Part2(input));

@@ -55,7 +55,7 @@ public class Day25Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void KeyChecker_Part1_Regression()
     {
         Assert.AreEqual(3397, Day25.Part1(input));

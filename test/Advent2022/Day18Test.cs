@@ -23,28 +23,28 @@ namespace AoC.Advent2022.Test
 2,3,5".Replace("\r", "");
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Obsidian01Test()
         {
             Assert.AreEqual(64, Day18.Part1(test));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Obsidian02Test()
         {
             Assert.AreEqual(58, Day18.Part2(test));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Obsidian_Part1_Regression()
         {
             Assert.AreEqual(3576, Day18.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Obsidian_Part2_Regression()
         {
             Assert.AreEqual(2066, Day18.Part2(input));

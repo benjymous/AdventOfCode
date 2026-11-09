@@ -12,7 +12,7 @@ namespace AoC.Advent2020.Test
         [DataRow(11, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X", 73)]
         [DataRow(101, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X", 101)]
         [DataRow(0, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X", 64)]
-        [DataTestMethod]
+        [TestMethod]
         public void MaskV1Test(long value, string input, long expected)
         {
             var statement = new Day14.Statement(input);
@@ -24,7 +24,7 @@ namespace AoC.Advent2020.Test
             "mem[8] = 11\n" +
             "mem[7] = 101\n" +
             "mem[8] = 0", 165)]
-        [DataTestMethod]
+        [TestMethod]
         public void Docking01Test(string input, long expected)
         {
             Assert.AreEqual(expected, Day14.Part1(input));
@@ -35,21 +35,21 @@ namespace AoC.Advent2020.Test
             "mem[42] = 100\n" +
             "mask = 00000000000000000000000000000000X0XX\n" +
             "mem[26] = 1", 208)]
-        [DataTestMethod]
+        [TestMethod]
         public void Docking02Test(string input, long expected)
         {
             Assert.AreEqual(expected, Day14.Part2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Docking_Part1_Regression()
         {
             Assert.AreEqual(6386593869035, Day14.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Docking_Part2_Regression()
         {
             Assert.AreEqual(4288986482164, Day14.Part2(input));

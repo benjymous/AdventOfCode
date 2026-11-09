@@ -33,14 +33,14 @@ p=9,5 v=-3,-3";
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void GuardWatching_Part1_Regression()
     {
         Assert.AreEqual(222901875, Day14.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void GuardWatching_Part2_Regression()
     {
         Assert.AreEqual(6243, Day14.Part2(input));

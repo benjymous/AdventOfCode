@@ -51,14 +51,14 @@ public class Day05Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void PrintQueue_Part1_Regression()
     {
         Assert.AreEqual(6034, Day05.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void PrintQueue_Part2_Regression()
     {
         Assert.AreEqual(6305, Day05.Part2(input));

@@ -16,7 +16,7 @@ namespace AoC.Advent2021.Test
         [DataRow("38006F45291200", "[1:LessThan {[6:LiteralValue = 10], [2:LiteralValue = 20]}]")]
         [DataRow("EE00D40C823060", "[7:Maximum {[2:LiteralValue = 1], [4:LiteralValue = 2], [1:LiteralValue = 3]}]")]
         [DataRow("8A004A801A8002F478", "[4:Minimum {[1:Minimum {[5:Minimum {[6:LiteralValue = 15]}]}]}]")]
-        [DataTestMethod]
+        [TestMethod]
         public void TestPacketDecode(string data, string expected)
         {
             var packet = (Packet)data;
@@ -54,7 +54,7 @@ namespace AoC.Advent2021.Test
         [DataRow("620080001611562C8802118E34", 12)]
         [DataRow("C0015000016115A2E0802F182340", 23)]
         [DataRow("A0016C880162017C3686B18A3D4780", 31)]
-        [DataTestMethod]
+        [TestMethod]
         public void TestPacketVersionSum(string data, int expected)
         {
             Assert.AreEqual(expected, Part1(data));
@@ -69,21 +69,21 @@ namespace AoC.Advent2021.Test
         [DataRow("F600BC2D8F", 0)]
         [DataRow("9C005AC2F8F0", 0)]
         [DataRow("9C0141080250320F1802104A08", 1)]
-        [DataTestMethod]
+        [TestMethod]
         public void TestPacketValue(string data, int expected)
         {
             Assert.AreEqual(expected, Part2(data));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Decoder_Part1_Regression()
         {
             Assert.AreEqual(917, Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Decoder_Part2_Regression()
         {
             Assert.AreEqual(2536453523344, Part2(input));

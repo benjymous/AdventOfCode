@@ -31,14 +31,14 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11".Replace("\r", "");
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Scratchcards_Part1_Regression()
     {
         Assert.AreEqual(23750, Day04.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Scratchcards_Part2_Regression()
     {
         Assert.AreEqual(13261850, Day04.Part2(input));

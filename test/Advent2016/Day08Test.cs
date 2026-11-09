@@ -9,7 +9,7 @@ namespace AoC.Advent2016.Test
         readonly string input = Util.GetInput<Day08>();
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void TFA_Part1_Regression()
         {
             Assert.AreEqual(123, Day08.Part1(input));
@@ -17,7 +17,7 @@ namespace AoC.Advent2016.Test
 
         [TestCategory("Regression")]
         [TestCategory("OCR")]
-        [DataTestMethod]
+        [TestMethod]
         public void TFA_Part2_Regression()
         {
             Assert.AreEqual("AFBUPZBJPS", Utils.OCR.TextReader.Read(Day08.Part2(input, new ConsoleOut())));

@@ -10,7 +10,7 @@ public class Day{{ Day }}Test
 
     [TestCategory("Test")]
     [DataRow("???", 0)]
-    [DataTestMethod]
+    [TestMethod]
     public void _01Test(string input, int expected)
     {
         Assert.AreEqual(expected, Day{{ Day }}.Part1(input));
@@ -18,21 +18,21 @@ public class Day{{ Day }}Test
 
     [TestCategory("Test")]
     [DataRow("???", 0)]
-    [DataTestMethod]
+    [TestMethod]
     public void _02Test(string input, int expected)
     {
         Assert.AreEqual(expected, Day{{ Day }}.Part2(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void _Part1_Regression()
     {
         Assert.AreEqual(0, Day{{ Day }}.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void _Part2_Regression()
     {
         Assert.AreEqual(0, Day{{ Day }}.Part2(input));

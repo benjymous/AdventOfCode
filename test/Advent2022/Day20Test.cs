@@ -11,28 +11,28 @@ namespace AoC.Advent2022.Test
         readonly string test = "1\n2\n-3\n3\n-2\n0\n4";
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void CircleShuffle01Test()
         {
             Assert.AreEqual(3, Day20.Part1(test));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void CircleShuffle02Test()
         {
             Assert.AreEqual(1623178306, Day20.Part2(test));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void CircleShuffle_Part1_Regression()
         {
             Assert.AreEqual(27726, Day20.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void CircleShuffle_Part2_Regression()
         {
             Assert.AreEqual(4275451658004, Day20.Part2(input));

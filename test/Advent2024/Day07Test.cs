@@ -32,14 +32,14 @@ public class Day07Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void BridgeMaths_Part1_Regression()
     {
         Assert.AreEqual(66343330034722, Day07.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void BridgeMaths_Part2_Regression()
     {
         Assert.AreEqual(637696070419031, Day07.Part2(input));

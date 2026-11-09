@@ -24,14 +24,14 @@ public class Day07Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Teleportation_Part1_Regression()
     {
         Assert.AreEqual(1630, Day07.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Teleportation_Part2_Regression()
     {
         Assert.AreEqual(47857642990160, Day07.Part2(input));

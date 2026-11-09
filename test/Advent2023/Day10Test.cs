@@ -36,7 +36,7 @@ L--J.L7...LJS7F-7L7.
     [DataRow(test2, 8)]
     [DataRow(test3, 23)]
     [DataRow(test4, 70)]
-    [DataTestMethod]
+    [TestMethod]
     public void PipeLength_Test(string input, int expected)
     {
         Assert.AreEqual(expected, Day10.Part1(input.Replace("\r", "")));
@@ -47,21 +47,21 @@ L--J.L7...LJS7F-7L7.
     [DataRow(test2, 1)]
     [DataRow(test3, 4)]
     [DataRow(test4, 8)]
-    [DataTestMethod]
+    [TestMethod]
     public void PipesInner_Test(string input, int expected)
     {
         Assert.AreEqual(expected, Day10.Part2(input.Replace("\r", "")));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void PipeMaze_Part1_Regression()
     {
         Assert.AreEqual(6800, Day10.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void PipeMaze_Part2_Regression()
     {
         Assert.AreEqual(483, Day10.Part2(input));

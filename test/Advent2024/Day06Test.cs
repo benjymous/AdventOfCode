@@ -26,21 +26,21 @@ public class Day06Test
     }
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
     public void GuardPath_02Test()
     {
         Assert.AreEqual(6, Day06.Part2(test));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void GuardPath_Part1_Regression()
     {
         Assert.AreEqual(5131, Day06.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void GuardPath_Part2_Regression()
     {
         Assert.AreEqual(1784, Day06.Part2(input));

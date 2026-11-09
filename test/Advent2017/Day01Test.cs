@@ -13,7 +13,7 @@ namespace AoC.Advent2017.Test
         [DataRow("1111", 4)]
         [DataRow("1234", 0)]
         [DataRow("91212129", 9)]
-        [DataTestMethod]
+        [TestMethod]
         public void Captcha01Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day01.Part1(input));
@@ -25,21 +25,21 @@ namespace AoC.Advent2017.Test
         [DataRow("123425", 4)]
         [DataRow("123123", 12)]
         [DataRow("12131415", 4)]
-        [DataTestMethod]
+        [TestMethod]
         public void Captcha02Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day01.Part2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Captcha_Part1_Regression()
         {
             Assert.AreEqual(1141, Day01.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Captcha_Part2_Regression()
         {
             Assert.AreEqual(950, Day01.Part2(input));

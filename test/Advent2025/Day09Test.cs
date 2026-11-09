@@ -25,14 +25,14 @@ public class Day09Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void TileFlipping_Part1_Regression()
     {
         Assert.AreEqual(4749838800, Day09.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void TileFlipping_Part2_Regression()
     {
         Assert.AreEqual(1624057680, Day09.Part2(input));

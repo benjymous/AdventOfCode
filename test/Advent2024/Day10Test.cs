@@ -31,14 +31,14 @@ public class Day10Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void HikingTrails_Part1_Regression()
     {
         Assert.AreEqual(816, Day10.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void HikingTrails_Part2_Regression()
     {
         Assert.AreEqual(1960, Day10.Part2(input));

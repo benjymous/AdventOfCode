@@ -14,7 +14,7 @@ namespace AoC.Advent2018.Test
         [DataRow("abAB", 4)]
         [DataRow("aabAAB", 6)]
         [DataRow("dabAcCaCBAcCcaDA", 10)]
-        [DataTestMethod]
+        [TestMethod]
         public void Polymer01Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day05.Part1(input));
@@ -22,21 +22,21 @@ namespace AoC.Advent2018.Test
 
         [TestCategory("Test")]
         [DataRow("dabAcCaCBAcCcaDA", 4)]
-        [DataTestMethod]
+        [TestMethod]
         public void Polymer02Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day05.Part2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Polymer_Part1_Regression()
         {
             Assert.AreEqual(9202, Day05.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Polymer_Part2_Regression()
         {
             Assert.AreEqual(6394, Day05.Part2(input));

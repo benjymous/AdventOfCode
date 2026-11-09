@@ -29,14 +29,14 @@ public class Day24Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Intersection_Part1_Regression()
     {
         Assert.AreEqual(29142, Day24.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Intersection_Part2_Regression()
     {
         Assert.AreEqual(848947587263033, Day24.Part2(input));

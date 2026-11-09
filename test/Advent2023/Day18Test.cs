@@ -24,7 +24,7 @@ L 2 (#015232)
 U 2 (#7a21e3)".Replace("\r", "");
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
     public void Lagoon_01Test()
     {
         Assert.AreEqual(62, Day18.Part1(test));
@@ -38,14 +38,14 @@ U 2 (#7a21e3)".Replace("\r", "");
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void LavaductLagoon_Part1_Regression()
     {
         Assert.AreEqual(67891, Day18.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void LavaductLagoon_Part2_Regression()
     {
         Assert.AreEqual(94116351948493, Day18.Part2(input));

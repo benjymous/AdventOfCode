@@ -8,11 +8,11 @@ public partial class Day24 : IPuzzle
 
     public class State
     {
-        public State(int reserve) => Cells = new HashSet<PackedPos32>(reserve);
+        public State(int reserve) => Cells = [with(reserve)];
 
         public State(HashSet<HexVectorPointy> initialState)
         {
-            Cells = new HashSet<PackedPos32>(initialState.Count);
+            Cells = [with(initialState.Count)];
             foreach (var v in initialState) Set((v.X, v.Y));
         }
 

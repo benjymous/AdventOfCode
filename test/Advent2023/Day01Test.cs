@@ -14,7 +14,7 @@ public class Day01Test
     [DataRow("a1b2c3d4e5f", 15)]
     [DataRow("treb7uchet", 77)]
     [DataRow("hello12there", 12)]
-    [DataTestMethod]
+    [TestMethod]
     public void Trebuchet01Test(string input, int expected)
     {
 
@@ -32,7 +32,7 @@ public class Day01Test
     [DataRow("zoneight234", 14)]
     [DataRow("7pqrstsixteen", 76)]
     [DataRow("ninefour", 94)]
-    [DataTestMethod]
+    [TestMethod]
     public void Trebuchet02Test(string input, int expected)
     {
         var v = new Day01.Value(input);
@@ -41,14 +41,14 @@ public class Day01Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Trebuchet_Part1_Regression()
     {
         Assert.AreEqual(53334, Day01.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Trebuchet_Part2_Regression()
     {
         Assert.AreEqual(52834, Day01.Part2(input));

@@ -33,7 +33,7 @@ namespace AoC.Advent2022.Test
 [1,[2,[3,[4,[5,6,0]]]],8,9]".Replace("\r", "");
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("[1,1,3,1,1]", "[1,1,5,1,1]", true)]
         [DataRow("[[1],[2,3,4]]", "[[1],4]", true)]
         [DataRow("[9]", "[[8,7,6]]", false)]
@@ -50,28 +50,28 @@ namespace AoC.Advent2022.Test
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Distress01Test()
         {
             Assert.AreEqual(13, Day13.Part1(test));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Distress02Test()
         {
             Assert.AreEqual(140, Day13.Part2(test));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Distress_Part1_Regression()
         {
             Assert.AreEqual(6086, Day13.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Distress_Part2_Regression()
         {
             Assert.AreEqual(27930, Day13.Part2(input));

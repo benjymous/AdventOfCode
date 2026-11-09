@@ -25,7 +25,7 @@ namespace AoC.Advent2017.Test
         [DataRow("{<a>,<a>,<a>,<a>}", "{,,,}")] //  1 group.
         [DataRow("{{<a>},{<a>},{<a>},{<a>}}", "{{},{},{},{}}")] //  5 groups.
         [DataRow("{{<!>},{<!>},{<!>},{<a>}}", "{{}}")] // 2 groups (since all but the last > are canceled
-        [DataTestMethod]
+        [TestMethod]
 
         public void GarbageStripTest(string input, string expected)
         {
@@ -40,10 +40,10 @@ namespace AoC.Advent2017.Test
         [DataRow("{<a>,<a>,<a>,<a>}", 1)] //  1 group.
         [DataRow("{{<a>},{<a>},{<a>},{<a>}}", 5)] //  5 groups.
         [DataRow("{{<!>},{<!>},{<!>},{<a>}}", 2)] // 2 groups (since all but the last > are
-        [DataTestMethod]
+        [TestMethod]
         public void GroupCountTest(string input, int expected)
         {
-            Assert.AreEqual(expected, Day09.GetGroups(input).Count());
+            Assert.HasCount(expected, Day09.GetGroups(input));
         }
 
         [DataRow("{}", 1)] // score of 1.
@@ -54,7 +54,7 @@ namespace AoC.Advent2017.Test
         [DataRow("{{<ab>},{<ab>},{<ab>},{<ab>}}", 9)] // score of 1 + 2 + 2 + 2 + 2 = 9.
         [DataRow("{{<!!>},{<!!>},{<!!>},{<!!>}}", 9)] //score of 1 + 2 + 2 + 2 + 2 = 9.
         [DataRow("{{<a!>},{<a!>},{<a!>},{<ab>}}", 3)] //score of 1 + 2 = 3.
-        [DataTestMethod]
+        [TestMethod]
         public void ScoreTest(string input, int expected)
         {
             Assert.AreEqual(expected, Day09.GetScore(input));
@@ -67,21 +67,21 @@ namespace AoC.Advent2017.Test
         [DataRow("<!!>", 0)]
         [DataRow("<!!!>>", 0)]
         [DataRow("<{o'i!a,<{i<a>", 10)]
-        [DataTestMethod]
+        [TestMethod]
         public void CountTest(string input, int expected)
         {
             Assert.AreEqual(expected, Day09.CountGarbage(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Garbage_Part1_Regression()
         {
             Assert.AreEqual(9662, Day09.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Garbage_Part2_Regression()
         {
             Assert.AreEqual(4903, Day09.Part2(input));

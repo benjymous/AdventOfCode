@@ -25,14 +25,14 @@ public class Day11Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Reactor_Part1_Regression()
     {
         Assert.AreEqual(724, Day11.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Reactor_Part2_Regression()
     {
         Assert.AreEqual(473930047491888, Day11.Part2(input));

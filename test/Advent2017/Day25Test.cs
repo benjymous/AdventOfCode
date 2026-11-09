@@ -34,14 +34,14 @@ In state B:
 ".Replace("\r", "");
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Tape01Test()
         {
             Assert.AreEqual(3, Day25.Part1(test));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Tape_Part1_Regression()
         {
             Assert.AreEqual(2794, Day25.Part1(input));

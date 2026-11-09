@@ -30,14 +30,14 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green".Replace("\r", "");
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void CubeConundrum_Part1_Regression()
     {
         Assert.AreEqual(2237, Day02.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void CubeConundrum_Part2_Regression()
     {
         Assert.AreEqual(66681, Day02.Part2(input));

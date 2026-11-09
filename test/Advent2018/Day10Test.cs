@@ -12,14 +12,14 @@ namespace AoC.Advent2018.Test
 
         [TestCategory("Regression")]
         [TestCategory("OCR")]
-        [DataTestMethod]
+        [TestMethod]
         public void StarSigns_Part1_Regression()
         {
             Assert.AreEqual("FBHKLEAG", Utils.OCR.TextReader.Read(Day10.Part1(input, new ConsoleOut())));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void StarSigns_Part2_Regression()
         {
             Assert.AreEqual(10009, Day10.Part2(input));

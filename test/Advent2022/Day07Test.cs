@@ -32,28 +32,28 @@ $ ls
 7214296 k".Replace("\r", "");
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Filesystem01Test()
         {
             Assert.AreEqual(95437, Day07.Part1(test));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Filesystem02Test()
         {
             Assert.AreEqual(24933642, Day07.Part2(test));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void FilesystemSpace_Part1_Regression()
         {
             Assert.AreEqual(1908462, Day07.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void FilesystemSpace_Part2_Regression()
         {
             Assert.AreEqual(3979145, Day07.Part2(input));

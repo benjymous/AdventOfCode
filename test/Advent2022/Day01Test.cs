@@ -24,28 +24,28 @@ namespace AoC.Advent2022.Test
 10000";
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Calories01Test()
         {
             Assert.AreEqual(24000, Day01.Part1(test.Replace("\r", "")));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Calories02Test()
         {
             Assert.AreEqual(45000, Day01.Part2(test.Replace("\r", "")));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Calories_Part1_Regression()
         {
             Assert.AreEqual(68775, Day01.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Calories_Part2_Regression()
         {
             Assert.AreEqual(202585, Day01.Part2(input));

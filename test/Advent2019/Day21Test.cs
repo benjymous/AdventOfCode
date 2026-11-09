@@ -11,14 +11,14 @@ namespace AoC.Advent2019.Test
         readonly string input = Util.GetInput<Day21>();
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Springbot_Part1_Regression()
         {
             Assert.AreEqual(19359969, Day21.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Springbot_Part2_Regression()
         {
             Assert.AreEqual(1140082748, Day21.Part2(input));

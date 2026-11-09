@@ -9,14 +9,14 @@ namespace AoC.Advent2020.Test
         readonly string input = Util.GetInput<Day07>();
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Haversacks_Part1_Regression()
         {
             Assert.AreEqual(326, Day07.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Haversacks_Part2_Regression()
         {
             Assert.AreEqual(5635, Day07.Part2(input));

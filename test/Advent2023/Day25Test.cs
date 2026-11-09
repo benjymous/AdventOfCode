@@ -30,7 +30,7 @@ frs: qnr lhk lsr".Replace("\r", "");
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Connections_Part1_Regression()
     {
         Assert.AreEqual(602151, Day25.Part1(input));

@@ -24,14 +24,14 @@ public class Day09Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Fragment_Part1_Regression()
     {
         Assert.AreEqual(6471961544878, Day09.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Fragment_Part2_Regression()
     {
         Assert.AreEqual(6511178035564, Day09.Part2(input));

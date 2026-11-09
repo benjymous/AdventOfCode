@@ -24,14 +24,14 @@ public class Day08Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void LightingCircuit_Part1_Regression()
     {
         Assert.AreEqual(84968, Day08.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void LightingCircuit_Part2_Regression()
     {
         Assert.AreEqual(8663467782, Day08.Part2(input));

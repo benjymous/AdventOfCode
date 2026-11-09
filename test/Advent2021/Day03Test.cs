@@ -22,28 +22,28 @@ namespace AoC.Advent2021.Test
 01010";
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Diagnostic01Test()
         {
-            Assert.IsTrue(Day03.Part1(test.Replace("\r", "")) == 198);
+            Assert.AreEqual(198, Day03.Part1(test.Replace("\r", "")));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Diagnostic02Test()
         {
-            Assert.IsTrue(Day03.Part2(test.Replace("\r", "")) == 230);
+            Assert.AreEqual(230, Day03.Part2(test.Replace("\r", "")));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Diagnostic_Part1_Regression()
         {
             Assert.AreEqual(3912944, Day03.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Diagnostic_Part2_Regression()
         {
             Assert.AreEqual(4996233, Day03.Part2(input));

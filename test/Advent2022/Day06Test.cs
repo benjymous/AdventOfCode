@@ -14,7 +14,7 @@ namespace AoC.Advent2022.Test
         [DataRow("nppdvjthqldpwncqszvftbrmjlhg", 6)]
         [DataRow("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 10)]
         [DataRow("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 11)]
-        [DataTestMethod]
+        [TestMethod]
         public void Tuning01Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day06.Part1(input));
@@ -26,21 +26,21 @@ namespace AoC.Advent2022.Test
         [DataRow("nppdvjthqldpwncqszvftbrmjlhg", 23)]
         [DataRow("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 29)]
         [DataRow("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 26)]
-        [DataTestMethod]
+        [TestMethod]
         public void Tuning02Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day06.Part2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Tuning_Part1_Regression()
         {
             Assert.AreEqual(1766, Day06.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Tuning_Part2_Regression()
         {
             Assert.AreEqual(2383, Day06.Part2(input));

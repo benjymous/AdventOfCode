@@ -10,7 +10,7 @@ namespace AoC.Advent2019.Test
 
         [TestCategory("Test")]
         [DataRow("....#\n#..#.\n#..##\n..#..\n#....", 2129920U)]
-        [DataTestMethod]
+        [TestMethod]
         public void BiodiversityTest(string input, uint expected)
         {
             Assert.AreEqual(expected, Day24.Part1(input));
@@ -18,21 +18,21 @@ namespace AoC.Advent2019.Test
 
         [TestCategory("Test")]
         [DataRow("....#\n#..#.\n#..##\n..#..\n#....", 99)]
-        [DataTestMethod]
+        [TestMethod]
         public void InfiniteTest(string input, int expected)
         {
             Assert.AreEqual(expected, Day24.Part2(input, 10));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Bugs_Part1_Regression()
         {
             Assert.AreEqual(18852849U, Day24.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Bugs_Part2_Regression()
         {
             Assert.AreEqual(1948, Day24.Part2(input));

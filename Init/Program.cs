@@ -1,7 +1,7 @@
 ﻿
 using Fluid;
 
-var year = "2025";
+var year = "2026";
 var yearFolder = Path.Combine("AoC", $"Advent{year}");
 var testFolder = Path.Combine("test", $"Advent{year}");
 
@@ -10,7 +10,7 @@ var daySolutionTemplate = File.ReadAllText("SolutionTemplate.txt");
 var dayTestTemplate = File.ReadAllText("TestTemplate.txt");
 
 Console.WriteLine(Directory.GetCurrentDirectory());
-Directory.SetCurrentDirectory(@"..\..\..\..");
+Directory.SetCurrentDirectory(@"..\..\..\..\..");
 Console.WriteLine(Directory.GetCurrentDirectory());
 
 if (!Directory.Exists(yearFolder)) _ = Directory.CreateDirectory(yearFolder);

@@ -10,7 +10,7 @@ namespace AoC.Advent2021.Test
 
         [TestCategory("Test")]
         [DataRow("199,200,208,210,200,207,240,269,260,263", 7)]
-        [DataTestMethod]
+        [TestMethod]
         public void Depths01Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day01.Part1(input));
@@ -18,21 +18,21 @@ namespace AoC.Advent2021.Test
 
         [TestCategory("Test")]
         [DataRow("199,200,208,210,200,207,240,269,260,263", 5)]
-        [DataTestMethod]
+        [TestMethod]
         public void Depths02Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day01.Part2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Depths_Part1_Regression()
         {
             Assert.AreEqual(1655, Day01.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Depths_Part2_Regression()
         {
             Assert.AreEqual(1683, Day01.Part2(input));

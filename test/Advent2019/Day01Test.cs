@@ -14,31 +14,31 @@ namespace AoC.Advent2019.Test
         [DataRow(1969, 654)]
         [DataRow(100756, 33583)]
         [DataRow(1, 0)]
-        [DataTestMethod]
+        [TestMethod]
         public void Fuel01Test(int input, int expected)
         {
-            Assert.IsTrue(Day01.GetFuelRequirement(input) == expected);
+            Assert.AreEqual(expected, Day01.GetFuelRequirement(input));
         }
 
         [TestCategory("Test")]
         [DataRow(14, 2)]
         [DataRow(1969, 966)]
         [DataRow(100756, 50346)]
-        [DataTestMethod]
+        [TestMethod]
         public void Fuel02Test(int input, int expected)
         {
-            Assert.IsTrue(Day01.GetFullFuelRequirement(input) == expected);
+            Assert.AreEqual(expected, Day01.GetFullFuelRequirement(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void FuelCheck_Part1_Regression()
         {
             Assert.AreEqual(3224048, Day01.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void FuelCheck_Part2_Regression()
         {
             Assert.AreEqual(4833211, Day01.Part2(input));

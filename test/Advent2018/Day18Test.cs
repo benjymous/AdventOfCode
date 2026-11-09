@@ -28,7 +28,7 @@ namespace AoC.Advent2018.Test
         [DataRow('#', ".##..|..", '#')]
         [DataRow('#', ".#...||.", '#')]
         [DataRow('#', ".##..||.", '#')]
-        [DataTestMethod]
+        [TestMethod]
         public void RulesTest(char current, string neighbours, char expected)
         {
             Assert.AreEqual(expected, Day18.Step(current, neighbours));
@@ -36,7 +36,7 @@ namespace AoC.Advent2018.Test
 
         [TestCategory("Test")]
         [DataRow(".#.#...|#.,.....#|##|,.|..|...#.,..|#.....#,#.#|||#|#|,...#.||...,.|....|...,||...#|.#|,|.||||..|.,...#.|..|.", 1147)]
-        [DataTestMethod]
+        [TestMethod]
         public void Lumber01Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day18.Part1(input));
@@ -61,21 +61,21 @@ namespace AoC.Advent2018.Test
         [DataRow(".#.#...|#.,.....#|##|,.|..|...#.,..|#.....#,#.#|||#|#|,...#.||...,.|....|...,||...#|.#|,|.||||..|.,...#.|..|.", 20, 0)]
         [DataRow(".#.#...|#.,.....#|##|,.|..|...#.,..|#.....#,#.#|||#|#|,...#.||...,.|....|...,||...#|.#|,|.||||..|.,...#.|..|.", 1000, 0)]
         [DataRow(".#.#...|#.,.....#|##|,.|..|...#.,..|#.....#,#.#|||#|#|,...#.||...,.|....|...,||...#|.#|,|.||||..|.,...#.|..|.", 10000000, 0)]
-        [DataTestMethod]
+        [TestMethod]
         public void Lumber02Test(string input, int iterations, int expected)
         {
             Assert.AreEqual(expected, Day18.Run(input, iterations));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Lumber_Part1_Regression()
         {
             Assert.AreEqual(536370, Day18.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Lumber_Part2_Regression()
         {
             Assert.AreEqual(190512, Day18.Part2(input));

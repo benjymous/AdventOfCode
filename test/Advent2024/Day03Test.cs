@@ -25,14 +25,14 @@ public class Day03Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Muls_Part1_Regression()
     {
         Assert.AreEqual(157621318, Day03.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Muls_Part2_Regression()
     {
         Assert.AreEqual(79845780, Day03.Part2(input));

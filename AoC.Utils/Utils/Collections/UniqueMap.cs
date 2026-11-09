@@ -4,8 +4,8 @@ namespace AoC.Utils.Collections
 {
     public class UniqueMap<TKey, TValue>(int count = 0) : IEnumerable<KeyValuePair<TKey, TValue>>
     {
-        readonly HashSet<TKey> seen = new(count);
-        readonly Dictionary<TKey, TValue> values = new(count);
+        readonly HashSet<TKey> seen = [with(count)];
+        readonly Dictionary<TKey, TValue> values = [with(count)];
 
         public bool UniqueAdd(TKey key, TValue value)
         {

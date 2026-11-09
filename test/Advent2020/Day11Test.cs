@@ -20,7 +20,7 @@ namespace AoC.Advent2020.Test
                  "LLLLLLLLLL\n" +
                  "L.LLLLLL.L\n" +
                  "L.LLLLL.LL\n", 37)]
-        [DataTestMethod]
+        [TestMethod]
         public void Seats01Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day11.Part1(input));
@@ -48,7 +48,7 @@ namespace AoC.Advent2020.Test
                  "##...##\n" +
                  "#.#.#.#\n" +
                  ".##.##.\n", 3, 3, 0)]
-        [DataTestMethod]
+        [TestMethod]
         public void NeighboursTest(string input, int x, int y, int expected)
         {
             int v = TestNeighbours(input, x, y);
@@ -73,21 +73,21 @@ namespace AoC.Advent2020.Test
             "LLLLLLLLLL\n" +
             "L.LLLLLL.L\n" +
             "L.LLLLL.LL\n", 26)]
-        [DataTestMethod]
+        [TestMethod]
         public void Seats02Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day11.Part2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Seating_Part1_Regression()
         {
             Assert.AreEqual(2494, Day11.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Seating_Part2_Regression()
         {
             Assert.AreEqual(2306, Day11.Part2(input));

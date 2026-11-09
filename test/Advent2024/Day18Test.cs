@@ -34,28 +34,28 @@ public class Day18Test
 2,0";
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
     public void MemoryMap_01Test()
     {
         Assert.AreEqual(22, Day18.Part1(test, 6, 6, 12));
     }
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
     public void MemoryMap_02Test()
     {
         Assert.AreEqual("6,1", Day18.Part2(test, 6, 6));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void MemoryMap_Part1_Regression()
     {
         Assert.AreEqual(372, Day18.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void MemoryMap_Part2_Regression()
     {
         Assert.AreEqual("25,6", Day18.Part2(input));

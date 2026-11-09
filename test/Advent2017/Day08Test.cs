@@ -13,27 +13,27 @@ a inc 1 if b < 5
 c dec -10 if a >= 1
 c inc -20 if c == 10";
 
-        [DataTestMethod]
+        [TestMethod]
         public void Registers01Test()
         {
             Assert.AreEqual(1, Day08.Part1(testInput));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         public void Registers02Test()
         {
             Assert.AreEqual(10, Day08.Part2(testInput));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Registers_Part1_Regression()
         {
             Assert.AreEqual(4647, Day08.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Registers_Part2_Regression()
         {
             Assert.AreEqual(5590, Day08.Part2(input));

@@ -15,7 +15,7 @@ namespace AoC.Advent2018.Test
         [DataRow("+1, +1, +1", 3)]
         [DataRow("+1, +1, -2", 0)]
         [DataRow("-1, -2, -3", -6)]
-        [DataTestMethod]
+        [TestMethod]
         public void Callibrate01Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day01.Part1(input));
@@ -26,21 +26,21 @@ namespace AoC.Advent2018.Test
         [DataRow("+3, +3, +4, -2, -4", 10)]
         [DataRow("-6, +3, +8, +5, -6", 5)]
         [DataRow("+7, +7, -2, -7, -4", 14)]
-        [DataTestMethod]
+        [TestMethod]
         public void Callibrate02Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day01.Part2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Callibration_Part1_Regression()
         {
             Assert.AreEqual(553, Day01.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Callibration_Part2_Regression()
         {
             Assert.AreEqual(78724, Day01.Part2(input));

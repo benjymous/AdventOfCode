@@ -53,7 +53,7 @@ v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^";
     [TestCategory("Test")]
     [DataRow(test1, 10092)]
     [DataRow(test2, 2028)]
-    [DataTestMethod]
+    [TestMethod]
     public void Warehouse_01Test(string input, int expected)
     {
         Assert.AreEqual(expected, Day15.Part1(input.Replace("\r", "")));
@@ -62,21 +62,21 @@ v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^";
     [TestCategory("Test")]
     [DataRow(test1, 9021)]
     [DataRow(test3, 618)]
-    [DataTestMethod]
+    [TestMethod]
     public void Warehouse_02Test(string input, int expected)
     {
         Assert.AreEqual(expected, Day15.Part2(input.Replace("\r", "")));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Warehouse_Part1_Regression()
     {
         Assert.AreEqual(1413675, Day15.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Warehouse_Part2_Regression()
     {
         Assert.AreEqual(1399772, Day15.Part2(input));

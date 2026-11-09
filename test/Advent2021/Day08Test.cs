@@ -20,28 +20,28 @@ egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
 gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce";
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Segments01Test()
         {
             Assert.AreEqual(26, Day08.Part1(test.Replace("\r", "")));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Segments02Test()
         {
             Assert.AreEqual(61229, Day08.Part2(test.Replace("\r", "")));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Segments_Part1_Regression()
         {
             Assert.AreEqual(365, Day08.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Segments_Part2_Regression()
         {
             Assert.AreEqual(975706, Day08.Part2(input));

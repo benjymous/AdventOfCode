@@ -15,7 +15,7 @@ public class Day17Test
     [DataRow("Register B: 29\n\nProgram: 1,7", new long[] { 0, 26, 0 }, "")]
     [DataRow("Register B: 2024\nRegister C: 43690\n\nProgram: 4,0", new long[] { 0, 44354, 43690 }, "")]
     [DataRow("Register A: 729\nRegister B: 0\nRegister C: 0\n\nProgram: 0,1,5,4,3,0", new long[] { }, "4,6,3,5,6,3,5,2,1,0")]
-    [DataTestMethod]
+    [TestMethod]
     public void CpuTest(string input, long[] expectedRegs, string expectedOutput)
     {
         var cpu = Day17.Cpu.Create(input);
@@ -32,14 +32,14 @@ public class Day17Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Cpu_Part1_Regression()
     {
         Assert.AreEqual("1,0,2,0,5,7,2,1,3", Day17.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Cpu_Part2_Regression()
     {
         Assert.AreEqual(265652340990875, Day17.Part2(input));

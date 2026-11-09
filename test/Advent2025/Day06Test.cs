@@ -24,14 +24,14 @@ public class Day06Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void CephalopodMaths_Part1_Regression()
     {
         Assert.AreEqual(7229350537438, Day06.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void CephalopodMaths_Part2_Regression()
     {
         Assert.AreEqual(11479269003550, Day06.Part2(input));

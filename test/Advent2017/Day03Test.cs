@@ -14,7 +14,7 @@ namespace AoC.Advent2017.Test
         [DataRow("12", 3)]
         [DataRow("23", 2)]
         [DataRow("1024", 31)]
-        [DataTestMethod]
+        [TestMethod]
         public void Spiral01Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day03.Part1(input));
@@ -25,21 +25,21 @@ namespace AoC.Advent2017.Test
         [DataRow("4", 5)]
         [DataRow("23", 25)]
         [DataRow("750", 806)]
-        [DataTestMethod]
+        [TestMethod]
         public void Spiral02Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day03.Part2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Spiral_Part1_Regression()
         {
             Assert.AreEqual(326, Day03.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Spiral_Part2_Regression()
         {
             Assert.AreEqual(363010, Day03.Part2(input));

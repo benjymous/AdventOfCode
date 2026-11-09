@@ -29,7 +29,7 @@ Prize: X=18641, Y=10279".Replace("\r","");
     [DataRow(26, 67, 12748, 66, 21, 12176, 0, 0)]
     [DataRow(17, 84, 7870, 86, 37, 6450, 38, 86)]
     [DataRow(69, 27, 18641, 23, 71, 10279, 0, 0)]
-    [DataTestMethod]
+    [TestMethod]
     public void TestSolver(int x1, int x2, int x3, int y1, int y2, int y3, int expectedA, int expectedB)
     {
         Assert.AreEqual((expectedA*3) + expectedB, new Day13.ClawMachine(x1, y1, x2, y2, x3, y3).Solve());
@@ -43,14 +43,14 @@ Prize: X=18641, Y=10279".Replace("\r","");
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Claw_Part1_Regression()
     {
         Assert.AreEqual(34393, Day13.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Claw_Part2_Regression()
     {
         Assert.AreEqual(83551068361379, Day13.Part2(input));

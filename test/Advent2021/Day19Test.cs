@@ -146,28 +146,28 @@ namespace AoC.Advent2021.Test
 30,-46,-14".Replace("\r", "");
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void BeaconAlignmentTest()
         {
             Assert.AreEqual(79, Day19.Part1(test));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void ScannerDistanceTest()
         {
             Assert.AreEqual(3621, Day19.Part2(test));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void BeaconScanner_Part1_Regression()
         {
             Assert.AreEqual(396, Day19.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void BeaconScanner_Part2_Regression()
         {
             Assert.AreEqual(11828, Day19.Part2(input));

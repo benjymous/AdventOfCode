@@ -44,7 +44,7 @@ namespace AoC.Advent2022.Test
         [DataRow("Blueprint 28: Each ore robot costs 3 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 15 clay. Each geode robot costs 2 ore and 8 obsidian.", 112)]
         [DataRow("Blueprint 29: Each ore robot costs 3 ore. Each clay robot costs 4 ore. Each obsidian robot costs 4 ore and 18 clay. Each geode robot costs 4 ore and 12 obsidian.", 0)]
         [DataRow("Blueprint 30: Each ore robot costs 2 ore. Each clay robot costs 2 ore. Each obsidian robot costs 2 ore and 10 clay. Each geode robot costs 2 ore and 11 obsidian.", 420)]
-        [DataTestMethod]
+        [TestMethod]
         public void Minerals01Test(string input, int expected)
         {
             var bp = Parser.FromString<Day19.Blueprint>(input);
@@ -55,7 +55,7 @@ namespace AoC.Advent2022.Test
         [TestCategory("Test")]
         [DataRow("Blueprint 1: Each ore robot costs 4 ore. Each clay robot costs 2 ore. Each obsidian robot costs 3 ore and 14 clay. Each geode robot costs 2 ore and 7 obsidian.", 56)]
         [DataRow("Blueprint 2: Each ore robot costs 2 ore. Each clay robot costs 3 ore. Each obsidian robot costs 3 ore and 8 clay. Each geode robot costs 3 ore and 12 obsidian.", 62)]
-        [DataTestMethod]
+        [TestMethod]
         public void Minerals02Test(string input, int expected)
         {
             var bp = Parser.FromString<Day19.Blueprint>(input);
@@ -64,14 +64,14 @@ namespace AoC.Advent2022.Test
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Minerals_Part1_Regression()
         {
             Assert.AreEqual(1653, Day19.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Minerals_Part2_Regression()
         {
             Assert.AreEqual(4212, Day19.Part2(input));

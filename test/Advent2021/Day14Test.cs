@@ -29,28 +29,28 @@ CC -> N
 CN -> C";
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Polimer01Test()
         {
             Assert.AreEqual(1588, Day14.Part1(test.Replace("\r", "")));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Polimer02Test()
         {
             Assert.AreEqual(2188189693529, Day14.Part2(test.Replace("\r", "")));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Polimer_Part1_Regression()
         {
             Assert.AreEqual(2947, Day14.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Polimer_Part2_Regression()
         {
             Assert.AreEqual(3232426226464, Day14.Part2(input));

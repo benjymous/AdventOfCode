@@ -16,7 +16,7 @@ namespace AoC.Advent2020.Test
         [DataRow("2,3,1", 78)]
         [DataRow("3,2,1", 438)]
         [DataRow("3,1,2", 1836)]
-        [DataTestMethod]
+        [TestMethod]
         public void Sequence1Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day15.Part1(input));
@@ -30,21 +30,21 @@ namespace AoC.Advent2020.Test
         [DataRow("2,3,1", 6895259)]
         [DataRow("3,2,1", 18)]
         [DataRow("3,1,2", 362)]
-        [DataTestMethod]
+        [TestMethod]
         public void Sequence2Test(string input, int expected)
         {
             Assert.AreEqual(expected, Day15.Part2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Sequence_Part1_Regression()
         {
             Assert.AreEqual(758, Day15.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Sequence_Part2_Regression()
         {
             Assert.AreEqual(814, Day15.Part2(input));

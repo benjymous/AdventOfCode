@@ -21,7 +21,7 @@ public class Day13 : IPuzzle
         {
             for (int x = 0; x <= maxX; ++x)
             {
-                sb.Append(dots.Contains((x, y)) ? "▊▊" : "  ");
+                sb.Append(dots.Contains((x, y)) ? "##" : "  ");
             }
             sb.AppendLine();
         }

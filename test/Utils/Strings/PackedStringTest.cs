@@ -9,7 +9,7 @@ namespace Test.Utils.Strings
     [TestClass]
     public class PackedStringTest
     {
-        [DataTestMethod]
+        [TestMethod]
         [TestCategory("PackedString")]
         [DataRow("aa")]
         [DataRow("ab")]
@@ -48,7 +48,7 @@ namespace Test.Utils.Strings
 
             Assert.AreNotEqual("XX", v1);
             Assert.IsTrue(dict.TryGetValue(str, out var v) && v == str);
-            Assert.AreEqual(5, dict.Count);
+            Assert.HasCount(5, dict);
         }
 
         [TestMethod]
@@ -65,7 +65,7 @@ namespace Test.Utils.Strings
             CollectionAssert.AreEqual(arr1, arr2);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [TestCategory("PackedString")]
         [DataRow("aaaa")]
         [DataRow("abcd")]
@@ -107,7 +107,7 @@ namespace Test.Utils.Strings
 
             Assert.AreNotEqual("XXXX", v1);
             Assert.IsTrue(dict.TryGetValue(str, out var v) && v == str);
-            Assert.AreEqual(5, dict.Count);
+            Assert.HasCount(5, dict);
         }
 
         [TestMethod]
@@ -124,7 +124,7 @@ namespace Test.Utils.Strings
             CollectionAssert.AreEqual(arr1, arr2);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [TestCategory("PackedString")]
         [DataRow("aaaaaa")]
         [DataRow("abcdef")]
@@ -162,7 +162,7 @@ namespace Test.Utils.Strings
 
             Assert.AreNotEqual("XXXX", v1);
             Assert.IsTrue(dict.TryGetValue(str, out var v) && v == str);
-            Assert.AreEqual(5, dict.Count);
+            Assert.HasCount(5, dict);
         }
 
         [TestMethod]

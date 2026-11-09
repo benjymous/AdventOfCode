@@ -19,7 +19,7 @@ namespace AoC.Test
         [DataRow("a\nb", "a|b")]
         [DataRow("a\nb\nc", "a|b|c")]
         [DataRow("a,b,c", "a|b|c")]
-        [DataTestMethod]
+        [TestMethod]
         public void TestSplit(string input, string expected)
         {
             string[] result = Util.Split(input);
@@ -46,7 +46,7 @@ namespace AoC.Test
         [DataRow(0, 0, 10, 10, 20)]
         [DataRow(0, 0, 0, 10, 10)]
         [DataRow(-100, -100, 100, 100, 400)]
-        [DataTestMethod]
+        [TestMethod]
         [TestCategory("ManhattanVector")]
         [TestCategory("ManhattanVector2")]
         public void TestManhattan2Distance(int x1, int y1, int x2, int y2, int expected)
@@ -63,7 +63,7 @@ namespace AoC.Test
         [DataRow(0, 0, 0, 0, 10, 0, 10)]
         [DataRow(0, 0, 0, 0, 0, 10, 10)]
         [DataRow(-100, -100, -100, 100, 100, 100, 600)]
-        [DataTestMethod]
+        [TestMethod]
         [TestCategory("ManhattanVector")]
         [TestCategory("ManhattanVector3")]
         public void TestManhattan3Distance(int x1, int y1, int z1, int x2, int y2, int z2, int expected)
@@ -81,7 +81,7 @@ namespace AoC.Test
         [DataRow(0, 0, 0, 0, 0, 0, 10, 0, 10)]
         [DataRow(0, 0, 0, 0, 0, 0, 0, 10, 10)]
         [DataRow(-100, -100, -100, -100, 100, 100, 100, 100, 800)]
-        [DataTestMethod]
+        [TestMethod]
         [TestCategory("ManhattanVector")]
         [TestCategory("ManhattanVector4")]
         public void TestManhattan4Distance(int x1, int y1, int z1, int w1, int x2, int y2, int z2, int w2, int expected)
@@ -93,7 +93,7 @@ namespace AoC.Test
             Assert.AreEqual(expected, b.Distance(a));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [TestCategory("Circle")]
         public void CircleCreateTest()
         {
@@ -102,7 +102,7 @@ namespace AoC.Test
             Assert.AreEqual("0,1,2,3,4,5,6,7,8,9", string.Join(',', circle));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [TestCategory("Circle")]
         public void CircleRemoveTest()
         {
@@ -113,7 +113,7 @@ namespace AoC.Test
             Assert.AreEqual("5,6,7,8,9", string.Join(',', circle));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [TestCategory("Circle")]
         public void CircleReverseTest()
         {
@@ -124,7 +124,7 @@ namespace AoC.Test
             Assert.AreEqual("4,3,2,1,0,5,6,7,8,9", string.Join(',', circle));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [TestCategory("Circle")]
         public void CircleReverseTest2()
         {
@@ -135,7 +135,7 @@ namespace AoC.Test
             Assert.AreEqual("0,1,2,7,6,5,4,3,8,9", string.Join(',', circle));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         public void XorTest()
         {
             var nums = new List<int> { 65, 27, 9, 1, 4, 3, 40, 50, 91, 7, 6, 0, 2, 5, 68, 22 };
@@ -143,7 +143,7 @@ namespace AoC.Test
             Assert.AreEqual(64, nums.Xor());
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(1, "01")]
         [DataRow(10, "0a")]
         [DataRow(15, "0f")]
@@ -181,7 +181,7 @@ namespace AoC.Test
         public void RegexParseTest()
         {
             var list = Parser.Parse<RegexCreationTest1>("10,10 20,20,5 32\n1,2 3,4,5 6\n0,0 1,1,1 2", "\n").ToArray();
-            Assert.AreEqual(3, list.Length);
+            Assert.HasCount(3, list);
 
             Assert.AreEqual(new ManhattanVector2(10, 10), list[0].A);
             Assert.AreEqual(new ManhattanVector3(20, 20, 5), list[0].B);
@@ -201,7 +201,7 @@ namespace AoC.Test
         public void NestedRegexParseTest()
         {
             var list = Parser.Parse<NestedRegexCreationTest>("One Two 32\nA B 6\nhello there 2", "\n").ToArray();
-            Assert.AreEqual(3, list.Length);
+            Assert.HasCount(3, list);
 
             Assert.AreEqual("One", list[0].A.Val);
             Assert.AreEqual("Two", list[0].B.Val);
@@ -239,17 +239,17 @@ namespace AoC.Test
         public void RegexCreateTest2()
         {
             var obj = Parser.FromString<RegexCreationTest2>("1,2,3 100,200,300 tom,dick,harry");
-            Assert.AreEqual(3, obj.A1.Length);
+            Assert.HasCount(3, obj.A1);
             Assert.AreEqual(1, obj.A1[0]);
             Assert.AreEqual(2, obj.A1[1]);
             Assert.AreEqual(3, obj.A1[2]);
 
-            Assert.AreEqual(3, obj.A2.Length);
+            Assert.HasCount(3, obj.A2);
             Assert.AreEqual(100L, obj.A2[0]);
             Assert.AreEqual(200L, obj.A2[1]);
             Assert.AreEqual(300L, obj.A2[2]);
 
-            Assert.AreEqual(3, obj.A3.Length);
+            Assert.HasCount(3, obj.A3);
             Assert.AreEqual("tom", obj.A3[0]);
             Assert.AreEqual("dick", obj.A3[1]);
             Assert.AreEqual("harry", obj.A3[2]);
@@ -262,7 +262,7 @@ namespace AoC.Test
         [TestCategory("RegexParse")]
         public void RegexCreateFailTest()
         {
-            Assert.ThrowsException<Exception>(() => Parser.FromString<RegexCreationTestNoConstructor>("blah"));
+            Assert.Throws<Exception>(() => Parser.FromString<RegexCreationTestNoConstructor>("blah"));
         }
 
         [method: Regex(@"(.+) (.+)")]
@@ -277,7 +277,7 @@ namespace AoC.Test
         public void ArrayRegexCreateTest()
         {
             var item = Parser.FromString<ArrayRegexCreationTest>("One,Two 32");
-            Assert.AreEqual(2, item.A.Length);
+            Assert.HasCount(2, item.A);
 
             Assert.AreEqual("One", item.A[0].Val);
             Assert.AreEqual("Two", item.A[1].Val);
@@ -297,7 +297,7 @@ namespace AoC.Test
         {
             var obj = Parser.FromString<RegexCreationDictionary>("1 2: 3, 4: 5, 6: 7");
             Assert.AreEqual(1, obj.A1);
-            Assert.AreEqual(3, obj.A2.Count);
+            Assert.HasCount(3, obj.A2);
             Assert.IsTrue(obj.A2.TryGetValue(2, out var v) && v == 3);
             Assert.IsTrue(obj.A2.TryGetValue(4, out v) && v == 5);
             Assert.IsTrue(obj.A2.TryGetValue(6, out v) && v == 7);
@@ -316,7 +316,7 @@ namespace AoC.Test
         {
             var obj = Parser.FromString<RegexCreationList>("1 2:3:4:5:6:7");
             Assert.AreEqual(1, obj.A1);
-            Assert.AreEqual(6, obj.A2.Count);
+            Assert.HasCount(6, obj.A2);
             Assert.AreEqual(2, obj.A2[0]);
             Assert.AreEqual(3, obj.A2[1]);
             Assert.AreEqual(4, obj.A2[2]);
@@ -338,13 +338,13 @@ namespace AoC.Test
         {
             var obj = Parser.FromString<RegexCreationHashSet>("1 2:3:4:5:6:7:7:2");
             Assert.AreEqual(1, obj.A1);
-            Assert.AreEqual(6, obj.A2.Count);
-            Assert.IsTrue(obj.A2.Contains(2));
-            Assert.IsTrue(obj.A2.Contains(3));
-            Assert.IsTrue(obj.A2.Contains(4));
-            Assert.IsTrue(obj.A2.Contains(5));
-            Assert.IsTrue(obj.A2.Contains(6));
-            Assert.IsTrue(obj.A2.Contains(7));
+            Assert.HasCount(6, obj.A2);
+            Assert.Contains(2, obj.A2);
+            Assert.Contains(3, obj.A2);
+            Assert.Contains(4, obj.A2);
+            Assert.Contains(5, obj.A2);
+            Assert.Contains(6, obj.A2);
+            Assert.Contains(7, obj.A2);
         }
 
         [Regex(@"(.+)")]
@@ -355,7 +355,7 @@ namespace AoC.Test
         public void RegexParseBooleans()
         {
             var bools = Parser.FromString<BoolsRegexCreationTest>("true, false, True, False, TRUE, FALSE, t, f, T, F, yes, no, Yes, No, YES, NO, y, n, Y, N");
-            Assert.AreEqual(20, bools.bools.Length);
+            Assert.HasCount(20, bools.bools);
             for (int i = 0; i < bools.bools.Length; ++i)
             {
                 Assert.AreEqual(i % 2 == 0, bools.bools[i], $"wrong boolean at {i}");
@@ -412,7 +412,7 @@ namespace AoC.Test
                     arr[x, y] = x + (y * 100);
 
             var col = arr.Column(1).ToArray();
-            Assert.AreEqual(5, col.Length);
+            Assert.HasCount(5, col);
             for (int i = 0; i < col.Length; ++i)
             {
                 Assert.AreEqual((i * 100) + 1, col[i]);
@@ -428,7 +428,7 @@ namespace AoC.Test
                     arr[x, y] = (x * 100) + y;
 
             var row = arr.Row(1).ToArray();
-            Assert.AreEqual(10, row.Length);
+            Assert.HasCount(10, row);
             for (int i = 0; i < row.Length; ++i)
             {
                 Assert.AreEqual((i * 100) + 1, row[i]);
@@ -440,7 +440,7 @@ namespace AoC.Test
         {
             var input = "abcdefghijklmnopqrstuvwxyz";
             var windows = input.Windows(4).Select(w => w.AsString()).ToArray();
-            Assert.AreEqual(23, windows.Length);
+            Assert.HasCount(23, windows);
             Assert.AreEqual("abcd", windows[0]);
             Assert.AreEqual("fghi", windows[5]);
             Assert.AreEqual("uvwx", windows[20]);

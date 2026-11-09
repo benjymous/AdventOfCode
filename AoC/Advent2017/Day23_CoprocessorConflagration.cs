@@ -6,7 +6,7 @@ public class Day23 : IPuzzle
     public static int Part1(string input)
     {
         int mulCount = 0;
-        var cpu = new Coprocessor(input, "Common,Day23")
+        var cpu = new Coprocessor(input, NorthCloud.InstructionSet.Day23)
         {
             Debugger = (line) => { if (line.Name == "mul") mulCount++; return true; }
         };
@@ -16,7 +16,7 @@ public class Day23 : IPuzzle
 
     public static long Part2(string input)
     {
-        var cpu = new Coprocessor(input, "Common,Day23")
+        var cpu = new Coprocessor(input, NorthCloud.InstructionSet.Day23)
         {
             Debugger = (line) => line.Index != 8
         };

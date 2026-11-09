@@ -28,7 +28,7 @@ namespace AoC.Advent2021.Test
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         [DataRow(49917929934999)]
         [DataRow(11911316711816)]
 
@@ -38,14 +38,14 @@ namespace AoC.Advent2021.Test
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void ALU_Part1_Regression()
         {
             Assert.AreEqual(49917929934999, Day24.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void ALU_Part2_Regression()
         {
             Assert.AreEqual(11911316711816, Day24.Part2(input));

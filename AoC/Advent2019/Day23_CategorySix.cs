@@ -1,4 +1,5 @@
 ﻿namespace AoC.Advent2019;
+
 public class Day23 : IPuzzle
 {
     public class NetworkNode(string program, int networkId, NetworkController networkController) : NPSA.IntCPU(program, 3000, [networkId]), NPSA.ICPUInterrupt
@@ -17,18 +18,28 @@ public class Day23 : IPuzzle
 
         public long LastY = -1;
         private readonly int[] IdleCount = new int[256];
+        int Stalled = 0;
 
-        public void NotifyStarvation(int id) => IdleCount[id]++;
-        public void NotifySeen(int id) => IdleCount[id] = 0;
+        public void NotifyStarvation(int id)
+        {
+            if (++IdleCount[id] == 3) Stalled++;
+        }
+
+        public void NotifySeen(int id)
+        {
+            if (IdleCount[id] >= 3) Stalled--;
+            IdleCount[id] = 0;
+        }
 
         public bool Step()
         {
             while (networkController.TryGetPacket(255, out var packet)) lastPacket = packet;
 
-            if (IdleCount.Count(v => v > 2) == 50)
+            if (Stalled >= 50)
             {
                 networkController.EnqueuePacket(0, lastPacket);
                 for (int i = 0; i < IdleCount.Length; ++i) IdleCount[i] = 0;
+                Stalled = 0;
 
                 if (lastPacket.y == LastY) return false;
                 LastY = lastPacket.y;
@@ -58,7 +69,7 @@ public class Day23 : IPuzzle
         {
             if (!MessageQueue(id).TryDequeue(out vec))
             {
-                if (Nat != null && id < 255) Nat.NotifyStarvation(id);
+                if (id < 255) Nat?.NotifyStarvation(id);
                 return false;
             }
             return true;

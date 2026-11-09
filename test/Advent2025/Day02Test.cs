@@ -31,7 +31,7 @@ public class Day02Test
     [DataRow(1212, true, true)]
     [DataRow(123123, true, true)]
     [DataRow(123123123, true, true)]
-    [DataTestMethod]
+    [TestMethod]
     public void Validity02Test(long input, bool part2, bool expected)
     {
         Assert.AreEqual(expected, Day02.Range.IsInvalid(input, part2 ? QuestionPart.Part2 : QuestionPart.Part1));
@@ -45,7 +45,7 @@ public class Day02Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void GiftShop_Part2_Regression()
     {
         Assert.AreEqual(47477053982, Day02.Part2(input));

@@ -13,14 +13,14 @@ namespace AoC.Advent2019.Test
         readonly string input = Util.GetInput<Day17>();
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Hoovamatic_Part1_Regression()
         {
             Assert.AreEqual(5056, Day17.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Hoovamatic_Part2_Regression()
         {
             Assert.AreEqual(942367, Day17.Part2(input));

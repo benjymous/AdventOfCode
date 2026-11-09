@@ -47,7 +47,7 @@ hdj{m>838:A,pv}
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Aplenty_Part2_Regression()
     {
         Assert.AreEqual(124078207789312, Day19.Part2(input));

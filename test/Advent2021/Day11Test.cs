@@ -20,28 +20,28 @@ namespace AoC.Advent2021.Test
 5283751526";
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Octoflash01Test()
         {
             Assert.AreEqual(1656, Day11.Part1(test.Replace("\r", "")));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Octoflash02Test()
         {
             Assert.AreEqual(195, Day11.Part2(test.Replace("\r", "")));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Octoflash_Part1_Regression()
         {
             Assert.AreEqual(1705, Day11.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Octoflash_Part2_Regression()
         {
             Assert.AreEqual(265, Day11.Part2(input));

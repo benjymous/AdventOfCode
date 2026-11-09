@@ -10,7 +10,7 @@ public class Day21Test
     readonly string test = "029A\n980A\n179A\n456A\n379A";
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
     public void KeypadChain_01Test()
     {
         Assert.AreEqual(126384, Day21.Part1(test));
@@ -30,21 +30,21 @@ public class Day21Test
     [DataRow("480A", 74 * 480)]
     [DataRow("083A", 66 * 83)]
 
-    [DataTestMethod]
+    [TestMethod]
     public void KeypadScoreTest(string input, int expected)
     {
         Assert.AreEqual(expected, Day21.GetScore(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void KeypadChain_Part1_Regression()
     {
         Assert.AreEqual(177814, Day21.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void KeypadChain_Part2_Regression()
     {
         Assert.AreEqual(220493992841852, Day21.Part2(input));

@@ -19,7 +19,7 @@ public class Day10 : IPuzzle
 
     public static IEnumerable<char> SimulateCRT(IEnumerable<(int cycle, int x)> watch)
         => watch.Select(v => (beamPos: v.cycle % 40, v.x))
-                .Select(v => v.beamPos == 0 ? '\n' : (v.beamPos >= v.x && v.beamPos <= v.x + 2) ? '▊' : ' ');
+                .Select(v => v.beamPos == 0 ? '\n' : (v.beamPos >= v.x && v.beamPos <= v.x + 2) ? '#' : ' ');
 
     public static int Part1(string input)
     {

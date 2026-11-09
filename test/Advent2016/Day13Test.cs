@@ -10,14 +10,14 @@ namespace AoC.Advent2016.Test
         readonly string input = Util.GetInput<Day13>();
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void CubicleMaze_Part1_Regression()
         {
             Assert.AreEqual(86, Day13.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void CubicleMaze_Part2_Regression()
         {
             Assert.AreEqual(127, Day13.Part2(input));

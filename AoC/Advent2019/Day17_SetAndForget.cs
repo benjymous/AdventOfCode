@@ -29,7 +29,7 @@ internal class Hoovamatic(string input) : ASCIITerminal(input)
     public static IEnumerable<string> FindSubstitutions(string commands, List<string> used)
     {
         if (!NeedsToShrink(commands)) return TestResult(commands, used);
-        var patterns = PatternsToSearch(commands).Distinct().Where(p => p[^1] == ',' && p[0] is 'L' or 'R' && p[^2] is >= '0' and <= '9' && !p.Contains('-')).Select(pattern => (pattern, Regex.Matches(commands, pattern, RegexOptions.IgnoreCase).Count)).OrderByDescending(x => x.pattern.Length + x.Count).Select(kvp => kvp.pattern);
+        var patterns = PatternsToSearch(commands).Distinct().Where(p => p[^1] == ',' && p[0] is 'L' or 'R' && p[^2] is >= '0' and <= '9' && !p.Contains('-')).Select(pattern => (pattern, Count:Regex.Count(commands, pattern, RegexOptions.IgnoreCase))).OrderByDescending(x => x.pattern.Length + x.Count).Select(kvp => kvp.pattern);
         foreach (var pattern in patterns)
         {
             var result = commands.Replace(pattern, $"-{(char)('A' + used.Count)}-,");

@@ -33,21 +33,21 @@ fold along y=7
 fold along x=5";
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Origami01Test()
         {
             Assert.AreEqual(17, Day13.Part1(test.Replace("\r", "")));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Origami02Test()
         {
-            Assert.AreEqual("243C751E061AA9A187EDACEE48B7965C", Day13.Part2(test.Replace("\r", ""), new ConsoleOut()).GetMD5String(false));
+            Assert.AreEqual("180583AC82FB0C0B53FBFD8DBCAA0993", Day13.Part2(test.Replace("\r", ""), new ConsoleOut()).GetMD5String(false));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Origami_Part1_Regression()
         {
             Assert.AreEqual(710, Day13.Part1(input));
@@ -55,7 +55,7 @@ fold along x=5";
 
         [TestCategory("Regression")]
         [TestCategory("OCR")]
-        [DataTestMethod]
+        [TestMethod]
         public void Origami_Part2_Regression()
         {
             Assert.AreEqual("EPLGRULR", Utils.OCR.TextReader.Read(Day13.Part2(input, new ConsoleOut())));

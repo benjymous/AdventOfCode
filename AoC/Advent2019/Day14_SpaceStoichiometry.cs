@@ -13,7 +13,7 @@ public class Day14 : IPuzzle
 
     public static long Decompose(Component input, Dictionary<string, Rule> rules)
     {
-        Queue<Component> currentSet = new([input]);
+        Queue<Component> currentSet = [with([input])];
         Dictionary<string, long> wasteHeap = [];
 
         long ore = 0;

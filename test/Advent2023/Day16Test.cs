@@ -27,21 +27,21 @@ public class Day16Test
     }
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
     public void Lava_02Test()
     {
         Assert.AreEqual(51, Day16.Part2(test));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Lava_Part1_Regression()
     {
         Assert.AreEqual(6361, Day16.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Lava_Part2_Regression()
     {
         Assert.AreEqual(6701, Day16.Part2(input));

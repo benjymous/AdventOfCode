@@ -43,16 +43,16 @@ public class Day12 : IPuzzle
 
     private static int DecodeRule(string rule) => rule.Aggregate(0, (val, ch) => (val << 1) + (ch == '#' ? 1 : 0));
 
-    private static void ParseInput(string input, out State initialState)
+    private static State ParseInput(string input)
     {
         var lines = Util.Split(input);
         var rules = lines.Skip(1).Select(line => line.Split(" => ")).Where(bits => bits[1][0] == '#').Select(bits => DecodeRule(bits[0])).ToHashSet();
-        initialState = new(rules, [.. lines[0].Split(": ")[1].Select(ch => ch == '#' ? 1 : 0)]);
+        return new(rules, [.. lines[0].Split(": ")[1].Select(ch => ch == '#' ? 1 : 0)]);
     }
 
     public static long Solve(string input, long generations)
     {
-        ParseInput(input, out var s1);
+        State s1 = ParseInput(input);
         State s2 = new(s1.Rules);
 
         long gen;

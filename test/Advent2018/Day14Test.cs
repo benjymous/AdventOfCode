@@ -13,7 +13,7 @@ namespace AoC.Advent2018.Test
         [DataRow(5, 10, "0124515891")]
         [DataRow(18, 10, "9251071085")]
         [DataRow(2018, 10, "5941429882")]
-        [DataTestMethod]
+        [TestMethod]
         public void Chocolate01(int start, int keep, string expected)
         {
             Assert.AreEqual(expected, Day14.Part1(start, keep));
@@ -24,21 +24,21 @@ namespace AoC.Advent2018.Test
         [DataRow("01245", 5)]
         [DataRow("92510", 18)]
         [DataRow("59414", 2018)]
-        [DataTestMethod]
+        [TestMethod]
         public void Chocolate02(string search, int expected)
         {
             Assert.AreEqual(expected, Day14.Part2(search));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Chocolate_Part1_Regression()
         {
             Assert.AreEqual("4910101614", Day14.Part1(int.Parse(input), 10));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Chocolate_Part2_Regression()
         {
             Assert.AreEqual(20253137, Day14.Part2(input));

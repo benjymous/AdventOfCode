@@ -94,11 +94,7 @@
             }
         }
 
-        public void Stop()
-        {
-            queue.Clear();
-        }
-
+        public void Stop() => queue.Clear();
 
         public int Count => queue.Count;
 

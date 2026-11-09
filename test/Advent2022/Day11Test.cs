@@ -36,28 +36,28 @@ Monkey 3:
     If false: throw to monkey 1".Replace("\r", "");
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Monkeys01Test()
         {
             Assert.AreEqual(10605L, Day11.Part1(test));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Monkeys02Test()
         {
             Assert.AreEqual(2713310158L, Day11.Part2(test));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Monkeys_Part1_Regression()
         {
             Assert.AreEqual(152488L, Day11.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Monkeys_Part2_Regression()
         {
             Assert.AreEqual(51382025916L, Day11.Part2(input));

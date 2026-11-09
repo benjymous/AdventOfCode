@@ -20,21 +20,21 @@ namespace AoC.Advent2017.Test
         [DataRow("s4", "nidogjbhpclmaefk", "aefknidogjbhpclm")]
         [DataRow("pn/e", "pecinkdagjbhoflm", "pnciekdagjbhoflm")]
 
-        [DataTestMethod]
+        [TestMethod]
         public void Dance01Test(string input, string start, string expected)
         {
             Assert.AreEqual(expected, Day16.DoDance(input, start));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Promenade_Part1_Regression()
         {
             Assert.AreEqual("lgpkniodmjacfbeh", Day16.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Promenade_Part2_Regression()
         {
             Assert.AreEqual("hklecbpnjigoafmd", Day16.Part2(input));

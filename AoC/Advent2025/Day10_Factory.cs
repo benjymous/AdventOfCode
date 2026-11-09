@@ -20,11 +20,11 @@ public class Day10 : IPuzzle
             int numButtons = ButtonActions.Count;
 
             // Each button can be pressed 0 or more times, must be whole number
-            var numPresses = new IntExpr[numButtons];
+            var numPressesPerButton = new IntExpr[numButtons];
             for (int j = 0; j < numButtons; j++)
             {
-                numPresses[j] = ctx.MkIntConst(ctx.MkSymbol(j));
-                opt.Assert(ctx.MkGe(numPresses[j], ctx.MkInt(0))); // numPresses[j] >= 0
+                numPressesPerButton[j] = ctx.MkIntConst(ctx.MkSymbol(j));
+                opt.Assert(ctx.MkGe(numPressesPerButton[j], ctx.MkInt(0))); // numPresses[j] >= 0
             }
 
             // Define how button presses effect the target values
@@ -35,7 +35,7 @@ public class Day10 : IPuzzle
                 // lights are toggled by presses
                 foreach (var light in TargetLights.Index())
                 {
-                    var termsSum = SumOfPressesForTarget(ctx, numPresses, light.Index);
+                    var termsSum = SumOfPressesForTarget(ctx, numPressesPerButton, light.Index);
 
                     var lhs = ctx.MkMod((IntExpr)termsSum, ctx.MkInt(2)); // check odd (on) or even (off)
                     var rhs = ctx.MkInt(light.Item ? 1 : 0);
@@ -48,7 +48,7 @@ public class Day10 : IPuzzle
                 // jolts are incremented by presses
                 foreach (var target in TargetJolts.Index())
                 {
-                    var lhs = SumOfPressesForTarget(ctx, numPresses, target.Index);
+                    var lhs = SumOfPressesForTarget(ctx, numPressesPerButton, target.Index);
                     var rhs = ctx.MkInt(target.Item);
 
                     opt.Assert(ctx.MkEq(lhs, rhs));
@@ -56,7 +56,7 @@ public class Day10 : IPuzzle
             }
 
             // Objective: minimize sum of press values  (total presses)
-            var sumPresses = ctx.MkAdd(numPresses);
+            var sumPresses = ctx.MkAdd(numPressesPerButton);
             opt.MkMinimize(sumPresses);
 
             if (opt.Check() != Status.SATISFIABLE) return 0; // No solution

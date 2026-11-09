@@ -60,8 +60,8 @@ public class Day18 : IPuzzle
                 if (first.Explode() || second.Explode()) return true;
                 else if (Depth == 4)
                 {
-                    if (first.left != null) first.left.Value += first.Value;
-                    if (second.right != null) second.right.Value += second.Value;
+                    first.left?.Value += first.Value;
+                    second.right?.Value += second.Value;
                     (first, second, Value) = (null, null, 0);
                     return true;
                 }

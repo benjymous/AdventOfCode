@@ -61,9 +61,18 @@ namespace AoC.Advent2019.NPSA
         private double speed = 0;
         private double runTimeSecs = 0;
 
+        private static IEnumerable<long> Parse(string input)
+        {
+            var d = input.Split(",");
+            for (var i = 0; i < d.Length; i++)
+            {
+                yield return long.Parse(d[i]);
+            }
+        }
+        
         public IntCPU(string program, int reserve = 0, long[] initialInput = null)
         {
-            initialState = Util.ParseNumbers<long>(program);
+            initialState = Parse(program);
             Reset(reserve);
 
             lock (paramLock)

@@ -22,14 +22,14 @@ public class Day20Test
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void PulsePropogation_Part1_Regression()
     {
         Assert.AreEqual(919383692, Day20.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void PulsePropogation_Part2_Regression()
     {
         Assert.AreEqual(247702167614647, Day20.Part2(input));

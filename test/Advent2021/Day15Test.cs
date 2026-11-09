@@ -22,28 +22,28 @@ namespace AoC.Advent2021.Test
 2311944581";
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Chiton01Test()
         {
             Assert.AreEqual(40, Day15.Part1(test.Replace("\r", "")));
         }
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void Chiton02Test()
         {
             Assert.AreEqual(315, Day15.Part2(test.Replace("\r", "")));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Chiton_Part1_Regression()
         {
             Assert.AreEqual(363, Day15.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Chiton_Part2_Regression()
         {
             Assert.AreEqual(2835, Day15.Part2(input));

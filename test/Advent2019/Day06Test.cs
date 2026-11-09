@@ -15,7 +15,7 @@ namespace AoC.Advent2019.Test
         [DataRow("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L", "J", 2)]
         [DataRow("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L", "E", 4)]
         [DataRow("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L", "COM", 11)]
-        [DataTestMethod]
+        [TestMethod]
         public void DescendentsTest(string input, string root, int expected)
         {
             var t = Day06.ParseTree(input);
@@ -25,7 +25,7 @@ namespace AoC.Advent2019.Test
 
         [TestCategory("Test")]
         [DataRow("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L", 42)]
-        [DataTestMethod]
+        [TestMethod]
         public void AllDescendentsTest(string input, int expected)
         {
             Assert.AreEqual(expected, Day06.Part1(input));
@@ -33,21 +33,21 @@ namespace AoC.Advent2019.Test
 
         [TestCategory("Test")]
         [DataRow("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L\nK)YOU\nI)SAN", 4)]
-        [DataTestMethod]
+        [TestMethod]
         public void TraversalTest(string input, int expected)
         {
             Assert.AreEqual(expected, Day06.Part2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Orbital_Part1_Regression()
         {
             Assert.AreEqual(147223, Day06.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Orbital_Part2_Regression()
         {
             Assert.AreEqual(340, Day06.Part2(input));

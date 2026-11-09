@@ -12,7 +12,7 @@ namespace AoC.Advent2017.Test
         [DataRow("aa bb cc dd ee", true)]
         [DataRow("aa bb cc dd aa", false)]
         [DataRow("aa bb cc dd aaa", true)]
-        [DataTestMethod]
+        [TestMethod]
         public void Entropy01Test(string input, bool expected)
         {
             Assert.AreEqual(expected, Day04.ValidationRule2(input));
@@ -24,21 +24,21 @@ namespace AoC.Advent2017.Test
         [DataRow("a ab abc abd abf abj", true)]
         [DataRow("iiii oiii ooii oooi oooo", true)]
         [DataRow("oiii ioii iioi iiio", false)]
-        [DataTestMethod]
+        [TestMethod]
         public void Entropy02Test(string input, bool expected)
         {
             Assert.AreEqual(expected, Day04.ValidationRule2(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Entropy_Part1_Regression()
         {
             Assert.AreEqual(325, Day04.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Entropy_Part2_Regression()
         {
             Assert.AreEqual(119, Day04.Part2(input));

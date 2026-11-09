@@ -9,7 +9,7 @@ namespace AoC.Advent2015.Test
         readonly string input = Util.GetInput<Day25>();
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void SnowMachine_Part1_Regression()
         {
             Assert.AreEqual(8997277, Day25.Part1(input));

@@ -9,14 +9,14 @@ namespace AoC.Advent2020.Test
         readonly string input = Util.GetInput<Day04>();
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Passports_Part1_Regression()
         {
             Assert.AreEqual(170, Day04.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Passports_Part2_Regression()
         {
             Assert.AreEqual(103, Day04.Part2(input));

@@ -17,21 +17,21 @@ public class Day05Test
     }
 
     [TestCategory("Test")]
-    [DataTestMethod]
+    [TestMethod]
     public void Freshness_02Test()
     {
         Assert.AreEqual(14ul, Day05.Part2(test));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Cafeteria_Part1_Regression()
     {
         Assert.AreEqual(811, Day05.Part1(input));
     }
 
     [TestCategory("Regression")]
-    [DataTestMethod]
+    [TestMethod]
     public void Cafeteria_Part2_Regression()
     {
         Assert.AreEqual(338189277144473ul, Day05.Part2(input));

@@ -20,14 +20,14 @@ v.v..>>v.v
 ....v..v.>".Replace("\r", "");
 
         [TestCategory("Test")]
-        [DataTestMethod]
+        [TestMethod]
         public void CucumberTest()
         {
             Assert.AreEqual(58, Day25.Part1(test));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Cucumber_Part1_Regression()
         {
             Assert.AreEqual(579, Day25.Part1(input));

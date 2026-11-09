@@ -27,7 +27,7 @@ public class Day18 : IPuzzle
 
     public static long Part1(string input)
     {
-        var cpu = new NorthCloud.Coprocessor(input, "Common,Day18,Day18Part1");
+        var cpu = new NorthCloud.Coprocessor(input, NorthCloud.InstructionSet.Day18Part1);
         var reciever = new Part1Port();
         cpu.Bus.Output = reciever;
         cpu.Run();
@@ -39,8 +39,8 @@ public class Day18 : IPuzzle
         var port01 = new Part2Port();
         var port10 = new Part2Port();
 
-        var cpu0 = new NorthCloud.Coprocessor(input, "Common,Day18,Day18Part2");
-        var cpu1 = new NorthCloud.Coprocessor(input, "Common,Day18,Day18Part2");
+        var cpu0 = new NorthCloud.Coprocessor(input, NorthCloud.InstructionSet.Day18Part2);
+        var cpu1 = new NorthCloud.Coprocessor(input, NorthCloud.InstructionSet.Day18Part2);
 
         cpu0.Set('p', 0);
         cpu0.Bus.Output = port01;

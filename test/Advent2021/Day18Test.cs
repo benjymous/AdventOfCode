@@ -20,7 +20,7 @@ namespace AoC.Advent2021.Test
         [DataRow("[[6,[5,[4,[3,2]]]],1]", "[[6,[5,[7,0]]],3]")]
         [DataRow("[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]", "[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]")]
         [DataRow("[[3,[2,[8,0]]],[9,[5,[4,[3,2]]]]]", "[[3,[2,[8,0]]],[9,[5,[7,0]]]]")]
-        [DataTestMethod]
+        [TestMethod]
         public void TestSingleExplode(string data, string expected)
         {
             Val number = new(data);
@@ -33,7 +33,7 @@ namespace AoC.Advent2021.Test
         [DataRow(10, "[5,5]")]
         [DataRow(11, "[5,6]")]
         [DataRow(12, "[6,6]")]
-        [DataTestMethod]
+        [TestMethod]
         public void TestSingleSplit(int val, string expected)
         {
             var number = new Val { Value = val };
@@ -43,7 +43,7 @@ namespace AoC.Advent2021.Test
         }
 
         [DataRow("[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]", "[[[[0,7],4],[[7,8],[6,0]]],[8,1]]")]
-        [DataTestMethod]
+        [TestMethod]
         public void TestReduce(string data, string expected)
         {
             Val number = new(data);
@@ -105,7 +105,7 @@ namespace AoC.Advent2021.Test
                             "[[[5,[7,4]],7],1]",
                             "[[[[4,2],2],6],[8,7]]"},
             "[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]")]
-        [DataTestMethod]
+        [TestMethod]
         public void TestAdd(string[] values, string expected)
         {
             var first = values.First();
@@ -137,7 +137,7 @@ namespace AoC.Advent2021.Test
         [DataRow("[[[[3,0],[5,3]],[4,4]],[5,5]]", 791)]
         [DataRow("[[[[5,0],[7,4]],[5,5]],[6,6]]", 1137)]
         [DataRow("[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]", 3488)]
-        [DataTestMethod]
+        [TestMethod]
         public void TestMagnitude(string data, int expected)
         {
             Val number = new(data);
@@ -146,14 +146,14 @@ namespace AoC.Advent2021.Test
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Magnitude_Part1_Regression()
         {
             Assert.AreEqual(4072, Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Magnitude_Part2_Regression()
         {
             Assert.AreEqual(4483, Part2(input));

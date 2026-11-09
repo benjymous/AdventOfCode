@@ -14,7 +14,7 @@ namespace AoC.Advent2018.Test
         [DataRow(0, 1, 10, 10, 510, 48271)]
         [DataRow(1, 1, 10, 10, 510, 145722555)]
         [DataRow(10, 10, 10, 10, 510, 0)]
-        [DataTestMethod]
+        [TestMethod]
         public void GeologicIndexTest(int x, int y, int tx, int ty, int depth, int expected)
         {
             var c = new Day22.Cave((tx, ty), depth);
@@ -27,7 +27,7 @@ namespace AoC.Advent2018.Test
         [DataRow(0, 1, 10, 10, 510, 8415)]
         [DataRow(1, 1, 10, 10, 510, 1805)]
         [DataRow(10, 10, 10, 10, 510, 510)]
-        [DataTestMethod]
+        [TestMethod]
         public void ErosionLevelTest(int x, int y, int tx, int ty, int depth, int expected)
         {
             var c = new Day22.Cave((tx, ty), depth);
@@ -40,7 +40,7 @@ namespace AoC.Advent2018.Test
         [DataRow(0, 1, 10, 10, 510, Day22.ROCKY)]
         [DataRow(1, 1, 10, 10, 510, Day22.NARROW)]
         [DataRow(10, 10, 10, 10, 510, Day22.ROCKY)]
-        [DataTestMethod]
+        [TestMethod]
         public void TypeTest(int x, int y, int tx, int ty, int depth, char expected)
         {
             var c = new Day22.Cave((tx, ty), depth);
@@ -49,21 +49,21 @@ namespace AoC.Advent2018.Test
 
         [TestCategory("Test")]
         [DataRow(10, 10, 510, 114)]
-        [DataTestMethod]
+        [TestMethod]
         public void Cave01Test(int tx, int ty, int depth, int expected)
         {
             Assert.AreEqual(expected, Day22.Part1(tx, ty, depth));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Caves_Part1_Regression()
         {
             Assert.AreEqual(7299, Day22.Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Caves_Part2_Regression()
         {
             Assert.AreEqual(1008, Day22.Part2(input));

@@ -14,7 +14,7 @@ namespace AoC.Advent2021.Test
         [DataRow("target area: x=20..30, y=-10..-5", 25, -7, true)]
         [DataRow("target area: x=20..30, y=-10..-5", 30, -5, true)]
         [DataRow("target area: x=20..30, y=-10..-5", 31, -10, false)]
-        [DataTestMethod]
+        [TestMethod]
         public void TestInRect(string data, int x, int y, bool expected)
         {
             Assert.AreEqual(expected, TestInRect(data, x, y));
@@ -32,7 +32,7 @@ namespace AoC.Advent2021.Test
         [DataRow("target area: x=20..30, y=-10..-5", 9, 0, true)]
         [DataRow("target area: x=20..30, y=-10..-5", 17, -4, false)]
         [DataRow("target area: x=20..30, y=-10..-5", 0, 0, false)]
-        [DataTestMethod]
+        [TestMethod]
         public void TestHits(string data, int x, int y, bool expected)
         {
             Assert.AreEqual(expected, TestHits(data, x, y));
@@ -47,7 +47,7 @@ namespace AoC.Advent2021.Test
 
         [TestCategory("Test")]
         [DataRow("target area: x=20..30, y=-10..-5", 45)]
-        [DataTestMethod]
+        [TestMethod]
         public void TestPart1(string data, int expected)
         {
             Assert.AreEqual(expected, Part1(data));
@@ -55,21 +55,21 @@ namespace AoC.Advent2021.Test
 
         [TestCategory("Test")]
         [DataRow("target area: x=20..30, y=-10..-5", 112)]
-        [DataTestMethod]
+        [TestMethod]
         public void TestPart2(string data, int expected)
         {
             Assert.AreEqual(expected, Part2(data));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Trajectory_Part1_Regression()
         {
             Assert.AreEqual(5565, Part1(input));
         }
 
         [TestCategory("Regression")]
-        [DataTestMethod]
+        [TestMethod]
         public void Trajectory_Part2_Regression()
         {
             Assert.AreEqual(2118, Part2(input));

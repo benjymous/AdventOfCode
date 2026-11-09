@@ -9,11 +9,9 @@ public class Day04 : IPuzzle
     }
 
     [method: Regex(@"\[....-..-.. (..:..)\] (?:Guard #(\d+) )?(falls asleep|wakes up|begins shift)")]
-    private class Entry(string timecode, int guardId, EntryType type)
+    private record class Entry(string timecode, int GuardId, EntryType EntryType)
     {
         public readonly int Timestamp = int.Parse(timecode.Replace(":", ""));
-        public readonly EntryType EntryType = type;
-        public readonly int GuardId = guardId;
     }
 
     private static (Dictionary<int, Dictionary<int, int>>, Dictionary<int, int> durations) Parse(string input)
